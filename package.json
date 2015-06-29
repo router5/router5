@@ -4,6 +4,7 @@
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/.bin/babel -m common modules/Router5.js > index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +27,7 @@
   "jspm": {
     "directories": {},
     "dependencies": {
+      "deku": "npm:deku@^0.4.5",
       "route-node": "npm:route-node@0.0.3"
     },
     "devDependencies": {
