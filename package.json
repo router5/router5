@@ -1,0 +1,37 @@
+{
+  "name": "router5",
+  "version": "0.0.0",
+  "description": "An HTML5 router, based on route-node and path-parser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/troch/router5.git"
+  },
+  "keywords": [
+    "router",
+    "html5"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/troch/router5/issues"
+  },
+  "homepage": "https://github.com/troch/router5",
+  "dependencies": {
+    "route-node": "0.0.3"
+  },
+  "jspm": {
+    "directories": {},
+    "dependencies": {
+      "route-node": "npm:route-node@0.0.3"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.1.13",
+      "babel-runtime": "npm:babel-runtime@^5.1.13",
+      "core-js": "npm:core-js@^0.9.4"
+    }
+  }
+}
