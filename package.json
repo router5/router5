@@ -30,6 +30,8 @@
     },
     "dependencies": {
       "deku": "npm:deku@^0.4.5",
+      "jsx": "github:floatdrop/plugin-jsx@^1.1.0",
+      "react": "npm:react@^0.14.0-alpha3",
       "route-node": "npm:route-node@0.0.5"
     },
     "devDependencies": {
@@ -37,5 +39,8 @@
       "babel-runtime": "npm:babel-runtime@^5.1.13",
       "core-js": "npm:core-js@^0.9.4"
     }
+  },
+  "devDependencies": {
+    "babel": "^5.6.14"
   }
 }

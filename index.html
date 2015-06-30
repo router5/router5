@@ -12,17 +12,19 @@
     </section>
 
     <section>
-        <button id="users">orders</button>
+        <button id="orders">orders</button>
         <button id="orders.view" params="{'id': 'A0E23'}">orders.view</button>
         <button id="orders.pending">orders.pending</button>
         <button id="orders.completed">orders.completed</button>
     </section>
 
+    <main id="app"></main>
+
     <script src="jspm_packages/system.js"></script>
     <script src="config.js"></script>
     <script src="build.js"></script>
     <script>
-        System.import('main');
+        System.import('main.jsx!');
     </script>
 </body>
 

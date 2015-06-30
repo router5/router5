@@ -9,8 +9,8 @@ let nameToIDs = name => {
 
 let areStatesEqual = (state1, state2) => {
     return state1.name === state2.name &&
-           Object.keys(state1.params).length === Object.keys(state2.params).length &&
-           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
+       Object.keys(state1.params).length === Object.keys(state2.params).length &&
+       Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
 }
 
 let makeState = (name, params, path) => ({name, params, path})
@@ -30,8 +30,9 @@ export default class Router5 {
         if (startMatch) {
             this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath)
             window.history.replaceState(this.lastKnownState, '', opts.useHash ? `#${startPath}` : startPath)
+        } else if (opts.defaultRoute) {
+            this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true})
         }
-        else if (opts.defaultRoute) this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true})
 
         window.addEventListener('popstate', evt => {
             if (!evt.state) return

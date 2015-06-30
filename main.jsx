@@ -1,5 +1,6 @@
 import RouteNode from 'route-node'
 import Router5 from './modules/Router5'
+import React from 'react'
 
 let userRoutes = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id'),
@@ -36,3 +37,11 @@ Array.prototype.slice.call(document.querySelectorAll('button')).forEach(button =
         router.navigate(button.getAttribute('id'), JSON.parse((button.getAttribute('params') || '{}').replace(/'/g, '"')))
     }, false)
 })
+
+let Hello = React.createClass({
+  render: function() {
+    return <div>Hello {this.props.name}</div>;
+  }
+});
+
+React.render(<Hello name='Thomas' />, document.getElementById('app'));

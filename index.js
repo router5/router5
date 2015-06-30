@@ -22,49 +22,102 @@ var nameToIDs = function nameToIDs(name) {
 };
 
 var areStatesEqual = function areStatesEqual(state1, state2) {
-    return state1.name === state2.name && state1.params.length === state2.params.length && Object.keys(state1.params).every(function (p) {
+    return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
         return state1.params[p] === state2.params[p];
     });
+};
+
+var makeState = function makeState(name, params, path) {
+    return { name: name, params: params, path: path };
 };
 
 var Router5 = (function () {
     function Router5(routes) {
         var _this = this;
 
+        var opts = arguments[1] === undefined ? {} : arguments[1];
+
         _classCallCheck(this, Router5);
 
-        this.callbacks = [];
+        this.callbacks = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
         this.rootNode = routes instanceof _routeNode2['default'] ? routes : new _routeNode2['default']('', '', routes);
         this.activeComponents = {};
+        this.options = opts;
+
+        // Try to match starting path name
+        var startPath = opts.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
+        var startMatch = this.rootNode.matchPath(startPath);
+        if (startMatch) {
+            this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath);
+            window.history.replaceState(this.lastKnownState, '', opts.useHash ? '#' + startPath : startPath);
+            this._invokeCallbacks('', this.lastKnownState, null);
+        } else if (opts.defaultRoute) {
+            this.navigate(opts.defaultRoute, opts.defaultParams, { replace: true });
+        }
 
         window.addEventListener('popstate', function (evt) {
+            if (!evt.state) return;
             _this.lastStateAttempt = evt.state;
             _this._invokeCallbacks(evt.state, _this.lastKnownState);
+            _this.lastKnownState = evt.state;
         });
     }
 
     _createClass(Router5, [{
         key: '_invokeCallbacks',
-        value: function _invokeCallbacks(newState, oldState) {
+        value: function _invokeCallbacks(name, newState, oldState) {
             var _this2 = this;
 
-            this.callbacks.forEach(function (cb) {
+            if (!this.callbacks[name]) return;
+            this.callbacks[name].forEach(function (cb) {
                 cb.call(_this2, newState, oldState);
+            });
+        }
+    }, {
+        key: 'getState',
+        value: function getState() {
+            return this.lastKnownState;
+        }
+    }, {
+        key: 'registerComponent',
+        value: function registerComponent(name, component) {
+            if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
+            this.activeComponents[name] = component;
+        }
+    }, {
+        key: 'deregisterComponent',
+        value: function deregisterComponent(name) {
+            delete this.activeComponents[name];
+        }
+    }, {
+        key: 'addNodeListener',
+        value: function addNodeListener(name, cb) {
+            if (name) {
+                var segments = this.rootNode.getSegmentsByName(name);
+                if (!segments.length) console.warn('No route found for ' + name + ', listener could be never called!');
+            }
+            if (!this.callbacks[name]) this.callbacks[name] = [];
+            this.callbacks[name].push(cb);
+        }
+    }, {
+        key: 'removeNodeListener',
+        value: function removeNodeListener(name, cb) {
+            if (!this.callbacks[name]) return;
+            this.callbacks[name] = this.callbacks[name].filter(function (callback) {
+                return callback !== cb;
             });
         }
     }, {
         key: 'addListener',
         value: function addListener(cb) {
-            this.callbacks.push(cb);
+            this.addNodeListener('', cb);
         }
     }, {
         key: 'removeListener',
         value: function removeListener(cb) {
-            this.callbacks = this.callbacks.filter(function (callback) {
-                return callback !== cb;
-            });
+            this.removeNodeListener('', cb);
         }
     }, {
         key: 'buildPath',
@@ -82,14 +135,21 @@ var Router5 = (function () {
             // let path  = this.rootNode.buildPathFromSegments(segments, params)
             var path = this.rootNode.buildPath(name, params);
 
-            if (!path) {
-                throw new Error('Could not find route "' + name + '"');
+            if (!path) throw new Error('Could not find route "' + name + '"');
+
+            this.lastStateAttempt = makeState(name, params, path);
+            var sameStates = this.lastKnownState ? areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
+
+            // Do not proceed further if states are the same and no reload
+            // (no desactivation and no callbacks)
+            if (sameStates && !opts.reload) return;
+            // Push to history
+            if (!sameStates) {
+                window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
             }
 
-            this.lastStateAttempt = { name: name, path: path, params: params };
-
-            if (this.lastKnownState) {
-                console.log('ohohoho', areStatesEqual(this.lastKnownState, this.lastStateAttempt) ? 'true' : 'false');
+            if (this.lastKnownState && !sameStates) {
+                var i = undefined;
                 // Diff segments
                 var segmentIds = nameToIDs(name);
                 var activeSegmentIds = nameToIDs(this.lastKnownState.name);
@@ -98,13 +158,18 @@ var Router5 = (function () {
                     if (activeSegmentIds[i] !== segmentIds[i]) break;
                 }
                 var segmentsToDeactivate = activeSegmentIds.slice(i);
-                console.log('to deactivate: ', segmentsToDeactivate);
+                console.info('to deactivate: ', segmentsToDeactivate);
+                // Invoke listeners on top node to rerender (if not root node)
+                if (i > 0) {
+                    console.info('top rerender on: ', activeSegmentIds[i - 1]);
+                    this._invokeCallbacks(activeSegmentIds[i - 1], this.lastStateAttempt, this.lastKnownState);
+                } else {
+                    console.info('top rerender on root');
+                }
             }
-            // Push to history
-            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', path);
-            // Update lastKnowState
-            this._invokeCallbacks(this.lastStateAttempt, this.lastKnownState);
 
+            this._invokeCallbacks('', this.lastStateAttempt, this.lastKnownState);
+            // Update lastKnowState
             this.lastKnownState = this.lastStateAttempt;
         }
     }]);
@@ -114,4 +179,5 @@ var Router5 = (function () {
 
 exports['default'] = Router5;
 module.exports = exports['default'];
+// location.hash = path
 
