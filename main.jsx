@@ -13,6 +13,7 @@ let ordersRoute = new RouteNode('orders', '/orders', [
     new RouteNode('completed', '/completed')
 ])
 
+console.log('will construct');
 let router = new Router5([
     userRoutes,
     ordersRoute,
@@ -39,9 +40,30 @@ Array.prototype.slice.call(document.querySelectorAll('button')).forEach(button =
 })
 
 let Hello = React.createClass({
+  getInitialState: function () {
+    return {state: router.getState()}
+  },
+
+  onStateChange: function (newState, oldState) {
+    this.setState({
+        state: newState
+    })
+  },
+
+  componentDidMount: function () {
+    router.addListener(this.onStateChange)
+  },
+
+  componentWillUnmount: function () {
+    router.removeListener(this.onStateChange)
+  },
+
   render: function() {
-    return <div>Hello {this.props.name}</div>;
+    if (this.state.state) {
+        let stateName = this.state.state.name
+        return <div key="1">Hello {stateName}</div>
+    }
   }
 });
 
-React.render(<Hello name='Thomas' />, document.getElementById('app'));
+React.render(<Hello />, document.getElementById('app'));

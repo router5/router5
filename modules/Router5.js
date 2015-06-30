@@ -17,6 +17,7 @@ let makeState = (name, params, path) => ({name, params, path})
 
 export default class Router5 {
     constructor(routes, opts = {}) {
+        console.info('constructor');
         this.callbacks = {}
         this.lastStateAttempt = null
         this.lastKnownState = null
