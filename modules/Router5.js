@@ -13,16 +13,28 @@ let areStatesEqual = (state1, state2) => {
            Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
 }
 
+let makeState = (name, params, path) => ({name, params, path})
+
 export default class Router5 {
-    constructor(routes, dft) {
+    constructor(routes, opts = {}) {
         this.callbacks = {}
         this.lastStateAttempt = null
         this.lastKnownState = null
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
         this.activeComponents = {}
+        this.options = opts
+
+        // Try to match starting path name
+        let startPath = opts.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
+        let startMatch = this.rootNode.matchPath(startPath)
+        if (startMatch) {
+            this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath)
+            window.history.replaceState(this.lastKnownState, '', opts.useHash ? `#${startPath}` : startPath)
+        }
+        else if (opts.defaultRoute) this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true})
 
         window.addEventListener('popstate', evt => {
-            if (evt.state) return
+            if (!evt.state) return
             this.lastStateAttempt = evt.state
             this._invokeCallbacks(evt.state, this.lastKnownState)
             this.lastKnownState = evt.state
@@ -34,6 +46,10 @@ export default class Router5 {
         this.callbacks[name].forEach(cb => {
             cb.call(this, newState, oldState)
         })
+    }
+
+    getState() {
+        return this.lastKnownState
     }
 
     registerComponent(name, component) {
@@ -79,7 +95,7 @@ export default class Router5 {
 
         if (!path) throw new Error(`Could not find route "${name}"`)
 
-        this.lastStateAttempt = {name, path, params}
+        this.lastStateAttempt = makeState(name, params, path)
         let sameStates = this.lastKnownState ? areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false
 
         // Do not proceed further if states are the same and no reload
@@ -87,7 +103,8 @@ export default class Router5 {
         if (sameStates && !opts.reload) return
         // Push to history
         if (!sameStates) {
-            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', path)
+            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
+            // location.hash = path
         }
 
         if (this.lastKnownState && !sameStates) {

@@ -14,8 +14,12 @@ let ordersRoute = new RouteNode('orders', '/orders', [
 
 let router = new Router5([
     userRoutes,
-    ordersRoute
-])
+    ordersRoute,
+    new RouteNode('home', '/home')
+], {
+    defaultRoute: 'home',
+    useHash: true
+})
 
 let listener = (newState, oldState) => {
     console.log('From:', oldState)
@@ -29,8 +33,6 @@ router.addNodeListener('users', function () {
 
 Array.prototype.slice.call(document.querySelectorAll('button')).forEach(button => {
     button.addEventListener('click', evt => {
-        evt.preventDefault()
-        console.log(button.attributes, button.getAttribute('params'));
-        router.navigate(button.getAttribute('id'), JSON.parse(button.getAttribute('params') || '{}'))
+        router.navigate(button.getAttribute('id'), JSON.parse((button.getAttribute('params') || '{}').replace(/'/g, '"')))
     }, false)
 })
