@@ -6,24 +6,31 @@ let userRoutes = new RouteNode('users', '/users', [
     new RouteNode('list', '/list')
 ])
 
-let router = new Router5([
-    userRoutes
+let ordersRoute = new RouteNode('orders', '/orders', [
+    new RouteNode('view', '/view/:id'),
+    new RouteNode('pending', '/pending'),
+    new RouteNode('completed', '/completed')
 ])
 
-let listener = (newState, oldState) => console.log(newState, oldState)
+let router = new Router5([
+    userRoutes,
+    ordersRoute
+])
+
+let listener = (newState, oldState) => {
+    console.log('From:', oldState)
+    console.log('To:', newState)
+}
+
 router.addListener(listener)
+router.addNodeListener('users', function () {
+    console.log('node users to be re-rendered');
+});
 
-document.getElementById('users').addEventListener('click', evt => {
-    evt.preventDefault()
-    router.navigate('users')
-}, false)
-
-document.getElementById('users.view').addEventListener('click', evt => {
-    evt.preventDefault()
-    router.navigate('users.view', {id: 123})
-}, false)
-
-document.getElementById('users.list').addEventListener('click', evt => {
-    evt.preventDefault()
-    router.navigate('users.list')
-}, false)
+Array.prototype.slice.call(document.querySelectorAll('button')).forEach(button => {
+    button.addEventListener('click', evt => {
+        evt.preventDefault()
+        console.log(button.attributes, button.getAttribute('params'));
+        router.navigate(button.getAttribute('id'), JSON.parse(button.getAttribute('params') || '{}'))
+    }, false)
+})
