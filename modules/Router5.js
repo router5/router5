@@ -7,6 +7,12 @@ let nameToIDs = name => {
     }, [])
 }
 
+let areStatesEqual = (state1, state2) => {
+    return state1.name === state2.name &&
+           Object.keys(state1.params).length === Object.keys(state2.params).length &&
+           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
+}
+
 export default class Router5 {
     constructor(routes) {
         this.callbacks = []
@@ -45,13 +51,16 @@ export default class Router5 {
         // let path  = this.rootNode.buildPathFromSegments(segments, params)
         let path  = this.rootNode.buildPath(name, params)
 
-        if (!path) {
-            throw new Error(`Could not find route "${name}"`)
-        }
+        if (!path) throw new Error(`Could not find route "${name}"`)
 
         this.lastStateAttempt = {name, path, params}
+        let sameStates = this.lastKnownState ? areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false
 
-        if (this.lastKnownState) {
+        // Do not proceed further if states are the same and no reload
+        // (no desactivation and no callbacks)
+        if (sameStates && !opts.reload) return
+
+        if (this.lastKnownState && !sameStates) {
             let i
             // Diff segments
             let segmentIds = nameToIDs(name)
@@ -64,7 +73,9 @@ export default class Router5 {
             console.log("to deactivate: ", segmentsToDeactivate)
         }
         // Push to history
-        window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', path)
+        if (!sameStates) {
+            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', path)
+        }
         // Update lastKnowState
         this._invokeCallbacks(this.lastStateAttempt, this.lastKnownState)
 

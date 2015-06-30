@@ -18,10 +18,13 @@ System.config({
     "babel": "npm:babel-core@5.6.15",
     "babel-runtime": "npm:babel-runtime@5.6.15",
     "core-js": "npm:core-js@0.9.18",
-    "deku": "npm:deku@0.4.5",
-    "route-node": "npm:route-node@0.0.3",
+    "deku": "npm:deku@0.4.6",
+    "route-node": "npm:route-node@0.0.5",
     "github:jspm/nodelibs-buffer@0.1.0": {
       "buffer": "npm:buffer@3.2.2"
+    },
+    "github:jspm/nodelibs-path@0.1.0": {
+      "path-browserify": "npm:path-browserify@0.0.0"
     },
     "github:jspm/nodelibs-process@0.1.1": {
       "process": "npm:process@0.10.1"
@@ -39,7 +42,7 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.1",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     },
-    "npm:deku@0.4.5": {
+    "npm:deku@0.4.6": {
       "array-flatten": "npm:array-flatten@1.1.0",
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "component-emitter": "npm:component-emitter@1.2.0",
@@ -55,11 +58,21 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.1",
       "sliced": "npm:sliced@0.0.5"
     },
-    "npm:route-node@0.0.2": {
-      "path-parser": "npm:path-parser@0.0.4"
+    "npm:path-browserify@0.0.0": {
+      "process": "github:jspm/nodelibs-process@0.1.1"
     },
-    "npm:route-node@0.0.3": {
-      "path-parser": "npm:path-parser@0.0.4"
+    "npm:path-parser@0.0.6": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "path": "github:jspm/nodelibs-path@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.1",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
+    },
+    "npm:route-node@0.0.5": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "path": "github:jspm/nodelibs-path@0.1.0",
+      "path-parser": "npm:path-parser@0.0.6",
+      "process": "github:jspm/nodelibs-process@0.1.1",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     }
   }
 });

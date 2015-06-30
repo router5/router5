@@ -21,6 +21,12 @@ var nameToIDs = function nameToIDs(name) {
     }, []);
 };
 
+var areStatesEqual = function areStatesEqual(state1, state2) {
+    return state1.name === state2.name && state1.params.length === state2.params.length && Object.keys(state1.params).every(function (p) {
+        return state1.params[p] === state2.params[p];
+    });
+};
+
 var Router5 = (function () {
     function Router5(routes) {
         var _this = this;
@@ -83,7 +89,7 @@ var Router5 = (function () {
             this.lastStateAttempt = { name: name, path: path, params: params };
 
             if (this.lastKnownState) {
-                var i = undefined;
+                console.log('ohohoho', areStatesEqual(this.lastKnownState, this.lastStateAttempt) ? 'true' : 'false');
                 // Diff segments
                 var segmentIds = nameToIDs(name);
                 var activeSegmentIds = nameToIDs(this.lastKnownState.name);

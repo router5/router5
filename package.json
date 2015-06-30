@@ -22,13 +22,15 @@
   },
   "homepage": "https://github.com/troch/router5",
   "dependencies": {
-    "route-node": "0.0.3"
+    "route-node": "0.0.5"
   },
   "jspm": {
-    "directories": {},
+    "directories": {
+      "lib": "dist/system"
+    },
     "dependencies": {
       "deku": "npm:deku@^0.4.5",
-      "route-node": "npm:route-node@0.0.3"
+      "route-node": "npm:route-node@0.0.5"
     },
     "devDependencies": {
       "babel": "npm:babel-core@^5.1.13",
