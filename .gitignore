@@ -1,5 +1,5 @@
 node_modules/
 jspm_packages/
-build.js
-build.js.map
+/build.js
+/build.js.map
 npm-debug.log
