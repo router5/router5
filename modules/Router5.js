@@ -17,7 +17,6 @@ let makeState = (name, params, path) => ({name, params, path})
 
 export default class Router5 {
     constructor(routes, opts = {}) {
-        console.info('constructor');
         this.callbacks = {}
         this.lastStateAttempt = null
         this.lastKnownState = null
@@ -28,6 +27,7 @@ export default class Router5 {
         // Try to match starting path name
         let startPath = opts.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
         let startMatch = this.rootNode.matchPath(startPath)
+
         if (startMatch) {
             this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath)
             window.history.replaceState(this.lastKnownState, '', opts.useHash ? `#${startPath}` : startPath)
@@ -36,9 +36,11 @@ export default class Router5 {
         }
 
         window.addEventListener('popstate', evt => {
+            // Do nothing if no state or if current = pop state (it should never happen)
             if (!evt.state) return
-            this.lastStateAttempt = evt.state
-            this._invokeCallbacks(evt.state, this.lastKnownState)
+            if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return
+
+            this._transition(evt.state, this.lastKnownState)
             this.lastKnownState = evt.state
         })
     }
@@ -48,6 +50,29 @@ export default class Router5 {
         this.callbacks[name].forEach(cb => {
             cb.call(this, newState, oldState)
         })
+    }
+
+    _transition(toState, fromState) {
+        if (fromState) {
+            let i
+            let fromStateIds = nameToIDs(fromState.name)
+            let toStateIds   = nameToIDs(toState.name)
+
+            let maxI = Math.min(fromStateIds.length, toStateIds.length)
+            for (i = 0; i < maxI; i += 1) {
+                if (fromStateIds[i] !== toStateIds[i]) break
+            }
+
+            let segmentsToDeactivate = fromStateIds.slice(i)
+            console.info("to deactivate: ", segmentsToDeactivate)
+
+            if (i > 0) {
+                console.info("Render from node: ", fromStateIds[i - 1])
+                this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
+            }
+        }
+
+        this._invokeCallbacks('', toState, fromState)
     }
 
     getState() {
@@ -103,33 +128,12 @@ export default class Router5 {
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) return
-        // Push to history
+        // Transition and amend history
         if (!sameStates) {
+            this._transition(this.lastStateAttempt, this.lastKnownState)
             window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
-            // location.hash = path
         }
 
-        if (this.lastKnownState && !sameStates) {
-            let i
-            // Diff segments
-            let segmentIds = nameToIDs(name)
-            let activeSegmentIds = nameToIDs(this.lastKnownState.name)
-            let maxI = Math.min(segmentIds.length, activeSegmentIds.length)
-            for (i = 0; i < maxI; i += 1) {
-                if (activeSegmentIds[i] !== segmentIds[i]) break
-            }
-            let segmentsToDeactivate = activeSegmentIds.slice(i)
-            console.info("to deactivate: ", segmentsToDeactivate)
-            // Invoke listeners on top node to rerender (if not root node)
-            if (i > 0) {
-                console.info("top rerender on: ", activeSegmentIds[i - 1])
-                this._invokeCallbacks(activeSegmentIds[i - 1], this.lastStateAttempt, this.lastKnownState)
-            } else {
-                console.info("top rerender on root")
-            }
-        }
-
-        this._invokeCallbacks('', this.lastStateAttempt, this.lastKnownState)
         // Update lastKnowState
         this.lastKnownState = this.lastStateAttempt
     }

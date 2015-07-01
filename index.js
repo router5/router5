@@ -49,18 +49,20 @@ var Router5 = (function () {
         // Try to match starting path name
         var startPath = opts.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
         var startMatch = this.rootNode.matchPath(startPath);
+
         if (startMatch) {
             this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath);
             window.history.replaceState(this.lastKnownState, '', opts.useHash ? '#' + startPath : startPath);
-            this._invokeCallbacks('', this.lastKnownState, null);
         } else if (opts.defaultRoute) {
             this.navigate(opts.defaultRoute, opts.defaultParams, { replace: true });
         }
 
         window.addEventListener('popstate', function (evt) {
+            // Do nothing if no state or if current = pop state (it should never happen)
             if (!evt.state) return;
-            _this.lastStateAttempt = evt.state;
-            _this._invokeCallbacks(evt.state, _this.lastKnownState);
+            if (_this.lastKnownState && areStatesEqual(evt.state, _this.lastKnownState)) return;
+
+            _this._transition(evt.state, _this.lastKnownState);
             _this.lastKnownState = evt.state;
         });
     }
@@ -74,6 +76,30 @@ var Router5 = (function () {
             this.callbacks[name].forEach(function (cb) {
                 cb.call(_this2, newState, oldState);
             });
+        }
+    }, {
+        key: '_transition',
+        value: function _transition(toState, fromState) {
+            if (fromState) {
+                var i = undefined;
+                var fromStateIds = nameToIDs(fromState.name);
+                var toStateIds = nameToIDs(toState.name);
+
+                var maxI = Math.min(fromStateIds.length, toStateIds.length);
+                for (i = 0; i < maxI; i += 1) {
+                    if (fromStateIds[i] !== toStateIds[i]) break;
+                }
+
+                var segmentsToDeactivate = fromStateIds.slice(i);
+                console.info('to deactivate: ', segmentsToDeactivate);
+
+                if (i > 0) {
+                    console.info('Render from node: ', fromStateIds[i - 1]);
+                    this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+                }
+            }
+
+            this._invokeCallbacks('', toState, fromState);
         }
     }, {
         key: 'getState',
@@ -143,32 +169,12 @@ var Router5 = (function () {
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) return;
-            // Push to history
+            // Transition and amend history
             if (!sameStates) {
+                this._transition(this.lastStateAttempt, this.lastKnownState);
                 window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
             }
 
-            if (this.lastKnownState && !sameStates) {
-                var i = undefined;
-                // Diff segments
-                var segmentIds = nameToIDs(name);
-                var activeSegmentIds = nameToIDs(this.lastKnownState.name);
-                var maxI = Math.min(segmentIds.length, activeSegmentIds.length);
-                for (i = 0; i < maxI; i += 1) {
-                    if (activeSegmentIds[i] !== segmentIds[i]) break;
-                }
-                var segmentsToDeactivate = activeSegmentIds.slice(i);
-                console.info('to deactivate: ', segmentsToDeactivate);
-                // Invoke listeners on top node to rerender (if not root node)
-                if (i > 0) {
-                    console.info('top rerender on: ', activeSegmentIds[i - 1]);
-                    this._invokeCallbacks(activeSegmentIds[i - 1], this.lastStateAttempt, this.lastKnownState);
-                } else {
-                    console.info('top rerender on root');
-                }
-            }
-
-            this._invokeCallbacks('', this.lastStateAttempt, this.lastKnownState);
             // Update lastKnowState
             this.lastKnownState = this.lastStateAttempt;
         }
@@ -179,5 +185,4 @@ var Router5 = (function () {
 
 exports['default'] = Router5;
 module.exports = exports['default'];
-// location.hash = path
 

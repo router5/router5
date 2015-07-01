@@ -19,17 +19,13 @@ System.config({
     "babel-runtime": "npm:babel-runtime@5.6.15",
     "core-js": "npm:core-js@0.9.18",
     "deku": "npm:deku@0.4.6",
-    "jsx": "github:floatdrop/plugin-jsx@1.1.0",
     "react": "npm:react@0.14.0-alpha3",
-    "route-node": "npm:route-node@0.0.5",
-    "github:floatdrop/plugin-jsx@1.1.0": {
-      "react-tools": "npm:react-tools@0.13.3"
-    },
+    "route-node": "npm:route-node@0.0.6",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },
     "github:jspm/nodelibs-buffer@0.1.0": {
-      "buffer": "npm:buffer@3.2.2"
+      "buffer": "npm:buffer@3.3.0"
     },
     "github:jspm/nodelibs-constants@0.1.0": {
       "constants-browserify": "npm:constants-browserify@0.0.1"
@@ -123,6 +119,11 @@ System.config({
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     },
     "npm:buffer@3.2.2": {
+      "base64-js": "npm:base64-js@0.0.8",
+      "ieee754": "npm:ieee754@1.1.6",
+      "is-array": "npm:is-array@1.0.1"
+    },
+    "npm:buffer@3.3.0": {
       "base64-js": "npm:base64-js@0.0.8",
       "ieee754": "npm:ieee754@1.1.6",
       "is-array": "npm:is-array@1.0.1"
@@ -359,12 +360,6 @@ System.config({
       "crypto": "github:jspm/nodelibs-crypto@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
-    "npm:react-tools@0.13.3": {
-      "buffer": "github:jspm/nodelibs-buffer@0.1.0",
-      "commoner": "npm:commoner@0.10.3",
-      "jstransform": "npm:jstransform@10.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.1"
-    },
     "npm:react@0.14.0-alpha3": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
       "envify": "npm:envify@3.4.0",
@@ -396,6 +391,13 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:route-node@0.0.5": {
+      "fs": "github:jspm/nodelibs-fs@0.1.2",
+      "path": "github:jspm/nodelibs-path@0.1.0",
+      "path-parser": "npm:path-parser@0.0.6",
+      "process": "github:jspm/nodelibs-process@0.1.1",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.0"
+    },
+    "npm:route-node@0.0.6": {
       "fs": "github:jspm/nodelibs-fs@0.1.2",
       "path": "github:jspm/nodelibs-path@0.1.0",
       "path-parser": "npm:path-parser@0.0.6",
