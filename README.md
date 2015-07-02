@@ -4,7 +4,7 @@
 
 A few helpers to use [router5](https://github.com/router5/router5) with React and reduce boilerplate code.
 
-`router5-react` exports two factories, each take a Router5 instance as unique argument:
+__router5-react__ exports two factories, each take a Router5 instance as unique argument:
 
 - linkFactory
 - segmentMixinFactory
@@ -21,9 +21,9 @@ import {linkFactory, segmentMixinFactory} from 'router5-react'
 import Router5 from 'router5'
 
 let router = Router5()
-    .addNode('users', '/users')
-    .addNode('view', '/view/:id')
-    .addNode('list', '/list')
+    .addNode('users',      '/users')
+    .addNode('users.view', '/view/:id')
+    .addNode('users.list', '/list')
     .start()
 
 export {
