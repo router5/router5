@@ -6,7 +6,9 @@ and [path-parser](https://github.com/troch/path-parser).
 ## What is it?
 
 It is an __HTML5 router__, using history and organising __named routes__ in a __tree__. Browser support
-is limited to modern browsers implementing session history: [http://caniuse.com/#search=history](http://caniuse.com/#search=history). Router 5 supports use of hash in URL, but session history is still required.
+is limited to modern browsers implementing session history: [http://caniuse.com/#search=history](http://caniuse.com/#search=history). Router 5 supports use of hash in URL, but session history is still required: deciding
+to use a hash or not is therefore not a decision based on browser support, but rather a decision based
+on server capabilities!
 
 It is aimed at applications rendering a tree of components, but can easily be used elsewhere.
 This router is library and framework agnostic, and favours covention over configuration. It makes no
@@ -76,6 +78,19 @@ __Options__:
 
 
 ### Router instance API
+
+__router.start()__
+
+Start the router listening to _popstate_ events and allow navigation. On start, the router
+will navigate to the default provided route if the current URL doesn't match any already defined route.
+
+__router.stop()__
+
+Stop the router listening to _popstate_ events and prevent navigation.
+
+__router.add(route)__
+
+- __route__ `Array[Object|RouteNode]|RouteNode|Object` Add routes to the route tree
 
 __router.rootNode__
 
