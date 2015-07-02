@@ -68,8 +68,8 @@
                 if (!evt.state) return;
                 if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return;
 
-                this._transition(evt.state, this.lastKnownState);
-                this.lastKnownState = evt.state;
+                var canTransition = this._transition(evt.state, this.lastKnownState);
+                if (canTransition) this.lastKnownState = evt.state;
             }
         }, {
             key: 'start',
@@ -113,6 +113,10 @@
         }, {
             key: '_transition',
             value: function _transition(toState, fromState) {
+                var _this2 = this;
+
+                var cannotDeactivate = false;
+
                 if (fromState) {
                     var i = undefined;
                     var fromStateIds = nameToIDs(fromState.name);
@@ -123,12 +127,19 @@
                         if (fromStateIds[i] !== toStateIds[i]) break;
                     }
 
-                    var segmentsToDeactivate = fromStateIds.slice(i);
+                    cannotDeactivate = fromStateIds.slice(i).map(function (id) {
+                        return _this2.activeComponents[id];
+                    }).filter(function (comp) {
+                        return comp && comp.canDeactivate;
+                    }).some(function (comp) {
+                        return !comp.canDeactivate(toState, fromState);
+                    });
 
-                    if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+                    if (!cannotDeactivate && i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
                 }
 
-                this._invokeCallbacks('', toState, fromState);
+                if (!cannotDeactivate) this._invokeCallbacks('', toState, fromState);
+                return !cannotDeactivate;
             }
         }, {
             key: 'getState',
@@ -202,12 +213,14 @@
                 if (sameStates && !opts.reload) return;
                 // Transition and amend history
                 if (!sameStates) {
-                    this._transition(this.lastStateAttempt, this.lastKnownState);
-                    window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
-                }
+                    var canTransition = this._transition(this.lastStateAttempt, this.lastKnownState);
 
-                // Update lastKnowState
-                this.lastKnownState = this.lastStateAttempt;
+                    if (canTransition) {
+                        window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
+                        // Update lastKnowState
+                        this.lastKnownState = this.lastStateAttempt;
+                    }
+                }
             }
         }]);
 

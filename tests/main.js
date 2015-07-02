@@ -142,26 +142,45 @@ describe('router5', function () {
     });
 
     it('should be able to register components', function () {
-        router.registerComponent('users.view', {
-            canDeactivate: function () {
-                return true;
-            }
-        });
+        router.registerComponent('users.view', {});
         expect(Object.keys(router.activeComponents).length).toBe(1);
 
+        router.registerComponent('users.list', {});
+        expect(Object.keys(router.activeComponents).length).toBe(2);
+
+        router.deregisterComponent('users.list');
+        expect(Object.keys(router.activeComponents).length).toBe(1);
+
+        router.deregisterComponent('users.view');
+        expect(Object.keys(router.activeComponents).length).toBe(0);
+    });
+
+    it('should block navigation if a component refuses deactivation', function () {
+        router.navigate('users.list');
+
+        // Cannot deactivate
+        router.registerComponent('users.list', {
+            canDeactivate: function () {
+                return false;
+            }
+        });
+        router.navigate('users');
+        expect(window.location.hash).toBe('#/users/list');
+
+        // Can deactivate
+        router.deregisterComponent('users.list');
         router.registerComponent('users.list', {
             canDeactivate: function () {
                 return true;
             }
         });
-        expect(Object.keys(router.activeComponents).length).toBe(2);
-
-        router.deregisterComponent('users.list');
-        expect(Object.keys(router.activeComponents).length).toBe(1);
+        router.navigate('users');
+        expect(window.location.hash).toBe('#/users');
     });
 
     it('should warn when trying to register a component twice', function () {
         spyOn(console, 'warn');
+        router.registerComponent('users.view', {});
         router.registerComponent('users.view', {});
         expect(console.warn).toHaveBeenCalled();
     });

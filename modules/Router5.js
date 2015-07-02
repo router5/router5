@@ -38,8 +38,8 @@ export default class Router5 {
         if (!evt.state) return
         if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return
 
-        this._transition(evt.state, this.lastKnownState)
-        this.lastKnownState = evt.state
+        let canTransition = this._transition(evt.state, this.lastKnownState)
+        if (canTransition) this.lastKnownState = evt.state
     }
 
     start() {
@@ -77,6 +77,8 @@ export default class Router5 {
     }
 
     _transition(toState, fromState) {
+        let cannotDeactivate = false
+
         if (fromState) {
             let i
             let fromStateIds = nameToIDs(fromState.name)
@@ -87,12 +89,17 @@ export default class Router5 {
                 if (fromStateIds[i] !== toStateIds[i]) break
             }
 
-            let segmentsToDeactivate = fromStateIds.slice(i)
+            cannotDeactivate =
+                fromStateIds.slice(i)
+                    .map(id => this.activeComponents[id])
+                    .filter(comp => comp && comp.canDeactivate)
+                    .some(comp => !comp.canDeactivate(toState, fromState))
 
-            if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
+            if (!cannotDeactivate && i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
         }
 
-        this._invokeCallbacks('', toState, fromState)
+        if (!cannotDeactivate) this._invokeCallbacks('', toState, fromState)
+        return !cannotDeactivate
     }
 
     getState() {
@@ -152,11 +159,14 @@ export default class Router5 {
         if (sameStates && !opts.reload) return
         // Transition and amend history
         if (!sameStates) {
-            this._transition(this.lastStateAttempt, this.lastKnownState)
-            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
+            let canTransition = this._transition(this.lastStateAttempt, this.lastKnownState)
+
+            if (canTransition) {
+                window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
+                // Update lastKnowState
+                this.lastKnownState = this.lastStateAttempt
+            }
         }
 
-        // Update lastKnowState
-        this.lastKnownState = this.lastStateAttempt
     }
 }
