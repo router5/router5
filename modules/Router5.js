@@ -43,6 +43,9 @@ export default class Router5 {
     }
 
     start() {
+        if (this.started) return this
+        this.started = true
+
         // Try to match starting path name
         let startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
         let startMatch = this.rootNode.matchPath(startPath)
@@ -54,16 +57,15 @@ export default class Router5 {
             this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true})
         }
         // Listen to popstate
-        window.addEventListener('popstate', this.onPopState)
-
-        this.started = true
+        window.addEventListener('popstate', this.onPopState.bind(this))
         return this
     }
 
     stop() {
-        window.removeEventListener('popstate', this.onPopState)
-
+        if (!this.started) return this
         this.started = false
+
+        window.removeEventListener('popstate', this.onPopState.bind(this))
         return this
     }
 
@@ -86,12 +88,8 @@ export default class Router5 {
             }
 
             let segmentsToDeactivate = fromStateIds.slice(i)
-            console.info("to deactivate: ", segmentsToDeactivate)
 
-            if (i > 0) {
-                console.info("Render from node: ", fromStateIds[i - 1])
-                this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
-            }
+            if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
         }
 
         this._invokeCallbacks('', toState, fromState)
@@ -113,7 +111,7 @@ export default class Router5 {
     addNodeListener(name, cb) {
         if (name) {
             let segments = this.rootNode.getSegmentsByName(name)
-            if (!segments.length) console.warn(`No route found for ${name}, listener could be never called!`)
+            if (!segments) console.warn(`No route found for ${name}, listener could be never called!`)
         }
         if (!this.callbacks[name]) this.callbacks[name] = []
         this.callbacks[name].push(cb)
@@ -137,7 +135,7 @@ export default class Router5 {
     }
 
     navigate(name, params = {}, opts = {}) {
-        if (!started) return
+        if (!this.started) return
 
         let currentState = window.history.state
         // let segments = this.rootNode.getSegmentsByName(name)

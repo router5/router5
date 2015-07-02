@@ -67,6 +67,9 @@ var Router5 = (function () {
     }, {
         key: 'start',
         value: function start() {
+            if (this.started) return this;
+            this.started = true;
+
             // Try to match starting path name
             var startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
             var startMatch = this.rootNode.matchPath(startPath);
@@ -78,17 +81,16 @@ var Router5 = (function () {
                 this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true });
             }
             // Listen to popstate
-            window.addEventListener('popstate', this.onPopState);
-
-            this.started = true;
+            window.addEventListener('popstate', this.onPopState.bind(this));
             return this;
         }
     }, {
         key: 'stop',
         value: function stop() {
-            window.removeEventListener('popstate', this.onPopState);
-
+            if (!this.started) return this;
             this.started = false;
+
+            window.removeEventListener('popstate', this.onPopState.bind(this));
             return this;
         }
     }, {
@@ -115,12 +117,8 @@ var Router5 = (function () {
                 }
 
                 var segmentsToDeactivate = fromStateIds.slice(i);
-                console.info('to deactivate: ', segmentsToDeactivate);
 
-                if (i > 0) {
-                    console.info('Render from node: ', fromStateIds[i - 1]);
-                    this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
-                }
+                if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
             }
 
             this._invokeCallbacks('', toState, fromState);
@@ -146,7 +144,7 @@ var Router5 = (function () {
         value: function addNodeListener(name, cb) {
             if (name) {
                 var segments = this.rootNode.getSegmentsByName(name);
-                if (!segments.length) console.warn('No route found for ' + name + ', listener could be never called!');
+                if (!segments) console.warn('No route found for ' + name + ', listener could be never called!');
             }
             if (!this.callbacks[name]) this.callbacks[name] = [];
             this.callbacks[name].push(cb);
@@ -180,7 +178,7 @@ var Router5 = (function () {
             var params = arguments[1] === undefined ? {} : arguments[1];
             var opts = arguments[2] === undefined ? {} : arguments[2];
 
-            if (!started) return;
+            if (!this.started) return;
 
             var currentState = window.history.state;
             // let segments = this.rootNode.getSegmentsByName(name)
