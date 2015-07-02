@@ -25,9 +25,9 @@
   },
   "homepage": "http://router5.github.com/router5/router5-react",
   "devDependencies": {
-    "router5": "0.0.1-alpha.4"
+    "router5": "0.0.1-alpha.5"
   },
   "peerDependencies": {
-    "router5": "0.0.1-alpha.4"
+    "router5": "0.0.1-alpha.5"
   }
 }
