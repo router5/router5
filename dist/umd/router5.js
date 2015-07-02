@@ -28,12 +28,6 @@
         }, []);
     };
 
-    var areStatesEqual = function areStatesEqual(state1, state2) {
-        return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
-            return state1.params[p] === state2.params[p];
-        });
-    };
-
     var makeState = function makeState(name, params, path) {
         return { name: name, params: params, path: path };
     };
@@ -66,7 +60,7 @@
             value: function onPopState(evt) {
                 // Do nothing if no state or if last know state is poped state (it should never happen)
                 if (!evt.state) return;
-                if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return;
+                if (this.lastKnownState && this.areStatesEqual(evt.state, this.lastKnownState)) return;
 
                 var canTransition = this._transition(evt.state, this.lastKnownState);
                 if (canTransition) this.lastKnownState = evt.state;
@@ -147,6 +141,13 @@
                 return this.lastKnownState;
             }
         }, {
+            key: 'areStatesEqual',
+            value: function areStatesEqual(state1, state2) {
+                return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
+                    return state1.params[p] === state2.params[p];
+                });
+            }
+        }, {
             key: 'registerComponent',
             value: function registerComponent(name, component) {
                 if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
@@ -188,7 +189,7 @@
         }, {
             key: 'buildPath',
             value: function buildPath(route, params) {
-                return this.rootNode.buildPath(route, params);
+                return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params);
             }
         }, {
             key: 'navigate',
@@ -206,7 +207,7 @@
                 if (!path) throw new Error('Could not find route "' + name + '"');
 
                 this.lastStateAttempt = makeState(name, params, path);
-                var sameStates = this.lastKnownState ? areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
+                var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
 
                 // Do not proceed further if states are the same and no reload
                 // (no desactivation and no callbacks)

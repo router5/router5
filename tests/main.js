@@ -48,7 +48,7 @@ describe('router5', function () {
     });
 
     it('should expose RouteNode path building function', function () {
-        expect(router.buildPath('users.list')).toBe('/users/list');
+        expect(router.buildPath('users.list')).toBe('#/users/list');
     });
 
     it('should be able to navigate to routes', function () {

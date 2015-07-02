@@ -7,12 +7,6 @@ let nameToIDs = name => {
     }, [])
 }
 
-let areStatesEqual = (state1, state2) => {
-    return state1.name === state2.name &&
-       Object.keys(state1.params).length === Object.keys(state2.params).length &&
-       Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
-}
-
 let makeState = (name, params, path) => ({name, params, path})
 
 export default class Router5 {
@@ -36,7 +30,7 @@ export default class Router5 {
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
         if (!evt.state) return
-        if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return
+        if (this.lastKnownState && this.areStatesEqual(evt.state, this.lastKnownState)) return
 
         let canTransition = this._transition(evt.state, this.lastKnownState)
         if (canTransition) this.lastKnownState = evt.state
@@ -106,6 +100,12 @@ export default class Router5 {
         return this.lastKnownState
     }
 
+    areStatesEqual(state1, state2) {
+        return state1.name === state2.name &&
+           Object.keys(state1.params).length === Object.keys(state2.params).length &&
+           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
+    }
+
     registerComponent(name, component) {
         if (this.activeComponents[name]) console.warn(`A component was alread registered for route node ${name}.`)
         this.activeComponents[name] = component
@@ -138,7 +138,7 @@ export default class Router5 {
     }
 
     buildPath(route, params) {
-        return this.rootNode.buildPath(route, params)
+        return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params)
     }
 
     navigate(name, params = {}, opts = {}) {
@@ -152,7 +152,7 @@ export default class Router5 {
         if (!path) throw new Error(`Could not find route "${name}"`)
 
         this.lastStateAttempt = makeState(name, params, path)
-        let sameStates = this.lastKnownState ? areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false
+        let sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false
 
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
