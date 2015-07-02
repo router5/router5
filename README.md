@@ -162,6 +162,11 @@ Similar to `addListener(fn)`, except that it will be triggered only if the route
 `router.addNodeListener('', fn)` is equivalent to `router.addListener(fn)`.
 
 
+__router.removeNodeListener(name, fn)__
+
+Remove a node listener.
+
+
 __router.navigate(name, params, opts)__
 
 Navigate to the specified route name and params. Available options:
