@@ -1,4 +1,6 @@
+[![npm version](https://badge.fury.io/js/router5.svg)](http://badge.fury.io/js/router5)
 [![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5)
+[![Coverage Status](https://coveralls.io/repos/router5/router5/badge.svg)](https://coveralls.io/r/router5/router5)
 
 # router5
 
