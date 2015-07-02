@@ -19,19 +19,21 @@ on server capabilities!
 
 It is aimed at applications rendering a tree of components, but can easily be used elsewhere.
 This router is library and framework agnostic, and makes no asumption on your implementation.
-It favours __covention over configuration__, by giving you the means to observes route changes
-and react to them. Afterall, why treat route changes any different than data changes?
+It favours __covention over configuration__, by giving you the means to observe route changes
+and to react to them. Afterall, why treat route changes any different than data changes?
 
 ## Features
 
 - __Use of hash (#)__
 - __Default start route__: a default route to navigate to on load if the current URL doesn't match any route. Similar to `$routeProvider.otherwise()` in _Angular ngRoute_ module.
+- __Start__ and __stop__ router
 - __Nested named routes__: routes are identified by names and parameters so you don't have to manipulate URLs
 directly. Routes can be nested, introducing the notion of _route segments_.
 - __Route change listeners__
 - __Route node change listeners__: you can add listeners to be triggered on a specific named route node. They will be triggered if that named route node is the node a component tree needs to be re-rendered from.
 - __Segments deactivation__: you can register components with the router with a `canDeactivate` method. On a route change, it will ask those components if they allow navigation. Similar to _Angular 2_ and _Aurelia_
 routers.
+- __You are in control!__ You decide what to do on a route change and how to do it.
 
 ## API
 

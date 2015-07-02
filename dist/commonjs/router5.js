@@ -204,15 +204,16 @@ var Router5 = (function () {
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) return;
-            // Transition and amend history
-            if (!sameStates) {
-                var canTransition = this._transition(this.lastStateAttempt, this.lastKnownState);
 
-                if (canTransition) {
-                    window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
-                    // Update lastKnowState
-                    this.lastKnownState = this.lastStateAttempt;
-                }
+            // Transition and amend history
+            var canTransition = this._transition(this.lastStateAttempt, this.lastKnownState);
+
+            if (canTransition) {
+                // Update lastKnowState
+                this.lastKnownState = this.lastStateAttempt;
+            }
+            if (canTransition && !sameStates) {
+                window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
             }
         }
     }]);

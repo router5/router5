@@ -74,6 +74,18 @@ describe('router5', function () {
         router.navigate('orders.pending');
         expect(window.location.hash).toBe('#/orders/pending');
         expect(listeners.global).toHaveBeenCalledWith(router.lastKnownState, previousState);
+        router.removeListener(listeners.global);
+    });
+
+    it('should invoke listeners on navigation to same state if reload is set to true', function () {
+        spyOn(listeners, 'global');
+        router.addListener(listeners.global);
+
+        router.navigate('orders.pending');
+        expect(listeners.global).not.toHaveBeenCalled();
+
+        router.navigate('orders.pending', {}, {reload: true});
+        expect(listeners.global).toHaveBeenCalled();
     });
 
     it('should handle popstate events', function () {
@@ -94,7 +106,7 @@ describe('router5', function () {
         router.removeListener(listeners.global);
         spyOn(listeners, 'global');
 
-        router.navigate('orders.view', {id: 123});
+        router.navigate('orders.view', {id: 123}, {replace: true});
         expect(listeners.global).not.toHaveBeenCalled();
     });
 
