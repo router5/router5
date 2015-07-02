@@ -33,8 +33,6 @@ var makeState = function makeState(name, params, path) {
 
 var Router5 = (function () {
     function Router5(routes) {
-        var _this = this;
-
         var opts = arguments[1] === undefined ? {} : arguments[1];
 
         _classCallCheck(this, Router5);
@@ -46,28 +44,41 @@ var Router5 = (function () {
         this.activeComponents = {};
         this.options = opts;
 
-        // Try to match starting path name
-        var startPath = opts.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
-        var startMatch = this.rootNode.matchPath(startPath);
-
-        if (startMatch) {
-            this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath);
-            window.history.replaceState(this.lastKnownState, '', opts.useHash ? '#' + startPath : startPath);
-        } else if (opts.defaultRoute) {
-            this.navigate(opts.defaultRoute, opts.defaultParams, { replace: true });
-        }
-
-        window.addEventListener('popstate', function (evt) {
-            // Do nothing if no state or if current = pop state (it should never happen)
-            if (!evt.state) return;
-            if (_this.lastKnownState && areStatesEqual(evt.state, _this.lastKnownState)) return;
-
-            _this._transition(evt.state, _this.lastKnownState);
-            _this.lastKnownState = evt.state;
-        });
+        return this;
     }
 
     _createClass(Router5, [{
+        key: 'add',
+        value: function add(routes) {
+            this.rootNode.add(routes);
+            return this;
+        }
+    }, {
+        key: 'start',
+        value: function start() {
+            var _this = this;
+
+            // Try to match starting path name
+            var startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
+            var startMatch = this.rootNode.matchPath(startPath);
+
+            if (startMatch) {
+                this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath);
+                window.history.replaceState(this.lastKnownState, '', this.options.useHash ? '#' + startPath : startPath);
+            } else if (this.options.defaultRoute) {
+                this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true });
+            }
+            // Listen to popstate
+            window.addEventListener('popstate', function (evt) {
+                // Do nothing if no state or if last know state is poped state (it should never happen)
+                if (!evt.state) return;
+                if (_this.lastKnownState && areStatesEqual(evt.state, _this.lastKnownState)) return;
+
+                _this._transition(evt.state, _this.lastKnownState);
+                _this.lastKnownState = evt.state;
+            });
+        }
+    }, {
         key: '_invokeCallbacks',
         value: function _invokeCallbacks(name, newState, oldState) {
             var _this2 = this;
@@ -108,6 +119,11 @@ var Router5 = (function () {
         }
     }, {
         key: 'registerComponent',
+
+        // setTitle(title) {
+        //     window.
+        // }
+
         value: function registerComponent(name, component) {
             if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
             this.activeComponents[name] = component;

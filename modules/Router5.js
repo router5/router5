@@ -24,25 +24,36 @@ export default class Router5 {
         this.activeComponents = {}
         this.options = opts
 
+        return this
+    }
+
+    add(routes) {
+        this.rootNode.add(routes)
+        return this
+    }
+
+    start() {
         // Try to match starting path name
-        let startPath = opts.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
+        let startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
         let startMatch = this.rootNode.matchPath(startPath)
 
         if (startMatch) {
             this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath)
-            window.history.replaceState(this.lastKnownState, '', opts.useHash ? `#${startPath}` : startPath)
-        } else if (opts.defaultRoute) {
-            this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true})
+            window.history.replaceState(this.lastKnownState, '', this.options.useHash ? `#${startPath}` : startPath)
+        } else if (this.options.defaultRoute) {
+            this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true})
         }
-
+        // Listen to popstate
         window.addEventListener('popstate', evt => {
-            // Do nothing if no state or if current = pop state (it should never happen)
+            // Do nothing if no state or if last know state is poped state (it should never happen)
             if (!evt.state) return
             if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return
 
             this._transition(evt.state, this.lastKnownState)
             this.lastKnownState = evt.state
         })
+
+        return this
     }
 
     _invokeCallbacks(name, newState, oldState) {

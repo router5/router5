@@ -16,11 +16,10 @@ let ordersRoute = new RouteNode('orders', '/orders', [
 let router = new Router5([
     userRoutes,
     ordersRoute,
-    new RouteNode('home', '/home')
 ], {
     defaultRoute: 'home',
     useHash: true
-})
+}).add(new RouteNode('home', '/home')).start()
 
 let listener = (newState, oldState) => {
     console.log('From:', oldState)
