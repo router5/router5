@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <base href="/">
+</head>
+
+<body>
+    <section>
+        <button id="users">users</button>
+        <button id="users.view" params="{'id': 1}">users.view</button>
+        <button id="users.list">users.list</button>
+    </section>
+
+    <section>
+        <button id="orders">orders</button>
+        <button id="orders.view" params="{'id': 'A0E23'}">orders.view</button>
+        <button id="orders.pending">orders.pending</button>
+        <button id="orders.completed">orders.completed</button>
+    </section>
+
+    <main id="app"></main>
+
+    <script src="jspm_packages/system.js"></script>
+    <script src="config.js"></script>
+    <script src="build.js"></script>
+    <script>
+        System.import('main');
+    </script>
+</body>
+
+</html>

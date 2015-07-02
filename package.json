@@ -1,0 +1,33 @@
+{
+  "name": "router5-react",
+  "version": "0.0.0",
+  "description": "router5 helpers for React",
+  "main": "dist/commonjs/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5-react.git"
+  },
+  "keywords": [
+    "router",
+    "html5",
+    "history",
+    "tree",
+    "react",
+    "functional"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5-react/issues"
+  },
+  "homepage": "http://router5.github.com/router5/router5-react",
+  "devDependencies": {
+    "router5": "0.0.1-alpha.3"
+  },
+  "peerDependencies": {
+    "router5": "0.0.1-alpha.3"
+  }
+}
