@@ -120,7 +120,7 @@ var Router5 = (function () {
                     if (fromStateIds[i] !== toStateIds[i]) break;
                 }
 
-                cannotDeactivate = fromStateIds.slice(i).map(function (id) {
+                cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
                     return _this2.activeComponents[id];
                 }).filter(function (comp) {
                     return comp && comp.canDeactivate;

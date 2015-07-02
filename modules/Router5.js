@@ -90,7 +90,7 @@ export default class Router5 {
             }
 
             cannotDeactivate =
-                fromStateIds.slice(i)
+                fromStateIds.slice(i).reverse()
                     .map(id => this.activeComponents[id])
                     .filter(comp => comp && comp.canDeactivate)
                     .some(comp => !comp.canDeactivate(toState, fromState))

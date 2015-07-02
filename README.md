@@ -31,8 +31,7 @@ and to react to them. Afterall, why treat route changes any different than data 
 directly. Routes can be nested, introducing the notion of _route segments_.
 - __Route change listeners__
 - __Route node change listeners__: you can add listeners to be triggered on a specific named route node. They will be triggered if that named route node is the node a component tree needs to be re-rendered from.
-- __Segments deactivation__: you can register components with the router with a `canDeactivate` method. On a route change, it will ask those components if they allow navigation. Similar to _Angular 2_ and _Aurelia_
-routers.
+- __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers.
 - __You are in control!__ You decide what to do on a route change and how to do it.
 
 ## API
@@ -125,8 +124,9 @@ router.getState() // => {name: "home", params: {}, path: "/home"}
 __router.registerComponent(name, component)__
 
 Register a component for the named route segment `name`. `name` has to describe the full
-route segment depth (i.e. _'users.view'_). If the route segment for the registered component
-is about to be removed by a route change, its `canDeactivate()` method will be called if present.
+route name (i.e. _'users.view'_). If the route segment for the registered component
+is about to be removed by a route change, its `canDeactivate(toState, fromState)`
+method will be called if present. Segments to be deactivated are called from bottom to top.
 
 Only one component per segment can be registered.
 
