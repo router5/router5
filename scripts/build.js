@@ -2,6 +2,7 @@ var babel       = require('babel');
 var path        = require('path');
 var fs          = require('fs');
 var async       = require('async');
+var mkdirp      = require('mkdirp');
 
 var getOptions  = require('./babel-options');
 var fileName    = path.join(__dirname, '../modules/Router5.js');
@@ -30,10 +31,20 @@ function buildFactory(module, dest) {
 //     })
 // }
 
-async.parallel([
-    buildFactory('common', 'dist/commonjs/router5.js'),
-    buildFactory('umd', 'dist/umd/router5.js'),
-    buildFactory('ignore', 'dist/test/router5.js')
-], function (err) {
-    process.exit(err ? 1 : 0);
+mkdirp('dist/test', function (err) {
+    if (err) {
+        console.log(err);
+        process.exit(1);
+    }
+
+    async.parallel([
+        buildFactory('common', 'dist/commonjs/router5.js'),
+        buildFactory('umd', 'dist/umd/router5.js'),
+        buildFactory('ignore', 'dist/test/router5.js')
+    ], function (err) {
+        if (err) console.log(err);
+        process.exit(err ? 1 : 0);
+    });
 });
+
+

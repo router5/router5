@@ -35,6 +35,7 @@
     "karma-mocha-reporter": "^1.0.2",
     "karma-coverage": "^0.4.2",
     "karma-coveralls": "^1.1.0",
-    "coveralls": "^2.11.2"
+    "coveralls": "^2.11.2",
+    "mkdirp": "^0.5.1"
   }
 }

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5)
+
 # router5
 
 An simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
