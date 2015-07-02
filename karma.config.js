@@ -6,7 +6,7 @@ module.exports = function(config) {
         autoWatch: false,
         singleRun: true,
 
-        browsers: ['Chrome'],
+        browsers: ['Firefox'],
 
         files: [
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
@@ -24,9 +24,17 @@ module.exports = function(config) {
             'karma-chrome-launcher',
             'karma-firefox-launcher',
             'karma-mocha-reporter',
-            'karma-coverage'
+            'karma-coverage',
+            'karma-coveralls'
         ],
 
-        reporters: ['mocha', 'coverage']
+        reporters: ['mocha', 'coverage', 'coveralls'],
+
+        coverageReporter: {
+            dir: 'coverage',
+            reporters: [
+                {type: 'lcov'}
+            ],
+        },
     });
 };
