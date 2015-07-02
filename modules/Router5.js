@@ -17,6 +17,7 @@ let makeState = (name, params, path) => ({name, params, path})
 
 export default class Router5 {
     constructor(routes, opts = {}) {
+        this.started = false
         this.callbacks = {}
         this.lastStateAttempt = null
         this.lastKnownState = null
@@ -32,6 +33,15 @@ export default class Router5 {
         return this
     }
 
+    onPopState(evt) {
+        // Do nothing if no state or if last know state is poped state (it should never happen)
+        if (!evt.state) return
+        if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return
+
+        this._transition(evt.state, this.lastKnownState)
+        this.lastKnownState = evt.state
+    }
+
     start() {
         // Try to match starting path name
         let startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
@@ -44,15 +54,16 @@ export default class Router5 {
             this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true})
         }
         // Listen to popstate
-        window.addEventListener('popstate', evt => {
-            // Do nothing if no state or if last know state is poped state (it should never happen)
-            if (!evt.state) return
-            if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return
+        window.addEventListener('popstate', this.onPopState)
 
-            this._transition(evt.state, this.lastKnownState)
-            this.lastKnownState = evt.state
-        })
+        this.started = true
+        return this
+    }
 
+    stop() {
+        window.removeEventListener('popstate', this.onPopState)
+
+        this.started = false
         return this
     }
 
@@ -126,6 +137,8 @@ export default class Router5 {
     }
 
     navigate(name, params = {}, opts = {}) {
+        if (!started) return
+
         let currentState = window.history.state
         // let segments = this.rootNode.getSegmentsByName(name)
         // let path  = this.rootNode.buildPathFromSegments(segments, params)

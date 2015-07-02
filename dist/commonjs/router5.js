@@ -37,6 +37,7 @@ var Router5 = (function () {
 
         _classCallCheck(this, Router5);
 
+        this.started = false;
         this.callbacks = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
@@ -54,10 +55,18 @@ var Router5 = (function () {
             return this;
         }
     }, {
+        key: 'onPopState',
+        value: function onPopState(evt) {
+            // Do nothing if no state or if last know state is poped state (it should never happen)
+            if (!evt.state) return;
+            if (this.lastKnownState && areStatesEqual(evt.state, this.lastKnownState)) return;
+
+            this._transition(evt.state, this.lastKnownState);
+            this.lastKnownState = evt.state;
+        }
+    }, {
         key: 'start',
         value: function start() {
-            var _this = this;
-
             // Try to match starting path name
             var startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
             var startMatch = this.rootNode.matchPath(startPath);
@@ -69,23 +78,27 @@ var Router5 = (function () {
                 this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true });
             }
             // Listen to popstate
-            window.addEventListener('popstate', function (evt) {
-                // Do nothing if no state or if last know state is poped state (it should never happen)
-                if (!evt.state) return;
-                if (_this.lastKnownState && areStatesEqual(evt.state, _this.lastKnownState)) return;
+            window.addEventListener('popstate', this.onPopState);
 
-                _this._transition(evt.state, _this.lastKnownState);
-                _this.lastKnownState = evt.state;
-            });
+            this.started = true;
+            return this;
+        }
+    }, {
+        key: 'stop',
+        value: function stop() {
+            window.removeEventListener('popstate', this.onPopState);
+
+            this.started = false;
+            return this;
         }
     }, {
         key: '_invokeCallbacks',
         value: function _invokeCallbacks(name, newState, oldState) {
-            var _this2 = this;
+            var _this = this;
 
             if (!this.callbacks[name]) return;
             this.callbacks[name].forEach(function (cb) {
-                cb.call(_this2, newState, oldState);
+                cb.call(_this, newState, oldState);
             });
         }
     }, {
@@ -119,11 +132,6 @@ var Router5 = (function () {
         }
     }, {
         key: 'registerComponent',
-
-        // setTitle(title) {
-        //     window.
-        // }
-
         value: function registerComponent(name, component) {
             if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
             this.activeComponents[name] = component;
@@ -171,6 +179,8 @@ var Router5 = (function () {
         value: function navigate(name) {
             var params = arguments[1] === undefined ? {} : arguments[1];
             var opts = arguments[2] === undefined ? {} : arguments[2];
+
+            if (!started) return;
 
             var currentState = window.history.state;
             // let segments = this.rootNode.getSegmentsByName(name)
