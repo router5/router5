@@ -47,7 +47,22 @@ You can supply a list of routes or a `RootNode` object:
 and empty URL).
 - If you supply a single `RootNode` object, it will be used as a root node.
 
+The most simple way to create routes:
+
 ```javascript
+import Router5 from 'router5'
+
+let router = new Router5()
+    .addNode('users',      '/users')
+    .addNode('users.view', '/view/:id')
+    .addNode('users.list', '/list')
+```
+
+Or with plain objects:
+
+```javascript
+import Router5 from 'router5'
+
 let router = new Router5([
     {name: 'users', path: '/users', [
         {name: 'view', path: '/view/:id'},
@@ -57,9 +72,12 @@ let router = new Router5([
 ])
 ```
 
-With `RouteNode`:
+Or with `RouteNode`:
 
 ```javascript
+import Router5   from 'router5'
+import RouteNode from 'routerNode'
+
 let userRoutes = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id'),
     new RouteNode('list', '/list')

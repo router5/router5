@@ -1,4 +1,4 @@
-import RouteNode from 'route-node'
+import RouteNode from 'route-node/modules/RouteNode'
 
 let nameToIDs = name => {
     return name.split('.').reduce((ids, name) => {
@@ -24,6 +24,11 @@ export default class Router5 {
 
     add(routes) {
         this.rootNode.add(routes)
+        return this
+    }
+
+    addNode(name, params) {
+        this.rootNode.addNode(name, params)
         return this
     }
 

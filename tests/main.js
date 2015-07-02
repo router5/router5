@@ -22,13 +22,13 @@ var ordersRoute = new RouteNode('orders', '/orders', [
 ]);
 
 router = new Router5([
-        userRoutes,
-        ordersRoute,
+        userRoutes
     ], {
         defaultRoute: 'home',
         useHash: true
     })
-    .add(new RouteNode('home', '/home'));
+    .add(ordersRoute)
+    .addNode('home', '/home');
 
 describe('router5', function () {
     it('should throw an error if Router5 is not used as a constructor', function () {

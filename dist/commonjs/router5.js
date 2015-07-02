@@ -49,6 +49,12 @@ var Router5 = (function () {
             return this;
         }
     }, {
+        key: 'addNode',
+        value: function addNode(name, params) {
+            this.rootNode.addNode(name, params);
+            return this;
+        }
+    }, {
         key: 'onPopState',
         value: function onPopState(evt) {
             // Do nothing if no state or if last know state is poped state (it should never happen)
