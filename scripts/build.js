@@ -43,7 +43,7 @@ function buildBundle(done) {
         var license = results[0].toString().trim().split('\n').map(function (line) {
             return ' * ' + line;
         }).join('\n');
-        license = '/**\n' + license + '\n */';
+        license = '/**\n * @license\n' + license + '\n */';
 
         var pathParserSrc = results[1].code.trim();
         var routeNodeSrc = results[2].code.trim();
