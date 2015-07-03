@@ -110,6 +110,10 @@ __Options:__
 
 ### Router instance API
 
+__router.setOption(opt, value)__
+
+A chainable method to set a specific option.
+
 __router.start()__
 
 Start the router listening to _popstate_ events and allow navigation. On start, the router
@@ -122,6 +126,11 @@ Stop the router listening to _popstate_ events and prevent navigation.
 __router.add(route)__
 
 - __route__ `Array[Object|RouteNode]|RouteNode|Object` Add routes to the route tree
+
+__router.addNode(name, path)__
+
+- __name__ `String` the name of the route to add. You can add a nested route by specifying its full name (i.e. 'a.b.c.d').
+- __path__ `String` the route path. For a full syntax overview, see [path-parser](https://github.com/path-parser).
 
 __router.rootNode__
 

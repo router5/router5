@@ -22,6 +22,11 @@ export default class Router5 {
         return this
     }
 
+    setOption(opt, val) {
+        this.options[opt] = val
+        return this
+    }
+
     add(routes) {
         this.rootNode.add(routes)
         return this

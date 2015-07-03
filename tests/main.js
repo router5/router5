@@ -24,9 +24,9 @@ var ordersRoute = new RouteNode('orders', '/orders', [
 router = new Router5([
         userRoutes
     ], {
-        defaultRoute: 'home',
-        useHash: true
+        defaultRoute: 'home'
     })
+    .setOption('useHash', true)
     .add(ordersRoute)
     .addNode('home', '/home');
 

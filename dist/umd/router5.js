@@ -50,6 +50,12 @@
         }
 
         _createClass(Router5, [{
+            key: 'setOption',
+            value: function setOption(opt, val) {
+                this.options[opt] = val;
+                return this;
+            }
+        }, {
             key: 'add',
             value: function add(routes) {
                 this.rootNode.add(routes);
