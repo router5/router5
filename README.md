@@ -43,22 +43,13 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 __new Router5(routes, opts)__
 
 You can supply a list of routes or a `RootNode` object:
+
 - If you supply a list of routes (either `RouteNode` objects or POJOs), a root node will be added (unamed route
 and empty URL).
-- If you supply a single `RootNode` object, it will be used as a root node.
+- If you supply a single `RootNode` object, it will be used as a root node (handy if you want to prefix all your
+routes)
 
-The most simple way to create routes:
-
-```javascript
-import Router5 from 'router5'
-
-let router = new Router5()
-    .addNode('users',      '/users')
-    .addNode('users.view', '/view/:id')
-    .addNode('users.list', '/list')
-```
-
-Or with plain objects:
+__Using plain objects:__
 
 ```javascript
 import Router5 from 'router5'
@@ -72,11 +63,11 @@ let router = new Router5([
 ])
 ```
 
-Or with `RouteNode`:
+__Using RouteNode:__
 
 ```javascript
 import Router5   from 'router5'
-import RouteNode from 'routerNode'
+import RouteNode from 'route-node'
 
 let userRoutes = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id'),
@@ -99,7 +90,18 @@ let router = new Router5([
 })
 ```
 
-__Options__:
+__The simplest way to create routes:__
+
+```javascript
+import Router5 from 'router5'
+
+let router = new Router5()
+    .addNode('users',      '/users')
+    .addNode('users.view', '/view/:id')
+    .addNode('users.list', '/list')
+```
+
+__Options:__
 
 - __useHash__: `true|false`, default to `false`
 - __defaultRoute__: the route name to navigate to when instanciating the router. It will only navigate to the default route if the current URL doesn't match an existing route.

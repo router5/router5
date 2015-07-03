@@ -144,7 +144,9 @@
         }, {
             key: 'getState',
             value: function getState() {
-                return this.lastKnownState;
+                return this.lastKnownState
+                // return window.history.state
+                ;
             }
         }, {
             key: 'areStatesEqual',
@@ -205,9 +207,6 @@
 
                 if (!this.started) return;
 
-                var currentState = window.history.state;
-                // let segments = this.rootNode.getSegmentsByName(name)
-                // let path  = this.rootNode.buildPathFromSegments(segments, params)
                 var path = this.rootNode.buildPath(name, params);
 
                 if (!path) throw new Error('Could not find route "' + name + '"');
@@ -222,12 +221,12 @@
                 // Transition and amend history
                 var canTransition = this._transition(this.lastStateAttempt, this.lastKnownState);
 
+                if (canTransition && !sameStates) {
+                    window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
+                }
                 if (canTransition) {
                     // Update lastKnowState
                     this.lastKnownState = this.lastStateAttempt;
-                }
-                if (canTransition && !sameStates) {
-                    window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
                 }
             }
         }]);
