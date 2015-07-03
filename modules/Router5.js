@@ -39,11 +39,11 @@ export default class Router5 {
 
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
-        if (!evt.state) return
-        if (this.lastKnownState && this.areStatesEqual(evt.state, this.lastKnownState)) return
+        let state = evt.state || this.matchPath(this.getWindowPath())
+        if (!state) return
+        if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return
 
-        let canTransition = this._transition(evt.state, this.lastKnownState)
-        if (canTransition) this.lastKnownState = evt.state
+        let canTransition = this._transition(state, this.lastKnownState)
     }
 
     start() {
@@ -51,11 +51,11 @@ export default class Router5 {
         this.started = true
 
         // Try to match starting path name
-        let startPath = this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
-        let startMatch = this.rootNode.matchPath(startPath)
+        let startPath = this.getWindowPath();
+        let startState = this.matchPath(startPath)
 
-        if (startMatch) {
-            this.lastKnownState = makeState(startMatch.name, startMatch.params, startPath)
+        if (startState) {
+            this.lastKnownState = startState
             window.history.replaceState(this.lastKnownState, '', this.options.useHash ? `#${startPath}` : startPath)
         } else if (this.options.defaultRoute) {
             this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true})
@@ -118,6 +118,10 @@ export default class Router5 {
         // return window.history.state
     }
 
+    getWindowPath() {
+        return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
+    }
+
     areStatesEqual(state1, state2) {
         return state1.name === state2.name &&
            Object.keys(state1.params).length === Object.keys(state2.params).length &&
@@ -157,6 +161,11 @@ export default class Router5 {
 
     buildPath(route, params) {
         return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params)
+    }
+
+    matchPath(path) {
+        let match = this.rootNode.matchPath(path)
+        return match ? makeState(match.name, match.params, path) : null
     }
 
     navigate(name, params = {}, opts = {}) {
