@@ -81,28 +81,35 @@ export default class Router5 {
     }
 
     _transition(toState, fromState) {
-        let cannotDeactivate = false
-
-        if (fromState) {
-            let i
-            let fromStateIds = nameToIDs(fromState.name)
-            let toStateIds   = nameToIDs(toState.name)
-
-            let maxI = Math.min(fromStateIds.length, toStateIds.length)
-            for (i = 0; i < maxI; i += 1) {
-                if (fromStateIds[i] !== toStateIds[i]) break
-            }
-
-            cannotDeactivate =
-                fromStateIds.slice(i).reverse()
-                    .map(id => this.activeComponents[id])
-                    .filter(comp => comp && comp.canDeactivate)
-                    .some(comp => !comp.canDeactivate(toState, fromState))
-
-            if (!cannotDeactivate && i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
+        if (!fromState) {
+            this.lastKnownState = toState
+            this._invokeCallbacks('', toState, fromState)
+            return true
         }
 
-        if (!cannotDeactivate) this._invokeCallbacks('', toState, fromState)
+        let i
+        let cannotDeactivate = false
+        let fromStateIds = nameToIDs(fromState.name)
+        let toStateIds   = nameToIDs(toState.name)
+        let maxI = Math.min(fromStateIds.length, toStateIds.length)
+
+        for (i = 0; i < maxI; i += 1) {
+            if (fromStateIds[i] !== toStateIds[i]) break
+        }
+
+        cannotDeactivate =
+            fromStateIds.slice(i).reverse()
+                .map(id => this.activeComponents[id])
+                .filter(comp => comp && comp.canDeactivate)
+                .some(comp => !comp.canDeactivate(toState, fromState))
+
+
+       if (!cannotDeactivate) {
+            this.lastKnownState = toState
+            if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
+            this._invokeCallbacks('', toState, fromState)
+        }
+
         return !cannotDeactivate
     }
 
@@ -171,10 +178,6 @@ export default class Router5 {
 
         if (canTransition && !sameStates) {
             window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
-        }
-        if (canTransition) {
-            // Update lastKnowState
-            this.lastKnownState = this.lastStateAttempt
         }
     }
 }

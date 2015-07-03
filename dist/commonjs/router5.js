@@ -114,30 +114,36 @@ var Router5 = (function () {
         value: function _transition(toState, fromState) {
             var _this2 = this;
 
-            var cannotDeactivate = false;
-
-            if (fromState) {
-                var i = undefined;
-                var fromStateIds = nameToIDs(fromState.name);
-                var toStateIds = nameToIDs(toState.name);
-
-                var maxI = Math.min(fromStateIds.length, toStateIds.length);
-                for (i = 0; i < maxI; i += 1) {
-                    if (fromStateIds[i] !== toStateIds[i]) break;
-                }
-
-                cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
-                    return _this2.activeComponents[id];
-                }).filter(function (comp) {
-                    return comp && comp.canDeactivate;
-                }).some(function (comp) {
-                    return !comp.canDeactivate(toState, fromState);
-                });
-
-                if (!cannotDeactivate && i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+            if (!fromState) {
+                this.lastKnownState = toState;
+                this._invokeCallbacks('', toState, fromState);
+                return true;
             }
 
-            if (!cannotDeactivate) this._invokeCallbacks('', toState, fromState);
+            var i = undefined;
+            var cannotDeactivate = false;
+            var fromStateIds = nameToIDs(fromState.name);
+            var toStateIds = nameToIDs(toState.name);
+            var maxI = Math.min(fromStateIds.length, toStateIds.length);
+
+            for (i = 0; i < maxI; i += 1) {
+                if (fromStateIds[i] !== toStateIds[i]) break;
+            }
+
+            cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
+                return _this2.activeComponents[id];
+            }).filter(function (comp) {
+                return comp && comp.canDeactivate;
+            }).some(function (comp) {
+                return !comp.canDeactivate(toState, fromState);
+            });
+
+            if (!cannotDeactivate) {
+                this.lastKnownState = toState;
+                if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+                this._invokeCallbacks('', toState, fromState);
+            }
+
             return !cannotDeactivate;
         }
     }, {
@@ -222,10 +228,6 @@ var Router5 = (function () {
 
             if (canTransition && !sameStates) {
                 window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
-            }
-            if (canTransition) {
-                // Update lastKnowState
-                this.lastKnownState = this.lastStateAttempt;
             }
         }
     }]);
