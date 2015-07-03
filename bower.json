@@ -25,7 +25,7 @@
     "coverage",
     "scripts",
     "npm-debug.log",
-    "tests"
+    "tests",
     ".travis.yml",
     "karma.config.js",
     "package.json",
