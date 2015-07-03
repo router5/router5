@@ -1,0 +1,34 @@
+{
+  "name": "router5",
+  "version": "0.0.1-alpha.6",
+  "homepage": "http://router5.github.io",
+  "authors": [
+    "Thomas Roch <thomas.c.roch@gmail.com>"
+  ],
+  "description": "A framework agnostic HTML5 router",
+  "main": "dist/browser/router5.min.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "router",
+    "HTML5"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "coverage",
+    "scripts",
+    "npm-debug.log",
+    "tests"
+    ".travis.yml",
+    "karma.config.js",
+    "package.json",
+    ".gitignore"
+  ]
+}
