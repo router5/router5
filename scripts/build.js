@@ -65,15 +65,18 @@ function buildBundle(done) {
     })
 }
 
-
-async.parallel([
-    buildFactory('common', 'dist/commonjs/router5.js'),
-    buildFactory('umd',    'dist/umd/router5.js'),
-    buildFactory('ignore', 'dist/test/router5.js'),
-    buildBundle
-], function (err) {
-    if (err) console.log(err);
-    process.exit(err ? 1 : 0);
+mkdirp('dist/test', function () {
+    async.parallel([
+        buildFactory('common', 'dist/commonjs/router5.js'),
+        buildFactory('umd',    'dist/umd/router5.js'),
+        buildFactory('ignore', 'dist/test/router5.js'),
+        buildBundle
+    ], function (err) {
+        if (err) console.log(err);
+        process.exit(err ? 1 : 0);
+    });
 });
+
+
 
 
