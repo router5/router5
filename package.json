@@ -4,7 +4,7 @@
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "dist/commonjs/index.js",
   "scripts": {
-    "build": "node ./scripts/build.js",
+    "build": "node ./scripts/build.js && npm run uglify",
     "uglify": "./node_modules/.bin/uglifyjs2 dist/browser/router5.js --comments -m -o dist/browser/router5.min.js",
     "test": "./node_modules/.bin/karma start karma.config.js"
   },
