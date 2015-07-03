@@ -69,6 +69,7 @@ function buildBundle(done) {
 async.parallel([
     buildFactory('common', 'dist/commonjs/router5.js'),
     buildFactory('umd',    'dist/umd/router5.js'),
+    buildFactory('ignore', 'dist/test/router5.js'),
     buildBundle
 ], function (err) {
     if (err) console.log(err);

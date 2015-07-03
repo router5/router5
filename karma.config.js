@@ -9,7 +9,9 @@ module.exports = function(config) {
         browsers: ['Firefox'],
 
         files: [
-            'dist/browser/router5.min.js',
+            'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
+            'node_modules/route-node/dist/umd/route-node.js',
+            'dist/test/router5.js',
             'tests/*.js'
         ],
 
