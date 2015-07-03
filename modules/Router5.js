@@ -107,6 +107,7 @@ export default class Router5 {
        if (!cannotDeactivate) {
             this.lastKnownState = toState
             if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
+            this._invokeCallbacks('=' + toState.name, toState, fromState)
             this._invokeCallbacks('', toState, fromState)
         }
 
@@ -157,6 +158,14 @@ export default class Router5 {
 
     removeListener(cb) {
         this.removeNodeListener('', cb)
+    }
+
+    addRouteListener(name, cb) {
+        this.addNodeListener('=' + name, cb)
+    }
+
+    removeRouteListener(name, cb) {
+        this.removeNodeListener('=' + name, cb)
     }
 
     buildPath(route, params) {

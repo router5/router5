@@ -31,7 +31,7 @@ and to react to them. Afterall, why treat route changes any different than data 
 - __Start__ and __stop__ router
 - __Nested named routes__: routes are identified by names and parameters so you don't have to manipulate URLs
 directly. Routes can be nested, introducing the notion of _route segments_.
-- __Route change listeners__
+- __Route change listeners: listen to any route change, or register listeners for a specific route.
 - __Route node change listeners__: you can add listeners to be triggered on a specific named route node. They will be triggered if that named route node is the node a component tree needs to be re-rendered from.
 - __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers.
 - __You are in control!__ You decide what to do on a route change and how to do it.
@@ -190,6 +190,14 @@ __router.removeListener(fn)__
 
 Removes a listener.
 
+
+__router.addRouteListener(name, fn)__
+
+The provided callback will be executed when route `` is activated.
+
+__router.removeRouteListener(name, fn)__
+
+Removes a route listener.
 
 __router.addNodeListener(name, fn)__
 

@@ -141,6 +141,7 @@ var Router5 = (function () {
             if (!cannotDeactivate) {
                 this.lastKnownState = toState;
                 if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+                this._invokeCallbacks('=' + toState.name, toState, fromState);
                 this._invokeCallbacks('', toState, fromState);
             }
 
@@ -203,6 +204,16 @@ var Router5 = (function () {
         key: 'removeListener',
         value: function removeListener(cb) {
             this.removeNodeListener('', cb);
+        }
+    }, {
+        key: 'addRouteListener',
+        value: function addRouteListener(name, cb) {
+            this.addNodeListener('=' + name, cb);
+        }
+    }, {
+        key: 'removeRouteListener',
+        value: function removeRouteListener(name, cb) {
+            this.removeNodeListener('=' + name, cb);
         }
     }, {
         key: 'buildPath',

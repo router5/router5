@@ -144,6 +144,15 @@ describe('router5', function () {
         router.removeNodeListener('users', listeners.node);
     });
 
+    it('should invoke route listeners', function () {
+        router.navigate('users.list');
+        spyOn(listeners, 'node');
+        router.addRouteListener('users', listeners.node);
+        router.navigate('users');
+        expect(listeners.node).toHaveBeenCalled();
+        router.removeRouteListener('users', listeners.node);
+    });
+
     it('should warn when trying to register a listener on a non-existing node', function () {
         spyOn(console, 'warn');
         router.addNodeListener('fake.node', listeners.node);
