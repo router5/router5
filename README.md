@@ -136,7 +136,7 @@ __router.rootNode__
 
 The top node `RouteNode` instance. For a detailled API, see [RouteNode's README](https://github.com/troch/route-node/blob/master/README.md)
 
-_router.buildPath(name, params)__
+__router.buildPath(name, params)__
 
 Build path for a route name and params.
 

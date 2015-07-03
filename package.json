@@ -5,6 +5,7 @@
   "main": "dist/commonjs/index.js",
   "scripts": {
     "build": "node ./scripts/build.js",
+    "uglify": "./node_modules/.bin/uglifyjs2 dist/browser/router5.js -o dist/browser/router5.min.js --comments",
     "test": "./node_modules/.bin/karma start karma.config.js"
   },
   "repository": {
@@ -36,6 +37,8 @@
     "karma-coverage": "^0.4.2",
     "karma-coveralls": "^1.1.0",
     "coveralls": "^2.11.2",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "uglify-js": "^2.4.23",
+    "uglify-js2": "^2.1.11"
   }
 }
