@@ -1,7 +1,4 @@
-node_modules/
-jspm_packages/
-/build.js
-/build.js.map
+/node_modules
 /dist/test
 /coverage
 npm-debug.log

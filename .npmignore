@@ -1,0 +1,9 @@
+/node_modules
+/dist/test
+/coverage
+/tests
+npm-debug.log
+karma.config.js
+.travis.yml
+README.md
+bower.json
