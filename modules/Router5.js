@@ -9,6 +9,12 @@ let nameToIDs = name => {
 
 let makeState = (name, params, path) => ({name, params, path})
 
+/**
+ * Create a new Router5 instance
+ * @class
+ * @param {Array[RouteNode|Object]|RouteNode|Object} routes The router routes
+ * @return {Router5} The router instance
+ */
 export default class Router5 {
     constructor(routes, opts = {}) {
         this.started = false
@@ -22,21 +28,41 @@ export default class Router5 {
         return this
     }
 
+    /**
+     * Set an option value
+     * @param  {String} opt The option to set
+     * @param  {*}      val The option value
+     * @return {Router5}    The Router5 instance
+     */
     setOption(opt, val) {
         this.options[opt] = val
         return this
     }
 
+    /**
+     * Add route(s)
+     * @param  {Array[RouteNode|Object]|RouteNode|Object} routes Route(s) to add
+     * @return {Router5}  The Router5 instance
+     */
     add(routes) {
         this.rootNode.add(routes)
         return this
     }
 
-    addNode(name, params) {
-        this.rootNode.addNode(name, params)
+    /**
+     * Add a route to the router.
+     * @param {String} name The route name
+     * @param {String} path The route path
+     * @return {Router5}  The Router5 instance
+     */
+    addNode(name, path) {
+        this.rootNode.addNode(name, path)
         return this
     }
 
+    /**
+     * @private
+     */
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
         let state = evt.state || this.matchPath(this.getWindowPath())
@@ -47,6 +73,10 @@ export default class Router5 {
         if (!canTransition) window.history.pushState(this.lastKnownState, '', this.options.useHash ? `#${path}` : path)
     }
 
+    /**
+     * Start the router
+     * @return {Router5} The router instance
+     */
     start() {
         if (this.started) return this
         this.started = true
@@ -66,6 +96,10 @@ export default class Router5 {
         return this
     }
 
+    /**
+     * Stop the router
+     * @return {Router5} The router instance
+     */
     stop() {
         if (!this.started) return this
         this.started = false
@@ -74,6 +108,9 @@ export default class Router5 {
         return this
     }
 
+    /**
+     * @private
+     */
     _invokeCallbacks(name, newState, oldState) {
         if (!this.callbacks[name]) return
         this.callbacks[name].forEach(cb => {
@@ -81,6 +118,9 @@ export default class Router5 {
         })
     }
 
+    /**
+     * @private
+     */
     _transition(toState, fromState) {
         if (!fromState) {
             this.lastKnownState = toState
@@ -115,30 +155,52 @@ export default class Router5 {
         return !cannotDeactivate
     }
 
+    /**
+     * Return the current state object
+     * @return {Object} The current state
+     */
     getState() {
         return this.lastKnownState
         // return window.history.state
     }
 
+    /**
+     * @private
+     */
     getWindowPath() {
         return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
     }
 
+    /**
+     * @private
+     */
     areStatesEqual(state1, state2) {
         return state1.name === state2.name &&
            Object.keys(state1.params).length === Object.keys(state2.params).length &&
            Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
     }
 
+    /**
+     * Register an active component for a specific route segment
+     * @param  {String} name      The route segment full name
+     * @param  {Object} component The component instance
+     */
     registerComponent(name, component) {
         if (this.activeComponents[name]) console.warn(`A component was alread registered for route node ${name}.`)
         this.activeComponents[name] = component
     }
 
+    /**
+     * Deregister an active component
+     * @param  {String} name The route segment full name
+     */
     deregisterComponent(name) {
         delete this.activeComponents[name]
     }
 
+    /**
+     * @private
+     */
     _addListener(name, cb) {
         let normalizedName = name.replace(/^(\^|=)/, '')
         if (normalizedName) {
@@ -149,44 +211,92 @@ export default class Router5 {
         this.callbacks[name].push(cb)
     }
 
+    /**
+     * @private
+     */
     _removeListener(name, cb) {
         if (!this.callbacks[name]) return
         this.callbacks[name] = this.callbacks[name].filter(callback => callback !== cb)
     }
 
+    /**
+     * Add a route change listener
+     * @param {Function} cb The listener to add
+     */
     addListener(cb) {
         this._addListener('', cb)
     }
 
+    /**
+     * Remove a route change listener
+     * @param  {Function} cb The listener to remove
+     */
     removeListener(cb) {
         this._removeListener('', cb)
     }
 
+    /**
+     * Add a node change listener
+     * @param {String}   name The route segment full name
+     * @param {Function} cb   The listener to add
+     */
     addNodeListener(name, cb) {
         this._addListener('^' + name, cb);
     }
 
+    /**
+     * Remove a node change listener
+     * @param {String}   name The route segment full name
+     * @param {Function} cb   The listener to remove
+     */
     removeNodeListener(name, cb) {
         this._removeListener('^' + name, cb);
     }
 
+    /**
+     * Add a route change listener
+     * @param {String}   name The route name to listen to
+     * @param {Function} cb   The listener to add
+     */
     addRouteListener(name, cb) {
         this._addListener('=' + name, cb)
     }
 
+    /**
+     * Remove a route change listener
+     * @param {String}   name The route name to listen to
+     * @param {Function} cb   The listener to remove
+     */
     removeRouteListener(name, cb) {
         this._removeListener('=' + name, cb)
     }
 
+    /**
+     * Generates a path from a route name and route params.
+     * The generated URL will be prefixed by
+     * @param {String} route  The route name
+     * @param {Object} params The route params (key-value pairs)
+     */
     buildPath(route, params) {
         return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params)
     }
 
+    /**
+     * Match a path against the route tree.
+     * @param {String} path   The path / URL to match
+     * @param {Object}        The matched state object (null if no match)
+     */
     matchPath(path) {
         let match = this.rootNode.matchPath(path)
         return match ? makeState(match.name, match.params, path) : null
     }
 
+    /**
+     * Navigate to a specific route
+     * @param  {String} name   The route name
+     * @param  {Object} params The route params
+     * @param  {Object} opts   The route options (replace, reload)
+     */
     navigate(name, params = {}, opts = {}) {
         if (!this.started) return
 

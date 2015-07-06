@@ -464,6 +464,13 @@ var makeState = function makeState(name, params, path) {
     return { name: name, params: params, path: path };
 };
 
+/**
+ * Create a new Router5 instance
+ * @class
+ * @param {Array[RouteNode|Object]|RouteNode|Object} routes The router routes
+ * @return {Router5} The router instance
+ */
+
 var Router5 = (function () {
     function Router5(routes) {
         var opts = arguments[1] === undefined ? {} : arguments[1];
@@ -483,24 +490,48 @@ var Router5 = (function () {
 
     _createClass(Router5, [{
         key: 'setOption',
+
+        /**
+         * Set an option value
+         * @param  {String} opt The option to set
+         * @param  {*}      val The option value
+         * @return {Router5}    The Router5 instance
+         */
         value: function setOption(opt, val) {
             this.options[opt] = val;
             return this;
         }
     }, {
         key: 'add',
+
+        /**
+         * Add route(s)
+         * @param  {Array[RouteNode|Object]|RouteNode|Object} routes Route(s) to add
+         * @return {Router5}  The Router5 instance
+         */
         value: function add(routes) {
             this.rootNode.add(routes);
             return this;
         }
     }, {
         key: 'addNode',
-        value: function addNode(name, params) {
-            this.rootNode.addNode(name, params);
+
+        /**
+         * Add a route to the router.
+         * @param {String} name The route name
+         * @param {String} path The route path
+         * @return {Router5}  The Router5 instance
+         */
+        value: function addNode(name, path) {
+            this.rootNode.addNode(name, path);
             return this;
         }
     }, {
         key: 'onPopState',
+
+        /**
+         * @private
+         */
         value: function onPopState(evt) {
             // Do nothing if no state or if last know state is poped state (it should never happen)
             var state = evt.state || this.matchPath(this.getWindowPath());
@@ -512,6 +543,11 @@ var Router5 = (function () {
         }
     }, {
         key: 'start',
+
+        /**
+         * Start the router
+         * @return {Router5} The router instance
+         */
         value: function start() {
             if (this.started) return this;
             this.started = true;
@@ -532,6 +568,11 @@ var Router5 = (function () {
         }
     }, {
         key: 'stop',
+
+        /**
+         * Stop the router
+         * @return {Router5} The router instance
+         */
         value: function stop() {
             if (!this.started) return this;
             this.started = false;
@@ -541,6 +582,10 @@ var Router5 = (function () {
         }
     }, {
         key: '_invokeCallbacks',
+
+        /**
+         * @private
+         */
         value: function _invokeCallbacks(name, newState, oldState) {
             var _this = this;
 
@@ -551,6 +596,10 @@ var Router5 = (function () {
         }
     }, {
         key: '_transition',
+
+        /**
+         * @private
+         */
         value: function _transition(toState, fromState) {
             var _this2 = this;
 
@@ -589,6 +638,11 @@ var Router5 = (function () {
         }
     }, {
         key: 'getState',
+
+        /**
+         * Return the current state object
+         * @return {Object} The current state
+         */
         value: function getState() {
             return this.lastKnownState
             // return window.history.state
@@ -596,11 +650,19 @@ var Router5 = (function () {
         }
     }, {
         key: 'getWindowPath',
+
+        /**
+         * @private
+         */
         value: function getWindowPath() {
             return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
         }
     }, {
         key: 'areStatesEqual',
+
+        /**
+         * @private
+         */
         value: function areStatesEqual(state1, state2) {
             return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
                 return state1.params[p] === state2.params[p];
@@ -608,17 +670,32 @@ var Router5 = (function () {
         }
     }, {
         key: 'registerComponent',
+
+        /**
+         * Register an active component for a specific route segment
+         * @param  {String} name      The route segment full name
+         * @param  {Object} component The component instance
+         */
         value: function registerComponent(name, component) {
             if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
             this.activeComponents[name] = component;
         }
     }, {
         key: 'deregisterComponent',
+
+        /**
+         * Deregister an active component
+         * @param  {String} name The route segment full name
+         */
         value: function deregisterComponent(name) {
             delete this.activeComponents[name];
         }
     }, {
         key: '_addListener',
+
+        /**
+         * @private
+         */
         value: function _addListener(name, cb) {
             var normalizedName = name.replace(/^(\^|=)/, '');
             if (normalizedName) {
@@ -630,6 +707,10 @@ var Router5 = (function () {
         }
     }, {
         key: '_removeListener',
+
+        /**
+         * @private
+         */
         value: function _removeListener(name, cb) {
             if (!this.callbacks[name]) return;
             this.callbacks[name] = this.callbacks[name].filter(function (callback) {
@@ -638,47 +719,101 @@ var Router5 = (function () {
         }
     }, {
         key: 'addListener',
+
+        /**
+         * Add a route change listener
+         * @param {Function} cb The listener to add
+         */
         value: function addListener(cb) {
             this._addListener('', cb);
         }
     }, {
         key: 'removeListener',
+
+        /**
+         * Remove a route change listener
+         * @param  {Function} cb The listener to remove
+         */
         value: function removeListener(cb) {
             this._removeListener('', cb);
         }
     }, {
         key: 'addNodeListener',
+
+        /**
+         * Add a node change listener
+         * @param {String}   name The route segment full name
+         * @param {Function} cb   The listener to add
+         */
         value: function addNodeListener(name, cb) {
             this._addListener('^' + name, cb);
         }
     }, {
         key: 'removeNodeListener',
+
+        /**
+         * Remove a node change listener
+         * @param {String}   name The route segment full name
+         * @param {Function} cb   The listener to remove
+         */
         value: function removeNodeListener(name, cb) {
             this._removeListener('^' + name, cb);
         }
     }, {
         key: 'addRouteListener',
+
+        /**
+         * Add a route change listener
+         * @param {String}   name The route name to listen to
+         * @param {Function} cb   The listener to add
+         */
         value: function addRouteListener(name, cb) {
             this._addListener('=' + name, cb);
         }
     }, {
         key: 'removeRouteListener',
+
+        /**
+         * Remove a route change listener
+         * @param {String}   name The route name to listen to
+         * @param {Function} cb   The listener to remove
+         */
         value: function removeRouteListener(name, cb) {
             this._removeListener('=' + name, cb);
         }
     }, {
         key: 'buildPath',
+
+        /**
+         * Generates a path from a route name and route params.
+         * The generated URL will be prefixed by
+         * @param {String} route  The route name
+         * @param {Object} params The route params (key-value pairs)
+         */
         value: function buildPath(route, params) {
             return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params);
         }
     }, {
         key: 'matchPath',
+
+        /**
+         * Match a path against the route tree.
+         * @param {String} path   The path / URL to match
+         * @param {Object}        The matched state object (null if no match)
+         */
         value: function matchPath(path) {
             var match = this.rootNode.matchPath(path);
             return match ? makeState(match.name, match.params, path) : null;
         }
     }, {
         key: 'navigate',
+
+        /**
+         * Navigate to a specific route
+         * @param  {String} name   The route name
+         * @param  {Object} params The route params
+         * @param  {Object} opts   The route options (replace, reload)
+         */
         value: function navigate(name) {
             var params = arguments[1] === undefined ? {} : arguments[1];
             var opts = arguments[2] === undefined ? {} : arguments[2];
