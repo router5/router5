@@ -188,11 +188,13 @@ export default class Router5 {
     registerComponent(name, component) {
         if (this.activeComponents[name]) console.warn(`A component was alread registered for route node ${name}.`)
         this.activeComponents[name] = component
+        return this
     }
 
     /**
      * Deregister an active component
      * @param  {String} name The route segment full name
+     * @return {Router5} The router instance
      */
     deregisterComponent(name) {
         delete this.activeComponents[name]
@@ -209,66 +211,73 @@ export default class Router5 {
         }
         if (!this.callbacks[name]) this.callbacks[name] = []
         this.callbacks[name].push(cb)
+        return this
     }
 
     /**
      * @private
      */
     _removeListener(name, cb) {
-        if (!this.callbacks[name]) return
-        this.callbacks[name] = this.callbacks[name].filter(callback => callback !== cb)
+        if (this.callbacks[name]) this.callbacks[name] = this.callbacks[name].filter(callback => callback !== cb)
+        return this
     }
 
     /**
      * Add a route change listener
      * @param {Function} cb The listener to add
+     * @return {Router5} The router instance
      */
     addListener(cb) {
-        this._addListener('', cb)
+        return this._addListener('', cb)
     }
 
     /**
      * Remove a route change listener
      * @param  {Function} cb The listener to remove
+     * @return {Router5} The router instance
      */
     removeListener(cb) {
-        this._removeListener('', cb)
+        return this._removeListener('', cb)
     }
 
     /**
      * Add a node change listener
      * @param {String}   name The route segment full name
      * @param {Function} cb   The listener to add
+     * @return {Router5} The router instance
      */
     addNodeListener(name, cb) {
-        this._addListener('^' + name, cb);
+        return this._addListener('^' + name, cb);
     }
 
     /**
      * Remove a node change listener
      * @param {String}   name The route segment full name
      * @param {Function} cb   The listener to remove
+     * @return {Router5} The router instance
      */
     removeNodeListener(name, cb) {
-        this._removeListener('^' + name, cb);
+        return this._removeListener('^' + name, cb);
     }
 
     /**
      * Add a route change listener
      * @param {String}   name The route name to listen to
      * @param {Function} cb   The listener to add
+     * @return {Router5} The router instance
      */
     addRouteListener(name, cb) {
-        this._addListener('=' + name, cb)
+        return this._addListener('=' + name, cb)
     }
 
     /**
      * Remove a route change listener
      * @param {String}   name The route name to listen to
      * @param {Function} cb   The listener to remove
+     * @return {Router5} The router instance
      */
     removeRouteListener(name, cb) {
-        this._removeListener('=' + name, cb)
+        return this._removeListener('=' + name, cb)
     }
 
     /**
@@ -296,6 +305,7 @@ export default class Router5 {
      * @param  {String} name   The route name
      * @param  {Object} params The route params
      * @param  {Object} opts   The route options (replace, reload)
+     * @return {Boolean}       Whether or not transition was allowed
      */
     navigate(name, params = {}, opts = {}) {
         if (!this.started) return
@@ -317,5 +327,7 @@ export default class Router5 {
         if (canTransition && !sameStates) {
             window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
         }
+
+        return canTransition
     }
 }

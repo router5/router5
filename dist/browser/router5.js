@@ -679,6 +679,7 @@ var Router5 = (function () {
         value: function registerComponent(name, component) {
             if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
             this.activeComponents[name] = component;
+            return this;
         }
     }, {
         key: 'deregisterComponent',
@@ -686,6 +687,7 @@ var Router5 = (function () {
         /**
          * Deregister an active component
          * @param  {String} name The route segment full name
+         * @return {Router5} The router instance
          */
         value: function deregisterComponent(name) {
             delete this.activeComponents[name];
@@ -704,6 +706,7 @@ var Router5 = (function () {
             }
             if (!this.callbacks[name]) this.callbacks[name] = [];
             this.callbacks[name].push(cb);
+            return this;
         }
     }, {
         key: '_removeListener',
@@ -712,10 +715,10 @@ var Router5 = (function () {
          * @private
          */
         value: function _removeListener(name, cb) {
-            if (!this.callbacks[name]) return;
-            this.callbacks[name] = this.callbacks[name].filter(function (callback) {
+            if (this.callbacks[name]) this.callbacks[name] = this.callbacks[name].filter(function (callback) {
                 return callback !== cb;
             });
+            return this;
         }
     }, {
         key: 'addListener',
@@ -723,9 +726,10 @@ var Router5 = (function () {
         /**
          * Add a route change listener
          * @param {Function} cb The listener to add
+         * @return {Router5} The router instance
          */
         value: function addListener(cb) {
-            this._addListener('', cb);
+            return this._addListener('', cb);
         }
     }, {
         key: 'removeListener',
@@ -733,9 +737,10 @@ var Router5 = (function () {
         /**
          * Remove a route change listener
          * @param  {Function} cb The listener to remove
+         * @return {Router5} The router instance
          */
         value: function removeListener(cb) {
-            this._removeListener('', cb);
+            return this._removeListener('', cb);
         }
     }, {
         key: 'addNodeListener',
@@ -744,9 +749,10 @@ var Router5 = (function () {
          * Add a node change listener
          * @param {String}   name The route segment full name
          * @param {Function} cb   The listener to add
+         * @return {Router5} The router instance
          */
         value: function addNodeListener(name, cb) {
-            this._addListener('^' + name, cb);
+            return this._addListener('^' + name, cb);
         }
     }, {
         key: 'removeNodeListener',
@@ -755,9 +761,10 @@ var Router5 = (function () {
          * Remove a node change listener
          * @param {String}   name The route segment full name
          * @param {Function} cb   The listener to remove
+         * @return {Router5} The router instance
          */
         value: function removeNodeListener(name, cb) {
-            this._removeListener('^' + name, cb);
+            return this._removeListener('^' + name, cb);
         }
     }, {
         key: 'addRouteListener',
@@ -766,9 +773,10 @@ var Router5 = (function () {
          * Add a route change listener
          * @param {String}   name The route name to listen to
          * @param {Function} cb   The listener to add
+         * @return {Router5} The router instance
          */
         value: function addRouteListener(name, cb) {
-            this._addListener('=' + name, cb);
+            return this._addListener('=' + name, cb);
         }
     }, {
         key: 'removeRouteListener',
@@ -777,9 +785,10 @@ var Router5 = (function () {
          * Remove a route change listener
          * @param {String}   name The route name to listen to
          * @param {Function} cb   The listener to remove
+         * @return {Router5} The router instance
          */
         value: function removeRouteListener(name, cb) {
-            this._removeListener('=' + name, cb);
+            return this._removeListener('=' + name, cb);
         }
     }, {
         key: 'buildPath',
@@ -813,6 +822,7 @@ var Router5 = (function () {
          * @param  {String} name   The route name
          * @param  {Object} params The route params
          * @param  {Object} opts   The route options (replace, reload)
+         * @return {Boolean}       Whether or not transition was allowed
          */
         value: function navigate(name) {
             var params = arguments[1] === undefined ? {} : arguments[1];
@@ -837,6 +847,8 @@ var Router5 = (function () {
             if (canTransition && !sameStates) {
                 window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
             }
+
+            return canTransition;
         }
     }]);
 
