@@ -29,12 +29,18 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+var defaultOrConstrained = function defaultOrConstrained(match) {
+    return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~]+') + ')';
+};
+
 var rules = [{
     // An URL can contain a parameter :paramName
     // - and _ are allowed but not in last position
     name: 'url-parameter',
-    pattern: /^:([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/,
-    regex: /([a-zA-Z0-9-_.~]+)/
+    pattern: /^:([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
+    regex: function regex(match) {
+        return new RegExp(defaultOrConstrained(match[2]));
+    }
 }, {
     // Url parameter (splat)
     name: 'url-parameter-splat',
@@ -42,9 +48,9 @@ var rules = [{
     regex: /([^\?]*)/
 }, {
     name: 'url-parameter-matrix',
-    pattern: /^\;([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/,
+    pattern: /^\;([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
     regex: function regex(match) {
-        return new RegExp(';' + match[1] + '=([a-zA-Z0-9-_.~]+)');
+        return new RegExp(';' + match[1] + '=' + defaultOrConstrained(match[2]));
     }
 }, {
     // Query parameter: ?param1&param2
@@ -85,7 +91,8 @@ var tokenise = function tokenise(str) {
         tokens.push({
             type: rule.name,
             match: match[0],
-            val: match.length > 1 ? match.slice(1) : null,
+            val: match.slice(1, 2),
+            otherVal: match.slice(2),
             regex: rule.regex instanceof Function ? rule.regex(match) : rule.regex
         });
 
@@ -124,7 +131,7 @@ var Path = (function () {
         this.urlParams = !this.hasUrlParams ? [] : this.tokens.filter(function (t) {
             return /^url-parameter/.test(t.type);
         }).map(function (t) {
-            return t.val;
+            return t.val.slice(0, 1);
         })
         // Flatten
         .reduce(function (r, v) {
@@ -203,11 +210,23 @@ var Path = (function () {
         key: 'build',
         value: function build() {
             var params = arguments[0] === undefined ? {} : arguments[0];
+            var ignoreConstraints = arguments[1] === undefined ? false : arguments[1];
 
             // Check all params are provided (not search parameters which are optional)
             if (!this.params.every(function (p) {
                 return params[p] !== undefined;
             })) throw new Error('Missing parameters');
+
+            // Check constraints
+            if (!ignoreConstraints) {
+                var constraintsPassed = this.tokens.filter(function (t) {
+                    return /^url-parameter/.test(t.type) && !/-splat$/.test(t.type);
+                }).every(function (t) {
+                    return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(params[t.val]);
+                });
+
+                if (!constraintsPassed) throw new Error('Some parameters are of invalid format');
+            }
 
             var base = this.tokens.filter(function (t) {
                 return t.type !== 'query-parameter';
@@ -489,6 +508,7 @@ var Router5 = (function () {
             if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
 
             var canTransition = this._transition(state, this.lastKnownState);
+            if (!canTransition) window.history.pushState(this.lastKnownState, '', this.options.useHash ? '#' + path : path);
         }
     }, {
         key: 'start',
@@ -560,7 +580,7 @@ var Router5 = (function () {
 
             if (!cannotDeactivate) {
                 this.lastKnownState = toState;
-                if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+                this._invokeCallbacks(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState);
                 this._invokeCallbacks('=' + toState.name, toState, fromState);
                 this._invokeCallbacks('', toState, fromState);
             }
@@ -598,18 +618,19 @@ var Router5 = (function () {
             delete this.activeComponents[name];
         }
     }, {
-        key: 'addNodeListener',
-        value: function addNodeListener(name, cb) {
-            if (name) {
-                var segments = this.rootNode.getSegmentsByName(name);
-                if (!segments) console.warn('No route found for ' + name + ', listener could be never called!');
+        key: '_addListener',
+        value: function _addListener(name, cb) {
+            var normalizedName = name.replace(/^(\^|=)/, '');
+            if (normalizedName) {
+                var segments = this.rootNode.getSegmentsByName(normalizedName);
+                if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
             }
             if (!this.callbacks[name]) this.callbacks[name] = [];
             this.callbacks[name].push(cb);
         }
     }, {
-        key: 'removeNodeListener',
-        value: function removeNodeListener(name, cb) {
+        key: '_removeListener',
+        value: function _removeListener(name, cb) {
             if (!this.callbacks[name]) return;
             this.callbacks[name] = this.callbacks[name].filter(function (callback) {
                 return callback !== cb;
@@ -618,22 +639,32 @@ var Router5 = (function () {
     }, {
         key: 'addListener',
         value: function addListener(cb) {
-            this.addNodeListener('', cb);
+            this._addListener('', cb);
         }
     }, {
         key: 'removeListener',
         value: function removeListener(cb) {
-            this.removeNodeListener('', cb);
+            this._removeListener('', cb);
+        }
+    }, {
+        key: 'addNodeListener',
+        value: function addNodeListener(name, cb) {
+            this._addListener('^' + name, cb);
+        }
+    }, {
+        key: 'removeNodeListener',
+        value: function removeNodeListener(name, cb) {
+            this._removeListener('^' + name, cb);
         }
     }, {
         key: 'addRouteListener',
         value: function addRouteListener(name, cb) {
-            this.addNodeListener('=' + name, cb);
+            this._addListener('=' + name, cb);
         }
     }, {
         key: 'removeRouteListener',
         value: function removeRouteListener(name, cb) {
-            this.removeNodeListener('=' + name, cb);
+            this._removeListener('=' + name, cb);
         }
     }, {
         key: 'buildPath',

@@ -144,6 +144,15 @@ describe('router5', function () {
         router.removeNodeListener('users', listeners.node);
     });
 
+    it('should invoke node listeners on root', function () {
+        router.navigate('orders');
+        spyOn(listeners, 'node');
+        router.addNodeListener('', listeners.node);
+        router.navigate('users');
+        expect(listeners.node).toHaveBeenCalled();
+        router.removeNodeListener('', listeners.node);
+    });
+
     it('should invoke route listeners', function () {
         router.navigate('users.list');
         spyOn(listeners, 'node');

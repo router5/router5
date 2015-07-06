@@ -44,6 +44,7 @@ export default class Router5 {
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return
 
         let canTransition = this._transition(state, this.lastKnownState)
+        if (!canTransition) window.history.pushState(this.lastKnownState, '', this.options.useHash ? `#${path}` : path)
     }
 
     start() {
@@ -106,7 +107,7 @@ export default class Router5 {
 
        if (!cannotDeactivate) {
             this.lastKnownState = toState
-            if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState)
+            this._invokeCallbacks(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState)
             this._invokeCallbacks('=' + toState.name, toState, fromState)
             this._invokeCallbacks('', toState, fromState)
         }
@@ -138,34 +139,43 @@ export default class Router5 {
         delete this.activeComponents[name]
     }
 
-    addNodeListener(name, cb) {
-        if (name) {
-            let segments = this.rootNode.getSegmentsByName(name)
-            if (!segments) console.warn(`No route found for ${name}, listener could be never called!`)
+    _addListener(name, cb) {
+        let normalizedName = name.replace(/^(\^|=)/, '')
+        if (normalizedName) {
+            let segments = this.rootNode.getSegmentsByName(normalizedName)
+            if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
         }
         if (!this.callbacks[name]) this.callbacks[name] = []
         this.callbacks[name].push(cb)
     }
 
-    removeNodeListener(name, cb) {
+    _removeListener(name, cb) {
         if (!this.callbacks[name]) return
         this.callbacks[name] = this.callbacks[name].filter(callback => callback !== cb)
     }
 
     addListener(cb) {
-        this.addNodeListener('', cb)
+        this._addListener('', cb)
     }
 
     removeListener(cb) {
-        this.removeNodeListener('', cb)
+        this._removeListener('', cb)
+    }
+
+    addNodeListener(name, cb) {
+        this._addListener('^' + name, cb);
+    }
+
+    removeNodeListener(name, cb) {
+        this._removeListener('^' + name, cb);
     }
 
     addRouteListener(name, cb) {
-        this.addNodeListener('=' + name, cb)
+        this._addListener('=' + name, cb)
     }
 
     removeRouteListener(name, cb) {
-        this.removeNodeListener('=' + name, cb)
+        this._removeListener('=' + name, cb)
     }
 
     buildPath(route, params) {

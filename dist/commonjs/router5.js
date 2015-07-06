@@ -69,6 +69,7 @@ var Router5 = (function () {
             if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
 
             var canTransition = this._transition(state, this.lastKnownState);
+            if (!canTransition) window.history.pushState(this.lastKnownState, '', this.options.useHash ? '#' + path : path);
         }
     }, {
         key: 'start',
@@ -140,7 +141,7 @@ var Router5 = (function () {
 
             if (!cannotDeactivate) {
                 this.lastKnownState = toState;
-                if (i > 0) this._invokeCallbacks(fromStateIds[i - 1], toState, fromState);
+                this._invokeCallbacks(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState);
                 this._invokeCallbacks('=' + toState.name, toState, fromState);
                 this._invokeCallbacks('', toState, fromState);
             }
@@ -178,18 +179,19 @@ var Router5 = (function () {
             delete this.activeComponents[name];
         }
     }, {
-        key: 'addNodeListener',
-        value: function addNodeListener(name, cb) {
-            if (name) {
-                var segments = this.rootNode.getSegmentsByName(name);
-                if (!segments) console.warn('No route found for ' + name + ', listener could be never called!');
+        key: '_addListener',
+        value: function _addListener(name, cb) {
+            var normalizedName = name.replace(/^(\^|=)/, '');
+            if (normalizedName) {
+                var segments = this.rootNode.getSegmentsByName(normalizedName);
+                if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
             }
             if (!this.callbacks[name]) this.callbacks[name] = [];
             this.callbacks[name].push(cb);
         }
     }, {
-        key: 'removeNodeListener',
-        value: function removeNodeListener(name, cb) {
+        key: '_removeListener',
+        value: function _removeListener(name, cb) {
             if (!this.callbacks[name]) return;
             this.callbacks[name] = this.callbacks[name].filter(function (callback) {
                 return callback !== cb;
@@ -198,22 +200,32 @@ var Router5 = (function () {
     }, {
         key: 'addListener',
         value: function addListener(cb) {
-            this.addNodeListener('', cb);
+            this._addListener('', cb);
         }
     }, {
         key: 'removeListener',
         value: function removeListener(cb) {
-            this.removeNodeListener('', cb);
+            this._removeListener('', cb);
+        }
+    }, {
+        key: 'addNodeListener',
+        value: function addNodeListener(name, cb) {
+            this._addListener('^' + name, cb);
+        }
+    }, {
+        key: 'removeNodeListener',
+        value: function removeNodeListener(name, cb) {
+            this._removeListener('^' + name, cb);
         }
     }, {
         key: 'addRouteListener',
         value: function addRouteListener(name, cb) {
-            this.addNodeListener('=' + name, cb);
+            this._addListener('=' + name, cb);
         }
     }, {
         key: 'removeRouteListener',
         value: function removeRouteListener(name, cb) {
-            this.removeNodeListener('=' + name, cb);
+            this._removeListener('=' + name, cb);
         }
     }, {
         key: 'buildPath',
