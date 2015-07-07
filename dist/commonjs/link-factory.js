@@ -18,14 +18,14 @@ function linkFactory(router) {
             routeName: _react2['default'].PropTypes.string.isRequired,
             routeParams: _react2['default'].PropTypes.object,
             routeOptions: _react2['default'].PropTypes.object,
-            activeClass: _react2['default'].PropTypes.string,
+            activeClassName: _react2['default'].PropTypes.string,
             onClick: _react2['default'].PropTypes.func
         },
 
         getDefaultProps: function getDefaultProps() {
             return {
                 className: '',
-                activeClass: 'active',
+                activeClassName: 'active',
                 routeParams: {},
                 routeOptions: {},
                 onClick: this.clickHandler
@@ -37,7 +37,7 @@ function linkFactory(router) {
             // Not an anti-pattern
             // https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
             return {
-                active: router.isActive(this.props.routeName, this.prop.routeParams)
+                active: router.isActive(this.props.routeName, this.props.routeParams)
             };
         },
 
@@ -55,7 +55,7 @@ function linkFactory(router) {
         // Should it be an option to observe state in Links?
         // Should we add a GroupLink component for menus?
         routeChangeHandler: function routeChangeHandler(toState, fromState) {
-            this.setState({ active: router.isActive(this.props.routeName, this.prop.routeParams) });
+            this.setState({ active: router.isActive(this.props.routeName, this.props.routeParams) });
         },
 
         componentDidMount: function componentDidMount() {
@@ -70,10 +70,10 @@ function linkFactory(router) {
             var props = this.props;
             var active = this.state.active;
 
-            var href = router.buildPath(this.props.routeName, this.props.routeParams);
-            var className = props.className.split(' ').concat(active ? [activeClassName] : []).join(' ');
+            var href = router.buildUrl(props.routeName, props.routeParams);
+            var className = props.className.split(' ').concat(active ? [props.activeClassName] : []).join(' ');
 
-            return _react2['default'].CreateElement('a', { href: href, className: className, onClick: onClick });
+            return _react2['default'].createElement('a', { href: href, className: props.className, onClick: props.onClick });
         }
     });
 }

@@ -5,20 +5,20 @@ export default linkFactory
 function linkFactory(router) {
     return React.createClass({
         propTypes: {
-            routeName:    React.PropTypes.string.isRequired,
-            routeParams:  React.PropTypes.object,
-            routeOptions: React.PropTypes.object,
-            activeClass:  React.PropTypes.string,
-            onClick:      React.PropTypes.func
+            routeName:       React.PropTypes.string.isRequired,
+            routeParams:     React.PropTypes.object,
+            routeOptions:    React.PropTypes.object,
+            activeClassName: React.PropTypes.string,
+            onClick:         React.PropTypes.func
         },
 
         getDefaultProps() {
             return {
-                className: '',
-                activeClass: 'active',
-                routeParams: {},
-                routeOptions: {},
-                onClick: this.clickHandler
+                className:       '',
+                activeClassName: 'active',
+                routeParams:     {},
+                routeOptions:    {},
+                onClick:         this.clickHandler
             };
         },
 
@@ -27,7 +27,7 @@ function linkFactory(router) {
             // Not an anti-pattern
             // https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
             return {
-                active: router.isActive(this.props.routeName, this.prop.routeParams)
+                active: router.isActive(this.props.routeName, this.props.routeParams)
             };
         },
 
@@ -48,7 +48,7 @@ function linkFactory(router) {
         // Should it be an option to observe state in Links?
         // Should we add a GroupLink component for menus?
         routeChangeHandler(toState, fromState) {
-            this.setState({active: router.isActive(this.props.routeName, this.prop.routeParams)})
+            this.setState({active: router.isActive(this.props.routeName, this.props.routeParams)})
         },
 
         componentDidMount() {
@@ -63,11 +63,11 @@ function linkFactory(router) {
             let props = this.props
             let active = this.state.active
 
-            let href =  router.buildPath(this.props.routeName, this.props.routeParams);
+            let href =  router.buildUrl(props.routeName, props.routeParams);
             let className = props.className.split(' ')
-                .concat(active ? [activeClassName] : []).join(' ')
+                .concat(active ? [props.activeClassName] : []).join(' ')
 
-            return React.CreateElement('a', {href, className, onClick})
+            return React.createElement('a', {href, className: props.className, onClick: props.onClick})
         }
     })
 }

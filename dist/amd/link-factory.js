@@ -13,14 +13,14 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 routeName: _React['default'].PropTypes.string.isRequired,
                 routeParams: _React['default'].PropTypes.object,
                 routeOptions: _React['default'].PropTypes.object,
-                activeClass: _React['default'].PropTypes.string,
+                activeClassName: _React['default'].PropTypes.string,
                 onClick: _React['default'].PropTypes.func
             },
 
             getDefaultProps: function getDefaultProps() {
                 return {
                     className: '',
-                    activeClass: 'active',
+                    activeClassName: 'active',
                     routeParams: {},
                     routeOptions: {},
                     onClick: this.clickHandler
@@ -32,7 +32,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 // Not an anti-pattern
                 // https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
                 return {
-                    active: router.isActive(this.props.routeName, this.prop.routeParams)
+                    active: router.isActive(this.props.routeName, this.props.routeParams)
                 };
             },
 
@@ -50,7 +50,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
             // Should it be an option to observe state in Links?
             // Should we add a GroupLink component for menus?
             routeChangeHandler: function routeChangeHandler(toState, fromState) {
-                this.setState({ active: router.isActive(this.props.routeName, this.prop.routeParams) });
+                this.setState({ active: router.isActive(this.props.routeName, this.props.routeParams) });
             },
 
             componentDidMount: function componentDidMount() {
@@ -65,10 +65,10 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 var props = this.props;
                 var active = this.state.active;
 
-                var href = router.buildPath(this.props.routeName, this.props.routeParams);
-                var className = props.className.split(' ').concat(active ? [activeClassName] : []).join(' ');
+                var href = router.buildUrl(props.routeName, props.routeParams);
+                var className = props.className.split(' ').concat(active ? [props.activeClassName] : []).join(' ');
 
-                return _React['default'].CreateElement('a', { href: href, className: className, onClick: onClick });
+                return _React['default'].createElement('a', { href: href, className: props.className, onClick: props.onClick });
             }
         });
     }
