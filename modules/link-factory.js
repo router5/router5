@@ -2,30 +2,34 @@ import React from 'react'
 
 export default linkFactory
 
-let linkFactory = (router) => {
+linkFactory = (router) => {
     return React.createClass({
         propTypes: {
-            routeName:    React.PropTypes.string.isRequired
+            routeName:    React.PropTypes.string.isRequired,
             routeParams:  React.PropTypes.object,
             routeOptions: React.PropTypes.object,
             activeClass:  React.PropTypes.string,
             onClick:      React.PropTypes.func
         },
 
-        getDefaultProps() ({
-            className: '',
-            activeClass: 'active',
-            routeParams: {},
-            routeOptions: {},
-            onClick: this.clickHandler
-        }),
+        getDefaultProps() {
+            return {
+                className: '',
+                activeClass: 'active',
+                routeParams: {},
+                routeOptions: {},
+                onClick: this.clickHandler
+            };
+        },
 
-        getInitialState() ({
+        getInitialState() {
             // Initialise state
             // Not an anti-pattern
             // https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
-            active: router.isActive(this.props.routeName, this.prop.routeParams)
-        }),
+            return {
+                active: router.isActive(this.props.routeName, this.prop.routeParams)
+            };
+        },
 
         // Is it overkill?
         shouldComponentUpdate(nextProps, nextState) {
@@ -53,7 +57,7 @@ let linkFactory = (router) => {
 
         componentWillUnmount() {
             router.removeListener(this.routeChangeHandler)
-        }
+        },
 
         render() {
             let props = this.props

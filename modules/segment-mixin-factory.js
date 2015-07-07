@@ -2,8 +2,8 @@ export default segmentMixinFactory
 
 let segmentMixinFactory = (router) => {
     return (routeName, listener) => ({
-        nodeListener: () {
-            listener.bind(this)()
+        nodeListener() {
+            listener.call(this)
         },
 
         componentDidMount() {
@@ -16,4 +16,4 @@ let segmentMixinFactory = (router) => {
             router.deregisterComponent(routeName, this)
         }
     })
-})
+}
