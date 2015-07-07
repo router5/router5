@@ -6,7 +6,7 @@
     "Thomas Roch <thomas.c.roch@gmail.com>"
   ],
   "description": "React helpers for integration with router5",
-  "main": "dist/browser/react-router5.min.js",
+  "main": "dist/browser/router5-react.min.js",
   "moduleType": [
     "amd",
     "es6",
