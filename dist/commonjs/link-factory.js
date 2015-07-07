@@ -27,8 +27,7 @@ function linkFactory(router) {
                 className: '',
                 activeClassName: 'active',
                 routeParams: {},
-                routeOptions: {},
-                onClick: this.clickHandler
+                routeOptions: {}
             };
         },
 
@@ -71,9 +70,10 @@ function linkFactory(router) {
             var active = this.state.active;
 
             var href = router.buildUrl(props.routeName, props.routeParams);
-            var className = props.className.split(' ').concat(active ? [props.activeClassName] : []).join(' ');
+            var className = (props.className ? props.className.split(' ') : []).concat(active ? [props.activeClassName] : []).join(' ');
+            var onClick = props.onClick || this.clickHandler;
 
-            return _react2['default'].createElement('a', { href: href, className: props.className, onClick: props.onClick });
+            return _react2['default'].createElement('a', { href: href, className: className, onClick: onClick }, props.children);
         }
     });
 }

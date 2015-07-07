@@ -17,8 +17,7 @@ function linkFactory(router) {
                 className:       '',
                 activeClassName: 'active',
                 routeParams:     {},
-                routeOptions:    {},
-                onClick:         this.clickHandler
+                routeOptions:    {}
             };
         },
 
@@ -63,11 +62,12 @@ function linkFactory(router) {
             let props = this.props
             let active = this.state.active
 
-            let href =  router.buildUrl(props.routeName, props.routeParams);
-            let className = props.className.split(' ')
+            let href =  router.buildUrl(props.routeName, props.routeParams)
+            let className = (props.className ? props.className.split(' ') : [])
                 .concat(active ? [props.activeClassName] : []).join(' ')
+            let onClick = props.onClick || this.clickHandler
 
-            return React.createElement('a', {href, className: props.className, onClick: props.onClick})
+            return React.createElement('a', {href, className, onClick}, props.children)
         }
     })
 }

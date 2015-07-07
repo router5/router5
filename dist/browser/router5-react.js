@@ -40,8 +40,7 @@ function linkFactory(router) {
                 className: '',
                 activeClassName: 'active',
                 routeParams: {},
-                routeOptions: {},
-                onClick: this.clickHandler
+                routeOptions: {}
             };
         },
 
@@ -84,17 +83,18 @@ function linkFactory(router) {
             var active = this.state.active;
 
             var href = router.buildUrl(props.routeName, props.routeParams);
-            var className = props.className.split(' ').concat(active ? [props.activeClassName] : []).join(' ');
+            var className = (props.className ? props.className.split(' ') : []).concat(active ? [props.activeClassName] : []).join(' ');
+            var onClick = props.onClick || this.clickHandler;
 
-            return React.createElement('a', { href: href, className: props.className, onClick: props.onClick });
+            return React.createElement('a', { href: href, className: className, onClick: onClick }, props.children);
         }
     });
 }
 function segmentMixinFactory(router) {
     return function (routeName, listener) {
         return {
-            nodeListener: function nodeListener() {
-                listener.call(this);
+            nodeListener: function nodeListener(toState, fromState) {
+                listener.call(this, toState, fromState);
             },
 
             componentDidMount: function componentDidMount() {

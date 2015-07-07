@@ -6,8 +6,8 @@ define(["exports", "module"], function (exports, module) {
     function segmentMixinFactory(router) {
         return function (routeName, listener) {
             return {
-                nodeListener: function nodeListener() {
-                    listener.call(this);
+                nodeListener: function nodeListener(toState, fromState) {
+                    listener.call(this, toState, fromState);
                 },
 
                 componentDidMount: function componentDidMount() {

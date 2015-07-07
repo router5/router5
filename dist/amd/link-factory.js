@@ -22,8 +22,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                     className: '',
                     activeClassName: 'active',
                     routeParams: {},
-                    routeOptions: {},
-                    onClick: this.clickHandler
+                    routeOptions: {}
                 };
             },
 
@@ -66,9 +65,10 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 var active = this.state.active;
 
                 var href = router.buildUrl(props.routeName, props.routeParams);
-                var className = props.className.split(' ').concat(active ? [props.activeClassName] : []).join(' ');
+                var className = (props.className ? props.className.split(' ') : []).concat(active ? [props.activeClassName] : []).join(' ');
+                var onClick = props.onClick || this.clickHandler;
 
-                return _React['default'].createElement('a', { href: href, className: props.className, onClick: props.onClick });
+                return _React['default'].createElement('a', { href: href, className: className, onClick: onClick }, props.children);
             }
         });
     }

@@ -2,8 +2,8 @@ export default segmentMixinFactory
 
 function segmentMixinFactory(router) {
     return (routeName, listener) => ({
-        nodeListener() {
-            listener.call(this)
+        nodeListener(toState, fromState) {
+            listener.call(this, toState, fromState)
         },
 
         componentDidMount() {
