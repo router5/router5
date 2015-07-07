@@ -2,7 +2,7 @@ import React from 'react'
 
 export default linkFactory
 
-linkFactory = (router) => {
+function linkFactory(router) {
     return React.createClass({
         propTypes: {
             routeName:    React.PropTypes.string.isRequired,
@@ -63,11 +63,11 @@ linkFactory = (router) => {
             let props = this.props
             let active = this.state.active
 
-            let path =  router.buildPath(this.props.routeName, this.props.routeParams);
+            let href =  router.buildPath(this.props.routeName, this.props.routeParams);
             let className = props.className.split(' ')
                 .concat(active ? [activeClassName] : []).join(' ')
 
-            return <a href={path} className={className} onClick={props.onClick}></a>
+            return React.CreateElement('a', {href, className, onClick})
         }
     })
 }

@@ -1,6 +1,6 @@
 export default segmentMixinFactory
 
-let segmentMixinFactory = (router) => {
+function segmentMixin(router) {
     return (routeName, listener) => ({
         nodeListener() {
             listener.call(this)
