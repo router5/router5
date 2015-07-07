@@ -2,13 +2,17 @@ export default segmentMixinFactory
 
 let segmentMixinFactory = (router) => {
     return (routeName, listener) => ({
+        nodeListener: () {
+            listener.bind(this)()
+        },
+
         componentDidMount() {
-            router.addNodeListener(routeName, listener.bind(this))
+            router.addNodeListener(routeName, this.nodeListener)
             router.registerComponent(routeName, this)
         },
 
         componentWillUnmount() {
-            router.addremoveNodeListener(routeName, listener.bind(this))
+            router.addremoveNodeListener(routeName, this.nodeListener)
             router.deregisterComponent(routeName, this)
         }
     })
