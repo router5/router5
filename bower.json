@@ -1,0 +1,33 @@
+{
+  "name": "router5-react",
+  "version": "0.1.0-alpha.1",
+  "homepage": "http://router5.github.io",
+  "authors": [
+    "Thomas Roch <thomas.c.roch@gmail.com>"
+  ],
+  "description": "React helpers for integration with router5",
+  "main": "dist/browser/react-router5.min.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "router",
+    "HTML5",
+    "react",
+    "reactjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "scripts",
+    "npm-debug.log",
+    "bower.json",
+    "README.md",
+    "package.json",
+    ".gitignore"
+  ]
+}
