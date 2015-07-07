@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = segmentMixinFactory;
 
-function segmentMixin(router) {
+function segmentMixinFactory(router) {
     return function (routeName, listener) {
         return {
             nodeListener: function nodeListener() {

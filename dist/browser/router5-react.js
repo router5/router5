@@ -90,7 +90,7 @@ function linkFactory(router) {
         }
     });
 }
-function segmentMixin(router) {
+function segmentMixinFactory(router) {
     return function (routeName, listener) {
         return {
             nodeListener: function nodeListener() {

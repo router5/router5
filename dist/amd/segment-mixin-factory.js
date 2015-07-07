@@ -3,7 +3,7 @@ define(["exports", "module"], function (exports, module) {
 
     module.exports = segmentMixinFactory;
 
-    function segmentMixin(router) {
+    function segmentMixinFactory(router) {
         return function (routeName, listener) {
             return {
                 nodeListener: function nodeListener() {
