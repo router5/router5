@@ -650,6 +650,20 @@ var Router5 = (function () {
             ;
         }
     }, {
+        key: 'isActive',
+
+        /**
+         * Whether or not the given route name with specified params is active.
+         * @param  {String}  name        The route name
+         * @param  {Object}  [params={}] The route parameters
+         * @return {Boolean}             Whether nor not the route is active
+         */
+        value: function isActive(name) {
+            var params = arguments[1] === undefined ? {} : arguments[1];
+
+            return this.areStatesEqual(makeState(name, params), this.getState());
+        }
+    }, {
         key: 'getWindowPath',
 
         /**

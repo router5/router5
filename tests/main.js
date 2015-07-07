@@ -214,5 +214,16 @@ describe('router5', function () {
         router.registerComponent('users.view', {});
         expect(console.warn).toHaveBeenCalled();
     });
+
+    it('should tell if a route is active or not', function () {
+        router.navigate('users.view', {id: 1});
+        expect(router.isActive('users.view', {id: 1})).toBe(true);
+        expect(router.isActive('users.view', {id: 2})).toBe(false);
+        expect(router.isActive('users.view')).toBe(false);
+
+        router.navigate('users');
+        expect(router.isActive('users')).toBe(true);
+        expect(router.isActive('users', {})).toBe(true);
+    });
 });
 

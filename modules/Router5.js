@@ -166,6 +166,16 @@ export default class Router5 {
     }
 
     /**
+     * Whether or not the given route name with specified params is active.
+     * @param  {String}  name        The route name
+     * @param  {Object}  [params={}] The route parameters
+     * @return {Boolean}             Whether nor not the route is active
+     */
+    isActive(name, params = {}) {
+        return this.areStatesEqual(makeState(name, params), this.getState())
+    }
+
+    /**
      * @private
      */
     getWindowPath() {
