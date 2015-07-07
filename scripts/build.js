@@ -49,9 +49,9 @@ function buildBundle(done) {
         var routeNodeSrc = results[2].code.trim();
         var router5Src = results[3].code.trim();
 
-        var classesSrc = pathParserSrc.replace(/'use strict';\n/, '') +
+        var classesSrc = pathParserSrc.replace(/("|')use strict("|');\n/g, '') +
             (routeNodeSrc + router5Src)
-                .replace(/'use strict';\n/, '')
+                .replace(/("|')use strict("|');\n/g, '')
                 .replace(/\nvar _createClass(?:.*)\n/, '')
                 .replace(/\nfunction _classCallCheck(?:.*)\n/, '');
 
