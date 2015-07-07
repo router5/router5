@@ -468,7 +468,7 @@ var makeState = function makeState(name, params, path) {
  * Create a new Router5 instance
  * @class
  * @param {RouteNode[]|Object[]|RouteNode|Object} routes The router routes
- * @param {Object} [opts={}] The router options
+ * @param {Object} [opts={}] The router options: useHash, defaultRoute and defaultParams can be specified.
  * @return {Router5} The router instance
  */
 
