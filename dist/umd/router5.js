@@ -53,6 +53,7 @@
             this.rootNode = routes instanceof _RouteNode['default'] ? routes : new _RouteNode['default']('', '', routes);
             this.activeComponents = {};
             this.options = opts;
+            this.base = window.location.pathname;
 
             return this;
         }
@@ -103,12 +104,15 @@
              */
             value: function onPopState(evt) {
                 // Do nothing if no state or if last know state is poped state (it should never happen)
-                var state = evt.state || this.matchPath(this.getWindowPath());
+                var state = evt.state || this.matchPath(this.getLocation());
                 if (!state) return;
                 if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
 
                 var canTransition = this._transition(state, this.lastKnownState);
-                if (!canTransition) window.history.pushState(this.lastKnownState, '', this.options.useHash ? '#' + path : path);
+                if (!canTransition) {
+                    var url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params);
+                    window.history.pushState(this.lastKnownState, '', url);
+                }
             }
         }, {
             key: 'start',
@@ -122,12 +126,12 @@
                 this.started = true;
 
                 // Try to match starting path name
-                var startPath = this.getWindowPath();
+                var startPath = this.getLocation().replace(new RegExp('^' + this.base), '');
                 var startState = this.matchPath(startPath);
 
                 if (startState) {
                     this.lastKnownState = startState;
-                    window.history.replaceState(this.lastKnownState, '', this.options.useHash ? '#' + startPath : startPath);
+                    window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
                 } else if (this.options.defaultRoute) {
                     this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true });
                 }
@@ -232,12 +236,12 @@
                 return this.areStatesEqual(makeState(name, params), this.getState());
             }
         }, {
-            key: 'getWindowPath',
+            key: 'getLocation',
 
             /**
              * @private
              */
-            value: function getWindowPath() {
+            value: function getLocation() {
                 return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
             }
         }, {
@@ -374,16 +378,30 @@
                 return this._removeListener('=' + name, cb);
             }
         }, {
+            key: 'buildUrl',
+
+            /**
+             * Generates an URL from a route name and route params.
+             * The generated URL will be prefixed by hash if useHash is set to true
+             * @param  {String} route  The route name
+             * @param  {Object} params The route params (key-value pairs)
+             * @return {String}        The built URL
+             */
+            value: function buildUrl(route, params) {
+                return (this.options.useHash ? window.location.pathname + '#' : this.base) + this.rootNode.buildPath(route, params);
+            }
+        }, {
             key: 'buildPath',
 
             /**
-             * Generates a path from a route name and route params.
-             * The generated URL will be prefixed by
-             * @param {String} route  The route name
-             * @param {Object} params The route params (key-value pairs)
+             * Build a path from a route name and route params
+             * The generated URL will be prefixed by hash if useHash is set to true
+             * @param  {String} route  The route name
+             * @param  {Object} params The route params (key-value pairs)
+             * @return {String}        The built Path
              */
             value: function buildPath(route, params) {
-                return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params);
+                return this.rootNode.buildPath(route, params);
             }
         }, {
             key: 'matchPath',
@@ -413,7 +431,8 @@
 
                 if (!this.started) return;
 
-                var path = this.rootNode.buildPath(name, params);
+                var path = this.buildPath(name, params);
+                var url = this.buildUrl(name, params);
 
                 if (!path) throw new Error('Could not find route "' + name + '"');
 
@@ -428,7 +447,7 @@
                 var canTransition = this._transition(this.lastStateAttempt, this.lastKnownState);
 
                 if (canTransition && !sameStates) {
-                    window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? '#' + path : path);
+                    window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url);
                 }
 
                 return canTransition;

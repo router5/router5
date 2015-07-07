@@ -25,6 +25,7 @@ export default class Router5 {
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
         this.activeComponents = {}
         this.options = opts
+        this.base = window.location.pathname
 
         return this
     }
@@ -66,12 +67,15 @@ export default class Router5 {
      */
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
-        let state = evt.state || this.matchPath(this.getWindowPath())
+        let state = evt.state || this.matchPath(this.getLocation())
         if (!state) return
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return
 
         let canTransition = this._transition(state, this.lastKnownState)
-        if (!canTransition) window.history.pushState(this.lastKnownState, '', this.options.useHash ? `#${path}` : path)
+        if (!canTransition) {
+            let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
+            window.history.pushState(this.lastKnownState, '', url)
+        }
     }
 
     /**
@@ -83,12 +87,12 @@ export default class Router5 {
         this.started = true
 
         // Try to match starting path name
-        let startPath = this.getWindowPath();
+        let startPath = this.getLocation().replace(new RegExp('^' + this.base), '');
         let startState = this.matchPath(startPath)
 
         if (startState) {
             this.lastKnownState = startState
-            window.history.replaceState(this.lastKnownState, '', this.options.useHash ? `#${startPath}` : startPath)
+            window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
         } else if (this.options.defaultRoute) {
             this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true})
         }
@@ -178,7 +182,7 @@ export default class Router5 {
     /**
      * @private
      */
-    getWindowPath() {
+    getLocation() {
         return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
     }
 
@@ -292,13 +296,25 @@ export default class Router5 {
     }
 
     /**
-     * Generates a path from a route name and route params.
-     * The generated URL will be prefixed by
-     * @param {String} route  The route name
-     * @param {Object} params The route params (key-value pairs)
+     * Generates an URL from a route name and route params.
+     * The generated URL will be prefixed by hash if useHash is set to true
+     * @param  {String} route  The route name
+     * @param  {Object} params The route params (key-value pairs)
+     * @return {String}        The built URL
+     */
+    buildUrl(route, params) {
+        return (this.options.useHash ? window.location.pathname + '#' : this.base) + this.rootNode.buildPath(route, params)
+    }
+
+    /**
+     * Build a path from a route name and route params
+     * The generated URL will be prefixed by hash if useHash is set to true
+     * @param  {String} route  The route name
+     * @param  {Object} params The route params (key-value pairs)
+     * @return {String}        The built Path
      */
     buildPath(route, params) {
-        return (this.options.useHash ? '#' : '') + this.rootNode.buildPath(route, params)
+        return this.rootNode.buildPath(route, params)
     }
 
     /**
@@ -321,7 +337,8 @@ export default class Router5 {
     navigate(name, params = {}, opts = {}) {
         if (!this.started) return
 
-        let path  = this.rootNode.buildPath(name, params)
+        let path  = this.buildPath(name, params)
+        let url  = this.buildUrl(name, params)
 
         if (!path) throw new Error(`Could not find route "${name}"`)
 
@@ -336,7 +353,7 @@ export default class Router5 {
         let canTransition = this._transition(this.lastStateAttempt, this.lastKnownState)
 
         if (canTransition && !sameStates) {
-            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', this.options.useHash ? `#${path}` : path)
+            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
         }
 
         return canTransition
