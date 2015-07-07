@@ -467,7 +467,8 @@ var makeState = function makeState(name, params, path) {
 /**
  * Create a new Router5 instance
  * @class
- * @param {Array[RouteNode|Object]|RouteNode|Object} routes The router routes
+ * @param {RouteNode[]|Object[]|RouteNode|Object} routes The router routes
+ * @param {Object} [opts={}] The router options
  * @return {Router5} The router instance
  */
 
@@ -506,7 +507,7 @@ var Router5 = (function () {
 
         /**
          * Add route(s)
-         * @param  {Array[RouteNode|Object]|RouteNode|Object} routes Route(s) to add
+         * @param  {RouteNode[]|Object[]|RouteNode|Object} routes Route(s) to add
          * @return {Router5}  The Router5 instance
          */
         value: function add(routes) {
@@ -807,8 +808,8 @@ var Router5 = (function () {
 
         /**
          * Match a path against the route tree.
-         * @param {String} path   The path / URL to match
-         * @param {Object}        The matched state object (null if no match)
+         * @param  {String} path   The path / URL to match
+         * @return {Object}        The matched state object (null if no match)
          */
         value: function matchPath(path) {
             var match = this.rootNode.matchPath(path);
@@ -820,8 +821,8 @@ var Router5 = (function () {
         /**
          * Navigate to a specific route
          * @param  {String} name   The route name
-         * @param  {Object} params The route params
-         * @param  {Object} opts   The route options (replace, reload)
+         * @param  {Object} [params={}] The route params
+         * @param  {Object} [opts={}]   The route options (replace, reload)
          * @return {Boolean}       Whether or not transition was allowed
          */
         value: function navigate(name) {
