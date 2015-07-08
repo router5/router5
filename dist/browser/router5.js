@@ -303,9 +303,13 @@ var RouteNode = (function () {
 
             if (names.length === 1) {
                 this.children.push(route);
-                // Push greedy splats to the bottom of the pile
-                this.children.sort(function (childA, childB) {
-                    return childA.hasSplatParam ? -1 : 1;
+                // Push greedy spats to the bottom of the pile
+                this.children.sort(function (a, b) {
+                    if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1;
+                    if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
+                    if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
+                    if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
+                    return 0;
                 });
             } else {
                 // Locate parent node
@@ -657,14 +661,44 @@ var Router5 = (function () {
 
         /**
          * Whether or not the given route name with specified params is active.
-         * @param  {String}  name        The route name
-         * @param  {Object}  [params={}] The route parameters
-         * @return {Boolean}             Whether nor not the route is active
+         * @param  {String}   name             The route name
+         * @param  {Object}   [params={}]      The route parameters
+         * @param  {Boolean}  [equality=false] If set to false (default), isActive will return true
+         *                                     if the provided route name and params are descendants
+         *                                     of the active state.
+         * @return {Boolean}                   Whether nor not the route is active
          */
         value: function isActive(name) {
             var params = arguments[1] === undefined ? {} : arguments[1];
+            var strictEquality = arguments[2] === undefined ? false : arguments[2];
 
-            return this.areStatesEqual(makeState(name, params), this.getState());
+            var activeState = this.getState();
+
+            if (!activeState) return false;
+
+            if (strictEquality || activeState.name === name) {
+                return this.areStatesEqual(makeState(name, params), activeState);
+            } else {
+                return this.areStatesDescendants(makeState(name, params), activeState);
+            }
+        }
+    }, {
+        key: 'areStatesDescendants',
+
+        /**
+         * Whether two states are descendants
+         * @param  {Object} parentState The parent state
+         * @param  {Object} childState  The child state
+         * @return {Boolean}            Whether the two provided states are related
+         */
+        value: function areStatesDescendants(parentState, childState) {
+            var regex = new RegExp('^' + parentState.name + '\\.(.*)$');
+            if (!regex.test(childState.name)) return false;
+            // If child state name extends parent state name, and all parent state params
+            // are in child state params.
+            return Object.keys(parentState.params).every(function (p) {
+                return parentState.params[p] === childState.params[p];
+            });
         }
     }, {
         key: 'getLocation',

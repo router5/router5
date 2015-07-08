@@ -171,12 +171,37 @@ export default class Router5 {
 
     /**
      * Whether or not the given route name with specified params is active.
-     * @param  {String}  name        The route name
-     * @param  {Object}  [params={}] The route parameters
-     * @return {Boolean}             Whether nor not the route is active
+     * @param  {String}   name             The route name
+     * @param  {Object}   [params={}]      The route parameters
+     * @param  {Boolean}  [equality=false] If set to false (default), isActive will return true
+     *                                     if the provided route name and params are descendants
+     *                                     of the active state.
+     * @return {Boolean}                   Whether nor not the route is active
      */
-    isActive(name, params = {}) {
-        return this.areStatesEqual(makeState(name, params), this.getState())
+    isActive(name, params = {}, strictEquality = false) {
+        let activeState = this.getState()
+
+        if (!activeState) return false
+
+        if (strictEquality || activeState.name === name) {
+            return this.areStatesEqual(makeState(name, params), activeState)
+        } else {
+            return this.areStatesDescendants(makeState(name, params), activeState)
+        }
+    }
+
+    /**
+     * Whether two states are descendants
+     * @param  {Object} parentState The parent state
+     * @param  {Object} childState  The child state
+     * @return {Boolean}            Whether the two provided states are related
+     */
+    areStatesDescendants(parentState, childState) {
+        let regex = new RegExp('^' + parentState.name + '\\.(.*)$')
+        if (!regex.test(childState.name)) return false
+        // If child state name extends parent state name, and all parent state params
+        // are in child state params.
+        return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p])
     }
 
     /**

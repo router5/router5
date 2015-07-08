@@ -10,7 +10,7 @@ var listeners = {
     }
 };
 
-var userRoutes = new RouteNode('users', '/users', [
+var usersRoute = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id'),
     new RouteNode('list', '/list')
 ]);
@@ -21,8 +21,13 @@ var ordersRoute = new RouteNode('orders', '/orders', [
     new RouteNode('completed', '/completed')
 ]);
 
+var sectionRoute = new RouteNode('section', '/:section', [
+    new RouteNode('view', '/view/:id')
+]);
+
 router = new Router5([
-        userRoutes
+        usersRoute,
+        sectionRoute
     ], {
         defaultRoute: 'home'
     })
@@ -38,6 +43,7 @@ describe('router5', function () {
     it('should start with the default route', function () {
         expect(window.location.hash).toBe('');
         expect(router.getState()).toEqual(null)
+        expect(router.isActive('home')).toEqual(false)
 
         // Starting twice shouldn't do anything
         router.start().start();
@@ -98,8 +104,13 @@ describe('router5', function () {
         window.dispatchEvent(evt);
 
         expect(router.getState()).toEqual(homeState);
+
+        router.navigate('users');
+        router.registerComponent('users', {canDeactivate: function () { return false; }});
         // Nothing will happen
         window.dispatchEvent(evt);
+        expect(router.getState()).not.toEqual(homeState);
+        router.deregisterComponent('users');
     });
 
     it('should be able to remove listeners', function () {
@@ -220,10 +231,15 @@ describe('router5', function () {
         expect(router.isActive('users.view', {id: 1})).toBe(true);
         expect(router.isActive('users.view', {id: 2})).toBe(false);
         expect(router.isActive('users.view')).toBe(false);
-
-        router.navigate('users');
         expect(router.isActive('users')).toBe(true);
-        expect(router.isActive('users', {})).toBe(true);
+        expect(router.isActive('users', {}, true)).toBe(false);
+
+        router.navigate('section.view', {section: 'section1', id: 12});
+        expect(router.isActive('section', {section: 'section1'})).toBe(true);
+        expect(router.isActive('section.view', {section: 'section1', id: 12})).toBe(true);
+        expect(router.isActive('section.view', {section: 'section2', id: 12})).toBe(false);
+        expect(router.isActive('section.view', {section: 'section1', id: 123})).toBe(false);
+        expect(router.isActive('users.view', {id: 123})).toBe(false);
     });
 });
 
