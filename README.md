@@ -9,7 +9,7 @@ Official website: [router5.github.io](http://router5.github.io)
 > This library is in release candidate version. Although it is functional, fully tested and stable,
 API is subject to adjustments whithout notice.
 
-An simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
+A simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
 and [path-parser](https://github.com/troch/path-parser).
 
 ## What is it?
@@ -23,7 +23,7 @@ on server capabilities!
 
 It is aimed at applications rendering a tree of components, but can easily be used elsewhere.
 This router is library and framework agnostic, and makes no asumption on your implementation.
-It favours __covention over configuration__, by giving you the means to observe route changes
+It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
 You can read more about motivations behind it here: [Why router5?](http://router5.github.io/why-router5.html).
@@ -54,6 +54,10 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 ## API
 
 - [API Reference](http://router5.github.io/docs/preventing-navigation.html)
+
+## Examples
+
+- [With React](http://router5.github.io/docs/with-react.html)
 
 ## Related
 
