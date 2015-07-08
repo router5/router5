@@ -20,7 +20,6 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
 
             getDefaultProps: function getDefaultProps() {
                 return {
-                    className: '',
                     activeClassName: 'active',
                     activeStrict: false,
                     routeParams: {},
@@ -44,7 +43,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
 
             clickHandler: function clickHandler(evt) {
                 evt.preventDefault();
-                router.navigate(this.props.routeName, this.props.routeParams, this.props.options);
+                router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
             },
 
             // Is it overkill?
