@@ -16,21 +16,26 @@ and mixins as functional as possible.
 This makes the use of Router5 with React very flexible, and you can choose how to organise your
 code. Below is one example of how you can use those helpers:
 
-```javascript
-import {linkFactory, segmentMixinFactory} from 'router5-react'
-import Router5 from 'router5'
 
-let router = Router5()
-    .addNode('users',      '/users')
-    .addNode('users.view', '/view/:id')
-    .addNode('users.list', '/list')
+```javascript
+import React from 'react'
+import {Router5} from 'router5'
+import {linkFactory, segmentMixinFactory} from 'router5-react'
+
+var router = new Router5()
+    .setOption('useHash', true)
+    .setOption('defaultRoute', 'inbox')
+    // Routes
+    .addNode('inbox',            '/inbox')
+    .addNode('inbox.message',    '/message/:id')
+    .addNode('compose',          '/compose')
+    .addNode('contacts',         '/contacts')
     .start()
 
-export {
-    Link:         linkFactory(router)
-    SegmentMixin: segmentMixinFactory(router)
-    router
-}
+var Link = linkFactory(router)
+var SegmentMixin = segmentMixinFactory(router)
+
+export {router, Link, SegmentMixin}
 ```
 
 ### Link component
@@ -45,7 +50,7 @@ let Menu = React.createClass({
     render() {
         let params = {id: 1}
         return (<nav>
-            <Link routeName="users.view" routeParams={params}>View user 1</Link>
+            <Link routeName="users.view" routeParams={params} routeOptions={reload: true}>View user 1</Link>
 
             <Link routeName="users.list">List users</Link>
         </nav>)

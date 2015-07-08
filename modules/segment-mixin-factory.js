@@ -7,12 +7,12 @@ function segmentMixinFactory(router) {
         },
 
         componentDidMount() {
-            router.addNodeListener(routeName, this.nodeListener)
+            if (listener) router.addNodeListener(routeName, this.nodeListener)
             router.registerComponent(routeName, this)
         },
 
         componentWillUnmount() {
-            router.removeNodeListener(routeName, this.nodeListener)
+            if (listener) router.removeNodeListener(routeName, this.nodeListener)
             router.deregisterComponent(routeName, this)
         }
     })
