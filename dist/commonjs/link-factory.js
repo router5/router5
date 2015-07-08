@@ -19,6 +19,7 @@ function linkFactory(router) {
             routeParams: _react2['default'].PropTypes.object,
             routeOptions: _react2['default'].PropTypes.object,
             activeClassName: _react2['default'].PropTypes.string,
+            activeStrict: _react2['default'].PropTypes.bool,
             onClick: _react2['default'].PropTypes.func
         },
 
@@ -26,6 +27,7 @@ function linkFactory(router) {
             return {
                 className: '',
                 activeClassName: 'active',
+                activeStrict: false,
                 routeParams: {},
                 routeOptions: {}
             };
@@ -36,7 +38,7 @@ function linkFactory(router) {
             // Not an anti-pattern
             // https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
             return {
-                active: router.isActive(this.props.routeName, this.props.routeParams)
+                active: router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict)
             };
         },
 

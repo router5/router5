@@ -14,6 +14,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 routeParams: _React['default'].PropTypes.object,
                 routeOptions: _React['default'].PropTypes.object,
                 activeClassName: _React['default'].PropTypes.string,
+                activeStrict: _React['default'].PropTypes.bool,
                 onClick: _React['default'].PropTypes.func
             },
 
@@ -21,6 +22,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 return {
                     className: '',
                     activeClassName: 'active',
+                    activeStrict: false,
                     routeParams: {},
                     routeOptions: {}
                 };
@@ -31,7 +33,7 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
                 // Not an anti-pattern
                 // https://facebook.github.io/react/tips/props-in-getInitialState-as-anti-pattern.html
                 return {
-                    active: router.isActive(this.props.routeName, this.props.routeParams)
+                    active: router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict)
                 };
             },
 

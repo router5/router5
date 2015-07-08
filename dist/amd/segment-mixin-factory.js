@@ -16,7 +16,7 @@ define(["exports", "module"], function (exports, module) {
                 },
 
                 componentWillUnmount: function componentWillUnmount() {
-                    router.addremoveNodeListener(routeName, this.nodeListener);
+                    router.removeNodeListener(routeName, this.nodeListener);
                     router.deregisterComponent(routeName, this);
                 }
             };
