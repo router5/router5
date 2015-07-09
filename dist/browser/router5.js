@@ -488,7 +488,7 @@ var Router5 = (function () {
         this.rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
         this.activeComponents = {};
         this.options = opts;
-        this.base = window.location.pathname;
+        this.base = window.location.pathname.replace(/^\/$/, '');
 
         return this;
     }
@@ -561,7 +561,7 @@ var Router5 = (function () {
             this.started = true;
 
             // Try to match starting path name
-            var startPath = this.getLocation().replace(new RegExp('^' + this.base), '');
+            var startPath = this.getLocation();
             var startState = this.matchPath(startPath);
 
             if (startState) {
@@ -796,7 +796,7 @@ var Router5 = (function () {
          * @private
          */
         value: function getLocation() {
-            return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
+            return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
         }
     }, {
         key: 'buildUrl',
@@ -840,10 +840,6 @@ var Router5 = (function () {
         key: '_transition',
 
         /**
-         *
-         */
-
-        /**
          * @private
          */
         value: function _transition(toState, fromState) {
@@ -851,7 +847,7 @@ var Router5 = (function () {
 
             if (!fromState) {
                 this.lastKnownState = toState;
-                this._invokeListeners('', toState, fromState);
+                this._invokeListeners('*', toState, fromState);
                 return true;
             }
 

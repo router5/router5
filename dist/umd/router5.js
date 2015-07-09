@@ -53,7 +53,7 @@
             this.rootNode = routes instanceof _RouteNode['default'] ? routes : new _RouteNode['default']('', '', routes);
             this.activeComponents = {};
             this.options = opts;
-            this.base = window.location.pathname;
+            this.base = window.location.pathname.replace(/^\/$/, '');
 
             return this;
         }
@@ -126,7 +126,7 @@
                 this.started = true;
 
                 // Try to match starting path name
-                var startPath = this.getLocation().replace(new RegExp('^' + this.base), '');
+                var startPath = this.getLocation();
                 var startState = this.matchPath(startPath);
 
                 if (startState) {
@@ -361,7 +361,7 @@
              * @private
              */
             value: function getLocation() {
-                return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
+                return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
             }
         }, {
             key: 'buildUrl',
@@ -405,10 +405,6 @@
             key: '_transition',
 
             /**
-             *
-             */
-
-            /**
              * @private
              */
             value: function _transition(toState, fromState) {
@@ -416,7 +412,7 @@
 
                 if (!fromState) {
                     this.lastKnownState = toState;
-                    this._invokeListeners('', toState, fromState);
+                    this._invokeListeners('*', toState, fromState);
                     return true;
                 }
 

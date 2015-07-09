@@ -25,7 +25,7 @@ export default class Router5 {
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
         this.activeComponents = {}
         this.options = opts
-        this.base = window.location.pathname
+        this.base = window.location.pathname.replace(/^\/$/, '')
 
         return this
     }
@@ -87,7 +87,7 @@ export default class Router5 {
         this.started = true
 
         // Try to match starting path name
-        let startPath = this.getLocation().replace(new RegExp('^' + this.base), '');
+        let startPath = this.getLocation();
         let startState = this.matchPath(startPath)
 
         if (startState) {
@@ -279,7 +279,9 @@ export default class Router5 {
      * @private
      */
     getLocation() {
-        return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
+        return this.options.useHash
+            ? window.location.hash.replace(/^#/, '')
+            : window.location.pathname.replace(new RegExp('^' + this.base), '')
     }
 
     /**
@@ -320,7 +322,7 @@ export default class Router5 {
     _transition(toState, fromState) {
         if (!fromState) {
             this.lastKnownState = toState
-            this._invokeListeners('', toState, fromState)
+            this._invokeListeners('*', toState, fromState)
             return true
         }
 
