@@ -114,53 +114,6 @@ export default class Router5 {
     }
 
     /**
-     * @private
-     */
-    _invokeCallbacks(name, newState, oldState) {
-        if (!this.callbacks[name]) return
-        this.callbacks[name].forEach(cb => {
-            cb.call(this, newState, oldState)
-        })
-    }
-
-    /**
-     * @private
-     */
-    _transition(toState, fromState) {
-        if (!fromState) {
-            this.lastKnownState = toState
-            this._invokeCallbacks('', toState, fromState)
-            return true
-        }
-
-        let i
-        let cannotDeactivate = false
-        let fromStateIds = nameToIDs(fromState.name)
-        let toStateIds   = nameToIDs(toState.name)
-        let maxI = Math.min(fromStateIds.length, toStateIds.length)
-
-        for (i = 0; i < maxI; i += 1) {
-            if (fromStateIds[i] !== toStateIds[i]) break
-        }
-
-        cannotDeactivate =
-            fromStateIds.slice(i).reverse()
-                .map(id => this.activeComponents[id])
-                .filter(comp => comp && comp.canDeactivate)
-                .some(comp => !comp.canDeactivate(toState, fromState))
-
-
-       if (!cannotDeactivate) {
-            this.lastKnownState = toState
-            this._invokeCallbacks(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState)
-            this._invokeCallbacks('=' + toState.name, toState, fromState)
-            this._invokeCallbacks('', toState, fromState)
-        }
-
-        return !cannotDeactivate
-    }
-
-    /**
      * Return the current state object
      * @return {Object} The current state
      */
@@ -191,6 +144,15 @@ export default class Router5 {
     }
 
     /**
+     * @private
+     */
+    areStatesEqual(state1, state2) {
+        return state1.name === state2.name &&
+           Object.keys(state1.params).length === Object.keys(state2.params).length &&
+           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
+    }
+
+    /**
      * Whether two states are descendants
      * @param  {Object} parentState The parent state
      * @param  {Object} childState  The child state
@@ -204,47 +166,22 @@ export default class Router5 {
         return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p])
     }
 
-    /**
-     * @private
-     */
-    getLocation() {
-        return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
-    }
 
     /**
      * @private
      */
-    areStatesEqual(state1, state2) {
-        return state1.name === state2.name &&
-           Object.keys(state1.params).length === Object.keys(state2.params).length &&
-           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
-    }
-
-    /**
-     * Register an active component for a specific route segment
-     * @param  {String} name      The route segment full name
-     * @param  {Object} component The component instance
-     */
-    registerComponent(name, component) {
-        if (this.activeComponents[name]) console.warn(`A component was alread registered for route node ${name}.`)
-        this.activeComponents[name] = component
-        return this
-    }
-
-    /**
-     * Deregister an active component
-     * @param  {String} name The route segment full name
-     * @return {Router5} The router instance
-     */
-    deregisterComponent(name) {
-        delete this.activeComponents[name]
+    _invokeListeners(name, newState, oldState) {
+        if (!this.callbacks[name]) return
+        this.callbacks[name].forEach(cb => {
+            cb.call(this, newState, oldState)
+        })
     }
 
     /**
      * @private
      */
     _addListener(name, cb) {
-        let normalizedName = name.replace(/^(\^|=)/, '')
+        let normalizedName = name.replace(/^(\*|\^|=)/, '')
         if (normalizedName) {
             let segments = this.rootNode.getSegmentsByName(normalizedName)
             if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
@@ -268,7 +205,7 @@ export default class Router5 {
      * @return {Router5} The router instance
      */
     addListener(cb) {
-        return this._addListener('', cb)
+        return this._addListener('*', cb)
     }
 
     /**
@@ -277,7 +214,7 @@ export default class Router5 {
      * @return {Router5} The router instance
      */
     removeListener(cb) {
-        return this._removeListener('', cb)
+        return this._removeListener('*', cb)
     }
 
     /**
@@ -321,6 +258,33 @@ export default class Router5 {
     }
 
     /**
+     * Register an active component for a specific route segment
+     * @param  {String} name      The route segment full name
+     * @param  {Object} component The component instance
+     */
+    registerComponent(name, component) {
+        if (this.activeComponents[name]) console.warn(`A component was alread registered for route node ${name}.`)
+        this.activeComponents[name] = component
+        return this
+    }
+
+    /**
+     * Deregister an active component
+     * @param  {String} name The route segment full name
+     * @return {Router5} The router instance
+     */
+    deregisterComponent(name) {
+        delete this.activeComponents[name]
+    }
+
+    /**
+     * @private
+     */
+    getLocation() {
+        return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname
+    }
+
+    /**
      * Generates an URL from a route name and route params.
      * The generated URL will be prefixed by hash if useHash is set to true
      * @param  {String} route  The route name
@@ -350,6 +314,43 @@ export default class Router5 {
     matchPath(path) {
         let match = this.rootNode.matchPath(path)
         return match ? makeState(match.name, match.params, path) : null
+    }
+
+    /**
+     * @private
+     */
+    _transition(toState, fromState) {
+        if (!fromState) {
+            this.lastKnownState = toState
+            this._invokeListeners('', toState, fromState)
+            return true
+        }
+
+        let i
+        let cannotDeactivate = false
+        let fromStateIds = nameToIDs(fromState.name)
+        let toStateIds   = nameToIDs(toState.name)
+        let maxI = Math.min(fromStateIds.length, toStateIds.length)
+
+        for (i = 0; i < maxI; i += 1) {
+            if (fromStateIds[i] !== toStateIds[i]) break
+        }
+
+        cannotDeactivate =
+            fromStateIds.slice(i).reverse()
+                .map(id => this.activeComponents[id])
+                .filter(comp => comp && comp.canDeactivate)
+                .some(comp => !comp.canDeactivate(toState, fromState))
+
+
+       if (!cannotDeactivate) {
+            this.lastKnownState = toState
+            this._invokeListeners(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState)
+            this._invokeListeners('=' + toState.name, toState, fromState)
+            this._invokeListeners('*', toState, fromState)
+        }
+
+        return !cannotDeactivate
     }
 
     /**

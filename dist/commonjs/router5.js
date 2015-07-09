@@ -147,62 +147,6 @@ var Router5 = (function () {
             return this;
         }
     }, {
-        key: '_invokeCallbacks',
-
-        /**
-         * @private
-         */
-        value: function _invokeCallbacks(name, newState, oldState) {
-            var _this = this;
-
-            if (!this.callbacks[name]) return;
-            this.callbacks[name].forEach(function (cb) {
-                cb.call(_this, newState, oldState);
-            });
-        }
-    }, {
-        key: '_transition',
-
-        /**
-         * @private
-         */
-        value: function _transition(toState, fromState) {
-            var _this2 = this;
-
-            if (!fromState) {
-                this.lastKnownState = toState;
-                this._invokeCallbacks('', toState, fromState);
-                return true;
-            }
-
-            var i = undefined;
-            var cannotDeactivate = false;
-            var fromStateIds = nameToIDs(fromState.name);
-            var toStateIds = nameToIDs(toState.name);
-            var maxI = Math.min(fromStateIds.length, toStateIds.length);
-
-            for (i = 0; i < maxI; i += 1) {
-                if (fromStateIds[i] !== toStateIds[i]) break;
-            }
-
-            cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
-                return _this2.activeComponents[id];
-            }).filter(function (comp) {
-                return comp && comp.canDeactivate;
-            }).some(function (comp) {
-                return !comp.canDeactivate(toState, fromState);
-            });
-
-            if (!cannotDeactivate) {
-                this.lastKnownState = toState;
-                this._invokeCallbacks(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState);
-                this._invokeCallbacks('=' + toState.name, toState, fromState);
-                this._invokeCallbacks('', toState, fromState);
-            }
-
-            return !cannotDeactivate;
-        }
-    }, {
         key: 'getState',
 
         /**
@@ -241,6 +185,17 @@ var Router5 = (function () {
             }
         }
     }, {
+        key: 'areStatesEqual',
+
+        /**
+         * @private
+         */
+        value: function areStatesEqual(state1, state2) {
+            return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
+                return state1.params[p] === state2.params[p];
+            });
+        }
+    }, {
         key: 'areStatesDescendants',
 
         /**
@@ -259,48 +214,18 @@ var Router5 = (function () {
             });
         }
     }, {
-        key: 'getLocation',
+        key: '_invokeListeners',
 
         /**
          * @private
          */
-        value: function getLocation() {
-            return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
-        }
-    }, {
-        key: 'areStatesEqual',
+        value: function _invokeListeners(name, newState, oldState) {
+            var _this = this;
 
-        /**
-         * @private
-         */
-        value: function areStatesEqual(state1, state2) {
-            return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
-                return state1.params[p] === state2.params[p];
+            if (!this.callbacks[name]) return;
+            this.callbacks[name].forEach(function (cb) {
+                cb.call(_this, newState, oldState);
             });
-        }
-    }, {
-        key: 'registerComponent',
-
-        /**
-         * Register an active component for a specific route segment
-         * @param  {String} name      The route segment full name
-         * @param  {Object} component The component instance
-         */
-        value: function registerComponent(name, component) {
-            if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
-            this.activeComponents[name] = component;
-            return this;
-        }
-    }, {
-        key: 'deregisterComponent',
-
-        /**
-         * Deregister an active component
-         * @param  {String} name The route segment full name
-         * @return {Router5} The router instance
-         */
-        value: function deregisterComponent(name) {
-            delete this.activeComponents[name];
         }
     }, {
         key: '_addListener',
@@ -309,7 +234,7 @@ var Router5 = (function () {
          * @private
          */
         value: function _addListener(name, cb) {
-            var normalizedName = name.replace(/^(\^|=)/, '');
+            var normalizedName = name.replace(/^(\*|\^|=)/, '');
             if (normalizedName) {
                 var segments = this.rootNode.getSegmentsByName(normalizedName);
                 if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
@@ -339,7 +264,7 @@ var Router5 = (function () {
          * @return {Router5} The router instance
          */
         value: function addListener(cb) {
-            return this._addListener('', cb);
+            return this._addListener('*', cb);
         }
     }, {
         key: 'removeListener',
@@ -350,7 +275,7 @@ var Router5 = (function () {
          * @return {Router5} The router instance
          */
         value: function removeListener(cb) {
-            return this._removeListener('', cb);
+            return this._removeListener('*', cb);
         }
     }, {
         key: 'addNodeListener',
@@ -401,6 +326,39 @@ var Router5 = (function () {
             return this._removeListener('=' + name, cb);
         }
     }, {
+        key: 'registerComponent',
+
+        /**
+         * Register an active component for a specific route segment
+         * @param  {String} name      The route segment full name
+         * @param  {Object} component The component instance
+         */
+        value: function registerComponent(name, component) {
+            if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
+            this.activeComponents[name] = component;
+            return this;
+        }
+    }, {
+        key: 'deregisterComponent',
+
+        /**
+         * Deregister an active component
+         * @param  {String} name The route segment full name
+         * @return {Router5} The router instance
+         */
+        value: function deregisterComponent(name) {
+            delete this.activeComponents[name];
+        }
+    }, {
+        key: 'getLocation',
+
+        /**
+         * @private
+         */
+        value: function getLocation() {
+            return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
+        }
+    }, {
         key: 'buildUrl',
 
         /**
@@ -437,6 +395,48 @@ var Router5 = (function () {
         value: function matchPath(path) {
             var match = this.rootNode.matchPath(path);
             return match ? makeState(match.name, match.params, path) : null;
+        }
+    }, {
+        key: '_transition',
+
+        /**
+         * @private
+         */
+        value: function _transition(toState, fromState) {
+            var _this2 = this;
+
+            if (!fromState) {
+                this.lastKnownState = toState;
+                this._invokeListeners('', toState, fromState);
+                return true;
+            }
+
+            var i = undefined;
+            var cannotDeactivate = false;
+            var fromStateIds = nameToIDs(fromState.name);
+            var toStateIds = nameToIDs(toState.name);
+            var maxI = Math.min(fromStateIds.length, toStateIds.length);
+
+            for (i = 0; i < maxI; i += 1) {
+                if (fromStateIds[i] !== toStateIds[i]) break;
+            }
+
+            cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
+                return _this2.activeComponents[id];
+            }).filter(function (comp) {
+                return comp && comp.canDeactivate;
+            }).some(function (comp) {
+                return !comp.canDeactivate(toState, fromState);
+            });
+
+            if (!cannotDeactivate) {
+                this.lastKnownState = toState;
+                this._invokeListeners(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState);
+                this._invokeListeners('=' + toState.name, toState, fromState);
+                this._invokeListeners('*', toState, fromState);
+            }
+
+            return !cannotDeactivate;
         }
     }, {
         key: 'navigate',
