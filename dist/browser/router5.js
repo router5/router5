@@ -662,11 +662,9 @@ var Router5 = (function () {
          * @private
          */
         value: function _invokeListeners(name, newState, oldState) {
-            var _this = this;
-
             if (!this.callbacks[name]) return;
             this.callbacks[name].forEach(function (cb) {
-                cb.call(_this, newState, oldState);
+                return cb(newState, oldState);
             });
         }
     }, {
@@ -842,10 +840,14 @@ var Router5 = (function () {
         key: '_transition',
 
         /**
+         *
+         */
+
+        /**
          * @private
          */
         value: function _transition(toState, fromState) {
-            var _this2 = this;
+            var _this = this;
 
             if (!fromState) {
                 this.lastKnownState = toState;
@@ -864,7 +866,7 @@ var Router5 = (function () {
             }
 
             cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
-                return _this2.activeComponents[id];
+                return _this.activeComponents[id];
             }).filter(function (comp) {
                 return comp && comp.canDeactivate;
             }).some(function (comp) {
@@ -873,7 +875,7 @@ var Router5 = (function () {
 
             if (!cannotDeactivate) {
                 this.lastKnownState = toState;
-                this._invokeListeners(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState);
+                this._invokeListeners('^' + (i > 0 ? fromStateIds[i - 1] : ''), toState, fromState);
                 this._invokeListeners('=' + toState.name, toState, fromState);
                 this._invokeListeners('*', toState, fromState);
             }

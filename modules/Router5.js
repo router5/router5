@@ -172,9 +172,7 @@ export default class Router5 {
      */
     _invokeListeners(name, newState, oldState) {
         if (!this.callbacks[name]) return
-        this.callbacks[name].forEach(cb => {
-            cb.call(this, newState, oldState)
-        })
+        this.callbacks[name].forEach(cb => cb(newState, oldState))
     }
 
     /**
@@ -342,10 +340,9 @@ export default class Router5 {
                 .filter(comp => comp && comp.canDeactivate)
                 .some(comp => !comp.canDeactivate(toState, fromState))
 
-
        if (!cannotDeactivate) {
             this.lastKnownState = toState
-            this._invokeListeners(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState)
+            this._invokeListeners('^' + (i > 0 ? fromStateIds[i - 1] : ''), toState, fromState)
             this._invokeListeners('=' + toState.name, toState, fromState)
             this._invokeListeners('*', toState, fromState)
         }

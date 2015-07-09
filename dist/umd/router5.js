@@ -227,11 +227,9 @@
              * @private
              */
             value: function _invokeListeners(name, newState, oldState) {
-                var _this = this;
-
                 if (!this.callbacks[name]) return;
                 this.callbacks[name].forEach(function (cb) {
-                    cb.call(_this, newState, oldState);
+                    return cb(newState, oldState);
                 });
             }
         }, {
@@ -407,10 +405,14 @@
             key: '_transition',
 
             /**
+             *
+             */
+
+            /**
              * @private
              */
             value: function _transition(toState, fromState) {
-                var _this2 = this;
+                var _this = this;
 
                 if (!fromState) {
                     this.lastKnownState = toState;
@@ -429,7 +431,7 @@
                 }
 
                 cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
-                    return _this2.activeComponents[id];
+                    return _this.activeComponents[id];
                 }).filter(function (comp) {
                     return comp && comp.canDeactivate;
                 }).some(function (comp) {
@@ -438,7 +440,7 @@
 
                 if (!cannotDeactivate) {
                     this.lastKnownState = toState;
-                    this._invokeListeners(i > 0 ? '^' + fromStateIds[i - 1] : '^', toState, fromState);
+                    this._invokeListeners('^' + (i > 0 ? fromStateIds[i - 1] : ''), toState, fromState);
                     this._invokeListeners('=' + toState.name, toState, fromState);
                     this._invokeListeners('*', toState, fromState);
                 }
