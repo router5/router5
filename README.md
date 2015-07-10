@@ -26,7 +26,7 @@ This router is library and framework agnostic, and makes no asumption on your im
 It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
-You can read more about motivations behind it here: [Why router5?](http://router5.github.io/why-router5.html).
+You can read more about motivations behind it here: [Why router5?](http://router5.github.io/docs/why-router5.html).
 
 To get started, look here: [Get started](http://router5.github.io/docs/why-router5.html)
 
