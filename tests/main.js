@@ -32,6 +32,7 @@ router = new Router5([
         defaultRoute: 'home'
     })
     .setOption('useHash', true)
+    .setOption('hashPrefix', '!')
     .add(ordersRoute)
     .addNode('home', '/home');
 
@@ -49,7 +50,7 @@ describe('router5', function () {
         router.start().start();
         expect(router.started).toBe(true);
 
-        expect(window.location.hash).toBe('#/home');
+        expect(window.location.hash).toBe('#!/home');
         expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
     });
 
@@ -60,7 +61,7 @@ describe('router5', function () {
     it('should be able to navigate to routes', function () {
         router.navigate('users.view', {id: 123});
 
-        expect(window.location.hash).toBe('#/users/view/123');
+        expect(window.location.hash).toBe('#!/users/view/123');
     });
 
     it('should throw an error if trying to navigate to an unknown route', function () {
@@ -78,7 +79,7 @@ describe('router5', function () {
         router.addListener(listeners.global);
 
         router.navigate('orders.pending');
-        expect(window.location.hash).toBe('#/orders/pending');
+        expect(window.location.hash).toBe('#!/orders/pending');
         expect(listeners.global).toHaveBeenCalledWith(router.lastKnownState, previousState);
         router.removeListener(listeners.global);
     });
@@ -136,14 +137,14 @@ describe('router5', function () {
         router.stop();
         expect(router.started).toBe(false);
         router.navigate('users.list');
-        expect(window.location.hash).toBe('#/orders/pending');
+        expect(window.location.hash).toBe('#!/orders/pending');
         // Stopping again shouldn't throw an error
         router.stop();
     });
 
     it('should not start with default route if current path matches an existing route', function () {
         router.start();
-        expect(window.location.hash).toBe('#/orders/pending');
+        expect(window.location.hash).toBe('#!/orders/pending');
     });
 
     it('should invoke node listeners', function () {
@@ -206,7 +207,7 @@ describe('router5', function () {
             }
         });
         router.navigate('users');
-        expect(window.location.hash).toBe('#/users/list');
+        expect(window.location.hash).toBe('#!/users/list');
 
         // Can deactivate
         router.deregisterComponent('users.list');
@@ -216,7 +217,7 @@ describe('router5', function () {
             }
         });
         router.navigate('users');
-        expect(window.location.hash).toBe('#/users');
+        expect(window.location.hash).toBe('#!/users');
     });
 
     it('should warn when trying to register a component twice', function () {

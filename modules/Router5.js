@@ -24,7 +24,11 @@ export default class Router5 {
         this.lastKnownState = null
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
         this.activeComponents = {}
-        this.options = opts
+        this.options = {
+            useHash: false,
+            hashPrefix: ''
+        }
+        Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
         this.base = window.location.pathname.replace(/^\/$/, '')
 
         return this
@@ -280,7 +284,7 @@ export default class Router5 {
      */
     getLocation() {
         return this.options.useHash
-            ? window.location.hash.replace(/^#/, '')
+            ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '')
             : window.location.pathname.replace(new RegExp('^' + this.base), '')
     }
 
@@ -292,7 +296,8 @@ export default class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
-        return (this.options.useHash ? window.location.pathname + '#' : this.base) + this.rootNode.buildPath(route, params)
+        return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.base) +
+            this.rootNode.buildPath(route, params)
     }
 
     /**

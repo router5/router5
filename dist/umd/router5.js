@@ -42,6 +42,8 @@
 
     var Router5 = (function () {
         function Router5(routes) {
+            var _this = this;
+
             var opts = arguments[1] === undefined ? {} : arguments[1];
 
             _classCallCheck(this, Router5);
@@ -52,7 +54,13 @@
             this.lastKnownState = null;
             this.rootNode = routes instanceof _RouteNode['default'] ? routes : new _RouteNode['default']('', '', routes);
             this.activeComponents = {};
-            this.options = opts;
+            this.options = {
+                useHash: false,
+                hashPrefix: ''
+            };
+            Object.keys(opts).forEach(function (opt) {
+                return _this.options[opt] = opts[opt];
+            });
             this.base = window.location.pathname.replace(/^\/$/, '');
 
             return this;
@@ -361,7 +369,7 @@
              * @private
              */
             value: function getLocation() {
-                return this.options.useHash ? window.location.hash.replace(/^#/, '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
+                return this.options.useHash ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
             }
         }, {
             key: 'buildUrl',
@@ -374,7 +382,7 @@
              * @return {String}        The built URL
              */
             value: function buildUrl(route, params) {
-                return (this.options.useHash ? window.location.pathname + '#' : this.base) + this.rootNode.buildPath(route, params);
+                return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.base) + this.rootNode.buildPath(route, params);
             }
         }, {
             key: 'buildPath',
@@ -408,7 +416,7 @@
              * @private
              */
             value: function _transition(toState, fromState) {
-                var _this = this;
+                var _this2 = this;
 
                 if (!fromState) {
                     this.lastKnownState = toState;
@@ -427,7 +435,7 @@
                 }
 
                 cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
-                    return _this.activeComponents[id];
+                    return _this2.activeComponents[id];
                 }).filter(function (comp) {
                     return comp && comp.canDeactivate;
                 }).some(function (comp) {
