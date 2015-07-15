@@ -88,7 +88,7 @@ let UsersComponent = React.createClass({
 
         if (toRoute.name === 'users.list') {
             // pseudo-code
-            xhr.getUser(1).then((user) => {
+            xhr.getUsers().then((users) => {
                 that.setState({route: toRoute, data: users})
             })
         }
