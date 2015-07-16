@@ -38,6 +38,10 @@
     "karma-coveralls": "^1.1.0",
     "coveralls": "^2.11.2",
     "mkdirp": "^0.5.1",
-    "uglify-js2": "^2.1.11"
+    "uglify-js2": "^2.1.11",
+    "conventional-changelog": "0.0.17",
+    "through2": "^2.0.0",
+    "vinyl-fs": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
