@@ -6,9 +6,6 @@
 
 Official website: [router5.github.io](http://router5.github.io)
 
-> This library is in release candidate version. Although it is functional, fully tested and stable,
-API is subject to adjustments whithout notice.
-
 A simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
 and [path-parser](https://github.com/troch/path-parser).
 
@@ -37,7 +34,7 @@ To get started, look here: [Get started](http://router5.github.io/docs/why-route
 - __Start__ and __stop__ router
 - __Nested named routes__: routes are identified by names and parameters so you don't have to manipulate URLs
 directly. Routes can be nested, introducing the notion of _route segments_.
-- __Route change listeners: listen to any route change, or register listeners for a specific route.
+- __Route change listeners__: listen to any route change, or register listeners for a specific route.
 - __Route node change listeners__: you can add listeners to be triggered on a specific named route node. They will be triggered if that named route node is the node a component tree needs to be re-rendered from.
 - __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers.
 - __You are in control!__ You decide what to do on a route change and how to do it.
