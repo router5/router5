@@ -4,7 +4,7 @@
 
 ### Features
 
-* add support for hashPrefix option ([cdcd5e3](https://github.com/router/router5/commit/cdcd5e3)), closes [#1](https://github.com/router/router5/issues/1)
+* add support for hashPrefix option ([cdcd5e3](https://github.com/router5/router5/commit/cdcd5e3)), closes [#1](https://github.com/router5/router5/issues/1)
 
 
 
@@ -14,12 +14,12 @@
 
 ### Bug Fixes
 
-* bugs related to getting location ([4c6a1d2](https://github.com/router/router5/commit/4c6a1d2))
+* bugs related to getting location ([4c6a1d2](https://github.com/router5/router5/commit/4c6a1d2))
 
 ### Features
 
-* don't bind listeners to router instance ([1a7246d](https://github.com/router/router5/commit/1a7246d))
-* improve isActive function (strict equality an option) ([732816f](https://github.com/router/router5/commit/732816f))
+* don't bind listeners to router instance ([1a7246d](https://github.com/router5/router5/commit/1a7246d))
+* improve isActive function (strict equality an option) ([732816f](https://github.com/router5/router5/commit/732816f))
 
 
 
@@ -29,12 +29,12 @@
 
 ### Bug Fixes
 
-* duplicated use strict in browser dist ([fe77f3c](https://github.com/router/router5/commit/fe77f3c))
-* take into account initial path ([5188f47](https://github.com/router/router5/commit/5188f47))
+* duplicated use strict in browser dist ([fe77f3c](https://github.com/router5/router5/commit/fe77f3c))
+* take into account initial path ([5188f47](https://github.com/router5/router5/commit/5188f47))
 
 ### Features
 
-* add isActive(name, params) function ([26303da](https://github.com/router/router5/commit/26303da))
+* add isActive(name, params) function ([26303da](https://github.com/router5/router5/commit/26303da))
 
 
 
@@ -44,8 +44,8 @@
 
 ### Features
 
-* make listeners chainable and return transition result in navigate ([f725296](https://github.com/router/router5/commit/f725296))
-* node listeners on unamed root node ([b52beb2](https://github.com/router/router5/commit/b52beb2))
+* make listeners chainable and return transition result in navigate ([f725296](https://github.com/router5/router5/commit/f725296))
+* node listeners on unamed root node ([b52beb2](https://github.com/router5/router5/commit/b52beb2))
 
 
 <a name="0.0.1-alpha.9"></a>
@@ -54,8 +54,8 @@
 
 ### Features
 
-* add route listeners ([ff554f7](https://github.com/router/router5/commit/ff554f7))
-* react to manual change in URL ([1e35d18](https://github.com/router/router5/commit/1e35d18))
+* add route listeners ([ff554f7](https://github.com/router5/router5/commit/ff554f7))
+* react to manual change in URL ([1e35d18](https://github.com/router5/router5/commit/1e35d18))
 
 
 
@@ -65,11 +65,11 @@
 
 ### Bug Fixes
 
-* update lastKnownState before invoking callbacks ([8904cfd](https://github.com/router/router5/commit/8904cfd))
+* update lastKnownState before invoking callbacks ([8904cfd](https://github.com/router5/router5/commit/8904cfd))
 
 ### Features
 
-* add setOption(opt, val) chainable method ([b45b0de](https://github.com/router/router5/commit/b45b0de))
+* add setOption(opt, val) chainable method ([b45b0de](https://github.com/router5/router5/commit/b45b0de))
 
 
 
@@ -79,12 +79,12 @@
 
 ### Bug Fixes
 
-* order of components deactivation ([a7b7ed3](https://github.com/router/router5/commit/a7b7ed3))
+* order of components deactivation ([a7b7ed3](https://github.com/router5/router5/commit/a7b7ed3))
 
 ### Features
 
-* add addNode chainable function ([49f1238](https://github.com/router/router5/commit/49f1238))
-* expose areStatesEqual function and add hash to buildPath function if useHash is  ([337b4e5](https://github.com/router/router5/commit/337b4e5))
+* add addNode chainable function ([49f1238](https://github.com/router5/router5/commit/49f1238))
+* expose areStatesEqual function and add hash to buildPath function if useHash is  ([337b4e5](https://github.com/router5/router5/commit/337b4e5))
 
 
 
@@ -94,17 +94,17 @@
 
 ### Bug Fixes
 
-* bug with reload option and same states ([2317287](https://github.com/router/router5/commit/2317287))
+* bug with reload option and same states ([2317287](https://github.com/router5/router5/commit/2317287))
 
 ### Features
 
-* add Router5 class with basic functionalities ([c72be0b](https://github.com/router/router5/commit/c72be0b))
-* add hash support and default route ([086ead0](https://github.com/router/router5/commit/086ead0))
-* add start and add methods and make them chainable with constructor ([4808750](https://github.com/router/router5/commit/4808750))
-* add stop function and started flag ([ea30ac6](https://github.com/router/router5/commit/ea30ac6))
-* do not push to history if states are the same and support reload option ([9734c8a](https://github.com/router/router5/commit/9734c8a))
-* register callbacks on specific nodes ([392a647](https://github.com/router/router5/commit/392a647))
-* request component deactivation on route transition ([78c1a51](https://github.com/router/router5/commit/78c1a51))
+* add Router5 class with basic functionalities ([c72be0b](https://github.com/router5/router5/commit/c72be0b))
+* add hash support and default route ([086ead0](https://github.com/router5/router5/commit/086ead0))
+* add start and add methods and make them chainable with constructor ([4808750](https://github.com/router5/router5/commit/4808750))
+* add stop function and started flag ([ea30ac6](https://github.com/router5/router5/commit/ea30ac6))
+* do not push to history if states are the same and support reload option ([9734c8a](https://github.com/router5/router5/commit/9734c8a))
+* register callbacks on specific nodes ([392a647](https://github.com/router5/router5/commit/392a647))
+* request component deactivation on route transition ([78c1a51](https://github.com/router5/router5/commit/78c1a51))
 
 
 
