@@ -19,11 +19,11 @@ let makeState = (name, params, path) => ({name, params, path})
 export default class Router5 {
     constructor(routes, opts = {}) {
         this.started = false
-        this.callbacks = {}
+        this._cbs = {}
+        this._cmps = {}
         this.lastStateAttempt = null
         this.lastKnownState = null
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
-        this.activeComponents = {}
         this.options = {
             useHash: false,
             hashPrefix: ''
@@ -175,8 +175,8 @@ export default class Router5 {
      * @private
      */
     _invokeListeners(name, newState, oldState) {
-        if (!this.callbacks[name]) return
-        this.callbacks[name].forEach(cb => cb(newState, oldState))
+        if (!this._cbs[name]) return
+        this._cbs[name].forEach(cb => cb(newState, oldState))
     }
 
     /**
@@ -188,8 +188,8 @@ export default class Router5 {
             let segments = this.rootNode.getSegmentsByName(normalizedName)
             if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
         }
-        if (!this.callbacks[name]) this.callbacks[name] = []
-        this.callbacks[name].push(cb)
+        if (!this._cbs[name]) this._cbs[name] = []
+        this._cbs[name].push(cb)
         return this
     }
 
@@ -197,7 +197,7 @@ export default class Router5 {
      * @private
      */
     _removeListener(name, cb) {
-        if (this.callbacks[name]) this.callbacks[name] = this.callbacks[name].filter(callback => callback !== cb)
+        if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(callback => callback !== cb)
         return this
     }
 
@@ -265,8 +265,8 @@ export default class Router5 {
      * @param  {Object} component The component instance
      */
     registerComponent(name, component) {
-        if (this.activeComponents[name]) console.warn(`A component was alread registered for route node ${name}.`)
-        this.activeComponents[name] = component
+        if (this._cmps[name]) console.warn(`A component was alread registered for route node ${name}.`)
+        this._cmps[name] = component
         return this
     }
 
@@ -276,16 +276,17 @@ export default class Router5 {
      * @return {Router5} The router instance
      */
     deregisterComponent(name) {
-        delete this.activeComponents[name]
+        delete this._cmps[name]
     }
 
     /**
      * @private
      */
     getLocation() {
-        return this.options.useHash
+        let path = this.options.useHash
             ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '')
             : window.location.pathname.replace(new RegExp('^' + this.base), '')
+        return path + window.location.search;
     }
 
     /**
@@ -343,7 +344,7 @@ export default class Router5 {
 
         cannotDeactivate =
             fromStateIds.slice(i).reverse()
-                .map(id => this.activeComponents[id])
+                .map(id => this._cmps[id])
                 .filter(comp => comp && comp.canDeactivate)
                 .some(comp => !comp.canDeactivate(toState, fromState))
 
