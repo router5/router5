@@ -189,14 +189,14 @@ export default class Router5 {
     /**
      * @private
      */
-    _addListener(name, cb) {
+    _addListener(name, cb, replace) {
         let normalizedName = name.replace(/^(\*|\^|=)/, '')
         if (normalizedName) {
             let segments = this.rootNode.getSegmentsByName(normalizedName)
             if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
         }
         if (!this._cbs[name]) this._cbs[name] = []
-        this._cbs[name].push(cb)
+        this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb)
         return this
     }
 
@@ -233,7 +233,7 @@ export default class Router5 {
      * @return {Router5} The router instance
      */
     addNodeListener(name, cb) {
-        return this._addListener('^' + name, cb);
+        return this._addListener('^' + name, cb, true);
     }
 
     /**
