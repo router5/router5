@@ -21,6 +21,7 @@ export default class Router5 {
         this.started = false
         this._cbs = {}
         this._cmps = {}
+        this._canAct = {}
         this.lastStateAttempt = null
         this.lastKnownState = null
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
@@ -57,12 +58,18 @@ export default class Router5 {
 
     /**
      * Add a route to the router.
-     * @param {String} name The route name
-     * @param {String} path The route path
-     * @return {Router5}  The Router5 instance
+     * @param {String}   name        The route name
+     * @param {String}   path        The route path
+     * @param {Function} canActivate A function to determine if the route can be activated.
+     *                               It will be invoked during a transition with `toState`
+     *                               and `fromState` parameters.
+     * @return {Router5}             The Router5 instance
      */
-    addNode(name, path) {
-        this.rootNode.addNode(name, path)
+    addNode(name, path, canActivate) {
+        try {
+            this.rootNode.addNode(name, path)
+            this._canAct[name] = canActivate
+        } catch (e) {}
         return this
     }
 
@@ -280,6 +287,19 @@ export default class Router5 {
     }
 
     /**
+     * [registerCanActivate description]
+     * @param  {String}   name        The route name to register the canActivate method for
+     * @param  {Function} canActivate The canActivate function. It should return `true`, `false`
+     *                                or a promise
+     * @return {Router5}  The router instance
+     */
+    canActivate(name, canActivate) {
+        if (this._canAct[name]) console.warn(`A canActivate was alread registered for route node ${name}.`)
+        this._canAct[name] = canActivate
+        return this
+    }
+
+    /**
      * @private
      */
     getLocation() {
@@ -334,6 +354,7 @@ export default class Router5 {
 
         let i
         let cannotDeactivate = false
+        let cannotActivate = false
         let fromStateIds = nameToIDs(fromState.name)
         let toStateIds   = nameToIDs(toState.name)
         let maxI = Math.min(fromStateIds.length, toStateIds.length)
@@ -348,14 +369,22 @@ export default class Router5 {
                 .filter(comp => comp && comp.canDeactivate)
                 .some(comp => !comp.canDeactivate(toState, fromState))
 
-       if (!cannotDeactivate) {
+
+        if (!cannotDeactivate) {
+            cannotActivate = toStateIds.slice(i)
+                .map(id => this._canAct[id])
+                .filter(canAct => canAct)
+                .some(canAct => !canAct(toState, fromState))
+        }
+
+        if (!cannotDeactivate && !cannotActivate) {
             this.lastKnownState = toState
             this._invokeListeners('^' + (i > 0 ? fromStateIds[i - 1] : ''), toState, fromState)
             this._invokeListeners('=' + toState.name, toState, fromState)
             this._invokeListeners('*', toState, fromState)
         }
 
-        return !cannotDeactivate
+        return !cannotDeactivate && !cannotActivate
     }
 
     /**

@@ -34,7 +34,8 @@ router = new Router5([
     .setOption('useHash', true)
     .setOption('hashPrefix', '!')
     .add(ordersRoute)
-    .addNode('home', '/home');
+    .addNode('home', '/home')
+    .addNode('admin', '/admin', function () { return false; });
 
 describe('router5', function () {
     it('should throw an error if Router5 is not used as a constructor', function () {
@@ -241,6 +242,12 @@ describe('router5', function () {
         expect(router.isActive('section.view', {section: 'section2', id: 12})).toBe(false);
         expect(router.isActive('section.view', {section: 'section1', id: 123})).toBe(false);
         expect(router.isActive('users.view', {id: 123})).toBe(false);
+    });
+
+    it('should block navigation if a route cannot be activated', function () {
+        router.navigate('home');
+        router.navigate('admin');
+        expect(router.isActive('home')).toBe(true);
     });
 });
 
