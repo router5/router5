@@ -185,16 +185,16 @@ describe('router5', function () {
 
     it('should be able to register components', function () {
         router.registerComponent('users.view', {});
-        expect(Object.keys(router.activeComponents).length).toBe(1);
+        expect(Object.keys(router._cmps).length).toBe(1);
 
         router.registerComponent('users.list', {});
-        expect(Object.keys(router.activeComponents).length).toBe(2);
+        expect(Object.keys(router._cmps).length).toBe(2);
 
         router.deregisterComponent('users.list');
-        expect(Object.keys(router.activeComponents).length).toBe(1);
+        expect(Object.keys(router._cmps).length).toBe(1);
 
         router.deregisterComponent('users.view');
-        expect(Object.keys(router.activeComponents).length).toBe(0);
+        expect(Object.keys(router._cmps).length).toBe(0);
     });
 
     it('should block navigation if a component refuses deactivation', function () {

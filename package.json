@@ -6,6 +6,7 @@
   "scripts": {
     "build": "node ./scripts/build.js && npm run uglify",
     "uglify": "./node_modules/.bin/uglifyjs2 dist/browser/router5.js --comments -m -o dist/browser/router5.min.js",
+    "buildTest": "node ./scripts/build.js --test",
     "test": "./node_modules/.bin/karma start karma.config.js"
   },
   "repository": {
@@ -42,6 +43,7 @@
     "conventional-changelog": "0.0.17",
     "through2": "^2.0.0",
     "vinyl-fs": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "yargs": "^3.15.0"
   }
 }
