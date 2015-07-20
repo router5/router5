@@ -6,28 +6,26 @@ let nameToIDs = name => {
 }
 
 let boolToPromise = res => {
-    if res.then return res
-    return new Promise((resolve, reject) => res ? resolve() : reject())
+    if (res.then) return res
+    return new Promise((resolve, reject) => res || res === undefined ? resolve() : reject())
 }
 
-let processFn = (fn, fromState, toState) => {
+let processFn = (fn, toState, fromState) => {
     return new Promise((resolve, reject) => {
         return boolToPromise(fn(toState, fromState))
     })
 }
 
-let process = (functions, fromState, toState) => {
+let process = (functions, toState, fromState) => {
     if (functions.length) {
-        return processFn(functions[0], fromState, toState)
-            .then(() => {
-                return process(functions.slice(1), fromState, toState)
-            })
+        return processFn(functions[0], toState, fromState)
+            .then(() => process(functions.slice(1), toState, fromState))
     }
     return boolToPromise(true)
 }
 
 export default class Transition {
-    constructor(router, fromState, toState) {
+    constructor(router, toState, fromState) {
         let i
         let fromStateIds = fromState ? nameToIDs(fromState.name) : []
         let toStateIds = nameToIDs(toState.name)
@@ -36,33 +34,33 @@ export default class Transition {
         for (i = 0; i < maxI; i += 1) {
             if (fromStateIds[i] !== toStateIds[i]) break
         }
-
-        this.toState      = toState
-        this.fromState    = fromState
-        this.toDeactivate = fromStateIds.slice(i).reverse()
-        this.toActivate   = toStateIds.slice(i)
+        let toDeactivate = fromStateIds.slice(i).reverse()
+        let toActivate   = toStateIds.slice(i)
+        let intersection = i > 0 ? fromStateIds[i - 1] : ''
 
         return new Promise((resolveTransition, rejectTransition) => {
             this.cancel = rejectTransition
 
             // Deactivate
-            let canDeactivateFunctions = this.toDeactivate
+            let canDeactivateFunctions = toDeactivate
                 .map(name => router._cmps(name))
                 .filter(comp => comp && comp.canDeactivate)
                 .map(comp => comp.canDeactivate)
 
-            let deactivation = process(canDeactivateFunctions, this.fromState, this.toState)
+            let deactivation = process(canDeactivateFunctions, toState, fromState)
 
             // Activate
             let activation = deactivation.then(() => {
-                let canActivateFunctions = this.toActivate
+                let canActivateFunctions = toActivate
                     .map(name => router._canAct[name])
                     .filter(_ => _)
-
-                return process(canActivateFunctions, this.fromState, this.toState)
+                return process(canActivateFunctions, toState, fromState)
             })
 
-            activation.then(resolveTransition, rejectTransition)
+            // Node listener
+            let nodeListener = activation.then(() => router._invokeListeners('^' + intersection, toState, fromState))
+
+            nodeListener.then(resolveTransition, rejectTransition)
         });
     }
 }

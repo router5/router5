@@ -1,4 +1,5 @@
 import RouteNode from 'route-node/modules/RouteNode'
+import Transition from './Transition'
 
 let nameToIDs = name => {
     return name.split('.').reduce((ids, name) => {
@@ -68,7 +69,7 @@ export default class Router5 {
     addNode(name, path, canActivate) {
         try {
             this.rootNode.addNode(name, path)
-            this._canAct[name] = canActivate
+            if (canActivate) this._canAct[name] = canActivate
         } catch (e) {}
         return this
     }
@@ -183,6 +184,7 @@ export default class Router5 {
      */
     _invokeListeners(name, newState, oldState) {
         if (!this._cbs[name]) return
+        if (!this._cbs[name].length === 1) return cb(newState, oldState)
         this._cbs[name].forEach(cb => cb(newState, oldState))
     }
 
