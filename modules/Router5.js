@@ -344,9 +344,9 @@ export default class Router5 {
      */
     _transition(toState, fromState, done) {
         // Cancel current transition
-        // if (this._tr) this._tr()
+        if (this._tr) this._tr()
 
-        this._tr = transition(router, toState, fromState, (err) => {
+        this._tr = transition(this, toState, fromState, (err) => {
             this._tr = null
 
             if (err) {
@@ -390,7 +390,7 @@ export default class Router5 {
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
-            done(constants.SAME_STATES)
+            if (done) done(constants.SAME_STATES)
             return
         }
 
