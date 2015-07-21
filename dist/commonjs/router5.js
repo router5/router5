@@ -14,12 +14,13 @@ var _routeNode = require('route-node');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
 
-var nameToIDs = function nameToIDs(name) {
-    return name.split('.').reduce(function (ids, name) {
-        ids.push(ids.length ? ids[ids.length - 1] + '.' + name : name);
-        return ids;
-    }, []);
-};
+var _transition2 = require('./transition');
+
+var _transition3 = _interopRequireDefault(_transition2);
+
+var _constants = require('./constants');
+
+var _constants2 = _interopRequireDefault(_constants);
 
 var makeState = function makeState(name, params, path) {
     return { name: name, params: params, path: path };
@@ -42,11 +43,12 @@ var Router5 = (function () {
         _classCallCheck(this, Router5);
 
         this.started = false;
-        this.callbacks = {};
+        this._cbs = {};
+        this._cmps = {};
+        this._canAct = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
         this.rootNode = routes instanceof _routeNode2['default'] ? routes : new _routeNode2['default']('', '', routes);
-        this.activeComponents = {};
         this.options = {
             useHash: false,
             hashPrefix: ''
@@ -89,12 +91,16 @@ var Router5 = (function () {
 
         /**
          * Add a route to the router.
-         * @param {String} name The route name
-         * @param {String} path The route path
-         * @return {Router5}  The Router5 instance
+         * @param {String}   name        The route name
+         * @param {String}   path        The route path
+         * @param {Function} canActivate A function to determine if the route can be activated.
+         *                               It will be invoked during a transition with `toState`
+         *                               and `fromState` parameters.
+         * @return {Router5}             The Router5 instance
          */
-        value: function addNode(name, path) {
+        value: function addNode(name, path, canActivate) {
             this.rootNode.addNode(name, path);
+            if (canActivate) this._canAct[name] = canActivate;
             return this;
         }
     }, {
@@ -104,25 +110,29 @@ var Router5 = (function () {
          * @private
          */
         value: function onPopState(evt) {
+            var _this2 = this;
+
             // Do nothing if no state or if last know state is poped state (it should never happen)
             var state = evt.state || this.matchPath(this.getLocation());
             if (!state) return;
             if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
 
-            var canTransition = this._transition(state, this.lastKnownState);
-            if (!canTransition) {
-                var url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params);
-                window.history.pushState(this.lastKnownState, '', url);
-            }
+            this._transition(state, this.lastKnownState, function (err) {
+                if (!err) {
+                    var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
+                    window.history.pushState(_this2.lastKnownState, '', url);
+                }
+            });
         }
     }, {
         key: 'start',
 
         /**
          * Start the router
-         * @return {Router5} The router instance
+         * @param  {Function} [done] A callback which will be called when starting is done
+         * @return {Router5}  The router instance
          */
-        value: function start() {
+        value: function start(done) {
             if (this.started) return this;
             this.started = true;
 
@@ -133,8 +143,9 @@ var Router5 = (function () {
             if (startState) {
                 this.lastKnownState = startState;
                 window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
+                if (done) done();
             } else if (this.options.defaultRoute) {
-                this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true });
+                this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true }, done);
             }
             // Listen to popstate
             window.addEventListener('popstate', this.onPopState.bind(this));
@@ -228,8 +239,9 @@ var Router5 = (function () {
          * @private
          */
         value: function _invokeListeners(name, newState, oldState) {
-            if (!this.callbacks[name]) return;
-            this.callbacks[name].forEach(function (cb) {
+            if (!this._cbs[name]) return;
+            if (!this._cbs[name].length === 1) return cb(newState, oldState);
+            this._cbs[name].forEach(function (cb) {
                 return cb(newState, oldState);
             });
         }
@@ -239,14 +251,14 @@ var Router5 = (function () {
         /**
          * @private
          */
-        value: function _addListener(name, cb) {
+        value: function _addListener(name, cb, replace) {
             var normalizedName = name.replace(/^(\*|\^|=)/, '');
             if (normalizedName) {
                 var segments = this.rootNode.getSegmentsByName(normalizedName);
                 if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
             }
-            if (!this.callbacks[name]) this.callbacks[name] = [];
-            this.callbacks[name].push(cb);
+            if (!this._cbs[name]) this._cbs[name] = [];
+            this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb);
             return this;
         }
     }, {
@@ -256,7 +268,7 @@ var Router5 = (function () {
          * @private
          */
         value: function _removeListener(name, cb) {
-            if (this.callbacks[name]) this.callbacks[name] = this.callbacks[name].filter(function (callback) {
+            if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(function (callback) {
                 return callback !== cb;
             });
             return this;
@@ -293,7 +305,7 @@ var Router5 = (function () {
          * @return {Router5} The router instance
          */
         value: function addNodeListener(name, cb) {
-            return this._addListener('^' + name, cb);
+            return this._addListener('^' + name, cb, true);
         }
     }, {
         key: 'removeNodeListener',
@@ -305,7 +317,8 @@ var Router5 = (function () {
          * @return {Router5} The router instance
          */
         value: function removeNodeListener(name, cb) {
-            return this._removeListener('^' + name, cb);
+            this._cbs['^' + name] = [];
+            return this;
         }
     }, {
         key: 'addRouteListener',
@@ -340,8 +353,8 @@ var Router5 = (function () {
          * @param  {Object} component The component instance
          */
         value: function registerComponent(name, component) {
-            if (this.activeComponents[name]) console.warn('A component was alread registered for route node ' + name + '.');
-            this.activeComponents[name] = component;
+            if (this._cmps[name]) console.warn('A component was alread registered for route node ' + name + '.');
+            this._cmps[name] = component;
             return this;
         }
     }, {
@@ -353,7 +366,21 @@ var Router5 = (function () {
          * @return {Router5} The router instance
          */
         value: function deregisterComponent(name) {
-            delete this.activeComponents[name];
+            delete this._cmps[name];
+        }
+    }, {
+        key: 'canActivate',
+
+        /**
+         * [registerCanActivate description]
+         * @param  {String}   name        The route name to register the canActivate method for
+         * @param  {Function} canActivate The canActivate function. It should return `true`, `false`
+         *                                or a promise
+         * @return {Router5}  The router instance
+         */
+        value: function canActivate(name, _canActivate) {
+            this._canAct[name] = _canActivate;
+            return this;
         }
     }, {
         key: 'getLocation',
@@ -362,7 +389,8 @@ var Router5 = (function () {
          * @private
          */
         value: function getLocation() {
-            return this.options.useHash ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
+            var path = this.options.useHash ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
+            return path + window.location.search;
         }
     }, {
         key: 'buildUrl',
@@ -408,57 +436,54 @@ var Router5 = (function () {
         /**
          * @private
          */
-        value: function _transition(toState, fromState) {
-            var _this2 = this;
+        value: function _transition(toState, fromState, done) {
+            var _this3 = this;
 
-            if (!fromState) {
-                this.lastKnownState = toState;
-                this._invokeListeners('*', toState, fromState);
-                return true;
-            }
+            // Cancel current transition
+            if (this._tr) this._tr();
 
-            var i = undefined;
-            var cannotDeactivate = false;
-            var fromStateIds = nameToIDs(fromState.name);
-            var toStateIds = nameToIDs(toState.name);
-            var maxI = Math.min(fromStateIds.length, toStateIds.length);
+            this._tr = (0, _transition3['default'])(this, toState, fromState, function (err) {
+                _this3._tr = null;
 
-            for (i = 0; i < maxI; i += 1) {
-                if (fromStateIds[i] !== toStateIds[i]) break;
-            }
+                if (err) {
+                    if (done) done(err);
+                    return;
+                }
 
-            cannotDeactivate = fromStateIds.slice(i).reverse().map(function (id) {
-                return _this2.activeComponents[id];
-            }).filter(function (comp) {
-                return comp && comp.canDeactivate;
-            }).some(function (comp) {
-                return !comp.canDeactivate(toState, fromState);
+                _this3.lastKnownState = toState;
+                _this3._invokeListeners('=' + toState.name, toState, fromState);
+                _this3._invokeListeners('*', toState, fromState);
+
+                if (done) done(null, true);
             });
 
-            if (!cannotDeactivate) {
-                this.lastKnownState = toState;
-                this._invokeListeners('^' + (i > 0 ? fromStateIds[i - 1] : ''), toState, fromState);
-                this._invokeListeners('=' + toState.name, toState, fromState);
-                this._invokeListeners('*', toState, fromState);
-            }
-
-            return !cannotDeactivate;
+            return function () {
+                if (_this3._tr) _this3._tr();
+            };
         }
     }, {
         key: 'navigate',
 
         /**
          * Navigate to a specific route
-         * @param  {String} name   The route name
-         * @param  {Object} [params={}] The route params
-         * @param  {Object} [opts={}]   The route options (replace, reload)
-         * @return {Boolean}       Whether or not transition was allowed
+         * @param  {String}   name        The route name
+         * @param  {Object}   [params={}] The route params
+         * @param  {Object}   [opts={}]   The route options (replace, reload)
+         * @param  {Function} [done]      A callback (err, res) to call when transition has been performed
+         *                                either successfully or unsuccessfully.
+         * @return {Function}             A cancellation function
          */
-        value: function navigate(name) {
-            var params = arguments[1] === undefined ? {} : arguments[1];
-            var opts = arguments[2] === undefined ? {} : arguments[2];
+        value: function navigate(name, params, opts, done) {
+            if (params === undefined) params = {};
 
-            if (!this.started) return;
+            var _this4 = this;
+
+            if (opts === undefined) opts = {};
+
+            if (!this.started) {
+                done(_constants2['default'].ROUTER_NOT_STARTED);
+                return;
+            }
 
             var path = this.buildPath(name, params);
             var url = this.buildUrl(name, params);
@@ -470,16 +495,21 @@ var Router5 = (function () {
 
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
-            if (sameStates && !opts.reload) return;
-
-            // Transition and amend history
-            var canTransition = this._transition(this.lastStateAttempt, this.lastKnownState);
-
-            if (canTransition && !sameStates) {
-                window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url);
+            if (sameStates && !opts.reload) {
+                if (done) done(_constants2['default'].SAME_STATES);
+                return;
             }
 
-            return canTransition;
+            // Transition and amend history
+            return this._transition(this.lastStateAttempt, this.lastKnownState, function (err) {
+                if (err) {
+                    if (done) done(err);
+                    return;
+                }
+
+                window.history[opts.replace ? 'replaceState' : 'pushState'](_this4.lastStateAttempt, '', url);
+                if (done) done(null, true);
+            });
         }
     }]);
 

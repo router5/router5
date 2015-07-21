@@ -1,13 +1,14 @@
 {
   "name": "router5",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "dist/commonjs/index.js",
   "scripts": {
     "build": "node ./scripts/build.js && npm run uglify",
     "uglify": "./node_modules/.bin/uglifyjs2 dist/browser/router5.js --comments -m -o dist/browser/router5.min.js",
     "buildTest": "node ./scripts/build.js --test",
-    "test": "./node_modules/.bin/karma start karma.config.js"
+    "test": "./node_modules/.bin/karma start karma.config.js",
+    "clog": "./node_modules/.bin/conventional-changelog -i CHANGELOG.md -p angular -o CHANGELOG.md"
   },
   "repository": {
     "type": "git",
@@ -40,7 +41,7 @@
     "coveralls": "^2.11.2",
     "mkdirp": "^0.5.1",
     "uglify-js2": "^2.1.11",
-    "conventional-changelog": "0.0.17",
+    "conventional-changelog": "^0.1.1",
     "through2": "^2.0.0",
     "vinyl-fs": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

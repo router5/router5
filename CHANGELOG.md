@@ -1,3 +1,19 @@
+<a name="0.2.0"></a>
+# 0.2.0 (2015-07-21)
+
+
+### Bug Fixes
+
+* take into account search part of URL when matching a path ([535f98c](https://github.com/router5/router5/commit/535f98c))
+
+### Features
+
+* add support for a canActivate method per route ([424c987](https://github.com/router5/router5/commit/424c987))
+* limit node listeners to one per node ([a4ed868](https://github.com/router5/router5/commit/a4ed868))
+* support asynchronous results for canActivate, canDeactivate and node listeners ([445892a](https://github.com/router5/router5/commit/445892a))
+
+
+
 <a name="0.1.0"></a>
 # 0.1.0 (2015-07-16)
 
