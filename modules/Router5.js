@@ -85,7 +85,7 @@ export default class Router5 {
 
     /**
      * Start the router
-     * @param  {Function} [done] A callback which will be called when starting is done
+     * @param  {Function} done An optional callback which will be called when starting is done
      * @return {Router5}  The router instance
      */
     start(done) {
@@ -369,7 +369,7 @@ export default class Router5 {
      * @param  {String}   name        The route name
      * @param  {Object}   [params={}] The route params
      * @param  {Object}   [opts={}]   The route options (replace, reload)
-     * @param  {Function} [done]      A callback (err, res) to call when transition has been performed
+     * @param  {Function} done        A optional callback (err, res) to call when transition has been performed
      *                                either successfully or unsuccessfully.
      * @return {Function}             A cancellation function
      */
