@@ -36,7 +36,9 @@ To get started, look here: [Get started](http://router5.github.io/docs/why-route
 directly. Routes can be nested, introducing the notion of _route segments_.
 - __Route change listeners__: listen to any route change, or register listeners for a specific route.
 - __Route node change listeners__: you can add listeners to be triggered on a specific named route node. They will be triggered if that named route node is the node a component tree needs to be re-rendered from.
-- __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers.
+- __Segments activation__: you can control whether or not a route can be accessed by specifying a `canActivate`
+function per node. Supports asynchronous results.
+- __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers. Supports asynchronous results.
 - __You are in control!__ You decide what to do on a route change and how to do it.
 
 
@@ -44,9 +46,9 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 
 - [Configuring routes](http://router5.github.io/docs/configuring-routes.html)
 - [Path syntax](http://router5.github.io/docs/path-syntax.html)
-- [Navigation](http://router5.github.io/docs/navigation.html)
 - [Listeners](http://router5.github.io/docs/listeners.html)
-- [Preventing navigation](http://router5.github.io/docs/api-reference.html)
+- [Navigation](http://router5.github.io/docs/navigation.html)
+- [Allowing navigation](http://router5.github.io/docs/preventing-navigation.html)
 
 ## API
 
@@ -58,5 +60,7 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 
 ## Related
 
+- [path-parser](https://github.com/troch/path-parser)
 - [route-node](https://github.com/troch/route-node)
 - [router5-react](https://github.com/router5/router5-react)
+- [router5-deku](https://github.com/router5/router5-deku)
