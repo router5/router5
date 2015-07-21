@@ -7,7 +7,9 @@ var argv        = require('yargs').argv;
 
 var getOptions     = require('./babel-options');
 var router5File    = path.join(__dirname, '../modules/Router5.js');
-var transitionFile = path.join(__dirname, '../modules/Transition.js');
+var transitionFile = path.join(__dirname, '../modules/transition.js');
+var asyncFile      = path.join(__dirname, '../modules/async.js');
+var constantsFile  = path.join(__dirname, '../modules/constants.js');
 
 function buildFactory(module, dest, file) {
     return function buildCommonJsModuel(done) {
@@ -40,7 +42,9 @@ function buildBundle(done) {
         transform(pathParser),
         transform(routeNode),
         transform(router5File),
-        transform(transitionFile)
+        transform(transitionFile),
+        transform(asyncFile),
+        transform(constantsFile)
     ], function (err, results) {
         console.log(err);
         // License
@@ -53,9 +57,11 @@ function buildBundle(done) {
         var routeNodeSrc = results[2].code.trim();
         var router5Src = results[3].code.trim();
         var transitionSrc = results[4].code.trim();
+        var asyncSrc = results[5].code.trim();
+        var constantsSrc = results[6].code.trim();
 
         var classesSrc = pathParserSrc.replace(/("|')use strict("|');\n/g, '') +
-            (routeNodeSrc + router5Src + transitionSrc)
+            (routeNodeSrc + router5Src + transitionSrc + asyncSrc)
                 .replace(/("|')use strict("|');\n/g, '')
                 .replace(/\nvar _createClass(?:.*)\n/, '')
                 .replace(/\nfunction _classCallCheck(?:.*)\n/, '');
@@ -78,15 +84,21 @@ function exit(err) {
 if (argv.test) {
     async.series([
         mkdirp.bind(null, 'dist/test'),
-        buildFactory('ignore', 'dist/test/router5.js', router5File),
-        buildFactory('ignore', 'dist/test/transition.js', transitionFile)
+        buildFactory('ignore', 'dist/test/router5.js',    router5File),
+        buildFactory('ignore', 'dist/test/transition.js', transitionFile),
+        buildFactory('ignore', 'dist/test/async.js',      asyncFile),
+        buildFactory('ignore', 'dist/test/constants.js',  constantsFile)
     ], exit);
 } else {
     async.parallel([
-        buildFactory('common', 'dist/commonjs/router5.js', router5File),
+        buildFactory('common', 'dist/commonjs/router5.js',    router5File),
         buildFactory('common', 'dist/commonjs/transition.js', transitionFile),
-        buildFactory('umd',    'dist/umd/router5.js', router5File),
-        buildFactory('umd',    'dist/umd/transition.js', transitionFile),
+        buildFactory('common', 'dist/commonjs/async.js',      asyncFile),
+        buildFactory('common', 'dist/commonjs/constants.js',  constantsFile),
+        buildFactory('umd',    'dist/umd/router5.js',         router5File),
+        buildFactory('umd',    'dist/umd/transition.js',      transitionFile),
+        buildFactory('umd',    'dist/commonjs/async.js',      asyncFile),
+        buildFactory('umd',    'dist/commonjs/constants.js',  constantsFile),
         buildBundle
     ], exit);
 }

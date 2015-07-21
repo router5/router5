@@ -1,66 +1,73 @@
+import asyncProcess from './async'
+import constants from './constants'
+
 let nameToIDs = name => {
     return name.split('.').reduce((ids, name) => {
-        ids.push(ids.length ? ids[ids.length - 1] + '.' + name : name)
-        return ids
+        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name)
     }, [])
 }
 
-let boolToPromise = res => {
-    if (res.then) return res
-    return new Promise((resolve, reject) => res || res === undefined ? resolve() : reject())
-}
+export default function transition(router, toState, fromState, callback) {
+    let cancelled = false
+    let cancel = () => cancelled = true
+    let done = (err, res) => callback(cancelled ? constants.TRANSITION_CANCELLED : err, res)
 
-let processFn = (fn, toState, fromState) => {
-    return new Promise((resolve, reject) => {
-        return boolToPromise(fn(toState, fromState))
-    })
-}
+    let i
+    let fromStateIds = fromState ? nameToIDs(fromState.name) : []
+    let toStateIds = nameToIDs(toState.name)
+    let maxI = Math.min(fromStateIds.length, toStateIds.length)
 
-let process = (functions, toState, fromState) => {
-    if (functions.length) {
-        return processFn(functions[0], toState, fromState)
-            .then(() => process(functions.slice(1), toState, fromState))
+    for (i = 0; i < maxI; i += 1) {
+        if (fromStateIds[i] !== toStateIds[i]) break
     }
-    return boolToPromise(true)
-}
 
-export default class Transition {
-    constructor(router, toState, fromState) {
-        let i
-        let fromStateIds = fromState ? nameToIDs(fromState.name) : []
-        let toStateIds = nameToIDs(toState.name)
-        let maxI = Math.min(fromStateIds.length, toStateIds.length)
+    let toDeactivate = fromStateIds.slice(i).reverse()
+    let toActivate   = toStateIds.slice(i)
+    let intersection = fromState ? (i > 0 ? fromStateIds[i - 1] : '') : null
 
-        for (i = 0; i < maxI; i += 1) {
-            if (fromStateIds[i] !== toStateIds[i]) break
-        }
-        let toDeactivate = fromStateIds.slice(i).reverse()
-        let toActivate   = toStateIds.slice(i)
-        let intersection = i > 0 ? fromStateIds[i - 1] : ''
-
-        return new Promise((resolveTransition, rejectTransition) => {
-            this.cancel = rejectTransition
-
-            // Deactivate
+    let canDeactivate = (toState, fromState, cb) => {
+        if (cancelled) done()
+        else {
             let canDeactivateFunctions = toDeactivate
-                .map(name => router._cmps(name))
+                .map(name => router._cmps[name])
                 .filter(comp => comp && comp.canDeactivate)
                 .map(comp => comp.canDeactivate)
 
-            let deactivation = process(canDeactivateFunctions, toState, fromState)
-
-            // Activate
-            let activation = deactivation.then(() => {
-                let canActivateFunctions = toActivate
-                    .map(name => router._canAct[name])
-                    .filter(_ => _)
-                return process(canActivateFunctions, toState, fromState)
-            })
-
-            // Node listener
-            let nodeListener = activation.then(() => router._invokeListeners('^' + intersection, toState, fromState))
-
-            nodeListener.then(resolveTransition, rejectTransition)
-        });
+            asyncProcess(
+                canDeactivateFunctions, toState, fromState,
+                (err, res) => cb(err ? constants.CANNOT_DEACTIVATE : null, res)
+            )
+        }
     }
+
+    let canActivate = (toState, fromState, cb) => {
+        if (cancelled) done()
+        else {
+            let canActivateFunctions = toActivate
+                .map(name => router._canAct[name])
+                .filter(_ => _)
+
+            asyncProcess(
+                canActivateFunctions, toState, fromState,
+                (err, res) => cb(err ? constants.CANNOT_ACTIVATE : null, res)
+            )
+        }
+    }
+
+    let nodeListener = (toState, fromState, cb) => {
+        if (cancelled) done()
+        else {
+            let listeners = router._cbs['^' + intersection] || []
+            asyncProcess(
+                listeners, toState, fromState,
+                (err, res) => cb(err ? constants.NODE_LISTENER_ERR : null, res),
+                true
+            )
+        }
+    }
+
+    let pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate]
+    asyncProcess(pipeline, toState, fromState, done)
+
+    return cancel
 }

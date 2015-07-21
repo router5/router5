@@ -1,12 +1,6 @@
-import RouteNode from 'route-node/modules/RouteNode'
-import Transition from './Transition'
-
-let nameToIDs = name => {
-    return name.split('.').reduce((ids, name) => {
-        ids.push(ids.length ? ids[ids.length - 1] + '.' + name : name)
-        return ids
-    }, [])
-}
+import RouteNode  from 'route-node/modules/RouteNode'
+import transition from './transition'
+import constants  from './constants'
 
 let makeState = (name, params, path) => ({name, params, path})
 
@@ -67,10 +61,8 @@ export default class Router5 {
      * @return {Router5}             The Router5 instance
      */
     addNode(name, path, canActivate) {
-        try {
-            this.rootNode.addNode(name, path)
-            if (canActivate) this._canAct[name] = canActivate
-        } catch (e) {}
+        this.rootNode.addNode(name, path)
+        if (canActivate) this._canAct[name] = canActivate
         return this
     }
 
@@ -83,18 +75,20 @@ export default class Router5 {
         if (!state) return
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return
 
-        let canTransition = this._transition(state, this.lastKnownState)
-        if (!canTransition) {
-            let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
-            window.history.pushState(this.lastKnownState, '', url)
-        }
+        this._transition(state, this.lastKnownState, (err) => {
+            if (!err) {
+                let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
+                window.history.pushState(this.lastKnownState, '', url)
+            }
+        })
     }
 
     /**
      * Start the router
-     * @return {Router5} The router instance
+     * @param  {Function} [done] A callback which will be called when starting is done
+     * @return {Router5}  The router instance
      */
-    start() {
+    start(done) {
         if (this.started) return this
         this.started = true
 
@@ -105,8 +99,9 @@ export default class Router5 {
         if (startState) {
             this.lastKnownState = startState
             window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
+            if (done) done()
         } else if (this.options.defaultRoute) {
-            this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true})
+            this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true}, done)
         }
         // Listen to popstate
         window.addEventListener('popstate', this.onPopState.bind(this))
@@ -245,7 +240,8 @@ export default class Router5 {
      * @return {Router5} The router instance
      */
     removeNodeListener(name, cb) {
-        return this._removeListener('^' + name, cb);
+        this._cbs['^' + name] = [];
+        return this
     }
 
     /**
@@ -296,7 +292,6 @@ export default class Router5 {
      * @return {Router5}  The router instance
      */
     canActivate(name, canActivate) {
-        if (this._canAct[name]) console.warn(`A canActivate was alread registered for route node ${name}.`)
         this._canAct[name] = canActivate
         return this
     }
@@ -347,57 +342,42 @@ export default class Router5 {
     /**
      * @private
      */
-    _transition(toState, fromState) {
-        if (!fromState) {
+    _transition(toState, fromState, done) {
+        // Cancel current transition
+        // if (this._tr) this._tr()
+
+        this._tr = transition(router, toState, fromState, (err) => {
+            this._tr = null
+
+            if (err) {
+                if (done) done(err)
+                return
+            }
+
             this.lastKnownState = toState
-            this._invokeListeners('*', toState, fromState)
-            return true
-        }
-
-        let i
-        let cannotDeactivate = false
-        let cannotActivate = false
-        let fromStateIds = nameToIDs(fromState.name)
-        let toStateIds   = nameToIDs(toState.name)
-        let maxI = Math.min(fromStateIds.length, toStateIds.length)
-
-        for (i = 0; i < maxI; i += 1) {
-            if (fromStateIds[i] !== toStateIds[i]) break
-        }
-
-        cannotDeactivate =
-            fromStateIds.slice(i).reverse()
-                .map(id => this._cmps[id])
-                .filter(comp => comp && comp.canDeactivate)
-                .some(comp => !comp.canDeactivate(toState, fromState))
-
-
-        if (!cannotDeactivate) {
-            cannotActivate = toStateIds.slice(i)
-                .map(id => this._canAct[id])
-                .filter(canAct => canAct)
-                .some(canAct => !canAct(toState, fromState))
-        }
-
-        if (!cannotDeactivate && !cannotActivate) {
-            this.lastKnownState = toState
-            this._invokeListeners('^' + (i > 0 ? fromStateIds[i - 1] : ''), toState, fromState)
             this._invokeListeners('=' + toState.name, toState, fromState)
             this._invokeListeners('*', toState, fromState)
-        }
 
-        return !cannotDeactivate && !cannotActivate
+            if (done) done(null, true)
+        })
+
+        return () => { if (this._tr) this._tr() }
     }
 
     /**
      * Navigate to a specific route
-     * @param  {String} name   The route name
-     * @param  {Object} [params={}] The route params
-     * @param  {Object} [opts={}]   The route options (replace, reload)
-     * @return {Boolean}       Whether or not transition was allowed
+     * @param  {String}   name        The route name
+     * @param  {Object}   [params={}] The route params
+     * @param  {Object}   [opts={}]   The route options (replace, reload)
+     * @param  {Function} [done]      A callback (err, res) to call when transition has been performed
+     *                                either successfully or unsuccessfully.
+     * @return {Function}             A cancellation function
      */
-    navigate(name, params = {}, opts = {}) {
-        if (!this.started) return
+    navigate(name, params = {}, opts = {}, done) {
+        if (!this.started) {
+            done(constants.ROUTER_NOT_STARTED)
+            return
+        }
 
         let path  = this.buildPath(name, params)
         let url  = this.buildUrl(name, params)
@@ -409,15 +389,20 @@ export default class Router5 {
 
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
-        if (sameStates && !opts.reload) return
-
-        // Transition and amend history
-        let canTransition = this._transition(this.lastStateAttempt, this.lastKnownState)
-
-        if (canTransition && !sameStates) {
-            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
+        if (sameStates && !opts.reload) {
+            done(constants.SAME_STATES)
+            return
         }
 
-        return canTransition
+        // Transition and amend history
+        return this._transition(this.lastStateAttempt, this.lastKnownState, (err) => {
+            if (err) {
+                if (done) done(err)
+                return
+            }
+
+            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
+            if (done) done(null, true)
+        })
     }
 }

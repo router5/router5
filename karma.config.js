@@ -11,6 +11,8 @@ module.exports = function(config) {
         files: [
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
             'node_modules/route-node/dist/umd/route-node.js',
+            'dist/test/constants.js',
+            'dist/test/async.js',
             'dist/test/transition.js',
             'dist/test/router5.js',
             'tests/*.js'
