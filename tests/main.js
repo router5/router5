@@ -37,9 +37,9 @@ router = new Router5([
     .addNode('admin', '/admin',   function canActivate() { return false; });
 
 describe('router5', function () {
-    // it('should throw an error if Router5 is not used as a constructor', function () {
-    //     expect(function () { Router5([]); }).toThrow();
-    // });
+    it('should throw an error if Router5 is not used as a constructor', function () {
+        expect(function () { Router5([]); }).toThrow();
+    });
 
     it('should start with the default route', function (done) {
         expect(window.location.hash).toBe('');
