@@ -5,6 +5,7 @@ var async       = require('async');
 var mkdirp      = require('mkdirp');
 var argv        = require('yargs').argv;
 
+var router5Version = require('../package.json').version;
 var getOptions     = require('./babel-options');
 var router5File    = path.join(__dirname, '../modules/Router5.js');
 var transitionFile = path.join(__dirname, '../modules/transition.js');
@@ -46,12 +47,12 @@ function buildBundle(done) {
         transform(asyncFile),
         transform(constantsFile)
     ], function (err, results) {
-        console.log(err);
+        if (err) console.log(err);
         // License
         var license = results[0].toString().trim().split('\n').map(function (line) {
             return ' * ' + line;
         }).join('\n');
-        license = '/**\n * @license\n' + license + '\n */';
+        license = '/**\n * @license\n * @version ' + router5Version + '\n' + license + '\n */';
 
         var pathParserSrc = results[1].code.trim();
         var routeNodeSrc = results[2].code.trim();
@@ -97,8 +98,8 @@ if (argv.test) {
         buildFactory('common', 'dist/commonjs/constants.js',  constantsFile),
         buildFactory('umd',    'dist/umd/router5.js',         router5File),
         buildFactory('umd',    'dist/umd/transition.js',      transitionFile),
-        buildFactory('umd',    'dist/commonjs/async.js',      asyncFile),
-        buildFactory('umd',    'dist/commonjs/constants.js',  constantsFile),
+        buildFactory('umd',    'dist/umd/async.js',           asyncFile),
+        buildFactory('umd',    'dist/umd/constants.js',       constantsFile),
         buildBundle
     ], exit);
 }
