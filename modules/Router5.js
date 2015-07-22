@@ -90,21 +90,32 @@ export default class Router5 {
      */
     start(done) {
         if (this.started) return this
-        this.started = true
+            this.started = true
+        let opts = this.options
 
         // Try to match starting path name
         let startPath = this.getLocation();
         let startState = this.matchPath(startPath)
 
-        if (startState) {
-            this.lastKnownState = startState
-            window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
-            if (done) done()
-        } else if (this.options.defaultRoute) {
-            this.navigate(this.options.defaultRoute, this.options.defaultParams, {replace: true}, done)
+        let cb = (err) => {
+            window.addEventListener('popstate', this.onPopState.bind(this))
+            done(err)
         }
+
+        let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, cb)
+
+        if (startState) {
+            this.lastStateAttempt = startState
+            this._transition(this.lastStateAttempt, this.lastKnownState, (err) => {
+                if (!err) {
+                    window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
+                    cb(null)
+                }
+                else if (opts.defaultRoute) navigateToDefault()
+                else cb(err)
+            })
+        } else if (opts.defaultRoute) navigateToDefault()
         // Listen to popstate
-        window.addEventListener('popstate', this.onPopState.bind(this))
         return this
     }
 
