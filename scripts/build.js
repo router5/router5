@@ -7,6 +7,7 @@ var argv        = require('yargs').argv;
 
 var router5Version = require('../package.json').version;
 var getOptions     = require('./babel-options');
+var indexFile      = path.join(__dirname, '../modules/index.js');
 var router5File    = path.join(__dirname, '../modules/Router5.js');
 var transitionFile = path.join(__dirname, '../modules/transition.js');
 var asyncFile      = path.join(__dirname, '../modules/async.js');
@@ -92,14 +93,24 @@ if (argv.test) {
     ], exit);
 } else {
     async.parallel([
+        buildFactory('common', 'dist/commonjs/index.js',      indexFile),
         buildFactory('common', 'dist/commonjs/router5.js',    router5File),
         buildFactory('common', 'dist/commonjs/transition.js', transitionFile),
         buildFactory('common', 'dist/commonjs/async.js',      asyncFile),
         buildFactory('common', 'dist/commonjs/constants.js',  constantsFile),
+
+        buildFactory('umd',    'dist/umd/index.js',           indexFile),
         buildFactory('umd',    'dist/umd/router5.js',         router5File),
         buildFactory('umd',    'dist/umd/transition.js',      transitionFile),
         buildFactory('umd',    'dist/umd/async.js',           asyncFile),
         buildFactory('umd',    'dist/umd/constants.js',       constantsFile),
+
+        // buildFactory('amd',    'dist/amd/index.js',           indexFile),
+        // buildFactory('amd',    'dist/amd/router5.js',         router5File),
+        // buildFactory('amd',    'dist/amd/transition.js',      transitionFile),
+        // buildFactory('amd',    'dist/amd/async.js',           asyncFile),
+        // buildFactory('amd',    'dist/amd/constants.js',       constantsFile),
+
         buildBundle
     ], exit);
 }
