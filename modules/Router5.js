@@ -145,9 +145,9 @@ export default class Router5 {
 
         if (strictEquality || activeState.name === name) {
             return this.areStatesEqual(makeState(name, params), activeState)
-        } else {
-            return this.areStatesDescendants(makeState(name, params), activeState)
         }
+
+        return this.areStatesDescendants(makeState(name, params), activeState)
     }
 
     /**
@@ -178,9 +178,7 @@ export default class Router5 {
      * @private
      */
     _invokeListeners(name, newState, oldState) {
-        if (!this._cbs[name]) return
-        if (!this._cbs[name].length === 1) return cb(newState, oldState)
-        this._cbs[name].forEach(cb => cb(newState, oldState))
+        (this._cbs[name] || []).forEach(cb => cb(newState, oldState))
     }
 
     /**
@@ -346,7 +344,7 @@ export default class Router5 {
         // Cancel current transition
         if (this._tr) this._tr()
 
-        this._tr = transition(this, toState, fromState, (err) => {
+        let tr = transition(this, toState, fromState, (err) => {
             this._tr = null
 
             if (err) {
@@ -361,7 +359,8 @@ export default class Router5 {
             if (done) done(null, true)
         })
 
-        return () => { if (this._tr) this._tr() }
+        this._tr = tr
+        return () => !tr || tr()
     }
 
     /**

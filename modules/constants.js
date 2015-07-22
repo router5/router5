@@ -4,7 +4,7 @@ const constants = {
     CANNOT_DEACTIVATE    : 2,
     CANNOT_ACTIVATE      : 3,
     NODE_LISTENER_ERR    : 4,
-    TRANSITION_CANCELLED : 5,
+    TRANSITION_CANCELLED : 5
 }
 
 export default constants
