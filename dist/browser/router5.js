@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.2.0
+ * @version 0.2.1
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -249,12 +249,12 @@ var Path = (function () {
 
 // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
 var constants = {
-    ROUTER_NOT_STARTED: 0,
-    SAME_STATES: 1,
-    CANNOT_DEACTIVATE: 2,
-    CANNOT_ACTIVATE: 3,
-    NODE_LISTENER_ERR: 4,
-    TRANSITION_CANCELLED: 5
+    ROUTER_NOT_STARTED: 1,
+    SAME_STATES: 2,
+    CANNOT_DEACTIVATE: 3,
+    CANNOT_ACTIVATE: 4,
+    NODE_LISTENER_ERR: 5,
+    TRANSITION_CANCELLED: 6
 };
 var RouteNode = (function () {
     function RouteNode() {
@@ -680,26 +680,39 @@ var Router5 = (function () {
 
         /**
          * Start the router
-         * @param  {Function} [done] A callback which will be called when starting is done
+         * @param  {Function} done An optional callback which will be called when starting is done
          * @return {Router5}  The router instance
          */
         value: function start(done) {
+            var _this3 = this;
+
             if (this.started) return this;
             this.started = true;
+            var opts = this.options;
 
             // Try to match starting path name
             var startPath = this.getLocation();
             var startState = this.matchPath(startPath);
 
+            var cb = function cb(err) {
+                window.addEventListener('popstate', _this3.onPopState.bind(_this3));
+                done(err);
+            };
+
+            var navigateToDefault = function navigateToDefault() {
+                return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
+            };
+
             if (startState) {
-                this.lastKnownState = startState;
-                window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
-                if (done) done();
-            } else if (this.options.defaultRoute) {
-                this.navigate(this.options.defaultRoute, this.options.defaultParams, { replace: true }, done);
-            }
+                this.lastStateAttempt = startState;
+                this._transition(this.lastStateAttempt, this.lastKnownState, function (err) {
+                    if (!err) {
+                        window.history.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
+                        cb(null);
+                    } else if (opts.defaultRoute) navigateToDefault();else cb(err);
+                });
+            } else if (opts.defaultRoute) navigateToDefault();
             // Listen to popstate
-            window.addEventListener('popstate', this.onPopState.bind(this));
             return this;
         }
     }, {
@@ -750,9 +763,9 @@ var Router5 = (function () {
 
             if (strictEquality || activeState.name === name) {
                 return this.areStatesEqual(makeState(name, params), activeState);
-            } else {
-                return this.areStatesDescendants(makeState(name, params), activeState);
             }
+
+            return this.areStatesDescendants(makeState(name, params), activeState);
         }
     }, {
         key: 'areStatesEqual',
@@ -790,9 +803,7 @@ var Router5 = (function () {
          * @private
          */
         value: function _invokeListeners(name, newState, oldState) {
-            if (!this._cbs[name]) return;
-            if (!this._cbs[name].length === 1) return cb(newState, oldState);
-            this._cbs[name].forEach(function (cb) {
+            (this._cbs[name] || []).forEach(function (cb) {
                 return cb(newState, oldState);
             });
         }
@@ -988,28 +999,29 @@ var Router5 = (function () {
          * @private
          */
         value: function _transition(toState, fromState, done) {
-            var _this3 = this;
+            var _this4 = this;
 
             // Cancel current transition
             if (this._tr) this._tr();
 
-            this._tr = transition(this, toState, fromState, function (err) {
-                _this3._tr = null;
+            var tr = transition(this, toState, fromState, function (err) {
+                _this4._tr = null;
 
                 if (err) {
                     if (done) done(err);
                     return;
                 }
 
-                _this3.lastKnownState = toState;
-                _this3._invokeListeners('=' + toState.name, toState, fromState);
-                _this3._invokeListeners('*', toState, fromState);
+                _this4.lastKnownState = toState;
+                _this4._invokeListeners('=' + toState.name, toState, fromState);
+                _this4._invokeListeners('*', toState, fromState);
 
                 if (done) done(null, true);
             });
 
+            this._tr = tr;
             return function () {
-                if (_this3._tr) _this3._tr();
+                return !tr || tr();
             };
         }
     }, {
@@ -1020,14 +1032,14 @@ var Router5 = (function () {
          * @param  {String}   name        The route name
          * @param  {Object}   [params={}] The route params
          * @param  {Object}   [opts={}]   The route options (replace, reload)
-         * @param  {Function} [done]      A callback (err, res) to call when transition has been performed
+         * @param  {Function} done        A optional callback (err, res) to call when transition has been performed
          *                                either successfully or unsuccessfully.
          * @return {Function}             A cancellation function
          */
         value: function navigate(name, params, opts, done) {
             if (params === undefined) params = {};
 
-            var _this4 = this;
+            var _this5 = this;
 
             if (opts === undefined) opts = {};
 
@@ -1058,7 +1070,7 @@ var Router5 = (function () {
                     return;
                 }
 
-                window.history[opts.replace ? 'replaceState' : 'pushState'](_this4.lastStateAttempt, '', url);
+                window.history[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
                 if (done) done(null, true);
             });
         }

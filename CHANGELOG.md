@@ -1,3 +1,13 @@
+<a name="0.2.1"></a>
+## 0.2.1 (2015-07-22)
+
+
+### Bug Fixes
+
+* call transition on start when matched route present (call canActivate methods) ([0efc4e6](https://github.com/router5/router5/commit/0efc4e6))
+
+
+
 <a name="0.2.0"></a>
 # 0.2.0 (2015-07-21)
 
