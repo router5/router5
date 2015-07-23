@@ -96,10 +96,8 @@ function testRouter(useHash) {
         });
 
         it('should give an error if trying to start when already started', function (done) {
-            router.start(function () {
-                expect(router.started).toBe(true);
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/home'));
-                expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
+            router.start(function (err) {
+                expect(err).toBe(Router5.ERR.ROUTER_ALREADY_STARTED);
                 done();
             });
         });
@@ -151,6 +149,16 @@ function testRouter(useHash) {
                 expect(err).toBe(null)
                 done();
             });
+        });
+
+        it('should throw an error if default route access is not found', function () {
+            router.stop();
+            router.setOption('defaultRoute', 'fake.route');
+            window.history.replaceState({}, '', base);
+
+            expect(function () {
+                router.start();
+            }).toThrow();
         });
 
         it('should be able to navigate to routes', function (done) {
