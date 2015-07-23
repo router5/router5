@@ -99,7 +99,7 @@ export default class Router5 {
 
         let cb = (err) => {
             window.addEventListener('popstate', this.onPopState.bind(this))
-            done(err)
+            if (done) done(err)
         }
 
         let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, cb)
@@ -114,7 +114,11 @@ export default class Router5 {
                 else if (opts.defaultRoute) navigateToDefault()
                 else cb(err)
             })
-        } else if (opts.defaultRoute) navigateToDefault()
+        } else if (opts.defaultRoute) {
+            navigateToDefault()
+        } else {
+            cb()
+        }
         // Listen to popstate
         return this
     }
