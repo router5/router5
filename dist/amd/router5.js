@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.2.1
+ * @version 0.2.2
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -317,7 +317,7 @@ define('router5', [], function () {
                         if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
                         if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
                         if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                        return 0;
+                        return a.path && b.path ? a.path.length < b.path.length : 0;
                     });
                 } else {
                     // Locate parent node
