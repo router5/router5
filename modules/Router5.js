@@ -137,6 +137,8 @@ export default class Router5 {
     stop() {
         if (!this.started) return this
         this.started = false
+        this.lastKnownState = false
+        this.lastStateAttempt = false
 
         window.removeEventListener('popstate', this.onPopState.bind(this))
         return this
