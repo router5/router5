@@ -145,7 +145,7 @@ var Router5 = (function () {
 
             var cb = function cb(err) {
                 window.addEventListener('popstate', _this3.onPopState.bind(_this3));
-                done(err);
+                if (done) done(err);
             };
 
             var navigateToDefault = function navigateToDefault() {
@@ -160,7 +160,11 @@ var Router5 = (function () {
                         cb(null);
                     } else if (opts.defaultRoute) navigateToDefault();else cb(err);
                 });
-            } else if (opts.defaultRoute) navigateToDefault();
+            } else if (opts.defaultRoute) {
+                navigateToDefault();
+            } else {
+                cb();
+            }
             // Listen to popstate
             return this;
         }

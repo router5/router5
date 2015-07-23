@@ -1,3 +1,13 @@
+<a name="0.2.2"></a>
+## 0.2.2 (2015-07-23)
+
+
+### Bug Fixes
+
+* don't invoke callback if not present in start ([3ecc838](https://github.com/router5/router5/commit/3ecc838))
+
+
+
 <a name="0.2.1"></a>
 ## 0.2.1 (2015-07-22)
 
