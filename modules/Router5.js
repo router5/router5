@@ -25,7 +25,7 @@ export default class Router5 {
             hashPrefix: ''
         }
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
-        this.base = window.location.pathname.replace(/^\/$/, '')
+        this.base = window.location.pathname.replace(/\/$/, '')
 
         return this
     }
