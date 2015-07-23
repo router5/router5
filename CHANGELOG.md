@@ -12,6 +12,18 @@
 * add error codes to Router5 (Router5.ERR) ([ac6b0bb](https://github.com/router5/router5/commit/ac6b0bb))
 
 
+<a name="0.2.3"></a>
+## 0.2.3 (2015-07-23)
+
+
+### Bug Fixes
+
+* better route matching by improving matching order ([2ce0605](https://github.com/router5/router5/commit/2ce0605))
+
+### Features
+
+* add AMD bundle ([9a24441](https://github.com/router5/router5/commit/9a24441))
+
 
 <a name="0.2.2"></a>
 ## 0.2.2 (2015-07-23)
