@@ -10,7 +10,7 @@ let nameToIDs = name => {
 export default function transition(router, toState, fromState, callback) {
     let cancelled = false
     let cancel = () => cancelled = true
-    let done = (err, res) => callback(cancelled ? constants.TRANSITION_CANCELLED : err, res)
+    let done = (err) => callback(cancelled ? constants.TRANSITION_CANCELLED : err)
 
     let i
     let fromStateIds = fromState ? nameToIDs(fromState.name) : []
@@ -35,7 +35,7 @@ export default function transition(router, toState, fromState, callback) {
 
             asyncProcess(
                 canDeactivateFunctions, toState, fromState,
-                (err, res) => cb(err ? constants.CANNOT_DEACTIVATE : null, res)
+                err => cb(err ? constants.CANNOT_DEACTIVATE : null)
             )
         }
     }
@@ -49,7 +49,7 @@ export default function transition(router, toState, fromState, callback) {
 
             asyncProcess(
                 canActivateFunctions, toState, fromState,
-                (err, res) => cb(err ? constants.CANNOT_ACTIVATE : null, res)
+                err => cb(err ? constants.CANNOT_ACTIVATE : null)
             )
         }
     }
@@ -60,7 +60,7 @@ export default function transition(router, toState, fromState, callback) {
             let listeners = router._cbs['^' + intersection] || []
             asyncProcess(
                 listeners, toState, fromState,
-                (err, res) => cb(err ? constants.NODE_LISTENER_ERR : null, res),
+                err => cb(err ? constants.NODE_LISTENER_ERR : null),
                 true
             )
         }

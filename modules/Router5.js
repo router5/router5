@@ -25,9 +25,15 @@ export default class Router5 {
             hashPrefix: ''
         }
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
-        this.base = window.location.pathname.replace(/\/$/, '')
-
+        this._setBase()
         return this
+    }
+
+    /**
+     * @private
+     */
+    _setBase() {
+        this.base = this.options.base || window.location.pathname.replace(/\/$/, '')
     }
 
     /**
@@ -38,6 +44,7 @@ export default class Router5 {
      */
     setOption(opt, val) {
         this.options[opt] = val
+        if (opt === 'base') this._setBase()
         return this
     }
 
@@ -117,7 +124,7 @@ export default class Router5 {
         } else if (opts.defaultRoute) {
             navigateToDefault()
         } else {
-            cb()
+            cb(null)
         }
         // Listen to popstate
         return this
@@ -371,7 +378,7 @@ export default class Router5 {
             this._invokeListeners('=' + toState.name, toState, fromState)
             this._invokeListeners('*', toState, fromState)
 
-            if (done) done(null, true)
+            if (done) done(null)
         })
 
         this._tr = tr
@@ -383,7 +390,7 @@ export default class Router5 {
      * @param  {String}   name        The route name
      * @param  {Object}   [params={}] The route params
      * @param  {Object}   [opts={}]   The route options (replace, reload)
-     * @param  {Function} done        A optional callback (err, res) to call when transition has been performed
+     * @param  {Function} done        A optional callback(err) to call when transition has been performed
      *                                either successfully or unsuccessfully.
      * @return {Function}             A cancellation function
      */
@@ -416,7 +423,7 @@ export default class Router5 {
             }
 
             window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
-            if (done) done(null, true)
+            if (done) done(null)
         })
     }
 }

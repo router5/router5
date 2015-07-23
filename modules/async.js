@@ -7,18 +7,18 @@ export default function asyncProcess(functions, toState, fromState, callback, al
         let len = remainingSteps[0].length
         let res = remainingSteps[0](toState, fromState, done)
 
-        if (typeof res === 'boolean') done(!res, res);
+        if (typeof res === 'boolean') done(res ? null : true);
 
         else if (res && typeof res.then === 'function') {
-            res.then(() => done(null, true), () => done(true, null))
+            res.then(() => done(null), () => done(true))
         }
 
-        else if (len < 3 && allowNoResult) done(null, true)
+        else if (len < 3 && allowNoResult) done(null)
 
         return false
     }
 
-    let iterate = (err, res) => {
+    let iterate = (err) => {
         if (err) callback(err)
         else {
             remainingSteps = remainingSteps.slice(1)
@@ -28,7 +28,7 @@ export default function asyncProcess(functions, toState, fromState, callback, al
 
     let next = () => {
         let finished = processFn(iterate)
-        if (finished) callback(null, true)
+        if (finished) callback(null)
     }
 
     next()
