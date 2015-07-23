@@ -318,7 +318,7 @@ define('router5', [], function () {
                         if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
                         if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
                         if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                        return a.path && b.path ? a.path.length < b.path.length : 0;
+                        return 0;
                     });
                 } else {
                     // Locate parent node
@@ -523,7 +523,7 @@ define('router5', [], function () {
     
         var toDeactivate = fromStateIds.slice(i).reverse();
         var toActivate = toStateIds.slice(i);
-        var intersection = fromState ? i > 0 ? fromStateIds[i - 1] : '' : null;
+        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
     
         var canDeactivate = function canDeactivate(toState, fromState, cb) {
             if (cancelled) done();else {
@@ -564,7 +564,7 @@ define('router5', [], function () {
             }
         };
     
-        var pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate];
+        var pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener];
         asyncProcess(pipeline, toState, fromState, done);
     
         return cancel;
@@ -707,9 +707,9 @@ define('router5', [], function () {
                 var startPath = this.getLocation();
                 var startState = this.matchPath(startPath);
     
-                var cb = function cb(err) {
+                var cb = function cb(err, state) {
                     window.addEventListener('popstate', _this3.onPopState.bind(_this3));
-                    if (done) done(err);
+                    if (done) done(err, state);
                 };
     
                 var navigateToDefault = function navigateToDefault() {
@@ -718,10 +718,10 @@ define('router5', [], function () {
     
                 if (startState) {
                     this.lastStateAttempt = startState;
-                    this._transition(this.lastStateAttempt, this.lastKnownState, function (err) {
+                    this._transition(this.lastStateAttempt, this.lastKnownState, function (err, state) {
                         if (!err) {
                             window.history.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
-                            cb(null);
+                            cb(null, state);
                         } else if (opts.defaultRoute) navigateToDefault();else cb(err);
                     });
                 } else if (opts.defaultRoute) {
@@ -1035,7 +1035,7 @@ define('router5', [], function () {
                     _this4._invokeListeners('=' + toState.name, toState, fromState);
                     _this4._invokeListeners('*', toState, fromState);
     
-                    if (done) done(null);
+                    if (done) done(null, toState);
                 });
     
                 this._tr = tr;
@@ -1072,7 +1072,8 @@ define('router5', [], function () {
     
                 if (!path) throw new Error('Could not find route "' + name + '"');
     
-                this.lastStateAttempt = makeState(name, params, path);
+                var toState = makeState(name, params, path);
+                this.lastStateAttempt = toState;
                 var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
     
                 // Do not proceed further if states are the same and no reload
@@ -1083,14 +1084,14 @@ define('router5', [], function () {
                 }
     
                 // Transition and amend history
-                return this._transition(this.lastStateAttempt, this.lastKnownState, function (err) {
+                return this._transition(toState, this.lastKnownState, function (err, state) {
                     if (err) {
                         if (done) done(err);
                         return;
                     }
     
                     window.history[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
-                    if (done) done(null);
+                    if (done) done(null, state);
                 });
             }
         }]);

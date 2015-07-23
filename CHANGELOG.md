@@ -1,3 +1,17 @@
+<a name="0.2.5"></a>
+## 0.2.5 (2015-07-23)
+
+
+### Bug Fixes
+
+* Commonjs and UMD release ([05811a8](https://github.com/router5/router5/commit/05811a8))
+
+### Features
+
+* call unnamed root node listener on first route transition (toState is null) ([618ef81](https://github.com/router5/router5/commit/618ef81))
+
+
+
 <a name="0.2.4"></a>
 ## 0.2.4 (2015-07-23)
 

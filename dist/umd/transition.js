@@ -47,7 +47,7 @@
 
         var toDeactivate = fromStateIds.slice(i).reverse();
         var toActivate = toStateIds.slice(i);
-        var intersection = fromState ? i > 0 ? fromStateIds[i - 1] : '' : null;
+        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
 
         var canDeactivate = function canDeactivate(toState, fromState, cb) {
             if (cancelled) done();else {
@@ -88,7 +88,7 @@
             }
         };
 
-        var pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate];
+        var pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener];
         (0, _asyncProcess['default'])(pipeline, toState, fromState, done);
 
         return cancel;
