@@ -83,7 +83,7 @@ class Router5 {
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return
 
         this._transition(state, this.lastKnownState, (err) => {
-            if (!err) {
+            if (err) {
                 let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
                 window.history.pushState(this.lastKnownState, '', url)
             }
