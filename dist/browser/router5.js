@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.2.4
+ * @version 0.2.5
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -318,7 +318,7 @@
                         if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
                         if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
                         if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                        return 0;
+                        return a.path && b.path ? a.path.length < b.path.length : 0;
                     });
                 } else {
                     // Locate parent node
@@ -678,7 +678,7 @@
                 if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
     
                 this._transition(state, this.lastKnownState, function (err) {
-                    if (!err) {
+                    if (err) {
                         var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                         window.history.pushState(_this2.lastKnownState, '', url);
                     }

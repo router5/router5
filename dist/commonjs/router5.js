@@ -127,7 +127,7 @@ var Router5 = (function () {
             if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
 
             this._transition(state, this.lastKnownState, function (err) {
-                if (!err) {
+                if (err) {
                     var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                     window.history.pushState(_this2.lastKnownState, '', url);
                 }

@@ -1,3 +1,13 @@
+<a name="0.2.6"></a>
+## 0.2.6 (2015-07-23)
+
+
+### Bug Fixes
+
+* don't push state on popstate when no error ([98b9215](https://github.com/router5/router5/commit/98b9215)), closes [#11](https://github.com/router5/router5/issues/11)
+
+
+
 <a name="0.2.5"></a>
 ## 0.2.5 (2015-07-23)
 
