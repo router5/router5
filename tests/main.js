@@ -33,6 +33,7 @@ router = new Router5([
     .setOption('useHash', true)
     .setOption('hashPrefix', '!')
     .add(ordersRoute)
+    .addNode('index', '/')
     .addNode('home', '/home')
     .addNode('admin', '/admin',   function canActivate() { return false; });
 
