@@ -1,3 +1,18 @@
+<a name="0.2.4"></a>
+## 0.2.4 (2015-07-23)
+
+
+### Bug Fixes
+
+* double slash in paths (base path parsing) ([7820a3b](https://github.com/router5/router5/commit/7820a3b))
+
+### Features
+
+* add base option for applications not using hash and having a non-empty base path ([42ea04e](https://github.com/router5/router5/commit/42ea04e))
+* add error codes to Router5 (Router5.ERR) ([ac6b0bb](https://github.com/router5/router5/commit/ac6b0bb))
+
+
+
 <a name="0.2.2"></a>
 ## 0.2.2 (2015-07-23)
 

@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.2.3
+ * @version 0.2.4
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -249,11 +249,12 @@ define('router5', [], function () {
     // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
     var constants = {
         ROUTER_NOT_STARTED: 1,
-        SAME_STATES: 2,
-        CANNOT_DEACTIVATE: 3,
-        CANNOT_ACTIVATE: 4,
-        NODE_LISTENER_ERR: 5,
-        TRANSITION_CANCELLED: 6
+        ROUTER_ALREADY_STARTED: 2,
+        SAME_STATES: 10,
+        CANNOT_DEACTIVATE: 11,
+        CANNOT_ACTIVATE: 12,
+        NODE_LISTENER_ERR: 13,
+        TRANSITION_CANCELLED: 20
     };
     var RouteNode = (function () {
         function RouteNode() {
@@ -471,18 +472,18 @@ define('router5', [], function () {
             var len = remainingSteps[0].length;
             var res = remainingSteps[0](toState, fromState, done);
     
-            if (typeof res === 'boolean') done(!res, res);else if (res && typeof res.then === 'function') {
+            if (typeof res === 'boolean') done(res ? null : true);else if (res && typeof res.then === 'function') {
                 res.then(function () {
-                    return done(null, true);
+                    return done(null);
                 }, function () {
-                    return done(true, null);
+                    return done(true);
                 });
-            } else if (len < 3 && allowNoResult) done(null, true);
+            } else if (len < 3 && allowNoResult) done(null);
     
             return false;
         };
     
-        var iterate = function iterate(err, res) {
+        var iterate = function iterate(err) {
             if (err) callback(err);else {
                 remainingSteps = remainingSteps.slice(1);
                 next();
@@ -491,7 +492,7 @@ define('router5', [], function () {
     
         var next = function next() {
             var finished = processFn(iterate);
-            if (finished) callback(null, true);
+            if (finished) callback(null);
         };
     
         next();
@@ -507,8 +508,8 @@ define('router5', [], function () {
         var cancel = function cancel() {
             return cancelled = true;
         };
-        var done = function done(err, res) {
-            return callback(cancelled ? constants.TRANSITION_CANCELLED : err, res);
+        var done = function done(err) {
+            return callback(cancelled ? constants.TRANSITION_CANCELLED : err);
         };
     
         var i = undefined;
@@ -534,8 +535,8 @@ define('router5', [], function () {
                     return comp.canDeactivate;
                 });
     
-                asyncProcess(canDeactivateFunctions, toState, fromState, function (err, res) {
-                    return cb(err ? constants.CANNOT_DEACTIVATE : null, res);
+                asyncProcess(canDeactivateFunctions, toState, fromState, function (err) {
+                    return cb(err ? constants.CANNOT_DEACTIVATE : null);
                 });
             }
         };
@@ -548,8 +549,8 @@ define('router5', [], function () {
                     return _;
                 });
     
-                asyncProcess(canActivateFunctions, toState, fromState, function (err, res) {
-                    return cb(err ? constants.CANNOT_ACTIVATE : null, res);
+                asyncProcess(canActivateFunctions, toState, fromState, function (err) {
+                    return cb(err ? constants.CANNOT_ACTIVATE : null);
                 });
             }
         };
@@ -557,8 +558,8 @@ define('router5', [], function () {
         var nodeListener = function nodeListener(toState, fromState, cb) {
             if (cancelled) done();else {
                 var listeners = router._cbs['^' + intersection] || [];
-                asyncProcess(listeners, toState, fromState, function (err, res) {
-                    return cb(err ? constants.NODE_LISTENER_ERR : null, res);
+                asyncProcess(listeners, toState, fromState, function (err) {
+                    return cb(err ? constants.NODE_LISTENER_ERR : null);
                 }, true);
             }
         };
@@ -606,12 +607,20 @@ define('router5', [], function () {
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
             });
-            this.base = window.location.pathname.replace(/^\/$/, '');
-    
+            this._setBase();
             return this;
         }
     
         _createClass(Router5, [{
+            key: '_setBase',
+    
+            /**
+             * @private
+             */
+            value: function _setBase() {
+                this.base = this.options.base || window.location.pathname.replace(/\/$/, '');
+            }
+        }, {
             key: 'setOption',
     
             /**
@@ -622,6 +631,7 @@ define('router5', [], function () {
              */
             value: function setOption(opt, val) {
                 this.options[opt] = val;
+                if (opt === 'base') this._setBase();
                 return this;
             }
         }, {
@@ -685,7 +695,11 @@ define('router5', [], function () {
             value: function start(done) {
                 var _this3 = this;
     
-                if (this.started) return this;
+                if (this.started) {
+                    done(constants.ROUTER_ALREADY_STARTED);
+                    return this;
+                }
+    
                 this.started = true;
                 var opts = this.options;
     
@@ -713,7 +727,7 @@ define('router5', [], function () {
                 } else if (opts.defaultRoute) {
                     navigateToDefault();
                 } else {
-                    cb();
+                    cb(null);
                 }
                 // Listen to popstate
                 return this;
@@ -727,6 +741,8 @@ define('router5', [], function () {
              */
             value: function stop() {
                 if (!this.started) return this;
+                this.lastKnownState = null;
+                this.lastStateAttempt = null;
                 this.started = false;
     
                 window.removeEventListener('popstate', this.onPopState.bind(this));
@@ -1019,7 +1035,7 @@ define('router5', [], function () {
                     _this4._invokeListeners('=' + toState.name, toState, fromState);
                     _this4._invokeListeners('*', toState, fromState);
     
-                    if (done) done(null, true);
+                    if (done) done(null);
                 });
     
                 this._tr = tr;
@@ -1035,7 +1051,7 @@ define('router5', [], function () {
              * @param  {String}   name        The route name
              * @param  {Object}   [params={}] The route params
              * @param  {Object}   [opts={}]   The route options (replace, reload)
-             * @param  {Function} done        A optional callback (err, res) to call when transition has been performed
+             * @param  {Function} done        A optional callback(err) to call when transition has been performed
              *                                either successfully or unsuccessfully.
              * @return {Function}             A cancellation function
              */
@@ -1074,13 +1090,15 @@ define('router5', [], function () {
                     }
     
                     window.history[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
-                    if (done) done(null, true);
+                    if (done) done(null);
                 });
             }
         }]);
     
         return Router5;
     })();
+    
+    Router5.ERR = constants;
 
     return {RouteNode: RouteNode, Router5: Router5};
 });

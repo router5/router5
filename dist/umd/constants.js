@@ -15,11 +15,12 @@
 
     var constants = {
         ROUTER_NOT_STARTED: 1,
-        SAME_STATES: 2,
-        CANNOT_DEACTIVATE: 3,
-        CANNOT_ACTIVATE: 4,
-        NODE_LISTENER_ERR: 5,
-        TRANSITION_CANCELLED: 6
+        ROUTER_ALREADY_STARTED: 2,
+        SAME_STATES: 10,
+        CANNOT_DEACTIVATE: 11,
+        CANNOT_ACTIVATE: 12,
+        NODE_LISTENER_ERR: 13,
+        TRANSITION_CANCELLED: 20
     };
 
     module.exports = constants;

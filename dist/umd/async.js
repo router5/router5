@@ -26,18 +26,18 @@
             var len = remainingSteps[0].length;
             var res = remainingSteps[0](toState, fromState, done);
 
-            if (typeof res === 'boolean') done(!res, res);else if (res && typeof res.then === 'function') {
+            if (typeof res === 'boolean') done(res ? null : true);else if (res && typeof res.then === 'function') {
                 res.then(function () {
-                    return done(null, true);
+                    return done(null);
                 }, function () {
-                    return done(true, null);
+                    return done(true);
                 });
-            } else if (len < 3 && allowNoResult) done(null, true);
+            } else if (len < 3 && allowNoResult) done(null);
 
             return false;
         };
 
-        var iterate = function iterate(err, res) {
+        var iterate = function iterate(err) {
             if (err) callback(err);else {
                 remainingSteps = remainingSteps.slice(1);
                 next();
@@ -46,7 +46,7 @@
 
         var next = function next() {
             var finished = processFn(iterate);
-            if (finished) callback(null, true);
+            if (finished) callback(null);
         };
 
         next();

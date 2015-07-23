@@ -26,8 +26,8 @@ function transition(router, toState, fromState, callback) {
     var cancel = function cancel() {
         return cancelled = true;
     };
-    var done = function done(err, res) {
-        return callback(cancelled ? _constants2['default'].TRANSITION_CANCELLED : err, res);
+    var done = function done(err) {
+        return callback(cancelled ? _constants2['default'].TRANSITION_CANCELLED : err);
     };
 
     var i = undefined;
@@ -53,8 +53,8 @@ function transition(router, toState, fromState, callback) {
                 return comp.canDeactivate;
             });
 
-            (0, _async2['default'])(canDeactivateFunctions, toState, fromState, function (err, res) {
-                return cb(err ? _constants2['default'].CANNOT_DEACTIVATE : null, res);
+            (0, _async2['default'])(canDeactivateFunctions, toState, fromState, function (err) {
+                return cb(err ? _constants2['default'].CANNOT_DEACTIVATE : null);
             });
         }
     };
@@ -67,8 +67,8 @@ function transition(router, toState, fromState, callback) {
                 return _;
             });
 
-            (0, _async2['default'])(canActivateFunctions, toState, fromState, function (err, res) {
-                return cb(err ? _constants2['default'].CANNOT_ACTIVATE : null, res);
+            (0, _async2['default'])(canActivateFunctions, toState, fromState, function (err) {
+                return cb(err ? _constants2['default'].CANNOT_ACTIVATE : null);
             });
         }
     };
@@ -76,8 +76,8 @@ function transition(router, toState, fromState, callback) {
     var nodeListener = function nodeListener(toState, fromState, cb) {
         if (cancelled) done();else {
             var listeners = router._cbs['^' + intersection] || [];
-            (0, _async2['default'])(listeners, toState, fromState, function (err, res) {
-                return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null, res);
+            (0, _async2['default'])(listeners, toState, fromState, function (err) {
+                return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null);
             }, true);
         }
     };

@@ -56,12 +56,20 @@ var Router5 = (function () {
         Object.keys(opts).forEach(function (opt) {
             return _this.options[opt] = opts[opt];
         });
-        this.base = window.location.pathname.replace(/^\/$/, '');
-
+        this._setBase();
         return this;
     }
 
     _createClass(Router5, [{
+        key: '_setBase',
+
+        /**
+         * @private
+         */
+        value: function _setBase() {
+            this.base = this.options.base || window.location.pathname.replace(/\/$/, '');
+        }
+    }, {
         key: 'setOption',
 
         /**
@@ -72,6 +80,7 @@ var Router5 = (function () {
          */
         value: function setOption(opt, val) {
             this.options[opt] = val;
+            if (opt === 'base') this._setBase();
             return this;
         }
     }, {
@@ -135,7 +144,11 @@ var Router5 = (function () {
         value: function start(done) {
             var _this3 = this;
 
-            if (this.started) return this;
+            if (this.started) {
+                done(_constants2['default'].ROUTER_ALREADY_STARTED);
+                return this;
+            }
+
             this.started = true;
             var opts = this.options;
 
@@ -163,7 +176,7 @@ var Router5 = (function () {
             } else if (opts.defaultRoute) {
                 navigateToDefault();
             } else {
-                cb();
+                cb(null);
             }
             // Listen to popstate
             return this;
@@ -177,6 +190,8 @@ var Router5 = (function () {
          */
         value: function stop() {
             if (!this.started) return this;
+            this.lastKnownState = null;
+            this.lastStateAttempt = null;
             this.started = false;
 
             window.removeEventListener('popstate', this.onPopState.bind(this));
@@ -469,7 +484,7 @@ var Router5 = (function () {
                 _this4._invokeListeners('=' + toState.name, toState, fromState);
                 _this4._invokeListeners('*', toState, fromState);
 
-                if (done) done(null, true);
+                if (done) done(null);
             });
 
             this._tr = tr;
@@ -485,7 +500,7 @@ var Router5 = (function () {
          * @param  {String}   name        The route name
          * @param  {Object}   [params={}] The route params
          * @param  {Object}   [opts={}]   The route options (replace, reload)
-         * @param  {Function} done        A optional callback (err, res) to call when transition has been performed
+         * @param  {Function} done        A optional callback(err) to call when transition has been performed
          *                                either successfully or unsuccessfully.
          * @return {Function}             A cancellation function
          */
@@ -524,7 +539,7 @@ var Router5 = (function () {
                 }
 
                 window.history[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
-                if (done) done(null, true);
+                if (done) done(null);
             });
         }
     }]);
@@ -532,5 +547,6 @@ var Router5 = (function () {
     return Router5;
 })();
 
+Router5.ERR = _constants2['default'];
 exports['default'] = Router5;
 module.exports = exports['default'];

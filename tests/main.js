@@ -155,7 +155,6 @@ function testRouter(useHash) {
 
         it('should be able to navigate to routes', function (done) {
             router.navigate('users.view', {id: 123}, {}, function (err) {
-                console.log(err);
                 expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/users/view/123'));
                 done();
             });
