@@ -1,11 +1,12 @@
 {
   "name": "router5",
-  "version": "0.2.2",
+  "version": "0.2.1",
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "dist/commonjs/index.js",
   "scripts": {
-    "build": "node ./scripts/build.js && npm run uglify",
+    "build": "node ./scripts/build.js && npm run uglify && npm run uglifyAmd",
     "uglify": "./node_modules/.bin/uglifyjs2 dist/browser/router5.js --comments -m -o dist/browser/router5.min.js",
+    "uglifyAmd": "./node_modules/.bin/uglifyjs2 dist/amd/router5.js --comments -m -o dist/amd/router5.min.js",
     "buildTest": "node ./scripts/build.js --test",
     "test": "./node_modules/.bin/karma start karma.config.js",
     "clog": "./node_modules/.bin/conventional-changelog -i CHANGELOG.md -p angular -o CHANGELOG.md",
