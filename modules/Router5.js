@@ -11,7 +11,7 @@ let makeState = (name, params, path) => ({name, params, path})
  * @param {Object} [opts={}] The router options: useHash, defaultRoute and defaultParams can be specified.
  * @return {Router5} The router instance
  */
-export default class Router5 {
+class Router5 {
     constructor(routes, opts = {}) {
         this.started = false
         this._cbs = {}
@@ -96,8 +96,12 @@ export default class Router5 {
      * @return {Router5}  The router instance
      */
     start(done) {
-        if (this.started) return this
-            this.started = true
+        if (this.started) {
+            done(constants.ROUTER_ALREADY_STARTED)
+            return this
+        }
+
+        this.started = true
         let opts = this.options
 
         // Try to match starting path name
@@ -136,9 +140,9 @@ export default class Router5 {
      */
     stop() {
         if (!this.started) return this
+        this.lastKnownState = null
+        this.lastStateAttempt = null
         this.started = false
-        this.lastKnownState = false
-        this.lastStateAttempt = false
 
         window.removeEventListener('popstate', this.onPopState.bind(this))
         return this
@@ -429,3 +433,6 @@ export default class Router5 {
         })
     }
 }
+
+Router5.ERR = constants
+export default Router5
