@@ -108,19 +108,19 @@ class Router5 {
         let startPath = this.getLocation();
         let startState = this.matchPath(startPath)
 
-        let cb = (err) => {
+        let cb = (err, state) => {
             window.addEventListener('popstate', this.onPopState.bind(this))
-            if (done) done(err)
+            if (done) done(err, state)
         }
 
         let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, cb)
 
         if (startState) {
             this.lastStateAttempt = startState
-            this._transition(this.lastStateAttempt, this.lastKnownState, (err) => {
+            this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
                 if (!err) {
                     window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
-                    cb(null)
+                    cb(null, state)
                 }
                 else if (opts.defaultRoute) navigateToDefault()
                 else cb(err)
@@ -384,7 +384,7 @@ class Router5 {
             this._invokeListeners('=' + toState.name, toState, fromState)
             this._invokeListeners('*', toState, fromState)
 
-            if (done) done(null)
+            if (done) done(null, toState)
         })
 
         this._tr = tr
@@ -411,7 +411,8 @@ class Router5 {
 
         if (!path) throw new Error(`Could not find route "${name}"`)
 
-        this.lastStateAttempt = makeState(name, params, path)
+        let toState = makeState(name, params, path)
+        this.lastStateAttempt = toState
         let sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false
 
         // Do not proceed further if states are the same and no reload
@@ -422,14 +423,14 @@ class Router5 {
         }
 
         // Transition and amend history
-        return this._transition(this.lastStateAttempt, this.lastKnownState, (err) => {
+        return this._transition(toState, this.lastKnownState, (err, state) => {
             if (err) {
                 if (done) done(err)
                 return
             }
 
             window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
-            if (done) done(null)
+            if (done) done(null, state)
         })
     }
 }

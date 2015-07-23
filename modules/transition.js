@@ -23,7 +23,7 @@ export default function transition(router, toState, fromState, callback) {
 
     let toDeactivate = fromStateIds.slice(i).reverse()
     let toActivate   = toStateIds.slice(i)
-    let intersection = fromState ? (i > 0 ? fromStateIds[i - 1] : '') : null
+    let intersection = fromState && i > 0 ? fromStateIds[i - 1] : ''
 
     let canDeactivate = (toState, fromState, cb) => {
         if (cancelled) done()
@@ -66,7 +66,7 @@ export default function transition(router, toState, fromState, callback) {
         }
     }
 
-    let pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate]
+    let pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener]
     asyncProcess(pipeline, toState, fromState, done)
 
     return cancel

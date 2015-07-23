@@ -161,6 +161,20 @@ function testRouter(useHash) {
             }).toThrow();
         });
 
+        it('should call root node listener on first transition', function (done) {
+            router.stop();
+            router.setOption('defaultRoute', 'home');
+            window.history.replaceState({}, '', base);
+            spyOn(listeners, 'global');
+            router.addNodeListener('', listeners.global);
+
+            router.start(function (err, state) {
+                expect(state).toEqual({name: 'home', path: '/home', params: {}});
+                expect(listeners.global).toHaveBeenCalled();
+                done();
+            });
+        });
+
         it('should be able to navigate to routes', function (done) {
             router.navigate('users.view', {id: 123}, {}, function (err) {
                 expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/users/view/123'));
