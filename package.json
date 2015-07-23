@@ -44,6 +44,7 @@
     "karma-firefox-launcher": "^0.1.6",
     "karma-jasmine": "^0.3.6",
     "karma-mocha-reporter": "^1.0.2",
+    "karma-sauce-launcher": "^0.2.14",
     "mkdirp": "^0.5.1",
     "through2": "^2.0.0",
     "uglify-js2": "^2.1.11",

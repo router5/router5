@@ -1,3 +1,33 @@
+var credentials = require('./saucelabs');
+process.env.SAUCE_USERNAME = credentials.SAUCE_USERNAME;
+process.env.SAUCE_ACCESS_KEY = credentials.SAUCE_ACCESS_KEY;
+
+var customLaunchers = {
+    sl_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 7',
+        version: '35'
+    },
+    sl_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        version: '30'
+    },
+    sl_ios_safari: {
+        base: 'SauceLabs',
+        browserName: 'iphone',
+        platform: 'OS X 10.9',
+        version: '7.1'
+    },
+    sl_ie_11: {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 8.1',
+        version: '11'
+    }
+};
+
 module.exports = function(config) {
     config.set({
         basePath: '',
@@ -7,6 +37,7 @@ module.exports = function(config) {
         singleRun: true,
 
         browsers: ['Firefox'],
+        // browsers: Object.keys(customLaunchers),
 
         files: [
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
@@ -28,10 +59,11 @@ module.exports = function(config) {
             'karma-firefox-launcher',
             'karma-mocha-reporter',
             'karma-coverage',
-            'karma-coveralls'
+            'karma-coveralls',
+            'karma-sauce-launcher'
         ],
 
-        reporters: ['mocha', 'coverage', 'coveralls'],
+        reporters: ['mocha', 'coverage', 'coveralls', 'saucelabs'],
 
         coverageReporter: {
             dir: 'coverage',
@@ -39,5 +71,9 @@ module.exports = function(config) {
                 {type: 'lcov'}
             ],
         },
+
+        sauceLabs: {
+            testName: 'router5 Unit Tests'
+        }
     });
 };
