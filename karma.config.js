@@ -123,7 +123,7 @@ module.exports = function(config) {
 
         sauceLabs: {
             testName: 'router5 Unit Tests',
-            startConnect: false
+            // startConnect: false
         },
 
         customLaunchers: customLaunchers
