@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.2.6
+ * @version 0.2.7
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -248,13 +248,13 @@ define('router5', [], function () {
     
     // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
     var constants = {
-        ROUTER_NOT_STARTED: 1,
-        ROUTER_ALREADY_STARTED: 2,
-        SAME_STATES: 10,
-        CANNOT_DEACTIVATE: 11,
-        CANNOT_ACTIVATE: 12,
-        NODE_LISTENER_ERR: 13,
-        TRANSITION_CANCELLED: 20
+        ROUTER_NOT_STARTED: 'NOT_STARTED',
+        ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
+        SAME_STATES: 'SAME_STATES',
+        CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
+        CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
+        NODE_LISTENER_ERR: 'NODE_ERR',
+        TRANSITION_CANCELLED: 'CANCELLED'
     };
     var RouteNode = (function () {
         function RouteNode() {
@@ -318,7 +318,7 @@ define('router5', [], function () {
                         if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
                         if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
                         if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                        return a.path && b.path ? a.path.length < b.path.length : 0;
+                        return a.path && b.path ? a.path.length < b.path.length ? 1 : -1 : 0;
                     });
                 } else {
                     // Locate parent node
