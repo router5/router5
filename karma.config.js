@@ -1,8 +1,13 @@
 var argv = require('yargs').argv;
 
-// var credentials = require('./saucelabs');
-// process.env.SAUCE_USERNAME = credentials.SAUCE_USERNAME;
-// process.env.SAUCE_ACCESS_KEY = credentials.SAUCE_ACCESS_KEY;
+var sauce  = argv.sauce;
+var travis = !!process.env.TRAVIS_JOB_NUMBER;
+
+if (!travis) {
+    process.env.SAUCE_USERNAME = require('./saucelabs').SAUCE_USERNAME;
+    process.env.SAUCE_ACCESS_KEY = require('./saucelabs').SAUCE_ACCESS_KEY;
+}
+
 
 var customLaunchers = {
     sl_firefox_10: {
@@ -85,7 +90,7 @@ module.exports = function(config) {
         singleRun: true,
 
         // browsers: ['Firefox'],
-        browsers: argv.sauce ? Object.keys(customLaunchers) : ['Firefox'],
+        browsers: sauce ? Object.keys(customLaunchers) : ['Firefox'],
 
         files: [
             'node_modules/bluebird/js/browser/bluebird.js',
@@ -108,11 +113,10 @@ module.exports = function(config) {
             'karma-firefox-launcher',
             'karma-mocha-reporter',
             'karma-coverage',
-            'karma-coveralls',
-            'karma-sauce-launcher'
-        ],
+            'karma-coveralls'
+        ].concat(sauce ? 'karma-sauce-launcher' : []),
 
-        reporters: ['mocha', 'coverage', 'coveralls', 'saucelabs'],
+        reporters: ['mocha', 'coverage', 'coveralls'].concat(sauce ? 'sauceLabs' : []),
 
         coverageReporter: {
             dir: 'coverage',
@@ -123,7 +127,7 @@ module.exports = function(config) {
 
         sauceLabs: {
             testName: 'router5 Unit Tests',
-            // startConnect: false
+            startConnect: !travis
         },
 
         customLaunchers: customLaunchers
