@@ -1,8 +1,8 @@
 var argv = require('yargs').argv;
 
-var credentials = require('./saucelabs');
-process.env.SAUCE_USERNAME = credentials.SAUCE_USERNAME;
-process.env.SAUCE_ACCESS_KEY = credentials.SAUCE_ACCESS_KEY;
+// var credentials = require('./saucelabs');
+// process.env.SAUCE_USERNAME = credentials.SAUCE_USERNAME;
+// process.env.SAUCE_ACCESS_KEY = credentials.SAUCE_ACCESS_KEY;
 
 var customLaunchers = {
     sl_firefox_10: {
@@ -123,9 +123,6 @@ module.exports = function(config) {
 
         sauceLabs: {
             testName: 'router5 Unit Tests',
-            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
-            username: process.env.SAUCE_USERNAME,
-            accessKey: process.env.SAUCE_ACCESS_KEY,
             startConnect: false
         },
 
