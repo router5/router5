@@ -122,7 +122,8 @@ module.exports = function(config) {
         },
 
         sauceLabs: {
-            testName: 'router5 Unit Tests'
+            testName: 'router5 Unit Tests',
+            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
         },
 
         customLaunchers: customLaunchers

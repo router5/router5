@@ -8,7 +8,7 @@ script:
   - npm run lint
   - npm run build
   - npm run buildTest
-  - npm test-sauce
+  - npm run test-sauce
 after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
 addons:
   sauce_connect: true
