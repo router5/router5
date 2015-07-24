@@ -221,13 +221,13 @@ function testRouter(useHash) {
 
         it('should handle popstate events', function (done) {
             var homeState = {name: 'home', params: {}, path: '/home'};
-            var evt = new Event('popstate');
-            window.dispatchEvent(evt);
+            var evt = {};
+            router.onPopState(evt);
             setTimeout(function () {
                 expect(router.getState()).not.toEqual(homeState);
 
                 evt.state = homeState;
-                window.dispatchEvent(evt);
+                router.onPopState(evt);
 
                 setTimeout(function () {
                     expect(router.getState()).toEqual(homeState);
@@ -235,7 +235,7 @@ function testRouter(useHash) {
                     router.navigate('users', {}, {}, function () {
                         router.registerComponent('users', {canDeactivate: function () { return false; }});
                         // Nothing will happen
-                        window.dispatchEvent(evt);
+                        router.onPopState(evt);
                         // Push to queue
                         setTimeout(function () {
                             expect(router.getState()).not.toEqual(homeState);

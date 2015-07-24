@@ -1,30 +1,78 @@
+var argv = require('yargs').argv;
+
 var credentials = require('./saucelabs');
 process.env.SAUCE_USERNAME = credentials.SAUCE_USERNAME;
 process.env.SAUCE_ACCESS_KEY = credentials.SAUCE_ACCESS_KEY;
 
 var customLaunchers = {
-    sl_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'Windows 7',
-        version: '35'
-    },
-    sl_firefox: {
+    sl_firefox_10: {
         base: 'SauceLabs',
         browserName: 'firefox',
-        version: '30'
+        version: '10'
     },
-    sl_ios_safari: {
+    sl_firefox_24: {
         base: 'SauceLabs',
-        browserName: 'iphone',
-        platform: 'OS X 10.9',
-        version: '7.1'
+        browserName: 'firefox',
+        version: '24'
+    },
+    sl_firefox_31: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        version: '31'
+    },
+    sl_chrome_26: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        version: '26'
+    },
+    sl_chrome_33: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        version: '33'
+    },
+    sl_chrome_40: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        version: '40'
+    },
+    sl_chrome_latest: {
+        base: 'SauceLabs',
+        browserName: 'chrome'
+    },
+    sl_firefox_latest: {
+        base: 'SauceLabs',
+        browserName: 'firefox'
+    },
+    sl_safari_7: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        version: '7'
+    },
+    sl_safari_8: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        version: '8'
     },
     sl_ie_11: {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         platform: 'Windows 8.1',
         version: '11'
+    },
+    sl_ie_10: {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '10'
+    },
+    sl_opera_latest: {
+        base: 'SauceLabs',
+        browserName: 'opera'
+    },
+    sl_opera_12: {
+        base: 'SauceLabs',
+        browserName: 'opera',
+        version: '12'
     }
 };
 
@@ -36,10 +84,11 @@ module.exports = function(config) {
         autoWatch: false,
         singleRun: true,
 
-        browsers: ['Firefox'],
-        // browsers: Object.keys(customLaunchers),
+        // browsers: ['Firefox'],
+        browsers: argv.sauce ? Object.keys(customLaunchers) : ['Firefox'],
 
         files: [
+            'node_modules/bluebird/js/browser/bluebird.js',
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
             'node_modules/route-node/dist/umd/route-node.js',
             'dist/test/constants.js',
@@ -74,6 +123,8 @@ module.exports = function(config) {
 
         sauceLabs: {
             testName: 'router5 Unit Tests'
-        }
+        },
+
+        customLaunchers: customLaunchers
     });
 };

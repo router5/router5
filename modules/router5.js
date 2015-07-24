@@ -105,7 +105,7 @@ class Router5 {
         let opts = this.options
 
         // Try to match starting path name
-        let startPath = this.getLocation();
+        let startPath = this.getLocation()
         let startState = this.matchPath(startPath)
 
         let cb = (err, state) => {
