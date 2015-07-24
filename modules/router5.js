@@ -22,18 +22,12 @@ class Router5 {
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
         this.options = {
             useHash: false,
-            hashPrefix: ''
+            hashPrefix: '',
+            base: window.location.pathname.replace(/\/$/, '')
         }
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
-        this._setBase()
-        return this
-    }
-
-    /**
-     * @private
-     */
-    _setBase() {
-        this.base = this.options.base || window.location.pathname.replace(/\/$/, '')
+        // Bind onPopState
+        this.boundOnPopState = this.onPopState.bind(this)
     }
 
     /**
@@ -44,7 +38,6 @@ class Router5 {
      */
     setOption(opt, val) {
         this.options[opt] = val
-        if (opt === 'base') this._setBase()
         return this
     }
 
@@ -109,7 +102,7 @@ class Router5 {
         let startState = this.matchPath(startPath)
 
         let cb = (err, state) => {
-            window.addEventListener('popstate', this.onPopState.bind(this))
+            window.addEventListener('popstate', this.boundOnPopState)
             if (done) done(err, state)
         }
 
@@ -144,7 +137,7 @@ class Router5 {
         this.lastStateAttempt = null
         this.started = false
 
-        window.removeEventListener('popstate', this.onPopState.bind(this))
+        window.removeEventListener('popstate', this.boundOnPopState)
         return this
     }
 
@@ -328,7 +321,7 @@ class Router5 {
     getLocation() {
         let path = this.options.useHash
             ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '')
-            : window.location.pathname.replace(new RegExp('^' + this.base), '')
+            : window.location.pathname.replace(new RegExp('^' + this.options.base), '')
         return path + window.location.search;
     }
 
@@ -340,7 +333,7 @@ class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
-        return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.base) +
+        return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.options.base) +
             this.rootNode.buildPath(route, params)
     }
 
