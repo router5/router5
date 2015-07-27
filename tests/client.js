@@ -9,7 +9,7 @@ var listeners = {
     }
 };
 
-var base = window.location.pathname
+var base = window.location.pathname;
 
 var hashPrefix = '!';
 
@@ -20,37 +20,6 @@ function getExpectedPath(useHash, path) {
 function getPath(useHash) {
     if (useHash) return window.location.hash + window.location.search;
     return window.location.pathname.replace(new RegExp('^' + base), '') + window.location.search;
-}
-
-var usersRoute = new RouteNode('users', '/users', [
-    new RouteNode('view', '/view/:id'),
-    new RouteNode('list', '/list')
-]);
-
-var ordersRoute = new RouteNode('orders', '/orders', [
-    new RouteNode('view', '/view/:id'),
-    new RouteNode('pending', '/pending'),
-    new RouteNode('completed', '/completed')
-]);
-
-var sectionRoute = new RouteNode('section', '/:section', [
-    new RouteNode('view', '/view/:id')
-]);
-
-function createRouter(useHash) {
-    return new Router5([
-            usersRoute,
-            sectionRoute
-        ], {
-            defaultRoute: 'home'
-        })
-        .setOption('useHash', useHash)
-        .setOption('hashPrefix', hashPrefix)
-        .setOption('base', base)
-        .add(ordersRoute)
-        .addNode('index', '/')
-        .addNode('home', '/home')
-        .addNode('admin', '/admin',   function canActivate() { return false; });
 }
 
 describe('router5', function () {
@@ -65,7 +34,7 @@ function testRouter(useHash) {
     var router;
 
     beforeAll(function () {
-        router = createRouter(useHash)
+        router = createRouter(base, useHash, hashPrefix)
     });
 
     afterAll(function () {
@@ -147,6 +116,21 @@ function testRouter(useHash) {
             window.history.replaceState({}, '', base + getExpectedPath(useHash, ''));
             router.start(function (err) {
                 expect(err).toBe(null)
+                done();
+            });
+        });
+
+        it('should start with the provided state', function (done) {
+            router.stop();
+            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/home'));
+            spyOn(listeners, 'global');
+            router.addListener('', listeners.global);
+            var homeState = {name: 'home', params: {}, path: '/home'};
+            router.start(homeState, function (err, state) {
+                expect(state).toEqual(homeState);
+                expect(router.lastKnownState).toEqual(homeState);
+                expect(listeners.global).not.toHaveBeenCalled();
+                router.removeListener('', listeners.global);
                 done();
             });
         });

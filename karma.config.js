@@ -101,7 +101,8 @@ module.exports = function(config) {
             'dist/test/async.js',
             'dist/test/transition.js',
             'dist/test/router5.js',
-            'tests/*.js'
+            'tests/_create-router.js',
+            'tests/client.js'
         ],
 
         preprocessors: {
