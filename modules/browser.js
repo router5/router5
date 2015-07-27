@@ -10,6 +10,7 @@ let noop = () => {}
  * Browser detection
  */
 let isBrowser = typeof window !== undefined
+
 /**
  * Browser functions needed by router5
  */
@@ -30,7 +31,9 @@ let getLocation = (opts) => {
     return path + window.location.search;
 }
 
-// Export
+/**
+ * Export browser object
+ */
 let browser = {}
 if (isBrowser) {
     browser = {getBase, pushState, replaceState, addPopstateListener, removePopstateListener, getLocation}

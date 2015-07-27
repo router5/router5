@@ -331,7 +331,7 @@ class Router5 {
      */
     buildUrl(route, params) {
         return this.options.base +
-            (this.options.useHash ?'#' + this.options.hashPrefix : '') +
+            (this.options.useHash ? '#' + this.options.hashPrefix : '') +
             this.rootNode.buildPath(route, params)
     }
 
