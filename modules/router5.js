@@ -89,40 +89,60 @@ class Router5 {
      * @param  {Function} done An optional callback which will be called when starting is done
      * @return {Router5}  The router instance
      */
-    start(done) {
+    start() {
+        let args = [...arguments]
+        let done = args.slice(-1)[0]
+        let startPath, startState
+
         if (this.started) {
-            done(constants.ROUTER_ALREADY_STARTED)
+            if (done) done(constants.ROUTER_ALREADY_STARTED)
             return this
+        }
+
+        if (args.length === 2) {
+            if (typeof args[0] === 'string') startPath = args[0]
+            if (typeof args[0] === 'object') startState = args[0]
         }
 
         this.started = true
         let opts = this.options
 
-        // Try to match starting path name
-        let startPath = this.getLocation()
-        let startState = this.matchPath(startPath)
-
+        // callback
         let cb = (err, state) => {
             browser.addPopstateListener(this.boundOnPopState)
             if (done) done(err, state)
         }
 
-        let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, cb)
+        // Get start path
+        if (!startPath && !startState) startPath = this.getLocation()
 
-        if (startState) {
-            this.lastStateAttempt = startState
-            this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
-                if (!err) {
-                    browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
-                    cb(null, state)
-                }
-                else if (opts.defaultRoute) navigateToDefault()
-                else cb(err)
-            })
-        } else if (opts.defaultRoute) {
-            navigateToDefault()
+        if (!startState) {
+            // If no supplied start state, get start state
+            startState = this.matchPath(startPath)
+            // Navigate to default function
+            let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, cb)
+            // If matched start path
+            if (startState) {
+                this.lastStateAttempt = startState
+                this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
+                    if (!err) {
+                        browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
+                        cb(null, state)
+                    }
+                    else if (opts.defaultRoute) navigateToDefault()
+                    else cb(err)
+                })
+            } else if (opts.defaultRoute) {
+                // If default, navigate to default
+                navigateToDefault()
+            } else {
+                // No start match, no default => do nothing
+                cb(null)
+            }
         } else {
-            cb(null)
+            // Initialise router with provided start state
+            this.lastKnownState = startState
+            cb(null, startState)
         }
         // Listen to popstate
         return this
