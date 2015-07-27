@@ -97,10 +97,12 @@ module.exports = function(config) {
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
             'node_modules/route-node/dist/umd/route-node.js',
             'dist/test/constants.js',
+            'dist/test/browser.js',
             'dist/test/async.js',
             'dist/test/transition.js',
             'dist/test/router5.js',
-            'tests/*.js'
+            'tests/_create-router.js',
+            'tests/client.js'
         ],
 
         preprocessors: {
