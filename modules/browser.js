@@ -9,7 +9,7 @@ let noop = () => {}
 /**
  * Browser detection
  */
-let isBrowser = typeof window !== undefined
+let isBrowser = typeof window !== 'undefined'
 
 /**
  * Browser functions needed by router5
