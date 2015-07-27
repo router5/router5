@@ -3,6 +3,7 @@
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
+var _slice = Array.prototype.slice;
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -21,6 +22,10 @@ var _transition3 = _interopRequireDefault(_transition2);
 var _constants = require('./constants');
 
 var _constants2 = _interopRequireDefault(_constants);
+
+var _browser = require('./browser');
+
+var _browser2 = _interopRequireDefault(_browser);
 
 var makeState = function makeState(name, params, path) {
     return { name: name, params: params, path: path };
@@ -51,25 +56,17 @@ var Router5 = (function () {
         this.rootNode = routes instanceof _routeNode2['default'] ? routes : new _routeNode2['default']('', '', routes);
         this.options = {
             useHash: false,
-            hashPrefix: ''
+            hashPrefix: '',
+            base: _browser2['default'].getBase()
         };
         Object.keys(opts).forEach(function (opt) {
             return _this.options[opt] = opts[opt];
         });
-        this._setBase();
-        return this;
+        // Bind onPopState
+        this.boundOnPopState = this.onPopState.bind(this);
     }
 
     _createClass(Router5, [{
-        key: '_setBase',
-
-        /**
-         * @private
-         */
-        value: function _setBase() {
-            this.base = this.options.base || window.location.pathname.replace(/\/$/, '');
-        }
-    }, {
         key: 'setOption',
 
         /**
@@ -80,7 +77,6 @@ var Router5 = (function () {
          */
         value: function setOption(opt, val) {
             this.options[opt] = val;
-            if (opt === 'base') this._setBase();
             return this;
         }
     }, {
@@ -129,7 +125,7 @@ var Router5 = (function () {
             this._transition(state, this.lastKnownState, function (err) {
                 if (err) {
                     var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
-                    window.history.pushState(_this2.lastKnownState, '', url);
+                    _browser2['default'].pushState(_this2.lastKnownState, '', url);
                 }
             });
         }
@@ -141,42 +137,65 @@ var Router5 = (function () {
          * @param  {Function} done An optional callback which will be called when starting is done
          * @return {Router5}  The router instance
          */
-        value: function start(done) {
+        value: function start() {
             var _this3 = this;
 
+            var args = [].concat(_slice.call(arguments));
+            var done = args.slice(-1)[0];
+            var startPath = undefined,
+                startState = undefined;
+
             if (this.started) {
-                done(_constants2['default'].ROUTER_ALREADY_STARTED);
+                if (done) done(_constants2['default'].ROUTER_ALREADY_STARTED);
                 return this;
+            }
+
+            if (args.length === 2) {
+                if (typeof args[0] === 'string') startPath = args[0];
+                if (typeof args[0] === 'object') startState = args[0];
             }
 
             this.started = true;
             var opts = this.options;
 
-            // Try to match starting path name
-            var startPath = this.getLocation();
-            var startState = this.matchPath(startPath);
-
+            // callback
             var cb = function cb(err, state) {
-                window.addEventListener('popstate', _this3.onPopState.bind(_this3));
+                _browser2['default'].addPopstateListener(_this3.boundOnPopState);
                 if (done) done(err, state);
             };
 
-            var navigateToDefault = function navigateToDefault() {
-                return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
-            };
+            // Get start path
+            if (!startPath && !startState) startPath = this.getLocation();
 
-            if (startState) {
-                this.lastStateAttempt = startState;
-                this._transition(this.lastStateAttempt, this.lastKnownState, function (err, state) {
-                    if (!err) {
-                        window.history.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
-                        cb(null, state);
-                    } else if (opts.defaultRoute) navigateToDefault();else cb(err);
-                });
-            } else if (opts.defaultRoute) {
-                navigateToDefault();
+            if (!startState) {
+                (function () {
+                    // If no supplied start state, get start state
+                    startState = _this3.matchPath(startPath);
+                    // Navigate to default function
+                    var navigateToDefault = function navigateToDefault() {
+                        return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
+                    };
+                    // If matched start path
+                    if (startState) {
+                        _this3.lastStateAttempt = startState;
+                        _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
+                            if (!err) {
+                                _browser2['default'].replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
+                                cb(null, state);
+                            } else if (opts.defaultRoute) navigateToDefault();else cb(err);
+                        });
+                    } else if (opts.defaultRoute) {
+                        // If default, navigate to default
+                        navigateToDefault();
+                    } else {
+                        // No start match, no default => do nothing
+                        cb(null);
+                    }
+                })();
             } else {
-                cb(null);
+                // Initialise router with provided start state
+                this.lastKnownState = startState;
+                cb(null, startState);
             }
             // Listen to popstate
             return this;
@@ -194,7 +213,7 @@ var Router5 = (function () {
             this.lastStateAttempt = null;
             this.started = false;
 
-            window.removeEventListener('popstate', this.onPopState.bind(this));
+            _browser2['default'].removePopstateListener(this.boundOnPopState);
             return this;
         }
     }, {
@@ -205,9 +224,7 @@ var Router5 = (function () {
          * @return {Object} The current state
          */
         value: function getState() {
-            return this.lastKnownState
-            // return window.history.state
-            ;
+            return this.lastKnownState;
         }
     }, {
         key: 'isActive',
@@ -419,8 +436,7 @@ var Router5 = (function () {
          * @private
          */
         value: function getLocation() {
-            var path = this.options.useHash ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
-            return path + window.location.search;
+            return _browser2['default'].getLocation(this.options);
         }
     }, {
         key: 'buildUrl',
@@ -433,7 +449,7 @@ var Router5 = (function () {
          * @return {String}        The built URL
          */
         value: function buildUrl(route, params) {
-            return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.base) + this.rootNode.buildPath(route, params);
+            return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + this.rootNode.buildPath(route, params);
         }
     }, {
         key: 'buildPath',
@@ -539,7 +555,7 @@ var Router5 = (function () {
                     return;
                 }
 
-                window.history[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
+                _browser2['default'][opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
                 if (done) done(null, state);
             });
         }

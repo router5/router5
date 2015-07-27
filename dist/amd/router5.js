@@ -25,228 +25,6 @@
  */
 define('router5', [], function () {
     
-    var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-    
-    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-    
-    var defaultOrConstrained = function defaultOrConstrained(match) {
-        return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~]+') + ')';
-    };
-    
-    var rules = [{
-        // An URL can contain a parameter :paramName
-        // - and _ are allowed but not in last position
-        name: 'url-parameter',
-        pattern: /^:([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
-        regex: function regex(match) {
-            return new RegExp(defaultOrConstrained(match[2]));
-        }
-    }, {
-        // Url parameter (splat)
-        name: 'url-parameter-splat',
-        pattern: /^\*([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/,
-        regex: /([^\?]*)/
-    }, {
-        name: 'url-parameter-matrix',
-        pattern: /^\;([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
-        regex: function regex(match) {
-            return new RegExp(';' + match[1] + '=' + defaultOrConstrained(match[2]));
-        }
-    }, {
-        // Query parameter: ?param1&param2
-        //                   ?:param1&:param2
-        name: 'query-parameter',
-        pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
-    }, {
-        // Delimiter /
-        name: 'delimiter',
-        pattern: /^(\/|\?)/,
-        regex: function regex(match) {
-            return new RegExp(match[0]);
-        }
-    }, {
-        // Sub delimiters
-        name: 'sub-delimiter',
-        pattern: /^(\!|\&|\-|_|\.|;)/,
-        regex: function regex(match) {
-            return new RegExp(match[0]);
-        }
-    }, {
-        // Unmatched fragment (until delimiter is found)
-        name: 'fragment',
-        pattern: /^([0-9a-zA-Z]+?)/,
-        regex: function regex(match) {
-            return new RegExp(match[0]);
-        }
-    }];
-    
-    var tokenise = function tokenise(str) {
-        var tokens = arguments[1] === undefined ? [] : arguments[1];
-    
-        // Look for a matching rule
-        var matched = rules.some(function (rule) {
-            var match = str.match(rule.pattern);
-            if (!match) return false;
-    
-            tokens.push({
-                type: rule.name,
-                match: match[0],
-                val: match.slice(1, 2),
-                otherVal: match.slice(2),
-                regex: rule.regex instanceof Function ? rule.regex(match) : rule.regex
-            });
-    
-            if (match[0].length < str.length) tokens = tokenise(str.substr(match[0].length), tokens);
-            return true;
-        });
-        // If no rules matched, throw an error (possible malformed path)
-        if (!matched) {
-            throw new Error('Could not parse path.');
-        }
-        // Return tokens
-        return tokens;
-    };
-    
-    var Path = (function () {
-        function Path(path) {
-            _classCallCheck(this, Path);
-    
-            if (!path) throw new Error('Please supply a path');
-            this.path = path;
-            this.tokens = tokenise(path);
-    
-            this.hasUrlParams = this.tokens.filter(function (t) {
-                return /^url-parameter/.test(t.type);
-            }).length > 0;
-            this.hasSpatParam = this.tokens.filter(function (t) {
-                return /splat$/.test(t.type);
-            }).length > 0;
-            this.hasMatrixParams = this.tokens.filter(function (t) {
-                return /matrix$/.test(t.type);
-            }).length > 0;
-            this.hasQueryParams = this.tokens.filter(function (t) {
-                return t.type === 'query-parameter';
-            }).length > 0;
-            // Extract named parameters from tokens
-            this.urlParams = !this.hasUrlParams ? [] : this.tokens.filter(function (t) {
-                return /^url-parameter/.test(t.type);
-            }).map(function (t) {
-                return t.val.slice(0, 1);
-            })
-            // Flatten
-            .reduce(function (r, v) {
-                return r.concat(v);
-            });
-            // Query params
-            this.queryParams = !this.hasQueryParams ? [] : this.tokens.filter(function (t) {
-                return t.type === 'query-parameter';
-            }).map(function (t) {
-                return t.val;
-            })
-            // Flatten
-            .reduce(function (r, v) {
-                return r.concat(v);
-            });
-            this.params = this.urlParams.concat(this.queryParams);
-            // Check if hasQueryParams
-            // Regular expressions for url part only (full and partial match)
-            this.source = this.tokens.filter(function (t) {
-                return t.regex !== undefined;
-            }).map(function (r) {
-                return r.regex.source;
-            }).join('');
-        }
-    
-        _createClass(Path, [{
-            key: '_urlMatch',
-            value: function _urlMatch(path, regex) {
-                var _this = this;
-    
-                var match = path.match(regex);
-                if (!match) return null;else if (!this.urlParams.length) return {};
-                // Reduce named params to key-value pairs
-                return match.slice(1, this.urlParams.length + 1).reduce(function (params, m, i) {
-                    params[_this.urlParams[i]] = m;
-                    return params;
-                }, {});
-            }
-        }, {
-            key: 'match',
-            value: function match(path) {
-                var _this2 = this;
-    
-                // Check if exact match
-                var match = this._urlMatch(path, new RegExp('^' + this.source + (this.hasQueryParams ? '?.*$' : '$')));
-                // If no match, or no query params, no need to go further
-                if (!match || !this.hasQueryParams) return match;
-                // Extract query params
-                var queryParams = path.split('?')[1].split('&').map(function (_) {
-                    return _.split('=');
-                }).reduce(function (obj, m) {
-                    obj[m[0]] = m[1];
-                    return obj;
-                }, {});
-    
-                if (Object.keys(queryParams).every(function (p) {
-                    return Object.keys(_this2.queryParams).indexOf(p) !== 1;
-                }) && Object.keys(queryParams).length === this.queryParams.length) {
-                    // Extend url match
-                    Object.keys(queryParams).forEach(function (p) {
-                        return match[p] = queryParams[p];
-                    });
-    
-                    return match;
-                }
-    
-                return null;
-            }
-        }, {
-            key: 'partialMatch',
-            value: function partialMatch(path) {
-                // Check if partial match (start of given path matches regex)
-                return this._urlMatch(path, new RegExp('^' + this.source));
-            }
-        }, {
-            key: 'build',
-            value: function build() {
-                var params = arguments[0] === undefined ? {} : arguments[0];
-                var ignoreConstraints = arguments[1] === undefined ? false : arguments[1];
-    
-                // Check all params are provided (not search parameters which are optional)
-                if (!this.params.every(function (p) {
-                    return params[p] !== undefined;
-                })) throw new Error('Missing parameters');
-    
-                // Check constraints
-                if (!ignoreConstraints) {
-                    var constraintsPassed = this.tokens.filter(function (t) {
-                        return /^url-parameter/.test(t.type) && !/-splat$/.test(t.type);
-                    }).every(function (t) {
-                        return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(params[t.val]);
-                    });
-    
-                    if (!constraintsPassed) throw new Error('Some parameters are of invalid format');
-                }
-    
-                var base = this.tokens.filter(function (t) {
-                    return t.type !== 'query-parameter';
-                }).map(function (t) {
-                    if (t.type === 'url-parameter-matrix') return ';' + t.val[0] + '=' + params[t.val[0]];
-                    return /^url-parameter/.test(t.type) ? params[t.val[0]] : t.match;
-                }).join('');
-    
-                var searchPart = this.queryParams.map(function (p) {
-                    return p + '=' + params[p];
-                }).join('&');
-    
-                return base + (searchPart ? '?' + searchPart : '');
-            }
-        }]);
-    
-        return Path;
-    })();
-    
-    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
     var constants = {
         ROUTER_NOT_STARTED: 'NOT_STARTED',
         ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
@@ -255,212 +33,68 @@ define('router5', [], function () {
         CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
         NODE_LISTENER_ERR: 'NODE_ERR',
         TRANSITION_CANCELLED: 'CANCELLED'
+    };/**
+     * Dumb functions
+     */
+    
+    function identity() {
+        var _arguments = arguments;
+    
+        return function () {
+            return _arguments[0];
+        };
+    }
+    var noop = function noop() {};
+    
+    /**
+     * Browser detection
+     */
+    var isBrowser = typeof window !== 'undefined';
+    
+    /**
+     * Browser functions needed by router5
+     */
+    var getBase = function getBase() {
+        return window.location.pathname.replace(/\/$/, '');
     };
-    var RouteNode = (function () {
-        function RouteNode() {
-            var name = arguments[0] === undefined ? '' : arguments[0];
-            var path = arguments[1] === undefined ? '' : arguments[1];
-            var childRoutes = arguments[2] === undefined ? [] : arguments[2];
     
-            _classCallCheck(this, RouteNode);
+    var pushState = function pushState(state, title, path) {
+        return window.history.pushState(state, title, path);
+    };
     
-            this.name = name;
-            this.path = path;
-            this.parser = path ? new Path(path) : null;
-            this.children = [];
+    var replaceState = function replaceState(state, title, path) {
+        return window.history.replaceState(state, title, path);
+    };
     
-            this.add(childRoutes);
+    var addPopstateListener = function addPopstateListener(fn) {
+        return window.addEventListener('popstate', fn);
+    };
     
-            return this;
-        }
+    var removePopstateListener = function removePopstateListener(fn) {
+        return window.removeEventListener('popstate', fn);
+    };
     
-        _createClass(RouteNode, [{
-            key: 'add',
-            value: function add(route) {
-                var _this = this;
+    var getLocation = function getLocation(opts) {
+        var path = opts.useHash ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + opts.base), '');
+        return path + window.location.search;
+    };
     
-                if (route instanceof Array) {
-                    route.forEach(function (r) {
-                        return _this.add(r);
-                    });
-                    return;
-                }
-    
-                if (!(route instanceof RouteNode) && !(route instanceof Object)) {
-                    throw new Error('Route constructor expects routes to be an Object or an instance of Route.');
-                }
-                if (route instanceof Object) {
-                    if (!route.name || !route.path) {
-                        throw new Error('Route constructor expects routes to have an name and a path defined.');
-                    }
-                    route = new RouteNode(route.name, route.path, route.children);
-                }
-                // Check duplicated routes
-                if (this.children.map(function (child) {
-                    return child.name;
-                }).indexOf(route.name) !== -1) {
-                    throw new Error('Alias "' + route.name + '" is already defined in route node');
-                }
-                // Check duplicated paths
-                if (this.children.map(function (child) {
-                    return child.path;
-                }).indexOf(route.path) !== -1) {
-                    throw new Error('Path "' + route.path + '" is already defined in route node');
-                }
-    
-                var names = route.name.split('.');
-    
-                if (names.length === 1) {
-                    this.children.push(route);
-                    // Push greedy spats to the bottom of the pile
-                    this.children.sort(function (a, b) {
-                        if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1;
-                        if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
-                        if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
-                        if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                        return a.path && b.path ? a.path.length < b.path.length ? 1 : -1 : 0;
-                    });
-                } else {
-                    // Locate parent node
-                    var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
-                    if (segments) {
-                        segments[segments.length - 1].add(new RouteNode(names[names.length - 1], route.path, route.children));
-                    } else {
-                        throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
-                    }
-                }
-    
-                return this;
-            }
-        }, {
-            key: 'addNode',
-            value: function addNode(name, params) {
-                this.add(new RouteNode(name, params));
-                return this;
-            }
-        }, {
-            key: 'getSegmentsByName',
-            value: function getSegmentsByName(routeName) {
-                var findSegmentByName = function findSegmentByName(name, routes) {
-                    var filteredRoutes = routes.filter(function (r) {
-                        return r.name === name;
-                    });
-                    return filteredRoutes.length ? filteredRoutes[0] : undefined;
-                };
-                var segments = [];
-                var names = routeName.split('.');
-                var routes = this.children;
-    
-                var matched = names.every(function (name) {
-                    var segment = findSegmentByName(name, routes);
-                    if (segment) {
-                        routes = segment.children;
-                        segments.push(segment);
-                        return true;
-                    }
-                    return false;
-                });
-    
-                return matched ? segments : null;
-            }
-        }, {
-            key: 'getSegmentsMatchingPath',
-            value: function getSegmentsMatchingPath(path) {
-                var matchChildren = function matchChildren(nodes, pathSegment, segments) {
-                    var _loop = function (i) {
-                        var child = nodes[i];
-                        // Partially match path
-                        var match = child.parser.partialMatch(pathSegment);
-                        if (match) {
-                            segments.push(child);
-                            Object.keys(match).forEach(function (param) {
-                                return segments.params[param] = match[param];
-                            });
-                            // Remove consumed segment from path
-                            var remainingPath = pathSegment.replace(child.parser.build(match), '');
-                            // If fully matched
-                            if (!remainingPath.length) {
-                                return {
-                                    v: segments
-                                };
-                            }
-                            // If no children to match against but unmatched path left
-                            if (!child.children.length) {
-                                return {
-                                    v: null
-                                };
-                            }
-                            // Else: remaining path and children
-                            return {
-                                v: matchChildren(child.children, remainingPath, segments)
-                            };
-                        }
-                    };
-    
-                    // for (child of node.children) {
-                    for (var i in nodes) {
-                        var _ret = _loop(i);
-    
-                        if (typeof _ret === 'object') return _ret.v;
-                    }
-                    return null;
-                };
-    
-                var startingNodes = this.parser ? [this] : this.children;
-                var segments = [];
-                segments.params = {};
-    
-                return matchChildren(startingNodes, path, segments);
-            }
-        }, {
-            key: 'getPathFromSegments',
-            value: function getPathFromSegments(segments) {
-                return segments ? segments.map(function (segment) {
-                    return segment.path;
-                }).join('') : null;
-            }
-        }, {
-            key: 'getPath',
-            value: function getPath(routeName) {
-                return this.getPathFromSegments(this.getSegmentsByName(routeName));
-            }
-        }, {
-            key: 'buildPathFromSegments',
-            value: function buildPathFromSegments(segments) {
-                var params = arguments[1] === undefined ? {} : arguments[1];
-    
-                return segments ? segments.map(function (segment) {
-                    return segment.parser.build(params);
-                }).join('') : null;
-            }
-        }, {
-            key: 'buildPath',
-            value: function buildPath(routeName) {
-                var params = arguments[1] === undefined ? {} : arguments[1];
-    
-                return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
-            }
-        }, {
-            key: 'getMatchPathFromSegments',
-            value: function getMatchPathFromSegments(segments) {
-                if (!segments) return null;
-    
-                var name = segments.map(function (segment) {
-                    return segment.name;
-                }).join('.');
-                var params = segments.params;
-    
-                return { name: name, params: params };
-            }
-        }, {
-            key: 'matchPath',
-            value: function matchPath(path) {
-                return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path));
-            }
-        }]);
-    
-        return RouteNode;
-    })();
+    /**
+     * Export browser object
+     */
+    var browser = {};
+    if (isBrowser) {
+        browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation };
+    } else {
+        browser = {
+            getBase: identity(''),
+            pushState: noop,
+            replaceState: noop,
+            addPopstateListener: noop,
+            removePopstateListener: noop,
+            getLocation: identity('')
+        };
+    }
     function asyncProcess(functions, toState, fromState, callback) {
         var allowNoResult = arguments[4] === undefined ? false : arguments[4];
     
@@ -569,9 +203,7 @@ define('router5', [], function () {
     
         return cancel;
     }
-    var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-    
-    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+    var _slice = Array.prototype.slice;
     
     var makeState = function makeState(name, params, path) {
         return { name: name, params: params, path: path };
@@ -602,25 +234,17 @@ define('router5', [], function () {
             this.rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
             this.options = {
                 useHash: false,
-                hashPrefix: ''
+                hashPrefix: '',
+                base: browser.getBase()
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
             });
-            this._setBase();
-            return this;
+            // Bind onPopState
+            this.boundOnPopState = this.onPopState.bind(this);
         }
     
         _createClass(Router5, [{
-            key: '_setBase',
-    
-            /**
-             * @private
-             */
-            value: function _setBase() {
-                this.base = this.options.base || window.location.pathname.replace(/\/$/, '');
-            }
-        }, {
             key: 'setOption',
     
             /**
@@ -631,7 +255,6 @@ define('router5', [], function () {
              */
             value: function setOption(opt, val) {
                 this.options[opt] = val;
-                if (opt === 'base') this._setBase();
                 return this;
             }
         }, {
@@ -680,7 +303,7 @@ define('router5', [], function () {
                 this._transition(state, this.lastKnownState, function (err) {
                     if (err) {
                         var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
-                        window.history.pushState(_this2.lastKnownState, '', url);
+                        browser.pushState(_this2.lastKnownState, '', url);
                     }
                 });
             }
@@ -692,42 +315,65 @@ define('router5', [], function () {
              * @param  {Function} done An optional callback which will be called when starting is done
              * @return {Router5}  The router instance
              */
-            value: function start(done) {
+            value: function start() {
                 var _this3 = this;
     
+                var args = [].concat(_slice.call(arguments));
+                var done = args.slice(-1)[0];
+                var startPath = undefined,
+                    startState = undefined;
+    
                 if (this.started) {
-                    done(constants.ROUTER_ALREADY_STARTED);
+                    if (done) done(constants.ROUTER_ALREADY_STARTED);
                     return this;
+                }
+    
+                if (args.length === 2) {
+                    if (typeof args[0] === 'string') startPath = args[0];
+                    if (typeof args[0] === 'object') startState = args[0];
                 }
     
                 this.started = true;
                 var opts = this.options;
     
-                // Try to match starting path name
-                var startPath = this.getLocation();
-                var startState = this.matchPath(startPath);
-    
+                // callback
                 var cb = function cb(err, state) {
-                    window.addEventListener('popstate', _this3.onPopState.bind(_this3));
+                    browser.addPopstateListener(_this3.boundOnPopState);
                     if (done) done(err, state);
                 };
     
-                var navigateToDefault = function navigateToDefault() {
-                    return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
-                };
+                // Get start path
+                if (!startPath && !startState) startPath = this.getLocation();
     
-                if (startState) {
-                    this.lastStateAttempt = startState;
-                    this._transition(this.lastStateAttempt, this.lastKnownState, function (err, state) {
-                        if (!err) {
-                            window.history.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
-                            cb(null, state);
-                        } else if (opts.defaultRoute) navigateToDefault();else cb(err);
-                    });
-                } else if (opts.defaultRoute) {
-                    navigateToDefault();
+                if (!startState) {
+                    (function () {
+                        // If no supplied start state, get start state
+                        startState = _this3.matchPath(startPath);
+                        // Navigate to default function
+                        var navigateToDefault = function navigateToDefault() {
+                            return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
+                        };
+                        // If matched start path
+                        if (startState) {
+                            _this3.lastStateAttempt = startState;
+                            _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
+                                if (!err) {
+                                    browser.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
+                                    cb(null, state);
+                                } else if (opts.defaultRoute) navigateToDefault();else cb(err);
+                            });
+                        } else if (opts.defaultRoute) {
+                            // If default, navigate to default
+                            navigateToDefault();
+                        } else {
+                            // No start match, no default => do nothing
+                            cb(null);
+                        }
+                    })();
                 } else {
-                    cb(null);
+                    // Initialise router with provided start state
+                    this.lastKnownState = startState;
+                    cb(null, startState);
                 }
                 // Listen to popstate
                 return this;
@@ -745,7 +391,7 @@ define('router5', [], function () {
                 this.lastStateAttempt = null;
                 this.started = false;
     
-                window.removeEventListener('popstate', this.onPopState.bind(this));
+                browser.removePopstateListener(this.boundOnPopState);
                 return this;
             }
         }, {
@@ -756,9 +402,7 @@ define('router5', [], function () {
              * @return {Object} The current state
              */
             value: function getState() {
-                return this.lastKnownState
-                // return window.history.state
-                ;
+                return this.lastKnownState;
             }
         }, {
             key: 'isActive',
@@ -970,8 +614,7 @@ define('router5', [], function () {
              * @private
              */
             value: function getLocation() {
-                var path = this.options.useHash ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + this.base), '');
-                return path + window.location.search;
+                return browser.getLocation(this.options);
             }
         }, {
             key: 'buildUrl',
@@ -984,7 +627,7 @@ define('router5', [], function () {
              * @return {String}        The built URL
              */
             value: function buildUrl(route, params) {
-                return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.base) + this.rootNode.buildPath(route, params);
+                return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + this.rootNode.buildPath(route, params);
             }
         }, {
             key: 'buildPath',
@@ -1090,7 +733,7 @@ define('router5', [], function () {
                         return;
                     }
     
-                    window.history[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
+                    browser[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
                     if (done) done(null, state);
                 });
             }
