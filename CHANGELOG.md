@@ -1,3 +1,37 @@
+<a name="0.3.1"></a>
+## 0.3.1 (2015-07-27)
+
+
+### Bug Fixes
+
+* fix build ([8b99291](https://github.com/router5/router5/commit/8b99291))
+
+
+
+<a name="0.3.0"></a>
+# 0.3.0 (2015-07-27)
+
+
+### Bug Fixes
+
+* onPopState listener removal ([0d5fea1](https://github.com/router5/router5/commit/0d5fea1))
+
+### Features
+
+* add option to pass a start path or state to `.start()` ([cbc39ae](https://github.com/router5/router5/commit/cbc39ae))
+* support universal javascript applications ([be5b6da](https://github.com/router5/router5/commit/be5b6da))
+
+
+
+<a name="0.2.7"></a>
+## 0.2.7 (2015-07-24)
+
+
+### Features
+
+* v0.2.7 adds support for IE10 and IE11 ([cd805ef](https://github.com/router5/router5/commit/cd805ef))
+
+
 <a name="0.2.6"></a>
 ## 0.2.6 (2015-07-23)
 
