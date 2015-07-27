@@ -54,11 +54,11 @@ class Router5 {
 
     /**
      * Add a route to the router.
-     * @param {String}   name        The route name
-     * @param {String}   path        The route path
-     * @param {Function} canActivate A function to determine if the route can be activated.
-     *                               It will be invoked during a transition with `toState`
-     *                               and `fromState` parameters.
+     * @param {String}   name          The route name
+     * @param {String}   path          The route path
+     * @param {Function} [canActivate] A function to determine if the route can be activated.
+     *                                 It will be invoked during a transition with `toState`
+     *                                 and `fromState` parameters.
      * @return {Router5}             The Router5 instance
      */
     addNode(name, path, canActivate) {
@@ -86,7 +86,10 @@ class Router5 {
 
     /**
      * Start the router
-     * @param  {Function} done An optional callback which will be called when starting is done
+     * @param  {String|Object} [startPathOrState] An optional start path or state
+     *                                            (use it for universal applications)
+     * @param  {Function}      [done]             An optional callback which will be called
+     *                                            when starting is done
      * @return {Router5}  The router instance
      */
     start() {
@@ -324,7 +327,7 @@ class Router5 {
     }
 
     /**
-     * [registerCanActivate description]
+     * A function to determine whether or not a segment can be activated.
      * @param  {String}   name        The route name to register the canActivate method for
      * @param  {Function} canActivate The canActivate function. It should return `true`, `false`
      *                                or a promise

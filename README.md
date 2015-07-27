@@ -31,7 +31,7 @@ To get started, look here: [Get started](http://router5.github.io/docs/why-route
 
 - __Use of hash (#)__
 - __Default start route__: a default route to navigate to on load if the current URL doesn't match any route. Similar to `$routeProvider.otherwise()` in _Angular ngRoute_ module.
-- __Start__ and __stop__ router
+- __Start__ and __stop__
 - __Nested named routes__: routes are identified by names and parameters so you don't have to manipulate URLs
 directly. Routes can be nested, introducing the notion of _route segments_.
 - __Route change listeners__: listen to any route change, or register listeners for a specific route.
@@ -39,6 +39,7 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 - __Segments activation__: you can control whether or not a route can be accessed by specifying a `canActivate`
 function per node. Supports asynchronous results.
 - __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers. Supports asynchronous results.
+- __Universal JavaScript__: use on client or server side
 - __You are in control!__ You decide what to do on a route change and how to do it.
 
 
@@ -49,6 +50,7 @@ function per node. Supports asynchronous results.
 - [Listeners](http://router5.github.io/docs/listeners.html)
 - [Navigation](http://router5.github.io/docs/navigation.html)
 - [Allowing navigation](http://router5.github.io/docs/preventing-navigation.html)
+- [Universal applications](http://router5.github.io/docs/universal-applications.html)
 
 ## API
 
