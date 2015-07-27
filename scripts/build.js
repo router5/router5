@@ -7,11 +7,14 @@ var argv        = require('yargs').argv;
 
 var router5Version = require('../package.json').version;
 var getOptions     = require('./babel-options');
-var indexFile      = path.join(__dirname, '../modules/index.js');
-var router5File    = path.join(__dirname, '../modules/router5.js');
-var transitionFile = path.join(__dirname, '../modules/transition.js');
-var asyncFile      = path.join(__dirname, '../modules/async.js');
-var constantsFile  = path.join(__dirname, '../modules/constants.js');
+var files = [
+    path.join(__dirname, '../modules/index.js'),
+    path.join(__dirname, '../modules/constants.js'),
+    path.join(__dirname, '../modules/browser.js'),
+    path.join(__dirname, '../modules/async.js'),
+    path.join(__dirname, '../modules/transition.js'),
+    path.join(__dirname, '../modules/router5.js')
+];
 
 function buildFactory(module, dest, file) {
     return function buildCommonJsModuel(done) {
@@ -39,59 +42,59 @@ function buildBundle(done) {
     var pathParser = path.join(__dirname, '../node_modules/route-node/node_modules/path-parser/modules/Path.js');
     var routeNode  = path.join(__dirname, '../node_modules/route-node/modules/RouteNode.js');
 
-    async.parallel([
-        fs.readFile.bind(fs, path.join(__dirname, '../LICENSE')),
-        transform(pathParser),
-        transform(routeNode),
-        transform(router5File),
-        transform(transitionFile),
-        transform(asyncFile),
-        transform(constantsFile)
-    ], function (err, results) {
-        if (err) console.log(err);
-        // License
-        var license = results[0].toString().trim().split('\n').map(function (line) {
-            return ' * ' + line;
-        }).join('\n');
-        license = '/**\n * @license\n * @version ' + router5Version + '\n' + license + '\n */';
+    async.parallel(
+        [fs.readFile.bind(fs, path.join(__dirname, '../LICENSE'))]
+            .concat(files.slice(1).map(function (file) {
+                return transform(file);
+            }))
+        , function (err, results) {
+            if (err) console.log(err);
+            // License
+            var license = results[0].toString().trim().split('\n').map(function (line) {
+                return ' * ' + line;
+            }).join('\n');
+            license = '/**\n * @license\n * @version ' + router5Version + '\n' + license + '\n */';
 
-        var pathParserSrc = results[1].code.trim();
-        var routeNodeSrc = results[2].code.trim();
-        var router5Src = results[3].code.trim();
-        var transitionSrc = results[4].code.trim();
-        var asyncSrc = results[5].code.trim();
-        var constantsSrc = results[6].code.trim();
+            var pathParserSrc = results[1].code.trim();
+            var remainingSrc = results.slice(2)
+                .map(function (src) {
+                    return src.code.trim()
+                })
+                .join('');
 
-        var bundledCode = pathParserSrc.replace(/("|')use strict("|');\n/g, '') +
-            (constantsSrc + routeNodeSrc + asyncSrc + transitionSrc + router5Src)
-                .replace(/("|')use strict("|');\n/g, '')
-                .replace(/\nvar _createClass(?:.*)\n/, '')
-                .replace(/\nfunction _classCallCheck(?:.*)\n/, '');
 
-        bundledCode = bundledCode.split('\n').map(function (line) {
-            return '    ' + line;
-        }).join('\n');
+            var bundledCode =
+                pathParserSrc.replace(/("|')use strict("|');\n/g, '') +
+                remainingSrc
+                    .replace(/("|')use strict("|');\n/g, '')
+                    .replace(/\nvar _createClass(?:.*)\n/, '')
+                    .replace(/\nfunction _classCallCheck(?:.*)\n/, '');
 
-        var globalHeader = '\n(function (window) {\n';
-        var globalFooter = '\n}(window));\n';
-        var globalExport = '\n\n' +
-            '    window.RouteNode = RouteNode;\n' +
-            '    window.Router5 = Router5;\n';
+            bundledCode = bundledCode.split('\n').map(function (line) {
+                return '    ' + line;
+            }).join('\n');
 
-        var amdHeader = "\ndefine('router5', [], function () {\n";
-        var amdFooter = '\n});\n';
-        var amdExport = '\n\n    return {RouteNode: RouteNode, Router5: Router5};';
+            var globalHeader = '\n(function (window) {\n';
+            var globalFooter = '\n}(window));\n';
+            var globalExport = '\n\n' +
+                '    window.RouteNode = RouteNode;\n' +
+                '    window.Router5 = Router5;\n';
 
-        var useStrict = "'use strict';\n";
+            var amdHeader = "\ndefine('router5', [], function () {\n";
+            var amdFooter = '\n});\n';
+            var amdExport = '\n\n    return {RouteNode: RouteNode, Router5: Router5};';
 
-        var globalCode = license + globalHeader + bundledCode + globalExport + globalFooter;
-        var amdCode = license + amdHeader + bundledCode + amdExport + amdFooter;
+            var useStrict = "'use strict';\n";
 
-        async.parallel([
-            fs.writeFile.bind(fs, path.join(__dirname, '../dist/browser/router5.js'), globalCode),
-            fs.writeFile.bind(fs, path.join(__dirname, '../dist/amd/router5.js'), amdCode)
-        ], done)
-    })
+            var globalCode = license + globalHeader + bundledCode + globalExport + globalFooter;
+            var amdCode = license + amdHeader + bundledCode + amdExport + amdFooter;
+
+            async.parallel([
+                fs.writeFile.bind(fs, path.join(__dirname, '../dist/browser/router5.js'), globalCode),
+                fs.writeFile.bind(fs, path.join(__dirname, '../dist/amd/router5.js'), amdCode)
+            ], done)
+        }
+    )
 }
 
 function exit(err) {
@@ -102,24 +105,27 @@ function exit(err) {
 if (argv.test) {
     async.series([
         mkdirp.bind(null, 'dist/test'),
-        buildFactory('ignore', 'dist/test/router5.js',    router5File),
-        buildFactory('ignore', 'dist/test/transition.js', transitionFile),
-        buildFactory('ignore', 'dist/test/async.js',      asyncFile),
-        buildFactory('ignore', 'dist/test/constants.js',  constantsFile)
+        buildFactory('ignore', 'dist/test/constants.js',  files[1]),
+        buildFactory('ignore', 'dist/test/browser.js',    files[2]),
+        buildFactory('ignore', 'dist/test/async.js',      files[3]),
+        buildFactory('ignore', 'dist/test/transition.js', files[4]),
+        buildFactory('ignore', 'dist/test/router5.js',    files[5])
     ], exit);
 } else {
     async.parallel([
-        buildFactory('common', 'dist/commonjs/index.js',      indexFile),
-        buildFactory('common', 'dist/commonjs/router5.js',    router5File),
-        buildFactory('common', 'dist/commonjs/transition.js', transitionFile),
-        buildFactory('common', 'dist/commonjs/async.js',      asyncFile),
-        buildFactory('common', 'dist/commonjs/constants.js',  constantsFile),
+        buildFactory('common', 'dist/commonjs/index.js',      files[0]),
+        buildFactory('common', 'dist/commonjs/constants.js',  files[1]),
+        buildFactory('common', 'dist/commonjs/browser.js',    files[2]),
+        buildFactory('common', 'dist/commonjs/async.js',      files[3]),
+        buildFactory('common', 'dist/commonjs/transition.js', files[4]),
+        buildFactory('common', 'dist/commonjs/router5.js',    files[5]),
 
-        buildFactory('umd',    'dist/umd/index.js',           indexFile),
-        buildFactory('umd',    'dist/umd/router5.js',         router5File),
-        buildFactory('umd',    'dist/umd/transition.js',      transitionFile),
-        buildFactory('umd',    'dist/umd/async.js',           asyncFile),
-        buildFactory('umd',    'dist/umd/constants.js',       constantsFile),
+        buildFactory('umd',    'dist/umd/index.js',           files[0]),
+        buildFactory('umd',    'dist/umd/constants.js',       files[1]),
+        buildFactory('umd',    'dist/umd/browser.js',         files[2]),
+        buildFactory('umd',    'dist/umd/async.js',           files[3]),
+        buildFactory('umd',    'dist/umd/transition.js',      files[4]),
+        buildFactory('umd',    'dist/umd/router5.js',         files[5]),
 
         buildBundle
     ], exit);

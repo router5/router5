@@ -1,6 +1,7 @@
 import RouteNode  from 'route-node/modules/RouteNode'
 import transition from './transition'
 import constants  from './constants'
+import browser    from './browser'
 
 let makeState = (name, params, path) => ({name, params, path})
 
@@ -23,7 +24,7 @@ class Router5 {
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: window.location.pathname.replace(/\/$/, '')
+            base: browser.getBase()
         }
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
         // Bind onPopState
@@ -78,7 +79,7 @@ class Router5 {
         this._transition(state, this.lastKnownState, (err) => {
             if (err) {
                 let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
-                window.history.pushState(this.lastKnownState, '', url)
+                browser.pushState(this.lastKnownState, '', url)
             }
         })
     }
@@ -102,7 +103,7 @@ class Router5 {
         let startState = this.matchPath(startPath)
 
         let cb = (err, state) => {
-            window.addEventListener('popstate', this.boundOnPopState)
+            browser.addPopstateListener(this.boundOnPopState)
             if (done) done(err, state)
         }
 
@@ -112,7 +113,7 @@ class Router5 {
             this.lastStateAttempt = startState
             this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
                 if (!err) {
-                    window.history.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
+                    browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
                     cb(null, state)
                 }
                 else if (opts.defaultRoute) navigateToDefault()
@@ -137,7 +138,7 @@ class Router5 {
         this.lastStateAttempt = null
         this.started = false
 
-        window.removeEventListener('popstate', this.boundOnPopState)
+        browser.removePopstateListener(this.boundOnPopState)
         return this
     }
 
@@ -147,7 +148,6 @@ class Router5 {
      */
     getState() {
         return this.lastKnownState
-        // return window.history.state
     }
 
     /**
@@ -319,10 +319,7 @@ class Router5 {
      * @private
      */
     getLocation() {
-        let path = this.options.useHash
-            ? window.location.hash.replace(new RegExp('^#' + this.options.hashPrefix), '')
-            : window.location.pathname.replace(new RegExp('^' + this.options.base), '')
-        return path + window.location.search;
+        return browser.getLocation(this.options)
     }
 
     /**
@@ -333,7 +330,8 @@ class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
-        return (this.options.useHash ? window.location.pathname + '#' + this.options.hashPrefix : this.options.base) +
+        return this.options.base +
+            (this.options.useHash ?'#' + this.options.hashPrefix : '') +
             this.rootNode.buildPath(route, params)
     }
 
@@ -422,7 +420,7 @@ class Router5 {
                 return
             }
 
-            window.history[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
+            browser[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
             if (done) done(null, state)
         })
     }
