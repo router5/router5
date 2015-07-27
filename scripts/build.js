@@ -48,12 +48,12 @@ function buildBundle(done) {
                 return transform(file);
             }))
         , function (err, results) {
+            if (err) console.log(err);
             // License
             var license = results[0].toString().trim().split('\n').map(function (line) {
                 return ' * ' + line;
             }).join('\n');
             license = '/**\n * @license\n * @version ' + router5Version + '\n' + license + '\n */';
-            console.log(results.length);
             var pathParserSrc = results[1].code.trim();
             var remainingSrc = results.slice(2)
                 .map(function (src) {
