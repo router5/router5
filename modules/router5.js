@@ -145,6 +145,7 @@ class Router5 {
         } else {
             // Initialise router with provided start state
             this.lastKnownState = startState
+            browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
             cb(null, startState)
         }
         // Listen to popstate
