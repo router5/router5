@@ -12,7 +12,7 @@
     "test-server": "./node_modules/.bin/_mocha tests/server.js",
     "test": "npm run test-client && npm run test-server",
     "test-sauce": "./node_modules/.bin/karma start karma.config.js --sauce",
-    "clog": "./node_modules/.bin/conventional-changelog -i CHANGELOG.md -p angular -o CHANGELOG.md",
+    "clog": "node scripts/changelog.js",
     "lint": "./node_modules/.bin/eslint modules"
   },
   "repository": {
@@ -55,7 +55,7 @@
     "through2": "^2.0.0",
     "uglify-js2": "^2.1.11",
     "vinyl-fs": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
+    "vinyl-source-stream2": "^0.1.1",
     "yargs": "^3.15.0"
   }
 }
