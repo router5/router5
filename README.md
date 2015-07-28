@@ -11,9 +11,9 @@ Official website: [router5.github.io](http://router5.github.io)
 A simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
 and [path-parser](https://github.com/troch/path-parser).
 
-> API will be subject to change, until 1.0.0 is reached but rest assured no breaking changes will be introduced without bumping
+> API will be subject to change, until 1.0.0 is reached. Rest assured no breaking changes will be introduced without bumping
 the minor version up. If you have missed something, you can look at the [CHANGELOG](./CHANGELOG.md). You can also look at the
-[ROADMAP](./ROADMAP.md) for planned improvments and evolutions. If you have suggestions, I'm happy to discuss them.
+[ROADMAP](./ROADMAP.md) for planned improvements and evolutions. If you have suggestions, I'm happy to discuss them.
 
 ## What is it?
 
@@ -45,7 +45,7 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 - __Segments activation__: you can control whether or not a route can be accessed by specifying a `canActivate`
 function per node. Supports asynchronous results.
 - __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers. Supports asynchronous results.
-- __Universal JavaScript__: use on client or server side
+- __Universal applications__: use on client and server side
 - __You are in control!__ You decide what to do on a route change and how to do it.
 
 
@@ -65,10 +65,15 @@ function per node. Supports asynchronous results.
 ## Examples
 
 - [With React](http://router5.github.io/docs/with-react.html)
+- [With Deku](http://router5.github.io/docs/with-deku.html)
+
+## Integration
+
+- [router5-react](https://github.com/router5/router5-react)
+- [router5-deku](https://github.com/router5/router5-deku)
+- [cyclejs driver gist](https://gist.github.com/axefrog/217e522282a7948737e1)
 
 ## Related
 
 - [path-parser](https://github.com/troch/path-parser)
 - [route-node](https://github.com/troch/route-node)
-- [router5-react](https://github.com/router5/router5-react)
-- [router5-deku](https://github.com/router5/router5-deku)
