@@ -4,6 +4,8 @@
 
 # router5
 
+[![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Official website: [router5.github.io](http://router5.github.io)
 
 A simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
