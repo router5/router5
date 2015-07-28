@@ -11,6 +11,10 @@ Official website: [router5.github.io](http://router5.github.io)
 A simple but powerful HTML5 router, based on [route-node](https://github.com/troch/route-node)
 and [path-parser](https://github.com/troch/path-parser).
 
+> API will be subject to change, until 1.0.0 is reached but rest assured no breaking changes will be introduced without bumping
+the minor version up. If you have missed something, you can look at the [CHANGELOG](./CHANGELOG.md). You can also look at the
+[ROADMAP](./ROADMAP.md) for planned improvments and evolutions. If you have suggestions, I'm happy to discuss them.
+
 ## What is it?
 
 It is an __HTML5 router__, using history and organising __named routes__ in a __tree__. Browser support
