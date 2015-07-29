@@ -1,4 +1,5 @@
-export default function asyncProcess(functions, toState, fromState, callback, allowNoResult = false) {
+export default function asyncProcess(isCancelled, functions, toState, fromState, callback, allowNoResult = false) {
+    isCancelled = isCancelled || (() => false)
     let remainingSteps = functions || []
 
     let processFn = (done) => {
@@ -27,8 +28,12 @@ export default function asyncProcess(functions, toState, fromState, callback, al
     }
 
     let next = () => {
-        let finished = processFn(iterate)
-        if (finished) callback(null)
+        if (isCancelled()) {
+            callback(null)
+        } else {
+            let finished = processFn(iterate)
+            if (finished) callback(null)
+        }
     }
 
     next()

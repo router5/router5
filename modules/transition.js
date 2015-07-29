@@ -9,6 +9,7 @@ let nameToIDs = name => {
 
 export default function transition(router, toState, fromState, callback) {
     let cancelled = false
+    let isCancelled = () => cancelled
     let cancel = () => cancelled = true
     let done = (err) => callback(cancelled ? constants.TRANSITION_CANCELLED : err)
 
@@ -26,48 +27,39 @@ export default function transition(router, toState, fromState, callback) {
     let intersection = fromState && i > 0 ? fromStateIds[i - 1] : ''
 
     let canDeactivate = (toState, fromState, cb) => {
-        if (cancelled) done()
-        else {
-            let canDeactivateFunctions = toDeactivate
-                .map(name => router._cmps[name])
-                .filter(comp => comp && comp.canDeactivate)
-                .map(comp => comp.canDeactivate)
+        let canDeactivateFunctions = toDeactivate
+            .map(name => router._cmps[name])
+            .filter(comp => comp && comp.canDeactivate)
+            .map(comp => comp.canDeactivate)
 
-            asyncProcess(
-                canDeactivateFunctions, toState, fromState,
-                err => cb(err ? constants.CANNOT_DEACTIVATE : null)
-            )
-        }
+        asyncProcess(
+            isCancelled, canDeactivateFunctions, toState, fromState,
+            err => cb(err ? constants.CANNOT_DEACTIVATE : null)
+        )
     }
 
     let canActivate = (toState, fromState, cb) => {
-        if (cancelled) done()
-        else {
-            let canActivateFunctions = toActivate
-                .map(name => router._canAct[name])
-                .filter(_ => _)
+        let canActivateFunctions = toActivate
+            .map(name => router._canAct[name])
+            .filter(_ => _)
 
-            asyncProcess(
-                canActivateFunctions, toState, fromState,
-                err => cb(err ? constants.CANNOT_ACTIVATE : null)
-            )
-        }
+        asyncProcess(
+            isCancelled, canActivateFunctions, toState, fromState,
+            err => cb(err ? constants.CANNOT_ACTIVATE : null)
+        )
     }
 
     let nodeListener = (toState, fromState, cb) => {
-        if (cancelled) done()
-        else {
-            let listeners = router._cbs['^' + intersection] || []
-            asyncProcess(
-                listeners, toState, fromState,
-                err => cb(err ? constants.NODE_LISTENER_ERR : null),
-                true
-            )
-        }
+        let listeners = router._cbs['^' + intersection] || []
+        asyncProcess(
+            isCancelled, listeners, toState, fromState,
+            err => cb(err ? constants.NODE_LISTENER_ERR : null),
+            true
+        )
     }
 
     let pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener]
-    asyncProcess(pipeline, toState, fromState, done)
+    asyncProcess(isCancelled, pipeline, toState, fromState, done)
 
     return cancel
 }
