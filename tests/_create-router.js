@@ -27,7 +27,7 @@
         new RouteNode('completed', '/completed')
     ]);
 
-    var sectionRoute = new RouteNode('section', '/:section', [
+    var sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
         new RouteNode('view', '/view/:id')
     ]);
 

@@ -99,7 +99,7 @@
 
             /**
              * Set a transition middleware function
-             * @param {Function} mware The middleware function
+             * @param {Function} fn The middleware function
              */
             value: function onTransition(fn) {
                 this._onTr = fn;
