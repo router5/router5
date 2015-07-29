@@ -1,3 +1,13 @@
+<a name="0.4.1"></a>
+## 0.4.1 (2015-07-29)
+
+
+### Bug Fixes
+
+* update route-node dep version to improve node children matching order ([ff1516d](https://github.com/router5/router5/commit/ff1516d))
+
+
+
 <a name="0.4.0"></a>
 # 0.4.0 (2015-07-29)
 
