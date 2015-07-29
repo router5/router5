@@ -54,15 +54,6 @@ class Router5 {
     }
 
     /**
-     * Set a transition middleware function
-     * @param {Function} fn The middleware function
-     */
-    onTransition(fn) {
-        this._onTr = fn
-        return this
-    }
-
-    /**
      * Add a route to the router.
      * @param {String}   name          The route name
      * @param {String}   path          The route path
@@ -92,6 +83,15 @@ class Router5 {
                 browser.pushState(this.lastKnownState, '', url)
             }
         })
+    }
+
+    /**
+     * Set a transition middleware function
+     * @param {Function} fn The middleware function
+     */
+    onTransition(fn) {
+        this._onTr = fn
+        return this
     }
 
     /**
@@ -233,8 +233,8 @@ class Router5 {
     /**
      * @private
      */
-    _invokeListeners(name, newState, oldState) {
-        (this._cbs[name] || []).forEach(cb => cb(newState, oldState))
+    _invokeListeners(name, ...args) {
+        (this._cbs[name] || []).forEach(cb => cb(...args))
     }
 
     /**
@@ -242,7 +242,7 @@ class Router5 {
      */
     _addListener(name, cb, replace) {
         let normalizedName = name.replace(/^(\*|\^|=)/, '')
-        if (normalizedName) {
+        if (normalizedName && !/^\$/.test(name)) {
             let segments = this.rootNode.getSegmentsByName(normalizedName)
             if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
         }
@@ -316,6 +316,60 @@ class Router5 {
      */
     removeRouteListener(name, cb) {
         return this._removeListener('=' + name, cb)
+    }
+
+    /**
+     * Add a transition start callback
+     * @param  {Function} cb The callback
+     * @return {Router5}     The router instance
+     */
+    onTransitionStart(cb) {
+        return this._addListener('$start', cb)
+    }
+
+    /**
+     * Remove a transition start callback
+     * @param  {Function} cb The callback
+     * @return {Router5}     The router instance
+     */
+    offTransitionStart(cb) {
+        return this._removeListener('$start', cb)
+    }
+
+    /**
+     * Add a transition cancel callback
+     * @param  {Function} cb The callback
+     * @return {Router5}     The router instance
+     */
+    onTransitionCancel(cb) {
+        return this._addListener('$cancel', cb)
+    }
+
+    /**
+     * Remove a transition cancel callback
+     * @param  {Function} cb The callback
+     * @return {Router5}     The router instance
+     */
+    offTransitionCancel(cb) {
+        return this._removeListener('$cancel', cb)
+    }
+
+    /**
+     * Add a transition error callback
+     * @param  {Function} cb The callback
+     * @return {Router5}     The router instance
+     */
+    onTransitionError(cb) {
+        return this._addListener('$error', cb)
+    }
+
+    /**
+     * Remove a transition error callback
+     * @param  {Function} cb The callback
+     * @return {Router5}     The router instance
+     */
+    offTransitionError(cb) {
+        return this._removeListener('$error', cb)
     }
 
     /**
@@ -397,11 +451,15 @@ class Router5 {
     _transition(toState, fromState, done) {
         // Cancel current transition
         if (this._tr) this._tr()
+        this._invokeListeners('$start', toState, fromState)
 
         let tr = transition(this, toState, fromState, (err) => {
             this._tr = null
 
             if (err) {
+                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$cancel', toState, fromState)
+                else this._invokeListeners('$error', toState, fromState, err)
+
                 if (done) done(err)
                 return
             }
