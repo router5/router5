@@ -49,8 +49,19 @@ export default function transition(router, toState, fromState, callback) {
         )
     }
 
+    let middlewareFn = router._onTr
+    let middleware = (toState, fromState, cb) => {
+        let mwareFunction = [middlewareFn]
+
+        asyncProcess(
+            isCancelled, mwareFunction, toState, fromState,
+            err => cb(err ? constants.TRANSITION_ERR : null)
+        )
+    }
+
+    let nodeListenerFn = router._cbs['^' + intersection]
     let nodeListener = (toState, fromState, cb) => {
-        let listeners = router._cbs['^' + intersection] || []
+        let listeners = nodeListenerFn
         asyncProcess(
             isCancelled, listeners, toState, fromState,
             err => cb(err ? constants.NODE_LISTENER_ERR : null),
@@ -58,7 +69,11 @@ export default function transition(router, toState, fromState, callback) {
         )
     }
 
-    let pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener]
+    let pipeline = (fromState ? [canDeactivate] : [])
+        .concat(canActivate)
+        .concat(middlewareFn ? middleware : [])
+        .concat(nodeListenerFn && nodeListenerFn.length ? nodeListener : [])
+
     asyncProcess(isCancelled, pipeline, toState, fromState, done)
 
     return cancel

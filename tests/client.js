@@ -6,6 +6,12 @@ var listeners = {
     },
     node: function nodeListener(newState, oldState) {
         // Do nothing
+    },
+    transition: function (fromState, toState, done) {
+        done(null);
+    },
+    transitionErr: function (fromState, toState, done) {
+        done(true);
     }
 };
 
@@ -73,9 +79,9 @@ function testRouter(useHash) {
 
         it('should start with the start route if matched', function (done) {
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users'));
-            router.start(function () {
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/users'));
+            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/view/123'));
+            router.start(function (err, state) {
+                expect(state).toEqual({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
                 done();
             });
         });
@@ -123,7 +129,7 @@ function testRouter(useHash) {
         it('should start with the provided state', function (done) {
             router.stop();
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/home'));
-            spyOn(listeners, 'global');
+            spyOn(listeners, 'global').and.callThrough();
             router.addListener('', listeners.global);
             var homeState = {name: 'home', params: {}, path: '/home'};
             router.start(homeState, function (err, state) {
@@ -149,7 +155,7 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', 'home');
             window.history.replaceState({}, '', base);
-            spyOn(listeners, 'global');
+            spyOn(listeners, 'global').and.callThrough();
             router.addNodeListener('', listeners.global);
 
             router.start(function (err, state) {
@@ -176,8 +182,7 @@ function testRouter(useHash) {
 
             router.navigate('home', {}, {}, function () {
                 var previousState = router.lastKnownState;
-
-                spyOn(listeners, 'global');
+                spyOn(listeners, 'global').and.callThrough();
                 router.addListener(listeners.global);
 
                 router.navigate('orders.pending', {}, {}, function () {
@@ -190,7 +195,7 @@ function testRouter(useHash) {
         });
 
         it('should invoke listeners on navigation to same state if reload is set to true', function (done) {
-            spyOn(listeners, 'global');
+            spyOn(listeners, 'global').and.callThrough();
             router.addListener(listeners.global);
 
             router.navigate('orders.pending', {}, {}, function () {
@@ -233,7 +238,7 @@ function testRouter(useHash) {
 
         it('should be able to remove listeners', function (done) {
             router.removeListener(listeners.global);
-            spyOn(listeners, 'global');
+            spyOn(listeners, 'global').and.callThrough();
 
             router.navigate('orders.view', {id: 123}, {replace: true}, function () {
                 expect(listeners.global).not.toHaveBeenCalled();
@@ -242,7 +247,7 @@ function testRouter(useHash) {
         });
 
         it('should not invoke listeners if trying to navigate to the current route', function (done) {
-            spyOn(listeners, 'global');
+            spyOn(listeners, 'global').and.callThrough();
             router.addListener(listeners.global);
 
             router.navigate('orders.view', {id: 123}, {}, function () {
@@ -274,7 +279,7 @@ function testRouter(useHash) {
 
         it('should invoke node listeners', function (done) {
             router.navigate('users.list', {}, {}, function () {
-                spyOn(listeners, 'node');
+                spyOn(listeners, 'node').and.callThrough();
                 router.addNodeListener('users', listeners.node);
                 router.navigate('users.view', {id: 1}, {}, function () {
                     expect(listeners.node).toHaveBeenCalled();
@@ -298,7 +303,7 @@ function testRouter(useHash) {
 
         it('should invoke route listeners', function (done) {
             router.navigate('users.list', {}, {}, function () {
-                spyOn(listeners, 'node');
+                spyOn(listeners, 'node').and.callThrough();
                 router.addRouteListener('users', listeners.node);
                 router.navigate('users', {}, {}, function () {
                     expect(listeners.node).toHaveBeenCalled();
@@ -396,6 +401,26 @@ function testRouter(useHash) {
                 done();
             });
             cancel();
+        });
+
+        it('should support a transition middleware', function (done) {
+            spyOn(listeners, 'transition').and.callThrough();
+            router.onTransition(listeners.transition);
+            router.navigate('users', {}, {}, function (err, state) {
+                expect(listeners.transition).toHaveBeenCalled();
+                expect(err).toBe(null);
+                done();
+            });
+        });
+
+        it('should fail transition if middleware returns an error', function (done) {
+            spyOn(listeners, 'transitionErr').and.callThrough();
+            router.onTransition(listeners.transitionErr);
+            router.navigate('home', {}, {}, function (err, state) {
+                expect(listeners.transitionErr).toHaveBeenCalled();
+                expect(err).toBe(Router5.ERR.TRANSITION_ERR);
+                done();
+            });
         });
     });
 }

@@ -15,6 +15,7 @@ let makeState = (name, params, path) => ({name, params, path})
 class Router5 {
     constructor(routes, opts = {}) {
         this.started = false
+        this._onTr = null
         this._cbs = {}
         this._cmps = {}
         this._canAct = {}
@@ -49,6 +50,15 @@ class Router5 {
      */
     add(routes) {
         this.rootNode.add(routes)
+        return this
+    }
+
+    /**
+     * Set a transition middleware function
+     * @param {Function} mware The middleware function
+     */
+    onTransition(fn) {
+        this._onTr = fn
         return this
     }
 
@@ -103,7 +113,7 @@ class Router5 {
             return this
         }
 
-        if (args.length === 2) {
+        if (args.length > 0) {
             if (typeof args[0] === 'string') startPath = args[0]
             if (typeof args[0] === 'object') startState = args[0]
         }
