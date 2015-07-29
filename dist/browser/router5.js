@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.4.1
+ * @version 0.4.2
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -733,17 +733,6 @@
                 return this;
             }
         }, {
-            key: 'onTransition',
-    
-            /**
-             * Set a transition middleware function
-             * @param {Function} fn The middleware function
-             */
-            value: function onTransition(fn) {
-                this._onTr = fn;
-                return this;
-            }
-        }, {
             key: 'addNode',
     
             /**
@@ -780,6 +769,17 @@
                         browser.pushState(_this2.lastKnownState, '', url);
                     }
                 });
+            }
+        }, {
+            key: 'onTransition',
+    
+            /**
+             * Set a transition middleware function
+             * @param {Function} fn The middleware function
+             */
+            value: function onTransition(fn) {
+                this._onTr = fn;
+                return this;
             }
         }, {
             key: 'start',
@@ -944,9 +944,13 @@
             /**
              * @private
              */
-            value: function _invokeListeners(name, newState, oldState) {
+            value: function _invokeListeners(name) {
+                for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                    args[_key - 1] = arguments[_key];
+                }
+    
                 (this._cbs[name] || []).forEach(function (cb) {
-                    return cb(newState, oldState);
+                    return cb.apply(undefined, args);
                 });
             }
         }, {
@@ -957,7 +961,7 @@
              */
             value: function _addListener(name, cb, replace) {
                 var normalizedName = name.replace(/^(\*|\^|=)/, '');
-                if (normalizedName) {
+                if (normalizedName && !/^\$/.test(name)) {
                     var segments = this.rootNode.getSegmentsByName(normalizedName);
                     if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
                 }
@@ -1047,6 +1051,72 @@
              */
             value: function removeRouteListener(name, cb) {
                 return this._removeListener('=' + name, cb);
+            }
+        }, {
+            key: 'onTransitionStart',
+    
+            /**
+             * Add a transition start callback
+             * @param  {Function} cb The callback
+             * @return {Router5}     The router instance
+             */
+            value: function onTransitionStart(cb) {
+                return this._addListener('$start', cb);
+            }
+        }, {
+            key: 'offTransitionStart',
+    
+            /**
+             * Remove a transition start callback
+             * @param  {Function} cb The callback
+             * @return {Router5}     The router instance
+             */
+            value: function offTransitionStart(cb) {
+                return this._removeListener('$start', cb);
+            }
+        }, {
+            key: 'onTransitionCancel',
+    
+            /**
+             * Add a transition cancel callback
+             * @param  {Function} cb The callback
+             * @return {Router5}     The router instance
+             */
+            value: function onTransitionCancel(cb) {
+                return this._addListener('$cancel', cb);
+            }
+        }, {
+            key: 'offTransitionCancel',
+    
+            /**
+             * Remove a transition cancel callback
+             * @param  {Function} cb The callback
+             * @return {Router5}     The router instance
+             */
+            value: function offTransitionCancel(cb) {
+                return this._removeListener('$cancel', cb);
+            }
+        }, {
+            key: 'onTransitionError',
+    
+            /**
+             * Add a transition error callback
+             * @param  {Function} cb The callback
+             * @return {Router5}     The router instance
+             */
+            value: function onTransitionError(cb) {
+                return this._addListener('$error', cb);
+            }
+        }, {
+            key: 'offTransitionError',
+    
+            /**
+             * Remove a transition error callback
+             * @param  {Function} cb The callback
+             * @return {Router5}     The router instance
+             */
+            value: function offTransitionError(cb) {
+                return this._removeListener('$error', cb);
             }
         }, {
             key: 'registerComponent',
@@ -1144,11 +1214,14 @@
     
                 // Cancel current transition
                 if (this._tr) this._tr();
+                this._invokeListeners('$start', toState, fromState);
     
                 var tr = transition(this, toState, fromState, function (err) {
                     _this4._tr = null;
     
                     if (err) {
+                        if (err === constants.TRANSITION_CANCELLED) _this4._invokeListeners('$cancel', toState, fromState);else _this4._invokeListeners('$error', toState, fromState, err);
+    
                         if (done) done(err);
                         return;
                     }

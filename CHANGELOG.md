@@ -1,3 +1,13 @@
+<a name="0.4.2"></a>
+## 0.4.2 (2015-07-29)
+
+
+### Features
+
+* add transition hooks (onTransitionStart, onTransitionCancel, onTransitionError) ([d166cb0](https://github.com/router5/router5/commit/d166cb0))
+
+
+
 <a name="0.4.1"></a>
 ## 0.4.1 (2015-07-29)
 
