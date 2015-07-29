@@ -45,6 +45,7 @@ directly. Routes can be nested, introducing the notion of _route segments_.
 - __Segments activation__: you can control whether or not a route can be accessed by specifying a `canActivate`
 function per node. Supports asynchronous results.
 - __Segments deactivation__: you can register segment components. On a route change, it will ask those components through their `canDeactivate` method if they allow navigation. Similar to _Angular 2_ and _Aurelia_ routers. Supports asynchronous results.
+- __Transition "middleware" function__: handle any data updates or other asynchronous actions before updating your view.
 - __Universal applications__: use on client and server side
 - __You are in control!__ You decide what to do on a route change and how to do it.
 
@@ -53,9 +54,10 @@ function per node. Supports asynchronous results.
 
 - [Configuring routes](http://router5.github.io/docs/configuring-routes.html)
 - [Path syntax](http://router5.github.io/docs/path-syntax.html)
-- [Listeners](http://router5.github.io/docs/listeners.html)
 - [Navigation](http://router5.github.io/docs/navigation.html)
-- [Allowing navigation](http://router5.github.io/docs/preventing-navigation.html)
+- [Preventing navigation](http://router5.github.io/docs/preventing-navigation.html)
+- [Listeners](http://router5.github.io/docs/listeners.html)
+- [Transition](http://router5.github.io/docs/transition.html)
 - [Universal applications](http://router5.github.io/docs/universal-applications.html)
 
 ## API
