@@ -94,7 +94,8 @@ class Router5 {
      */
     start() {
         let args = [...arguments]
-        let done = args.slice(-1)[0]
+        let lastArg = args.slice(-1)[0]
+        let done = (lastArg instanceof Function) ? lastArg : null
         let startPath, startState
 
         if (this.started) {
