@@ -3,8 +3,8 @@ Roadmap to 1.0.0
 
 - [x] Asynchronous canDeactivate and canActivate
 - [x] Support universal apps
-- [ ] Add event listeners: onTransitionStart, onTransitionError, onTransitionCancel, etc...
-- [x] Explore addition of a custom middleware function before invoking listeners
+- [x] Add transition hooks: onTransitionStart, onTransitionError, onTransitionCancel
+- [x] Add transition "middleware" function
 - [ ] Consolidate API
 - [ ] Improve docs
 - [ ] Improve `popstate` handling
