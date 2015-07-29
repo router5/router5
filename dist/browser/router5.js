@@ -458,6 +458,7 @@
         SAME_STATES: 'SAME_STATES',
         CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
         CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
+        TRANSITION_ERR: 'TRANSITION_ERR',
         NODE_LISTENER_ERR: 'NODE_ERR',
         TRANSITION_CANCELLED: 'CANCELLED'
     };/**
@@ -522,9 +523,12 @@
             getLocation: identity('')
         };
     }
-    function asyncProcess(functions, toState, fromState, callback) {
-        var allowNoResult = arguments[4] === undefined ? false : arguments[4];
+    function asyncProcess(isCancelled, functions, toState, fromState, callback) {
+        var allowNoResult = arguments[5] === undefined ? false : arguments[5];
     
+        isCancelled = isCancelled || function () {
+            return false;
+        };
         var remainingSteps = functions || [];
     
         var processFn = function processFn(done) {
@@ -552,8 +556,12 @@
         };
     
         var next = function next() {
-            var finished = processFn(iterate);
-            if (finished) callback(null);
+            if (isCancelled()) {
+                callback(null);
+            } else {
+                var finished = processFn(iterate);
+                if (finished) callback(null);
+            }
         };
     
         next();
@@ -566,6 +574,9 @@
     
     function transition(router, toState, fromState, callback) {
         var cancelled = false;
+        var isCancelled = function isCancelled() {
+            return cancelled;
+        };
         var cancel = function cancel() {
             return cancelled = true;
         };
@@ -587,46 +598,51 @@
         var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
     
         var canDeactivate = function canDeactivate(toState, fromState, cb) {
-            if (cancelled) done();else {
-                var canDeactivateFunctions = toDeactivate.map(function (name) {
-                    return router._cmps[name];
-                }).filter(function (comp) {
-                    return comp && comp.canDeactivate;
-                }).map(function (comp) {
-                    return comp.canDeactivate;
-                });
+            var canDeactivateFunctions = toDeactivate.map(function (name) {
+                return router._cmps[name];
+            }).filter(function (comp) {
+                return comp && comp.canDeactivate;
+            }).map(function (comp) {
+                return comp.canDeactivate;
+            });
     
-                asyncProcess(canDeactivateFunctions, toState, fromState, function (err) {
-                    return cb(err ? constants.CANNOT_DEACTIVATE : null);
-                });
-            }
+            asyncProcess(isCancelled, canDeactivateFunctions, toState, fromState, function (err) {
+                return cb(err ? constants.CANNOT_DEACTIVATE : null);
+            });
         };
     
         var canActivate = function canActivate(toState, fromState, cb) {
-            if (cancelled) done();else {
-                var canActivateFunctions = toActivate.map(function (name) {
-                    return router._canAct[name];
-                }).filter(function (_) {
-                    return _;
-                });
+            var canActivateFunctions = toActivate.map(function (name) {
+                return router._canAct[name];
+            }).filter(function (_) {
+                return _;
+            });
     
-                asyncProcess(canActivateFunctions, toState, fromState, function (err) {
-                    return cb(err ? constants.CANNOT_ACTIVATE : null);
-                });
-            }
+            asyncProcess(isCancelled, canActivateFunctions, toState, fromState, function (err) {
+                return cb(err ? constants.CANNOT_ACTIVATE : null);
+            });
         };
     
+        var middlewareFn = router._onTr;
+        var middleware = function middleware(toState, fromState, cb) {
+            var mwareFunction = [middlewareFn];
+    
+            asyncProcess(isCancelled, mwareFunction, toState, fromState, function (err) {
+                return cb(err ? constants.TRANSITION_ERR : null);
+            });
+        };
+    
+        var nodeListenerFn = router._cbs['^' + intersection];
         var nodeListener = function nodeListener(toState, fromState, cb) {
-            if (cancelled) done();else {
-                var listeners = router._cbs['^' + intersection] || [];
-                asyncProcess(listeners, toState, fromState, function (err) {
-                    return cb(err ? constants.NODE_LISTENER_ERR : null);
-                }, true);
-            }
+            var listeners = nodeListenerFn;
+            asyncProcess(isCancelled, listeners, toState, fromState, function (err) {
+                return cb(err ? constants.NODE_LISTENER_ERR : null);
+            }, true);
         };
     
-        var pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener];
-        asyncProcess(pipeline, toState, fromState, done);
+        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(nodeListenerFn && nodeListenerFn.length ? nodeListener : []);
+    
+        asyncProcess(isCancelled, pipeline, toState, fromState, done);
     
         return cancel;
     }
@@ -657,6 +673,7 @@
             _classCallCheck(this, Router5);
     
             this.started = false;
+            this._onTr = null;
             this._cbs = {};
             this._cmps = {};
             this._canAct = {};
@@ -698,6 +715,17 @@
              */
             value: function add(routes) {
                 this.rootNode.add(routes);
+                return this;
+            }
+        }, {
+            key: 'onTransition',
+    
+            /**
+             * Set a transition middleware function
+             * @param {Function} mware The middleware function
+             */
+            value: function onTransition(fn) {
+                this._onTr = fn;
                 return this;
             }
         }, {
@@ -753,7 +781,8 @@
                 var _this3 = this;
     
                 var args = [].concat(_slice.call(arguments));
-                var done = args.slice(-1)[0];
+                var lastArg = args.slice(-1)[0];
+                var done = lastArg instanceof Function ? lastArg : null;
                 var startPath = undefined,
                     startState = undefined;
     
@@ -762,7 +791,7 @@
                     return this;
                 }
     
-                if (args.length === 2) {
+                if (args.length > 0) {
                     if (typeof args[0] === 'string') startPath = args[0];
                     if (typeof args[0] === 'object') startState = args[0];
                 }
@@ -807,6 +836,7 @@
                 } else {
                     // Initialise router with provided start state
                     this.lastKnownState = startState;
+                    browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
                     cb(null, startState);
                 }
                 // Listen to popstate

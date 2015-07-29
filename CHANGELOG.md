@@ -1,3 +1,18 @@
+<a name="0.4.0"></a>
+# 0.4.0 (2015-07-29)
+
+
+### Bug Fixes
+
+* improve handling of arguments in start function ([e17ed69](https://github.com/router5/router5/commit/e17ed69))
+* replace history state on start when supplying a starting state ([43127f2](https://github.com/router5/router5/commit/43127f2))
+
+### Features
+
+* add support for onTransition middleware function ([259065f](https://github.com/router5/router5/commit/259065f))
+
+
+
 <a name="0.3.1"></a>
 ## 0.3.1 (2015-07-27)
 

@@ -15,9 +15,12 @@
 
     module.exports = asyncProcess;
 
-    function asyncProcess(functions, toState, fromState, callback) {
-        var allowNoResult = arguments[4] === undefined ? false : arguments[4];
+    function asyncProcess(isCancelled, functions, toState, fromState, callback) {
+        var allowNoResult = arguments[5] === undefined ? false : arguments[5];
 
+        isCancelled = isCancelled || function () {
+            return false;
+        };
         var remainingSteps = functions || [];
 
         var processFn = function processFn(done) {
@@ -45,8 +48,12 @@
         };
 
         var next = function next() {
-            var finished = processFn(iterate);
-            if (finished) callback(null);
+            if (isCancelled()) {
+                callback(null);
+            } else {
+                var finished = processFn(iterate);
+                if (finished) callback(null);
+            }
         };
 
         next();

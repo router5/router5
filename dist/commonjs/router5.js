@@ -48,6 +48,7 @@ var Router5 = (function () {
         _classCallCheck(this, Router5);
 
         this.started = false;
+        this._onTr = null;
         this._cbs = {};
         this._cmps = {};
         this._canAct = {};
@@ -89,6 +90,17 @@ var Router5 = (function () {
          */
         value: function add(routes) {
             this.rootNode.add(routes);
+            return this;
+        }
+    }, {
+        key: 'onTransition',
+
+        /**
+         * Set a transition middleware function
+         * @param {Function} mware The middleware function
+         */
+        value: function onTransition(fn) {
+            this._onTr = fn;
             return this;
         }
     }, {
@@ -144,7 +156,8 @@ var Router5 = (function () {
             var _this3 = this;
 
             var args = [].concat(_slice.call(arguments));
-            var done = args.slice(-1)[0];
+            var lastArg = args.slice(-1)[0];
+            var done = lastArg instanceof Function ? lastArg : null;
             var startPath = undefined,
                 startState = undefined;
 
@@ -153,7 +166,7 @@ var Router5 = (function () {
                 return this;
             }
 
-            if (args.length === 2) {
+            if (args.length > 0) {
                 if (typeof args[0] === 'string') startPath = args[0];
                 if (typeof args[0] === 'object') startState = args[0];
             }
@@ -198,6 +211,7 @@ var Router5 = (function () {
             } else {
                 // Initialise router with provided start state
                 this.lastKnownState = startState;
+                _browser2['default'].replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
                 cb(null, startState);
             }
             // Listen to popstate

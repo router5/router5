@@ -23,6 +23,9 @@ var nameToIDs = function nameToIDs(name) {
 
 function transition(router, toState, fromState, callback) {
     var cancelled = false;
+    var isCancelled = function isCancelled() {
+        return cancelled;
+    };
     var cancel = function cancel() {
         return cancelled = true;
     };
@@ -44,46 +47,51 @@ function transition(router, toState, fromState, callback) {
     var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
 
     var canDeactivate = function canDeactivate(toState, fromState, cb) {
-        if (cancelled) done();else {
-            var canDeactivateFunctions = toDeactivate.map(function (name) {
-                return router._cmps[name];
-            }).filter(function (comp) {
-                return comp && comp.canDeactivate;
-            }).map(function (comp) {
-                return comp.canDeactivate;
-            });
+        var canDeactivateFunctions = toDeactivate.map(function (name) {
+            return router._cmps[name];
+        }).filter(function (comp) {
+            return comp && comp.canDeactivate;
+        }).map(function (comp) {
+            return comp.canDeactivate;
+        });
 
-            (0, _async2['default'])(canDeactivateFunctions, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].CANNOT_DEACTIVATE : null);
-            });
-        }
+        (0, _async2['default'])(isCancelled, canDeactivateFunctions, toState, fromState, function (err) {
+            return cb(err ? _constants2['default'].CANNOT_DEACTIVATE : null);
+        });
     };
 
     var canActivate = function canActivate(toState, fromState, cb) {
-        if (cancelled) done();else {
-            var canActivateFunctions = toActivate.map(function (name) {
-                return router._canAct[name];
-            }).filter(function (_) {
-                return _;
-            });
+        var canActivateFunctions = toActivate.map(function (name) {
+            return router._canAct[name];
+        }).filter(function (_) {
+            return _;
+        });
 
-            (0, _async2['default'])(canActivateFunctions, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].CANNOT_ACTIVATE : null);
-            });
-        }
+        (0, _async2['default'])(isCancelled, canActivateFunctions, toState, fromState, function (err) {
+            return cb(err ? _constants2['default'].CANNOT_ACTIVATE : null);
+        });
     };
 
+    var middlewareFn = router._onTr;
+    var middleware = function middleware(toState, fromState, cb) {
+        var mwareFunction = [middlewareFn];
+
+        (0, _async2['default'])(isCancelled, mwareFunction, toState, fromState, function (err) {
+            return cb(err ? _constants2['default'].TRANSITION_ERR : null);
+        });
+    };
+
+    var nodeListenerFn = router._cbs['^' + intersection];
     var nodeListener = function nodeListener(toState, fromState, cb) {
-        if (cancelled) done();else {
-            var listeners = router._cbs['^' + intersection] || [];
-            (0, _async2['default'])(listeners, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null);
-            }, true);
-        }
+        var listeners = nodeListenerFn;
+        (0, _async2['default'])(isCancelled, listeners, toState, fromState, function (err) {
+            return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null);
+        }, true);
     };
 
-    var pipeline = fromState ? [canDeactivate, canActivate, nodeListener] : [canActivate, nodeListener];
-    (0, _async2['default'])(pipeline, toState, fromState, done);
+    var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(nodeListenerFn && nodeListenerFn.length ? nodeListener : []);
+
+    (0, _async2['default'])(isCancelled, pipeline, toState, fromState, done);
 
     return cancel;
 }
