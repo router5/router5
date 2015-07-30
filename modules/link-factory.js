@@ -40,8 +40,10 @@ function linkFactory(router) {
         },
 
         clickHandler(evt) {
-            evt.preventDefault()
-            router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions)
+            if (evt.which === 1) {
+                evt.preventDefault()
+                router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions)
+            }
         },
 
         // Is it overkill?
