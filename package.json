@@ -1,6 +1,6 @@
 {
   "name": "router5-react",
-  "version": "0.1.0-alpha.7",
+  "version": "0.1.0",
   "description": "router5 helpers for React",
   "main": "dist/commonjs/index.js",
   "scripts": {
@@ -33,6 +33,6 @@
     "uglify-js2": "^2.1.11"
   },
   "peerDependencies": {
-    "router5": ">=0.1.0-rc.6"
+    "router5": ">=0.4.1"
   }
 }
