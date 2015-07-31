@@ -1,5 +1,5 @@
 import RouteNode  from 'route-node/modules/RouteNode'
-import transition from './transition'
+import {transition, transitionPath} from './transition'
 import constants  from './constants'
 import browser    from './browser'
 
@@ -13,6 +13,21 @@ let makeState = (name, params, path) => ({name, params, path})
  * @return {Router5} The router instance
  */
 class Router5 {
+    /**
+     * Error codes
+     * @type {Object}
+     */
+    static ERR = constants
+
+    /**
+     * An helper function to return instructions for a transition:
+     * intersection route name, route names to deactivate, route names to activate
+     * @param  {Object} toState   The state to go to
+     * @param  {Object} fromState The state to go from
+     * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
+     */
+    static transitionPath = transitionPath
+
     constructor(routes, opts = {}) {
         this.started = false
         this._onTr = null
@@ -519,5 +534,4 @@ class Router5 {
     }
 }
 
-Router5.ERR = constants
 export default Router5

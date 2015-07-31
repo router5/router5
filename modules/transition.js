@@ -1,17 +1,14 @@
 import asyncProcess from './async'
 import constants from './constants'
 
-let nameToIDs = name => {
-    return name.split('.').reduce((ids, name) => {
-        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name)
-    }, [])
-}
+export default {transition, transitionPath}
 
-export default function transition(router, toState, fromState, callback) {
-    let cancelled = false
-    let isCancelled = () => cancelled
-    let cancel = () => cancelled = true
-    let done = (err) => callback(cancelled ? constants.TRANSITION_CANCELLED : err)
+function transitionPath(toState, fromState) {
+    let nameToIDs = name => {
+        return name.split('.').reduce((ids, name) => {
+            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name)
+        }, [])
+    }
 
     let i
     let fromStateIds = fromState ? nameToIDs(fromState.name) : []
@@ -25,6 +22,17 @@ export default function transition(router, toState, fromState, callback) {
     let toDeactivate = fromStateIds.slice(i).reverse()
     let toActivate   = toStateIds.slice(i)
     let intersection = fromState && i > 0 ? fromStateIds[i - 1] : ''
+
+    return {intersection, toDeactivate, toActivate}
+}
+
+function transition(router, toState, fromState, callback) {
+    let cancelled = false
+    let isCancelled = () => cancelled
+    let cancel = () => cancelled = true
+    let done = (err) => callback(cancelled ? constants.TRANSITION_CANCELLED : err)
+
+    let {intersection, toDeactivate, toActivate} = transitionPath(toState, fromState)
 
     let canDeactivate = (toState, fromState, cb) => {
         let canDeactivateFunctions = toDeactivate

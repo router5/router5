@@ -35,7 +35,7 @@ function buildFactory(module, dest, file) {
 function buildBundle(done) {
     function transform(fileToTransform) {
         return function (done) {
-            babel.transformFile(fileToTransform, {modules: 'ignore'}, done)
+            babel.transformFile(fileToTransform, getOptions('ignore'), done)
         }
     }
 
