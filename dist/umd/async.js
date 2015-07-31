@@ -16,7 +16,7 @@
     module.exports = asyncProcess;
 
     function asyncProcess(isCancelled, functions, toState, fromState, callback) {
-        var allowNoResult = arguments[5] === undefined ? false : arguments[5];
+        var allowNoResult = arguments.length <= 5 || arguments[5] === undefined ? false : arguments[5];
 
         isCancelled = isCancelled || function () {
             return false;

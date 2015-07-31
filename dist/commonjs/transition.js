@@ -3,7 +3,6 @@
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-exports['default'] = transition;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
@@ -15,22 +14,13 @@ var _constants = require('./constants');
 
 var _constants2 = _interopRequireDefault(_constants);
 
-var nameToIDs = function nameToIDs(name) {
-    return name.split('.').reduce(function (ids, name) {
-        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-    }, []);
-};
+exports['default'] = { transition: transition, transitionPath: transitionPath };
 
-function transition(router, toState, fromState, callback) {
-    var cancelled = false;
-    var isCancelled = function isCancelled() {
-        return cancelled;
-    };
-    var cancel = function cancel() {
-        return cancelled = true;
-    };
-    var done = function done(err) {
-        return callback(cancelled ? _constants2['default'].TRANSITION_CANCELLED : err);
+function transitionPath(toState, fromState) {
+    var nameToIDs = function nameToIDs(name) {
+        return name.split('.').reduce(function (ids, name) {
+            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+        }, []);
     };
 
     var i = undefined;
@@ -45,6 +35,27 @@ function transition(router, toState, fromState, callback) {
     var toDeactivate = fromStateIds.slice(i).reverse();
     var toActivate = toStateIds.slice(i);
     var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
+
+    return { intersection: intersection, toDeactivate: toDeactivate, toActivate: toActivate };
+}
+
+function transition(router, toState, fromState, callback) {
+    var cancelled = false;
+    var isCancelled = function isCancelled() {
+        return cancelled;
+    };
+    var cancel = function cancel() {
+        return cancelled = true;
+    };
+    var done = function done(err) {
+        return callback(cancelled ? _constants2['default'].TRANSITION_CANCELLED : err);
+    };
+
+    var _transitionPath = transitionPath(toState, fromState);
+
+    var intersection = _transitionPath.intersection;
+    var toDeactivate = _transitionPath.toDeactivate;
+    var toActivate = _transitionPath.toActivate;
 
     var canDeactivate = function canDeactivate(toState, fromState, cb) {
         var canDeactivateFunctions = toDeactivate.map(function (name) {
@@ -95,5 +106,4 @@ function transition(router, toState, fromState, callback) {
 
     return cancel;
 }
-
 module.exports = exports['default'];
