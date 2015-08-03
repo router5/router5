@@ -38,7 +38,7 @@
         "comma-spacing": [2, {"before": false, "after": true}],
         "comma-style": [2, "last"],
         "consistent-this":  [2, "that"],
-        "lines-around-comment": 2,
+        "lines-around-comment": [2, {"allowBlockStart": true}],
         "key-spacing": 0,
         "new-parens": 0,
         "quotes": [2, "single", "avoid-escape"],
