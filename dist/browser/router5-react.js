@@ -60,7 +60,7 @@ function linkFactory(router) {
         },
 
         clickHandler: function clickHandler(evt) {
-            if (evt.nativeEvent.which === 1) {
+            if (!evt.nativeEvent.which === 2) {
                 evt.preventDefault();
                 router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
             }
