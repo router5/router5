@@ -79,7 +79,8 @@ var Router5 = (function () {
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: _browser2['default'].getBase()
+            base: _browser2['default'].getBase(),
+            trailingSlash: 0
         };
         Object.keys(opts).forEach(function (opt) {
             return _this.options[opt] = opts[opt];
@@ -140,14 +141,19 @@ var Router5 = (function () {
             var _this2 = this;
 
             // Do nothing if no state or if last know state is poped state (it should never happen)
+            var newState = !newState || !newState.name;
             var state = evt.state || this.matchPath(this.getLocation());
             if (!state) return;
-            if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
+            if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
+                return;
+            }
 
             this._transition(state, this.lastKnownState, function (err) {
                 if (err) {
                     var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                     _browser2['default'].pushState(_this2.lastKnownState, '', url);
+                } else {
+                    _browser2['default'][newState ? 'pushState' : 'replaceState'](state, '', _this2.buildUrl(state.name, state.params));
                 }
             });
         }
@@ -557,7 +563,12 @@ var Router5 = (function () {
     }, {
         key: 'buildUrl',
         value: function buildUrl(route, params) {
-            return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + this.rootNode.buildPath(route, params);
+            return this._buildUrl(this.rootNode.buildPath(route, params));
+        }
+    }, {
+        key: '_buildUrl',
+        value: function _buildUrl(path) {
+            return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + path;
         }
 
         /**
@@ -581,7 +592,7 @@ var Router5 = (function () {
     }, {
         key: 'matchPath',
         value: function matchPath(path) {
-            var match = this.rootNode.matchPath(path);
+            var match = this.rootNode.matchPath(path, this.options.trailingSlash);
             return match ? makeState(match.name, match.params, path) : null;
         }
 
@@ -660,7 +671,7 @@ var Router5 = (function () {
             }
 
             // Transition and amend history
-            return this._transition(toState, this.lastKnownState, function (err, state) {
+            return this._transition(toState, sameStates ? null : this.lastKnownState, function (err, state) {
                 if (err) {
                     if (done) done(err);
                     return;

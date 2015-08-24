@@ -95,6 +95,7 @@ function transition(router, toState, fromState, callback) {
     var nodeListenerFn = router._cbs['^' + intersection];
     var nodeListener = function nodeListener(toState, fromState, cb) {
         var listeners = nodeListenerFn;
+
         (0, _async2['default'])(isCancelled, listeners, toState, fromState, function (err) {
             return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null);
         }, true);

@@ -1,3 +1,13 @@
+<a name="0.5.0"></a>
+# 0.5.0 (2015-08-24)
+
+
+### Features
+
+* support optional trailing slashes in URL ([60ba973](https://github.com/router5/router5/commit/60ba973))
+
+
+
 <a name="0.4.2"></a>
 ## 0.4.2 (2015-07-29)
 

@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.4.3
+ * @version 0.5.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -63,7 +63,7 @@
         name: 'delimiter',
         pattern: /^(\/|\?)/,
         regex: function regex(match) {
-            return new RegExp(match[0]);
+            return new RegExp('\\' + match[0]);
         }
     }, {
         // Sub delimiters
@@ -106,6 +106,11 @@
         }
         // Return tokens
         return tokens;
+    };
+    
+    var optTrailingSlash = function optTrailingSlash(source, trailingSlash) {
+        if (!trailingSlash || source === '\\/') return source;
+        return source.replace(/\\\/$/, '') + '(?:\\/)?';
     };
     
     var Path = (function () {
@@ -176,8 +181,12 @@
             value: function match(path) {
                 var _this2 = this;
     
+                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+    
+                // trailingSlash: falsy => non optional, truthy => optional
+                var source = optTrailingSlash(this.source, trailingSlash);
                 // Check if exact match
-                var match = this._urlMatch(path, new RegExp('^' + this.source + (this.hasQueryParams ? '\?.*$' : '$')));
+                var match = this._urlMatch(path, new RegExp('^' + source + (this.hasQueryParams ? '\\?.*$' : '$')));
                 // If no match, or no query params, no need to go further
                 if (!match || !this.hasQueryParams) return match;
                 // Extract query params
@@ -204,8 +213,12 @@
         }, {
             key: 'partialMatch',
             value: function partialMatch(path) {
+                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+    
                 // Check if partial match (start of given path matches regex)
-                return this._urlMatch(path, new RegExp('^' + this.source));
+                // trailingSlash: falsy => non optional, truthy => optional
+                var source = optTrailingSlash(this.source, trailingSlash);
+                return this._urlMatch(path, new RegExp('^' + source));
             }
         }, {
             key: 'build',
@@ -371,18 +384,33 @@
         }, {
             key: 'getSegmentsMatchingPath',
             value: function getSegmentsMatchingPath(path) {
+                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                     var _loop = function (i) {
                         var child = nodes[i];
                         // Partially match path
                         var match = child.parser.partialMatch(pathSegment);
+                        var remainingPath = undefined;
+    
+                        if (!match && trailingSlash) {
+                            // Try with optional trailing slash
+                            match = child.parser.match(pathSegment, true);
+                            remainingPath = '';
+                        } else if (match) {
+                            // Remove consumed segment from path
+                            var consumedPath = child.parser.build(match);
+                            remainingPath = pathSegment.replace(consumedPath, '');
+                            if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                                remainingPath = '';
+                            }
+                        }
+    
                         if (match) {
                             segments.push(child);
                             Object.keys(match).forEach(function (param) {
                                 return segments.params[param] = match[param];
                             });
-                            // Remove consumed segment from path
-                            var remainingPath = pathSegment.replace(child.parser.build(match), '');
                             // If fully matched
                             if (!remainingPath.length) {
                                 return {
@@ -448,7 +476,7 @@
         }, {
             key: 'getMatchPathFromSegments',
             value: function getMatchPathFromSegments(segments) {
-                if (!segments) return null;
+                if (!segments || !segments.length) return null;
     
                 var name = segments.map(function (segment) {
                     return segment.name;
@@ -460,7 +488,9 @@
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
-                return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path));
+                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    
+                return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
             }
         }]);
     
@@ -551,13 +581,17 @@
             var len = remainingSteps[0].length;
             var res = remainingSteps[0](toState, fromState, done);
     
-            if (typeof res === 'boolean') done(res ? null : true);else if (res && typeof res.then === 'function') {
+            if (typeof res === 'boolean') {
+                done(res ? null : true);
+            } else if (res && typeof res.then === 'function') {
                 res.then(function () {
                     return done(null);
                 }, function () {
                     return done(true);
                 });
-            } else if (len < 3 && allowNoResult) done(null);
+            } else if (len < 3 && allowNoResult) {
+                done(null);
+            }
     
             return false;
         };
@@ -659,6 +693,7 @@
         var nodeListenerFn = router._cbs['^' + intersection];
         var nodeListener = function nodeListener(toState, fromState, cb) {
             var listeners = nodeListenerFn;
+    
             asyncProcess(isCancelled, listeners, toState, fromState, function (err) {
                 return cb(err ? constants.NODE_LISTENER_ERR : null);
             }, true);
@@ -730,7 +765,8 @@
             this.options = {
                 useHash: false,
                 hashPrefix: '',
-                base: browser.getBase()
+                base: browser.getBase(),
+                trailingSlash: 0
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
@@ -791,14 +827,19 @@
                 var _this2 = this;
     
                 // Do nothing if no state or if last know state is poped state (it should never happen)
+                var newState = !newState || !newState.name;
                 var state = evt.state || this.matchPath(this.getLocation());
                 if (!state) return;
-                if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return;
+                if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
+                    return;
+                }
     
                 this._transition(state, this.lastKnownState, function (err) {
                     if (err) {
                         var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                         browser.pushState(_this2.lastKnownState, '', url);
+                    } else {
+                        browser[newState ? 'pushState' : 'replaceState'](state, '', _this2.buildUrl(state.name, state.params));
                     }
                 });
             }
@@ -1208,7 +1249,12 @@
         }, {
             key: 'buildUrl',
             value: function buildUrl(route, params) {
-                return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + this.rootNode.buildPath(route, params);
+                return this._buildUrl(this.rootNode.buildPath(route, params));
+            }
+        }, {
+            key: '_buildUrl',
+            value: function _buildUrl(path) {
+                return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + path;
             }
     
             /**
@@ -1232,7 +1278,7 @@
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
-                var match = this.rootNode.matchPath(path);
+                var match = this.rootNode.matchPath(path, this.options.trailingSlash);
                 return match ? makeState(match.name, match.params, path) : null;
             }
     
@@ -1311,7 +1357,7 @@
                 }
     
                 // Transition and amend history
-                return this._transition(toState, this.lastKnownState, function (err, state) {
+                return this._transition(toState, sameStates ? null : this.lastKnownState, function (err, state) {
                     if (err) {
                         if (done) done(err);
                         return;
