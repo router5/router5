@@ -34,7 +34,7 @@ describe('router5', function () {
     testRouter(false);
 
     // With hash
-    testRouter(true);
+    // testRouter(true);
 });
 
 function testRouter(useHash) {
@@ -50,6 +50,12 @@ function testRouter(useHash) {
     });
 
     describe(useHash ? 'with using URL hash part' : 'without using URL hash part', function () {
+        function flushListeners() {
+            router._cbs = {};
+        }
+
+        beforeEach(flushListeners);
+
         it('should throw an error if Router5 is not used as a constructor', function () {
             expect(function () { Router5([]); }).toThrow();
         });
@@ -149,6 +155,18 @@ function testRouter(useHash) {
             });
         });
 
+        it('should match an URL with extra trailing slashes', function (done) {
+            router.setOption('trailingSlash', 1);
+            router.stop();
+            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
+            router.start(function (err, state) {
+                expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
+                expect(router.getLocation()).toBe('/users/list');
+                router.setOption('trailingSlash', 0);
+                done();
+            });
+        });
+
         it('should start with the provided state', function (done) {
             router.stop();
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/home'));
@@ -159,7 +177,6 @@ function testRouter(useHash) {
                 expect(state).toEqual(homeState);
                 expect(router.lastKnownState).toEqual(homeState);
                 expect(listeners.global).not.toHaveBeenCalled();
-                router.removeListener('', listeners.global);
                 done();
             });
         });
@@ -205,9 +222,6 @@ function testRouter(useHash) {
         });
 
         it('should invoke listeners on navigation', function (done) {
-            // Removing a listener not added should not throw an error
-            router.removeListener(listeners.global);
-
             router.navigate('home', {}, {}, function () {
                 var previousState = router.lastKnownState;
                 spyOn(listeners, 'global').and.callThrough();
@@ -216,21 +230,17 @@ function testRouter(useHash) {
                 router.navigate('orders.pending', {}, {}, function () {
                     expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/orders/pending'));
                     expect(listeners.global).toHaveBeenCalledWith(router.lastKnownState, previousState);
-                    router.removeListener(listeners.global);
                     done();
                 });
             });
         });
 
         it('should invoke listeners on navigation to same state if reload is set to true', function (done) {
-            spyOn(listeners, 'global').and.callThrough();
-            router.addListener(listeners.global);
+            router.navigate('orders.pending', {}, {}, function (err, state) {
+                expect(err).toBe(Router5.ERR.SAME_STATES);
 
-            router.navigate('orders.pending', {}, {}, function () {
-                expect(listeners.global).not.toHaveBeenCalled();
-
-                router.navigate('orders.pending', {}, {reload: true}, function () {
-                    expect(listeners.global).toHaveBeenCalled();
+                router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
+                    expect(err).toBe(null);
                     done();
                 });
             });
@@ -265,7 +275,6 @@ function testRouter(useHash) {
         });
 
         it('should be able to remove listeners', function (done) {
-            router.removeListener(listeners.global);
             spyOn(listeners, 'global').and.callThrough();
 
             router.navigate('orders.view', {id: 123}, {replace: true}, function () {
@@ -280,7 +289,6 @@ function testRouter(useHash) {
 
             router.navigate('orders.view', {id: 123}, {}, function () {
                 expect(listeners.global).not.toHaveBeenCalled();
-                router.removeListener(listeners.global);
                 done();
             });
         });

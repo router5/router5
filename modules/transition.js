@@ -70,6 +70,7 @@ function transition(router, toState, fromState, callback) {
     let nodeListenerFn = router._cbs['^' + intersection]
     let nodeListener = (toState, fromState, cb) => {
         let listeners = nodeListenerFn
+
         asyncProcess(
             isCancelled, listeners, toState, fromState,
             err => cb(err ? constants.NODE_LISTENER_ERR : null),
