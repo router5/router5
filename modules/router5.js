@@ -40,7 +40,8 @@ class Router5 {
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: browser.getBase()
+            base: browser.getBase(),
+            trailingSlash: 0
         }
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
         // Bind onPopState
@@ -88,14 +89,19 @@ class Router5 {
      */
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
+        let newState = typeof evt.state === 'undefined'
         let state = evt.state || this.matchPath(this.getLocation())
         if (!state) return
-        if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) return
+        if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
+            return
+        }
 
         this._transition(state, this.lastKnownState, (err) => {
             if (err) {
                 let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
                 browser.pushState(this.lastKnownState, '', url)
+            } else {
+                browser[newState ? 'pushState' : 'replaceState'](state, '', this.buildUrl(state.name, state.params))
             }
         })
     }
@@ -434,9 +440,13 @@ class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
+        return this._buildUrl(this.rootNode.buildPath(route, params))
+    }
+
+    _buildUrl(path) {
         return this.options.base +
             (this.options.useHash ? '#' + this.options.hashPrefix : '') +
-            this.rootNode.buildPath(route, params)
+            path
     }
 
     /**
@@ -456,7 +466,7 @@ class Router5 {
      * @return {Object}        The matched state object (null if no match)
      */
     matchPath(path) {
-        let match = this.rootNode.matchPath(path)
+        let match = this.rootNode.matchPath(path, this.options.trailingSlash)
         return match ? makeState(match.name, match.params, path) : null
     }
 
@@ -522,7 +532,7 @@ class Router5 {
         }
 
         // Transition and amend history
-        return this._transition(toState, this.lastKnownState, (err, state) => {
+        return this._transition(toState, sameStates ? null : this.lastKnownState, (err, state) => {
             if (err) {
                 if (done) done(err)
                 return
