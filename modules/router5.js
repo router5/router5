@@ -89,7 +89,7 @@ class Router5 {
      */
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
-        let newState = typeof evt.state === 'undefined'
+        let newState = !newState || !newState.name
         let state = evt.state || this.matchPath(this.getLocation())
         if (!state) return
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
