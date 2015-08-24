@@ -122,7 +122,29 @@ function testRouter(useHash) {
             router.setOption('defaultRoute', null);
             window.history.replaceState({}, '', base + getExpectedPath(useHash, ''));
             router.start(function (err) {
-                expect(err).toBe(null)
+                expect(err).toBe(null);
+                done();
+            });
+        });
+
+        it('should not match an URL with extra trailing slashes', function (done) {
+            router.stop();
+            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
+            router.start(function (err, state) {
+                expect(err).toBe(null);
+                expect(state).toBe(undefined);
+                done();
+            });
+        });
+
+        it('should match an URL with extra trailing slashes', function (done) {
+            router.setOption('trailingSlash', 1);
+            router.stop();
+            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
+            router.start(function (err, state) {
+                expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
+                expect(router.getLocation()).toBe('/users/list');
+                router.setOption('trailingSlash', 0);
                 done();
             });
         });
