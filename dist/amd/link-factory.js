@@ -42,7 +42,9 @@ define(['exports', 'module', 'react'], function (exports, module, _react) {
             },
 
             clickHandler: function clickHandler(evt) {
-                if (!evt.nativeEvent.which === 2) {
+                var comboKey = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
+
+                if (evt.button === 0 && !comboKey) {
                     evt.preventDefault();
                     router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
                 }
