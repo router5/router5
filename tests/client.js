@@ -56,12 +56,25 @@ function testRouter(useHash) {
 
         beforeEach(flushListeners);
 
+        function makeUrl(path) {
+            return 'https://www.mysite.com:8080' + base + (useHash ? '#' + hashPrefix : '' ) + path;
+        }
+
         it('should throw an error if Router5 is not used as a constructor', function () {
             expect(function () { Router5([]); }).toThrow();
         });
 
         it('should expose RouteNode path building function', function () {
             expect(router.buildPath('users.list')).toBe('/users/list');
+        });
+
+        it('should be able to extract the path of an URL', function () {
+            expect(router.urlToPath(makeUrl('/home'))).toBe('/home');
+        });
+
+        it('should match an URL', function () {
+            expect(router.matchUrl(makeUrl('/home'))).toEqual({name: 'home', params: {}, path: '/home'});
+            expect(router.matchUrl(makeUrl('/users/view/1'))).toEqual({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
         });
 
         it('should start with the default route', function (done) {

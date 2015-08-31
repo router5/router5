@@ -462,12 +462,45 @@ class Router5 {
 
     /**
      * Match a path against the route tree.
-     * @param  {String} path   The path / URL to match
+     * @param  {String} path   The path to match
      * @return {Object}        The matched state object (null if no match)
      */
     matchPath(path) {
         let match = this.rootNode.matchPath(path, this.options.trailingSlash)
         return match ? makeState(match.name, match.params, path) : null
+    }
+
+    /**
+     * Parse / extract a path from an url
+     * @param  {String} url The URL
+     * @return {String}     The extracted path
+     */
+    urlToPath(url) {
+        let match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/)
+        console.log(match)
+        let path = match ? match[1] : url
+
+        let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/)
+
+        if (!pathParts) throw new Error(`Could not parse url ${url}`)
+
+        let [pathname, hash, search] = pathParts.slice(1)
+        let opts = this.options
+
+        return (
+            opts.useHash
+            ? hash.replace(new RegExp('^#' + opts.hashPrefix), '')
+            : pathname.replace(new RegExp('^' + opts.base), '')
+        ) + (search || '')
+    }
+
+    /**
+     * Parse path from an url and match it against the route tree.
+     * @param  {String} url    The URL to match
+     * @return {Object}        The matched state object (null if no match)
+     */
+    matchUrl(url) {
+        return this.matchPath(this.urlToPath(url))
     }
 
     /**
