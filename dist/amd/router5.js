@@ -57,8 +57,8 @@ define('router5', [], function () {
         //                   ?:param1&:param2
         name: 'query-parameter',
         pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
-    }, { // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
-    
+    }, // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
+    {
         // Delimiter /
         name: 'delimiter',
         pattern: /^(\/|\?)/,
@@ -122,20 +122,24 @@ define('router5', [], function () {
             this.tokens = tokenise(path);
     
             this.hasUrlParams = this.tokens.filter(function (t) {
-                return /^url-parameter/.test(t.type);
+                return (/^url-parameter/.test(t.type)
+                );
             }).length > 0;
             this.hasSpatParam = this.tokens.filter(function (t) {
-                return /splat$/.test(t.type);
+                return (/splat$/.test(t.type)
+                );
             }).length > 0;
             this.hasMatrixParams = this.tokens.filter(function (t) {
-                return /matrix$/.test(t.type);
+                return (/matrix$/.test(t.type)
+                );
             }).length > 0;
             this.hasQueryParams = this.tokens.filter(function (t) {
                 return t.type === 'query-parameter';
             }).length > 0;
             // Extract named parameters from tokens
             this.urlParams = !this.hasUrlParams ? [] : this.tokens.filter(function (t) {
-                return /^url-parameter/.test(t.type);
+                return (/^url-parameter/.test(t.type)
+                );
             }).map(function (t) {
                 return t.val.slice(0, 1);
             })
@@ -234,7 +238,8 @@ define('router5', [], function () {
                 // Check constraints
                 if (!ignoreConstraints) {
                     var constraintsPassed = this.tokens.filter(function (t) {
-                        return /^url-parameter/.test(t.type) && !/-splat$/.test(t.type);
+                        return (/^url-parameter/.test(t.type) && !/-splat$/.test(t.type)
+                        );
                     }).every(function (t) {
                         return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(params[t.val]);
                     });
@@ -246,7 +251,8 @@ define('router5', [], function () {
                     return t.type !== 'query-parameter';
                 }).map(function (t) {
                     if (t.type === 'url-parameter-matrix') return ';' + t.val[0] + '=' + params[t.val[0]];
-                    return /^url-parameter/.test(t.type) ? params[t.val[0]] : t.match;
+                    return (/^url-parameter/.test(t.type) ? params[t.val[0]] : t.match
+                    );
                 }).join('');
     
                 var searchPart = this.queryParams.map(function (p) {
@@ -705,6 +711,8 @@ define('router5', [], function () {
     
         return cancel;
     }
+    var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+    
     var _slice = Array.prototype.slice;
     
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1272,7 +1280,7 @@ define('router5', [], function () {
     
             /**
              * Match a path against the route tree.
-             * @param  {String} path   The path / URL to match
+             * @param  {String} path   The path to match
              * @return {Object}        The matched state object (null if no match)
              */
         }, {
@@ -1280,6 +1288,46 @@ define('router5', [], function () {
             value: function matchPath(path) {
                 var match = this.rootNode.matchPath(path, this.options.trailingSlash);
                 return match ? makeState(match.name, match.params, path) : null;
+            }
+    
+            /**
+             * Parse / extract a path from an url
+             * @param  {String} url The URL
+             * @return {String}     The extracted path
+             */
+        }, {
+            key: 'urlToPath',
+            value: function urlToPath(url) {
+                var match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
+                console.log(match);
+                var path = match ? match[1] : url;
+    
+                var pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
+    
+                if (!pathParts) throw new Error('Could not parse url ' + url);
+    
+                var _pathParts$slice = pathParts.slice(1);
+    
+                var _pathParts$slice2 = _slicedToArray(_pathParts$slice, 3);
+    
+                var pathname = _pathParts$slice2[0];
+                var hash = _pathParts$slice2[1];
+                var search = _pathParts$slice2[2];
+    
+                var opts = this.options;
+    
+                return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : pathname.replace(new RegExp('^' + opts.base), '')) + (search || '');
+            }
+    
+            /**
+             * Parse path from an url and match it against the route tree.
+             * @param  {String} url    The URL to match
+             * @return {Object}        The matched state object (null if no match)
+             */
+        }, {
+            key: 'matchUrl',
+            value: function matchUrl(url) {
+                return this.matchPath(this.urlToPath(url));
             }
     
             /**

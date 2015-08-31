@@ -1,3 +1,13 @@
+<a name="0.5.1"></a>
+## 0.5.1 (2015-08-31)
+
+
+### Features
+
+* add `matchUrl` for matching full URLs ([22daedd](https://github.com/router5/router5/commit/22daedd))
+
+
+
 <a name="0.5.0"></a>
 # 0.5.0 (2015-08-24)
 
