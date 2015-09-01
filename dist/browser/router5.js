@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.5.1
+ * @version 0.5.3
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -109,7 +109,7 @@
     };
     
     var optTrailingSlash = function optTrailingSlash(source, trailingSlash) {
-        if (!trailingSlash || source === '\\/') return source;
+        if (!trailingSlash) return source;
         return source.replace(/\\\/$/, '') + '(?:\\/)?';
     };
     
@@ -1300,7 +1300,6 @@
             key: 'urlToPath',
             value: function urlToPath(url) {
                 var match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
-                console.log(match);
                 var path = match ? match[1] : url;
     
                 var pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);

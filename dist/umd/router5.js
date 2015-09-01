@@ -609,7 +609,6 @@
             key: 'urlToPath',
             value: function urlToPath(url) {
                 var match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
-                console.log(match);
                 var path = match ? match[1] : url;
 
                 var pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
