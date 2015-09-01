@@ -477,7 +477,6 @@ class Router5 {
      */
     urlToPath(url) {
         let match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/)
-        console.log(match)
         let path = match ? match[1] : url
 
         let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/)
@@ -544,14 +543,17 @@ class Router5 {
      */
     navigate(name, params = {}, opts = {}, done) {
         if (!this.started) {
-            done(constants.ROUTER_NOT_STARTED)
+            if (done) done(constants.ROUTER_NOT_STARTED)
             return
         }
 
         let path  = this.buildPath(name, params)
         let url  = this.buildUrl(name, params)
 
-        if (!path) throw new Error(`Could not find route "${name}"`)
+        if (!path) {
+            if (done) done(constants.ROUTE_NOT_FOUND)
+            return
+        }
 
         let toState = makeState(name, params, path)
         this.lastStateAttempt = toState

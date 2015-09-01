@@ -194,14 +194,15 @@ function testRouter(useHash) {
             });
         });
 
-        it('should throw an error if default route access is not found', function () {
+        it('should return an error if default route access is not found', function (done) {
             router.stop();
             router.setOption('defaultRoute', 'fake.route');
             window.history.replaceState({}, '', base);
 
-            expect(function () {
-                router.start();
-            }).toThrow();
+            router.start(function(err, state) {
+                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                done();
+            });
         });
 
         it('should call root node listener on first transition', function (done) {
@@ -230,8 +231,11 @@ function testRouter(useHash) {
             });
         });
 
-        it('should throw an error if trying to navigate to an unknown route', function () {
-            expect(function () { router.navigate('fake.route'); }).toThrow();
+        it('should return an error if trying to navigate to an unknown route', function (done) {
+            router.navigate('fake.route', {}, {}, function (err, state) {
+                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                done();
+            });
         });
 
         it('should invoke listeners on navigation', function (done) {
