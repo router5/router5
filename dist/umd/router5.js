@@ -694,14 +694,17 @@
                 if (opts === undefined) opts = {};
 
                 if (!this.started) {
-                    done(_constants2['default'].ROUTER_NOT_STARTED);
+                    if (done) done(_constants2['default'].ROUTER_NOT_STARTED);
                     return;
                 }
 
                 var path = this.buildPath(name, params);
                 var url = this.buildUrl(name, params);
 
-                if (!path) throw new Error('Could not find route "' + name + '"');
+                if (!path) {
+                    if (done) done(_constants2['default'].ROUTE_NOT_FOUND);
+                    return;
+                }
 
                 var toState = makeState(name, params, path);
                 this.lastStateAttempt = toState;

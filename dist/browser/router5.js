@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.5.0
+ * @version 0.5.1
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -505,6 +505,7 @@
     var constants = {
         ROUTER_NOT_STARTED: 'NOT_STARTED',
         ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
+        ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
         SAME_STATES: 'SAME_STATES',
         CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
         CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
@@ -1384,14 +1385,17 @@
                 if (opts === undefined) opts = {};
     
                 if (!this.started) {
-                    done(constants.ROUTER_NOT_STARTED);
+                    if (done) done(constants.ROUTER_NOT_STARTED);
                     return;
                 }
     
                 var path = this.buildPath(name, params);
                 var url = this.buildUrl(name, params);
     
-                if (!path) throw new Error('Could not find route "' + name + '"');
+                if (!path) {
+                    if (done) done(constants.ROUTE_NOT_FOUND);
+                    return;
+                }
     
                 var toState = makeState(name, params, path);
                 this.lastStateAttempt = toState;
