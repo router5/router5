@@ -1,3 +1,13 @@
+<a name="0.6.0"></a>
+# 0.6.0 (2015-09-04)
+
+
+### Features
+
+* update to 0.3.x version of route-node with nested query parameters handling ([99b7bb2](https://github.com/router5/router5/commit/99b7bb2))
+
+
+
 <a name="0.5.5"></a>
 ## 0.5.5 (2015-09-04)
 
