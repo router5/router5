@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.5.3
+ * @version 0.5.4
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -774,27 +774,38 @@ define('router5', [], function () {
             this.options = {
                 useHash: false,
                 hashPrefix: '',
-                base: browser.getBase(),
+                base: '',
                 trailingSlash: 0
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
             });
+            this._setBase();
             // Bind onPopState
             this.boundOnPopState = this.onPopState.bind(this);
         }
     
         /**
-         * Set an option value
-         * @param  {String} opt The option to set
-         * @param  {*}      val The option value
-         * @return {Router5}    The Router5 instance
+         * @private
          */
     
         _createClass(Router5, [{
+            key: '_setBase',
+            value: function _setBase() {
+                if (this.options.useHash && !this.options.base) this.options.base = browser.getBase();
+            }
+    
+            /**
+             * Set an option value
+             * @param  {String} opt The option to set
+             * @param  {*}      val The option value
+             * @return {Router5}    The Router5 instance
+             */
+        }, {
             key: 'setOption',
             value: function setOption(opt, val) {
                 this.options[opt] = val;
+                if (opt === 'useHash') this._setBase();
                 return this;
             }
     
@@ -898,8 +909,11 @@ define('router5', [], function () {
     
                 // callback
                 var cb = function cb(err, state) {
+                    var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+    
                     browser.addPopstateListener(_this3.boundOnPopState);
                     if (done) done(err, state);
+                    if (err && invokeErrCb) _this3._invokeListeners('$error', state, null, err);
                 };
     
                 // Get start path
@@ -911,7 +925,9 @@ define('router5', [], function () {
                         startState = _this3.matchPath(startPath);
                         // Navigate to default function
                         var navigateToDefault = function navigateToDefault() {
-                            return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
+                            return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
+                                return cb(err, state, false);
+                            });
                         };
                         // If matched start path
                         if (startState) {
@@ -920,14 +936,14 @@ define('router5', [], function () {
                                 if (!err) {
                                     browser.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
                                     cb(null, state);
-                                } else if (opts.defaultRoute) navigateToDefault();else cb(err);
+                                } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
                         } else if (opts.defaultRoute) {
                             // If default, navigate to default
                             navigateToDefault();
                         } else {
                             // No start match, no default => do nothing
-                            cb(null);
+                            cb(constants.ROUTE_NOT_FOUND, null);
                         }
                     })();
                 } else {
@@ -1393,6 +1409,7 @@ define('router5', [], function () {
     
                 if (!path) {
                     if (done) done(constants.ROUTE_NOT_FOUND);
+                    this._invokeListeners('$error', toState, fromState, constants.ROUTE_NOT_FOUND);
                     return;
                 }
     
@@ -1404,6 +1421,7 @@ define('router5', [], function () {
                 // (no desactivation and no callbacks)
                 if (sameStates && !opts.reload) {
                     if (done) done(constants.SAME_STATES);
+                    this._invokeListeners('$error', toState, fromState, constants.SAME_STATES);
                     return;
                 }
     

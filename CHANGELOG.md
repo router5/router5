@@ -1,3 +1,14 @@
+<a name="0.5.4"></a>
+## 0.5.4 (2015-09-04)
+
+
+### Bug Fixes
+
+* don't set base if useHash is falsy or if it has been provided ([66ae677](https://github.com/router5/router5/commit/66ae677))
+* invoke error callbacks in places where it is not called ([92f9719](https://github.com/router5/router5/commit/92f9719)), closes [#22](https://github.com/router5/router5/issues/22)
+
+
+
 <a name="0.5.3"></a>
 ## 0.5.3 (2015-09-01)
 

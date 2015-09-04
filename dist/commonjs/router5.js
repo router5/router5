@@ -82,27 +82,38 @@ var Router5 = (function () {
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: _browser2['default'].getBase(),
+            base: '',
             trailingSlash: 0
         };
         Object.keys(opts).forEach(function (opt) {
             return _this.options[opt] = opts[opt];
         });
+        this._setBase();
         // Bind onPopState
         this.boundOnPopState = this.onPopState.bind(this);
     }
 
     /**
-     * Set an option value
-     * @param  {String} opt The option to set
-     * @param  {*}      val The option value
-     * @return {Router5}    The Router5 instance
+     * @private
      */
 
     _createClass(Router5, [{
+        key: '_setBase',
+        value: function _setBase() {
+            if (this.options.useHash && !this.options.base) this.options.base = _browser2['default'].getBase();
+        }
+
+        /**
+         * Set an option value
+         * @param  {String} opt The option to set
+         * @param  {*}      val The option value
+         * @return {Router5}    The Router5 instance
+         */
+    }, {
         key: 'setOption',
         value: function setOption(opt, val) {
             this.options[opt] = val;
+            if (opt === 'useHash') this._setBase();
             return this;
         }
 
@@ -206,8 +217,11 @@ var Router5 = (function () {
 
             // callback
             var cb = function cb(err, state) {
+                var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
                 _browser2['default'].addPopstateListener(_this3.boundOnPopState);
                 if (done) done(err, state);
+                if (err && invokeErrCb) _this3._invokeListeners('$error', state, null, err);
             };
 
             // Get start path
@@ -219,7 +233,9 @@ var Router5 = (function () {
                     startState = _this3.matchPath(startPath);
                     // Navigate to default function
                     var navigateToDefault = function navigateToDefault() {
-                        return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, cb);
+                        return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
+                            return cb(err, state, false);
+                        });
                     };
                     // If matched start path
                     if (startState) {
@@ -228,14 +244,14 @@ var Router5 = (function () {
                             if (!err) {
                                 _browser2['default'].replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
                                 cb(null, state);
-                            } else if (opts.defaultRoute) navigateToDefault();else cb(err);
+                            } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                         });
                     } else if (opts.defaultRoute) {
                         // If default, navigate to default
                         navigateToDefault();
                     } else {
                         // No start match, no default => do nothing
-                        cb(null);
+                        cb(_constants2['default'].ROUTE_NOT_FOUND, null);
                     }
                 })();
             } else {
@@ -701,6 +717,7 @@ var Router5 = (function () {
 
             if (!path) {
                 if (done) done(_constants2['default'].ROUTE_NOT_FOUND);
+                this._invokeListeners('$error', toState, fromState, _constants2['default'].ROUTE_NOT_FOUND);
                 return;
             }
 
@@ -712,6 +729,7 @@ var Router5 = (function () {
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) {
                 if (done) done(_constants2['default'].SAME_STATES);
+                this._invokeListeners('$error', toState, fromState, _constants2['default'].SAME_STATES);
                 return;
             }
 
