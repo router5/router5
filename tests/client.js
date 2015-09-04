@@ -136,12 +136,12 @@ function testRouter(useHash) {
             });
         });
 
-        it('should start with no error if no matched start state and no default route', function (done) {
+        it('should start with a not found error if no matched start state and no default route', function (done) {
             router.stop();
             router.setOption('defaultRoute', null);
             window.history.replaceState({}, '', base + getExpectedPath(useHash, ''));
             router.start(function (err) {
-                expect(err).toBe(null);
+                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -150,8 +150,8 @@ function testRouter(useHash) {
             router.stop();
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
             router.start(function (err, state) {
-                expect(err).toBe(null);
-                expect(state).toBe(undefined);
+                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(state).toBe(null);
                 done();
             });
         });

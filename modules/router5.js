@@ -152,9 +152,10 @@ class Router5 {
         let opts = this.options
 
         // callback
-        let cb = (err, state) => {
+        let cb = (err, state, invokeErrCb = true) => {
             browser.addPopstateListener(this.boundOnPopState)
             if (done) done(err, state)
+            if (err && invokeErrCb) this._invokeListeners('$error', state, null, err)
         }
 
         // Get start path
@@ -164,7 +165,7 @@ class Router5 {
             // If no supplied start state, get start state
             startState = this.matchPath(startPath)
             // Navigate to default function
-            let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, cb)
+            let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false))
             // If matched start path
             if (startState) {
                 this.lastStateAttempt = startState
@@ -174,14 +175,14 @@ class Router5 {
                         cb(null, state)
                     }
                     else if (opts.defaultRoute) navigateToDefault()
-                    else cb(err)
+                    else cb(err, null, false)
                 })
             } else if (opts.defaultRoute) {
                 // If default, navigate to default
                 navigateToDefault()
             } else {
                 // No start match, no default => do nothing
-                cb(null)
+                cb(constants.ROUTE_NOT_FOUND, null)
             }
         } else {
             // Initialise router with provided start state
@@ -561,6 +562,7 @@ class Router5 {
 
         if (!path) {
             if (done) done(constants.ROUTE_NOT_FOUND)
+            this._invokeListeners('$error', toState, fromState, constants.ROUTE_NOT_FOUND)
             return
         }
 
@@ -572,6 +574,7 @@ class Router5 {
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
             if (done) done(constants.SAME_STATES)
+            this._invokeListeners('$error', toState, fromState, constants.SAME_STATES)
             return
         }
 
