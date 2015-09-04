@@ -562,7 +562,7 @@ class Router5 {
 
         if (!path) {
             if (done) done(constants.ROUTE_NOT_FOUND)
-            this._invokeListeners('$error', toState, fromState, constants.ROUTE_NOT_FOUND)
+            this._invokeListeners('$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND)
             return
         }
 
@@ -574,7 +574,7 @@ class Router5 {
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
             if (done) done(constants.SAME_STATES)
-            this._invokeListeners('$error', toState, fromState, constants.SAME_STATES)
+            this._invokeListeners('$error', toState, this.lastKnownState, constants.SAME_STATES)
             return
         }
 
