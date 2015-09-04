@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.5.5
+ * @version 0.6.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -540,6 +540,8 @@
             value: function buildPathFromSegments(segments) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
     
+                if (!segments) return null;
+    
                 var searchParams = segments.filter(function (s) {
                     return s.parser.hasQueryParams;
                 }).map(function (s) {
@@ -554,9 +556,9 @@
                     return p + '=' + params[p];
                 }).join('&');
     
-                return segments ? segments.map(function (segment) {
+                return segments.map(function (segment) {
                     return segment.parser.build(params, { ignoreSearch: true });
-                }).join('') + (searchPart ? '?' + searchPart : '') : null;
+                }).join('') + (searchPart ? '?' + searchPart : '');
             }
         }, {
             key: 'buildPath',
