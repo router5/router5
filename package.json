@@ -30,7 +30,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "~0.2.3"
+    "route-node": "~0.3.2"
   },
   "devDependencies": {
     "async": "^1.3.0",
