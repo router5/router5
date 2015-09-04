@@ -40,12 +40,20 @@ class Router5 {
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: browser.getBase(),
+            base: '',
             trailingSlash: 0
         }
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
+        this._setBase()
         // Bind onPopState
         this.boundOnPopState = this.onPopState.bind(this)
+    }
+
+    /**
+     * @private
+     */
+    _setBase() {
+        if (this.options.useHash && !this.options.base) this.options.base = browser.getBase()
     }
 
     /**
@@ -56,6 +64,7 @@ class Router5 {
      */
     setOption(opt, val) {
         this.options[opt] = val
+        if (opt === 'useHash') this._setBase()
         return this
     }
 
