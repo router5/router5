@@ -1,3 +1,13 @@
+<a name="0.5.5"></a>
+## 0.5.5 (2015-09-04)
+
+
+### Bug Fixes
+
+* call error callbacks with right arguments ([bde616c](https://github.com/router5/router5/commit/bde616c))
+
+
+
 <a name="0.5.4"></a>
 ## 0.5.4 (2015-09-04)
 

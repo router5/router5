@@ -717,7 +717,7 @@ var Router5 = (function () {
 
             if (!path) {
                 if (done) done(_constants2['default'].ROUTE_NOT_FOUND);
-                this._invokeListeners('$error', toState, fromState, _constants2['default'].ROUTE_NOT_FOUND);
+                this._invokeListeners('$error', null, this.lastKnownState, _constants2['default'].ROUTE_NOT_FOUND);
                 return;
             }
 
@@ -729,7 +729,7 @@ var Router5 = (function () {
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) {
                 if (done) done(_constants2['default'].SAME_STATES);
-                this._invokeListeners('$error', toState, fromState, _constants2['default'].SAME_STATES);
+                this._invokeListeners('$error', toState, this.lastKnownState, _constants2['default'].SAME_STATES);
                 return;
             }
 
