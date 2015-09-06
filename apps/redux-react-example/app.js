@@ -1,6 +1,6 @@
 import React from 'react'
 import {router} from 'common/router'
-import Home from 'redux-react/components/home'
+import Home from 'redux-react-example/components/home'
 
 export default class App extends React.Component {
     static components = {

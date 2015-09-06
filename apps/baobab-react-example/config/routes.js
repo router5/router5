@@ -1,7 +1,19 @@
 const routes = [
     {
-        name: 'home',
-        path: '/home'
+        name: 'inbox',
+        path: '/inbox'
+    },
+    {
+        name: 'sent',
+        path: '/sent'
+    },
+    {
+        name: 'drafts',
+        path: '/drafts',
+    },
+    {
+        name: 'compose',
+        path: '/compose'
     },
     {
         name: 'admin',

@@ -1,4 +1,4 @@
-import types from 'redux-react/constants/ActionTypes'
+import types from 'redux-react-example/constants/ActionTypes'
 
 const initialState = {routerState: null}
 

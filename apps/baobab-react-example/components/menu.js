@@ -4,9 +4,13 @@ export default class Menu extends React.Component {
     render() {
         return (
             <nav>
-                <Link routeName="home">Home</Link>
+                <Link routeName="inbox">Inbox</Link>
 
-                <Link routeName="admin">Admin</Link>
+                <Link routeName="sent">Sent</Link>
+
+                <Link routeName="compose">Compose</Link>
+
+                <Link routeName="drafts">Drafts</Link>
             </nav>
         )
     }

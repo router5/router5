@@ -1,4 +1,4 @@
-import types from 'redux-react/constants/ActionTypes'
+import types from 'redux-react-example/constants/ActionTypes'
 
 export function updateState(state) {
     return {
