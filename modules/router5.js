@@ -98,14 +98,14 @@ class Router5 {
      */
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
-        let newState = !newState || !newState.name
+        let newState = !evt.state || !evt.state.name
         let state = evt.state || this.matchPath(this.getLocation())
         if (!state) return
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
             return
         }
 
-        this._transition(state, this.lastKnownState, (err) => {
+        this._transition(state, this.lastKnownState, (err, state) => {
             if (err) {
                 let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
                 browser.pushState(this.lastKnownState, '', url)
