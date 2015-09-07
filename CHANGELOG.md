@@ -1,3 +1,13 @@
+<a name="0.6.1"></a>
+## 0.6.1 (2015-09-07)
+
+
+### Bug Fixes
+
+* fix popstate issues (browser forward button ([105a00d](https://github.com/router5/router5/commit/105a00d))
+
+
+
 <a name="0.6.0"></a>
 # 0.6.0 (2015-09-04)
 

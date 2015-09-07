@@ -155,14 +155,14 @@ var Router5 = (function () {
             var _this2 = this;
 
             // Do nothing if no state or if last know state is poped state (it should never happen)
-            var newState = !newState || !newState.name;
+            var newState = !evt.state || !evt.state.name;
             var state = evt.state || this.matchPath(this.getLocation());
             if (!state) return;
             if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
                 return;
             }
 
-            this._transition(state, this.lastKnownState, function (err) {
+            this._transition(state, this.lastKnownState, function (err, state) {
                 if (err) {
                     var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                     _browser2['default'].pushState(_this2.lastKnownState, '', url);
