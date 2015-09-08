@@ -158,15 +158,32 @@
                 // Do nothing if no state or if last know state is poped state (it should never happen)
                 var newState = !evt.state || !evt.state.name;
                 var state = evt.state || this.matchPath(this.getLocation());
-                if (!state) return;
+                var opts = this.options;
+
+                if (!state) {
+                    // If current state is already the default route, we will have a double entry
+                    // Navigating back and forth will emit SAME_STATES error
+                    this.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
+                    return;
+                }
                 if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
                     return;
                 }
 
                 this._transition(state, this.lastKnownState, function (err, state) {
                     if (err) {
-                        var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
-                        _browser2['default'].pushState(_this2.lastKnownState, '', url);
+                        if (err === _constants2['default'].CANNOT_DEACTIVATE) {
+                            var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
+                            if (!newState) {
+                                // Keep history state unchanged but use current URL
+                                _browser2['default'].replaceState(state, '', url);
+                            }
+                            // else do nothing or history will be messed up
+                            // TODO: history.back()?
+                        } else {
+                                // Force navigation to default state
+                                _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
+                            }
                     } else {
                         _browser2['default'][newState ? 'pushState' : 'replaceState'](state, '', _this2.buildUrl(state.name, state.params));
                     }
@@ -712,6 +729,8 @@
                     if (done) done(_constants2['default'].ROUTER_NOT_STARTED);
                     return;
                 }
+
+                if (!_browser2['default'].getState()) opts.replace = true;
 
                 var path = this.buildPath(name, params);
                 var url = this.buildUrl(name, params);

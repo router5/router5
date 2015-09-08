@@ -1,3 +1,13 @@
+<a name="0.6.2"></a>
+## 0.6.2 (2015-09-08)
+
+
+### Bug Fixes
+
+* handle popstate events in a saner way ([883da81](https://github.com/router5/router5/commit/883da81))
+
+
+
 <a name="0.6.1"></a>
 ## 0.6.1 (2015-09-07)
 

@@ -58,12 +58,16 @@
         return path + window.location.search;
     };
 
+    var getState = function getState() {
+        return window.history.state;
+    };
+
     /**
      * Export browser object
      */
     var browser = {};
     if (isBrowser) {
-        browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation };
+        browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation, getState: getState };
     } else {
         browser = {
             getBase: identity(''),
@@ -71,7 +75,8 @@
             replaceState: noop,
             addPopstateListener: noop,
             removePopstateListener: noop,
-            getLocation: identity('')
+            getLocation: identity(''),
+            getState: identity(null)
         };
     }
 
