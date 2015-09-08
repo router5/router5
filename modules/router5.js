@@ -100,15 +100,32 @@ class Router5 {
         // Do nothing if no state or if last know state is poped state (it should never happen)
         let newState = !evt.state || !evt.state.name
         let state = evt.state || this.matchPath(this.getLocation())
-        if (!state) return
+        let opts = this.options
+
+        if (!state) {
+            // If current state is already the default route, we will have a double entry
+            // Navigating back and forth will emit SAME_STATES error
+            this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
+            return
+        }
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
             return
         }
 
         this._transition(state, this.lastKnownState, (err, state) => {
             if (err) {
-                let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
-                browser.replaceState(this.lastKnownState, '', url)
+                if (err === constants.CANNOT_DEACTIVATE) {
+                    let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
+                    if (!newState) {
+                        // Keep history state unchanged but use current URL
+                        browser.replaceState(state, '', url)
+                    }
+                    // else do nothing or history will be messed up
+                    // TODO: history.back()?
+                } else {
+                    // Force navigation to default state
+                    this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
+                }
             } else {
                 browser[newState ? 'pushState' : 'replaceState'](state, '', this.buildUrl(state.name, state.params))
             }
