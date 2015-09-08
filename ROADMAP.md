@@ -8,5 +8,6 @@ Roadmap to 1.0.0
 - [ ] Consolidate API
 - [ ] Improve docs
 - [ ] Improve `popstate` handling
+- [ ] Allow use of custom error codes?
 - [ ] Explore handling of page unload events
 - [ ] Create examples, at least one using a flux-like architecture
