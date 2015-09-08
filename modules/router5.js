@@ -108,7 +108,7 @@ class Router5 {
         this._transition(state, this.lastKnownState, (err, state) => {
             if (err) {
                 let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
-                browser.pushState(this.lastKnownState, '', url)
+                browser.replaceState(this.lastKnownState, '', url)
             } else {
                 browser[newState ? 'pushState' : 'replaceState'](state, '', this.buildUrl(state.name, state.params))
             }
@@ -556,6 +556,8 @@ class Router5 {
             if (done) done(constants.ROUTER_NOT_STARTED)
             return
         }
+
+        if (!browser.getState()) opts.replace = true
 
         let path  = this.buildPath(name, params)
         let url  = this.buildUrl(name, params)

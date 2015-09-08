@@ -31,12 +31,14 @@ let getLocation = (opts) => {
     return path + window.location.search;
 }
 
+let getState = () => window.history.state
+
 /**
  * Export browser object
  */
 let browser = {}
 if (isBrowser) {
-    browser = {getBase, pushState, replaceState, addPopstateListener, removePopstateListener, getLocation}
+    browser = {getBase, pushState, replaceState, addPopstateListener, removePopstateListener, getLocation, getState}
 } else {
     browser = {
         getBase:                identity(''),
@@ -44,7 +46,8 @@ if (isBrowser) {
         replaceState:           noop,
         addPopstateListener:    noop,
         removePopstateListener: noop,
-        getLocation:            identity('')
+        getLocation:            identity(''),
+        getState:               identity(null)
     }
 }
 
