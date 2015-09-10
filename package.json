@@ -3,6 +3,7 @@
   "version": "0.6.2",
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "dist/commonjs/index.js",
+  "jsnext:main": "modules/index.js",
   "scripts": {
     "build": "node ./scripts/build.js && npm run uglify && npm run uglifyAmd",
     "uglify": "./node_modules/.bin/uglifyjs2 dist/browser/router5.js --comments -m -o dist/browser/router5.min.js",
