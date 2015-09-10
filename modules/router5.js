@@ -1,4 +1,4 @@
-import RouteNode  from 'route-node/modules/RouteNode'
+import RouteNode  from 'route-node'
 import {transition, transitionPath} from './transition'
 import constants  from './constants'
 import browser    from './browser'
