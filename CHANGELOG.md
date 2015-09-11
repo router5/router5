@@ -1,3 +1,13 @@
+<a name="0.6.3"></a>
+## 0.6.3 (2015-09-11)
+
+
+### Bug Fixes
+
+* use popstate state if cannot deactivate ([c608d03](https://github.com/router5/router5/commit/c608d03))
+
+
+
 <a name="0.6.2"></a>
 ## 0.6.2 (2015-09-08)
 

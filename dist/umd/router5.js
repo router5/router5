@@ -170,7 +170,7 @@
                     return;
                 }
 
-                this._transition(state, this.lastKnownState, function (err, state) {
+                this._transition(state, this.lastKnownState, function (err, toState) {
                     if (err) {
                         if (err === _constants2['default'].CANNOT_DEACTIVATE) {
                             var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
@@ -185,7 +185,7 @@
                                 _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                             }
                     } else {
-                        _browser2['default'][newState ? 'pushState' : 'replaceState'](state, '', _this2.buildUrl(state.name, state.params));
+                        _browser2['default'][newState ? 'pushState' : 'replaceState'](toState, '', _this2.buildUrl(toState.name, toState.params));
                     }
                 });
             }

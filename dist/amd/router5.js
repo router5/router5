@@ -954,7 +954,7 @@ define('router5', [], function () {
                     return;
                 }
     
-                this._transition(state, this.lastKnownState, function (err, state) {
+                this._transition(state, this.lastKnownState, function (err, toState) {
                     if (err) {
                         if (err === constants.CANNOT_DEACTIVATE) {
                             var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
@@ -969,7 +969,7 @@ define('router5', [], function () {
                                 _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                             }
                     } else {
-                        browser[newState ? 'pushState' : 'replaceState'](state, '', _this2.buildUrl(state.name, state.params));
+                        browser[newState ? 'pushState' : 'replaceState'](toState, '', _this2.buildUrl(toState.name, toState.params));
                     }
                 });
             }
