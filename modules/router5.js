@@ -112,7 +112,7 @@ class Router5 {
             return
         }
 
-        this._transition(state, this.lastKnownState, (err, state) => {
+        this._transition(state, this.lastKnownState, (err, toState) => {
             if (err) {
                 if (err === constants.CANNOT_DEACTIVATE) {
                     let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
@@ -127,7 +127,7 @@ class Router5 {
                     this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
                 }
             } else {
-                browser[newState ? 'pushState' : 'replaceState'](state, '', this.buildUrl(state.name, state.params))
+                browser[newState ? 'pushState' : 'replaceState'](toState, '', this.buildUrl(toState.name, toState.params))
             }
         })
     }
