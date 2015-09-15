@@ -15,8 +15,11 @@ function transitionPath(toState, fromState) {
     let toStateIds = nameToIDs(toState.name)
     let maxI = Math.min(fromStateIds.length, toStateIds.length)
 
-    for (i = 0; i < maxI; i += 1) {
-        if (fromStateIds[i] !== toStateIds[i]) break
+    if (fromState && fromState.name === toState.name) i = Math.max(maxI - 1, 0)
+    else {
+        for (i = 0; i < maxI; i += 1) {
+            if (fromStateIds[i] !== toStateIds[i]) break
+        }
     }
 
     let toDeactivate = fromStateIds.slice(i).reverse()

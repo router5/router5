@@ -336,8 +336,12 @@ function testRouter(useHash) {
                 router.addNodeListener('users', listeners.node);
                 router.navigate('users.view', {id: 1}, {}, function () {
                     expect(listeners.node).toHaveBeenCalled();
-                    router.removeNodeListener('users', listeners.node);
-                    done();
+                    router.navigate('users.view', {id: 1}, {}, function() {
+                        router.navigate('users.view', {id: 2}, {}, function(err, state) {
+                            expect(listeners.node.calls.count()).toBe(2);
+                            done();
+                        })
+                    });
                 });
             });
         });
