@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.6.2
+ * @version 0.6.4
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -726,8 +726,10 @@
         var toStateIds = nameToIDs(toState.name);
         var maxI = Math.min(fromStateIds.length, toStateIds.length);
     
-        for (i = 0; i < maxI; i += 1) {
-            if (fromStateIds[i] !== toStateIds[i]) break;
+        if (fromState && fromState.name === toState.name) i = Math.max(maxI - 1, 0);else {
+            for (i = 0; i < maxI; i += 1) {
+                if (fromStateIds[i] !== toStateIds[i]) break;
+            }
         }
     
         var toDeactivate = fromStateIds.slice(i).reverse();

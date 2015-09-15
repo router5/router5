@@ -1,3 +1,13 @@
+<a name="0.6.4"></a>
+## 0.6.4 (2015-09-15)
+
+
+### Bug Fixes
+
+* deactivation path, activation path and node listener for same route names with different params ([fa985d2](https://github.com/router5/router5/commit/fa985d2)), closes [#27](https://github.com/router5/router5/issues/27)
+
+
+
 <a name="0.6.3"></a>
 ## 0.6.3 (2015-09-11)
 
