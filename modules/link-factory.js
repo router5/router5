@@ -40,6 +40,14 @@ function linkFactory(router) {
         },
 
         clickHandler(evt) {
+            if (this.props.onClick) {
+                this.props.onClick(evt);
+
+                if (evt.defaultPrevented) {
+                    return;
+                }
+            }
+
             let comboKey = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
 
             if (evt.button === 0 && !comboKey) {
@@ -70,7 +78,7 @@ function linkFactory(router) {
             let href =  router.buildUrl(props.routeName, props.routeParams)
             let className = (props.className ? props.className.split(' ') : [])
                 .concat(active ? [props.activeClassName] : []).join(' ')
-            let onClick = props.onClick || this.clickHandler
+            let onClick = this.clickHandler
 
             return React.createElement('a', {href, className, onClick}, props.children)
         }
