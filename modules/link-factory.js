@@ -31,14 +31,6 @@ function linkFactory(router) {
             };
         },
 
-        // Is it overkill?
-        shouldComponentUpdate(nextProps, nextState) {
-            return !router.areStatesEqual(
-                {name: nextProps.routeName,  params: nextProps.routeParams},
-                {name: this.props.routeName, params: this.props.routeParams}
-            ) || this.state.active !== nextState.active;
-        },
-
         clickHandler(evt) {
             if (this.props.onClick) {
                 this.props.onClick(evt);
@@ -51,8 +43,8 @@ function linkFactory(router) {
             let comboKey = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
 
             if (evt.button === 0 && !comboKey) {
-                evt.preventDefault()
-                router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions)
+                evt.preventDefault();
+                router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
             }
         },
 
@@ -60,27 +52,27 @@ function linkFactory(router) {
         // Should it be an option to observe state in Links?
         // Should we add a GroupLink component for menus?
         routeChangeHandler(toState, fromState) {
-            this.setState({active: router.isActive(this.props.routeName, this.props.routeParams)})
+            this.setState({active: router.isActive(this.props.routeName, this.props.routeParams)});
         },
 
         componentDidMount() {
-            router.addListener(this.routeChangeHandler)
+            router.addListener(this.routeChangeHandler);
         },
 
         componentWillUnmount() {
-            router.removeListener(this.routeChangeHandler)
+            router.removeListener(this.routeChangeHandler);
         },
 
         render() {
-            let props = this.props
-            let active = this.state.active
+            let props = this.props;
+            let active = this.state.active;
 
-            let href =  router.buildUrl(props.routeName, props.routeParams)
+            let href =  router.buildUrl(props.routeName, props.routeParams);
             let className = (props.className ? props.className.split(' ') : [])
                 .concat(active ? [props.activeClassName] : []).join(' ')
-            let onClick = this.clickHandler
+            let onClick = this.clickHandler;
 
-            return React.createElement('a', {href, className, onClick}, props.children)
+            return React.createElement('a', {href, className, onClick}, props.children);
         }
     })
 }
