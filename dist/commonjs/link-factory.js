@@ -41,12 +41,15 @@ function linkFactory(router) {
             };
         },
 
-        // Is it overkill?
-        shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-            return !router.areStatesEqual({ name: nextProps.routeName, params: nextProps.routeParams }, { name: this.props.routeName, params: this.props.routeParams }) || this.state.active !== nextState.active;
-        },
-
         clickHandler: function clickHandler(evt) {
+            if (this.props.onClick) {
+                this.props.onClick(evt);
+
+                if (evt.defaultPrevented) {
+                    return;
+                }
+            }
+
             var comboKey = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
 
             if (evt.button === 0 && !comboKey) {
@@ -76,7 +79,7 @@ function linkFactory(router) {
 
             var href = router.buildUrl(props.routeName, props.routeParams);
             var className = (props.className ? props.className.split(' ') : []).concat(active ? [props.activeClassName] : []).join(' ');
-            var onClick = props.onClick || this.clickHandler;
+            var onClick = this.clickHandler;
 
             return _react2['default'].createElement('a', { href: href, className: className, onClick: onClick }, props.children);
         }
