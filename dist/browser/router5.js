@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.6.4
+ * @version 0.7.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -113,22 +113,44 @@
         return source.replace(/\\\/$/, '') + '(?:\\/)?';
     };
     
+    var appendQueryParam = function appendQueryParam(params, param) {
+        var val = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+    
+        var existingVal = params[param];
+    
+        if (existingVal === undefined) params[param] = val;else params[param] = Array.isArray(existingVal) ? existingVal.concat(val) : [existingVal, val];
+    
+        return params;
+    };
+    
     var parseQueryParams = function parseQueryParams(path) {
         var searchPart = path.split('?')[1];
         if (!searchPart) return {};
         return searchPart.split('&').map(function (_) {
             return _.split('=');
         }).reduce(function (obj, m) {
-            obj[m[0]] = m[1] === undefined ? '' : m[1];
-            return obj;
+            return appendQueryParam(obj, m[0], m[1]);
         }, {});
     };
     
-    var isSerialisable = function isSerialisable(val) {
-        return val !== undefined && val !== null && val !== '';
+    var toSerialisable = function toSerialisable(val) {
+        return val !== undefined && val !== null && val !== '' ? '=' + val : '';
+    };
+    
+    var serialise = function serialise(key, val) {
+        return Array.isArray(val) ? val.map(function (v) {
+            return serialise(key, v);
+        }).join('&') : key + toSerialisable(val);
     };
     
     var Path = (function () {
+        _createClass(Path, null, [{
+            key: 'createPath',
+            value: function createPath(path) {
+                return new Path(path);
+            }
+        }]);
+    
         function Path(path) {
             _classCallCheck(this, Path);
     
@@ -246,7 +268,7 @@
                 Object.keys(queryParams).filter(function (p) {
                     return _this3.queryParams.indexOf(p) >= 0;
                 }).forEach(function (p) {
-                    return match[p] = queryParams[p];
+                    return appendQueryParam(match, p, queryParams[p]);
                 });
     
                 return match;
@@ -287,7 +309,7 @@
                 var searchPart = this.queryParams.filter(function (p) {
                     return Object.keys(params).indexOf(p) !== -1;
                 }).map(function (p) {
-                    return p + (isSerialisable(params[p]) ? '=' + params[p] : '');
+                    return serialise(p, params[p]);
                 }).join('&');
     
                 return base + (searchPart ? '?' + searchPart : '');
@@ -553,7 +575,7 @@
                 }).filter(function (p) {
                     return Object.keys(params).indexOf(p) !== -1;
                 }).map(function (p) {
-                    return p + '=' + params[p];
+                    return Path.serialise(p, params[p]);
                 }).join('&');
     
                 return segments.map(function (segment) {

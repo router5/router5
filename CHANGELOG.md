@@ -1,3 +1,13 @@
+<a name="0.7.0"></a>
+# 0.7.0 (2015-10-11)
+
+
+### Features
+
+* support arrays in query parameters (route-node v0.4.0) ([12a2ac8](https://github.com/router5/router5/commit/12a2ac8))
+
+
+
 <a name="0.6.4"></a>
 ## 0.6.4 (2015-09-15)
 
