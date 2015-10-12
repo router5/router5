@@ -118,7 +118,7 @@ class Router5 {
                     let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
                     if (!newState) {
                         // Keep history state unchanged but use current URL
-                        browser.replaceState(state, '', url)
+                        this.updateBrowserState(state, url, true);
                     }
                     // else do nothing or history will be messed up
                     // TODO: history.back()?
@@ -188,7 +188,7 @@ class Router5 {
                 this.lastStateAttempt = startState
                 this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
                     if (!err) {
-                        browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
+                        this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
                         cb(null, state)
                     }
                     else if (opts.defaultRoute) navigateToDefault()
@@ -204,7 +204,7 @@ class Router5 {
         } else {
             // Initialise router with provided start state
             this.lastKnownState = startState
-            browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params))
+            this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
             cb(null, startState)
         }
         // Listen to popstate
