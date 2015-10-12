@@ -127,7 +127,7 @@ class Router5 {
                     this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
                 }
             } else {
-                browser[newState ? 'pushState' : 'replaceState'](toState, '', this.buildUrl(toState.name, toState.params))
+                this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), newState)
             }
         })
     }
@@ -604,9 +604,20 @@ class Router5 {
                 return
             }
 
-            browser[opts.replace ? 'replaceState' : 'pushState'](this.lastStateAttempt, '', url)
+            this.updateBrowserState(this.lastStateAttempt, url, opts.replace)
             if (done) done(null, state)
         })
+    }
+
+    /**
+     * Update the browser history
+     * @param {Object}  stateObject     State object to be used
+     * @param {string}  url             Absolute url to be used
+     * @param {boolean} [replace=false] If replaceState or pushState should be used
+     * @param {string}  [title='']      The title to be used for history
+     */
+    updateBrowserState(stateObject, url, replace = false, title = '') {
+        browser[replace ? 'replaceState' : 'pushState'](stateObject, title, url);
     }
 }
 
