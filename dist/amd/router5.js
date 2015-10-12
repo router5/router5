@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.7.1
+ * @version 0.8.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -984,7 +984,7 @@ define('router5', [], function () {
                             var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                             if (!newState) {
                                 // Keep history state unchanged but use current URL
-                                browser.replaceState(state, '', url);
+                                _this2.updateBrowserState(state, url, true);
                             }
                             // else do nothing or history will be messed up
                             // TODO: history.back()?
@@ -993,7 +993,7 @@ define('router5', [], function () {
                                 _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                             }
                     } else {
-                        browser[newState ? 'pushState' : 'replaceState'](toState, '', _this2.buildUrl(toState.name, toState.params));
+                        _this2.updateBrowserState(toState, _this2.buildUrl(toState.name, toState.params), newState);
                     }
                 });
             }
@@ -1068,7 +1068,7 @@ define('router5', [], function () {
                             _this3.lastStateAttempt = startState;
                             _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
                                 if (!err) {
-                                    browser.replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
+                                    _this3.updateBrowserState(_this3.lastKnownState, _this3.buildUrl(startState.name, startState.params), true);
                                     cb(null, state);
                                 } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
@@ -1083,7 +1083,7 @@ define('router5', [], function () {
                 } else {
                     // Initialise router with provided start state
                     this.lastKnownState = startState;
-                    browser.replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
+                    this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
                     cb(null, startState);
                 }
                 // Listen to popstate
@@ -1568,9 +1568,25 @@ define('router5', [], function () {
                         return;
                     }
     
-                    browser[opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
+                    _this5.updateBrowserState(_this5.lastStateAttempt, url, opts.replace);
                     if (done) done(null, state);
                 });
+            }
+    
+            /**
+             * Update the browser history
+             * @param {Object}  stateObject     State object to be used
+             * @param {string}  url             Absolute url to be used
+             * @param {boolean} [replace=false] If replaceState or pushState should be used
+             * @param {string}  [title='']      The title to be used for history
+             */
+        }, {
+            key: 'updateBrowserState',
+            value: function updateBrowserState(stateObject, url) {
+                var replace = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+                var title = arguments.length <= 3 || arguments[3] === undefined ? '' : arguments[3];
+    
+                browser[replace ? 'replaceState' : 'pushState'](stateObject, title, url);
             }
         }]);
     

@@ -1,3 +1,13 @@
+<a name="0.8.0"></a>
+# 0.8.0 (2015-10-12)
+
+
+### Features
+
+* move updating browser history into separate function ([f758912](https://github.com/router5/router5/commit/f758912))
+
+
+
 <a name="0.7.1"></a>
 ## 0.7.1 (2015-10-11)
 

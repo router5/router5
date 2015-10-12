@@ -176,7 +176,7 @@
                             var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
                             if (!newState) {
                                 // Keep history state unchanged but use current URL
-                                _browser2['default'].replaceState(state, '', url);
+                                _this2.updateBrowserState(state, url, true);
                             }
                             // else do nothing or history will be messed up
                             // TODO: history.back()?
@@ -185,7 +185,7 @@
                                 _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                             }
                     } else {
-                        _browser2['default'][newState ? 'pushState' : 'replaceState'](toState, '', _this2.buildUrl(toState.name, toState.params));
+                        _this2.updateBrowserState(toState, _this2.buildUrl(toState.name, toState.params), newState);
                     }
                 });
             }
@@ -260,7 +260,7 @@
                             _this3.lastStateAttempt = startState;
                             _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
                                 if (!err) {
-                                    _browser2['default'].replaceState(_this3.lastKnownState, '', _this3.buildUrl(startState.name, startState.params));
+                                    _this3.updateBrowserState(_this3.lastKnownState, _this3.buildUrl(startState.name, startState.params), true);
                                     cb(null, state);
                                 } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
@@ -275,7 +275,7 @@
                 } else {
                     // Initialise router with provided start state
                     this.lastKnownState = startState;
-                    _browser2['default'].replaceState(this.lastKnownState, '', this.buildUrl(startState.name, startState.params));
+                    this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
                     cb(null, startState);
                 }
                 // Listen to popstate
@@ -760,9 +760,25 @@
                         return;
                     }
 
-                    _browser2['default'][opts.replace ? 'replaceState' : 'pushState'](_this5.lastStateAttempt, '', url);
+                    _this5.updateBrowserState(_this5.lastStateAttempt, url, opts.replace);
                     if (done) done(null, state);
                 });
+            }
+
+            /**
+             * Update the browser history
+             * @param {Object}  stateObject     State object to be used
+             * @param {string}  url             Absolute url to be used
+             * @param {boolean} [replace=false] If replaceState or pushState should be used
+             * @param {string}  [title='']      The title to be used for history
+             */
+        }, {
+            key: 'updateBrowserState',
+            value: function updateBrowserState(stateObject, url) {
+                var replace = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+                var title = arguments.length <= 3 || arguments[3] === undefined ? '' : arguments[3];
+
+                _browser2['default'][replace ? 'replaceState' : 'pushState'](stateObject, title, url);
             }
         }]);
 
