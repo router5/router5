@@ -73,4 +73,4 @@ export default function listenersPlugin() {
    }
 
    return { name: pluginName, init, onSuccess, flush };
-};
+}
