@@ -8,6 +8,6 @@ const constants = {
     TRANSITION_ERR         : 'TRANSITION_ERR',
     NODE_LISTENER_ERR      : 'NODE_ERR',
     TRANSITION_CANCELLED   : 'CANCELLED'
-}
+};
 
-export default constants
+export default constants;

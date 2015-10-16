@@ -1,9 +1,9 @@
-import RouteNode  from 'route-node'
-import {transition, transitionPath} from './transition'
-import constants  from './constants'
-import browser    from './browser'
+import RouteNode  from 'route-node';
+import {transition, transitionPath} from './transition';
+import constants  from './constants';
+import browser    from './browser';
 
-let makeState = (name, params, path) => ({name, params, path})
+let makeState = (name, params, path) => ({name, params, path});
 
 /**
  * Create a new Router5 instance
@@ -13,47 +13,32 @@ let makeState = (name, params, path) => ({name, params, path})
  * @return {Router5} The router instance
  */
 class Router5 {
-    /**
-     * Error codes
-     * @type {Object}
-     */
-    static ERR = constants
-
-    /**
-     * An helper function to return instructions for a transition:
-     * intersection route name, route names to deactivate, route names to activate
-     * @param  {Object} toState   The state to go to
-     * @param  {Object} fromState The state to go from
-     * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
-     */
-    static transitionPath = transitionPath
-
     constructor(routes, opts = {}) {
-        this.started = false
-        this._onTr = null
-        this._cbs = {}
-        this._cmps = {}
-        this._canAct = {}
-        this.lastStateAttempt = null
-        this.lastKnownState = null
-        this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
+        this.started = false;
+        this._onTr = null;
+        this._cbs = {};
+        this._cmps = {};
+        this._canAct = {};
+        this.lastStateAttempt = null;
+        this.lastKnownState = null;
+        this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
         this.options = {
             useHash: false,
             hashPrefix: '',
             base: '',
             trailingSlash: 0
-        }
-        Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
-        this._setBase()
+        };
+        Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
+        this._setBase();
         // Bind onPopState
-        this.boundOnPopState = this.onPopState.bind(this)
+        this.boundOnPopState = this.onPopState.bind(this);
     }
 
     /**
      * @private
      */
     _setBase() {
-        if (this.options.useHash && !this.options.base) this.options.base = browser.getBase()
+        if (this.options.useHash && !this.options.base) this.options.base = browser.getBase();
     }
 
     /**
@@ -63,9 +48,9 @@ class Router5 {
      * @return {Router5}    The Router5 instance
      */
     setOption(opt, val) {
-        this.options[opt] = val
-        if (opt === 'useHash') this._setBase()
-        return this
+        this.options[opt] = val;
+        if (opt === 'useHash') this._setBase();
+        return this;
     }
 
     /**
@@ -74,8 +59,8 @@ class Router5 {
      * @return {Router5}  The Router5 instance
      */
     add(routes) {
-        this.rootNode.add(routes)
-        return this
+        this.rootNode.add(routes);
+        return this;
     }
 
     /**
@@ -88,9 +73,9 @@ class Router5 {
      * @return {Router5}             The Router5 instance
      */
     addNode(name, path, canActivate) {
-        this.rootNode.addNode(name, path)
-        if (canActivate) this._canAct[name] = canActivate
-        return this
+        this.rootNode.addNode(name, path);
+        if (canActivate) this._canAct[name] = canActivate;
+        return this;
     }
 
     /**
@@ -98,24 +83,24 @@ class Router5 {
      */
     onPopState(evt) {
         // Do nothing if no state or if last know state is poped state (it should never happen)
-        let newState = !evt.state || !evt.state.name
-        let state = evt.state || this.matchPath(this.getLocation())
-        let opts = this.options
+        let newState = !evt.state || !evt.state.name;
+        let state = evt.state || this.matchPath(this.getLocation());
+        let opts = this.options;
 
         if (!state) {
             // If current state is already the default route, we will have a double entry
             // Navigating back and forth will emit SAME_STATES error
-            this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
-            return
+            this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true});
+            return;
         }
         if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
-            return
+            return;
         }
 
         this._transition(state, this.lastKnownState, (err, toState) => {
             if (err) {
                 if (err === constants.CANNOT_DEACTIVATE) {
-                    let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
+                    let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params);
                     if (!newState) {
                         // Keep history state unchanged but use current URL
                         this.updateBrowserState(state, url, true);
@@ -124,10 +109,10 @@ class Router5 {
                     // TODO: history.back()?
                 } else {
                     // Force navigation to default state
-                    this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
+                    this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true});
                 }
             } else {
-                this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), newState)
+                this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), newState);
             }
         })
     }
@@ -137,8 +122,8 @@ class Router5 {
      * @param {Function} fn The middleware function
      */
     onTransition(fn) {
-        this._onTr = fn
-        return this
+        this._onTr = fn;
+        return this;
     }
 
     /**
@@ -150,65 +135,65 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     start() {
-        let args = [...arguments]
-        let lastArg = args.slice(-1)[0]
-        let done = (lastArg instanceof Function) ? lastArg : null
-        let startPath, startState
+        let args = [...arguments];
+        let lastArg = args.slice(-1)[0];
+        let done = (lastArg instanceof Function) ? lastArg : null;
+        let startPath, startState;
 
         if (this.started) {
-            if (done) done(constants.ROUTER_ALREADY_STARTED)
-            return this
+            if (done) done(constants.ROUTER_ALREADY_STARTED);
+            return this;
         }
 
         if (args.length > 0) {
-            if (typeof args[0] === 'string') startPath = args[0]
-            if (typeof args[0] === 'object') startState = args[0]
+            if (typeof args[0] === 'string') startPath = args[0];
+            if (typeof args[0] === 'object') startState = args[0];
         }
 
-        this.started = true
-        let opts = this.options
+        this.started = true;
+        let opts = this.options;
 
         // callback
         let cb = (err, state, invokeErrCb = true) => {
-            browser.addPopstateListener(this.boundOnPopState)
-            if (done) done(err, state)
-            if (err && invokeErrCb) this._invokeListeners('$error', state, null, err)
+            browser.addPopstateListener(this.boundOnPopState);
+            if (done) done(err, state);
+            if (err && invokeErrCb) this._invokeListeners('$error', state, null, err);
         }
 
         // Get start path
-        if (!startPath && !startState) startPath = this.getLocation()
+        if (!startPath && !startState) startPath = this.getLocation();
 
         if (!startState) {
             // If no supplied start state, get start state
-            startState = this.matchPath(startPath)
+            startState = this.matchPath(startPath);
             // Navigate to default function
-            let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false))
+            let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false));
             // If matched start path
             if (startState) {
-                this.lastStateAttempt = startState
+                this.lastStateAttempt = startState;
                 this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
                     if (!err) {
                         this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
-                        cb(null, state)
+                        cb(null, state);
                     }
-                    else if (opts.defaultRoute) navigateToDefault()
-                    else cb(err, null, false)
+                    else if (opts.defaultRoute) navigateToDefault();
+                    else cb(err, null, false);
                 })
             } else if (opts.defaultRoute) {
                 // If default, navigate to default
-                navigateToDefault()
+                navigateToDefault();
             } else {
                 // No start match, no default => do nothing
-                cb(constants.ROUTE_NOT_FOUND, null)
+                cb(constants.ROUTE_NOT_FOUND, null);
             }
         } else {
             // Initialise router with provided start state
             this.lastKnownState = startState
             this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
-            cb(null, startState)
+            cb(null, startState);
         }
         // Listen to popstate
-        return this
+        return this;
     }
 
     /**
@@ -216,13 +201,13 @@ class Router5 {
      * @return {Router5} The router instance
      */
     stop() {
-        if (!this.started) return this
-        this.lastKnownState = null
-        this.lastStateAttempt = null
-        this.started = false
+        if (!this.started) return this;
+        this.lastKnownState = null;
+        this.lastStateAttempt = null;
+        this.started = false;
 
-        browser.removePopstateListener(this.boundOnPopState)
-        return this
+        browser.removePopstateListener(this.boundOnPopState);
+        return this;
     }
 
     /**
@@ -230,7 +215,7 @@ class Router5 {
      * @return {Object} The current state
      */
     getState() {
-        return this.lastKnownState
+        return this.lastKnownState;
     }
 
     /**
@@ -243,15 +228,15 @@ class Router5 {
      * @return {Boolean}                   Whether nor not the route is active
      */
     isActive(name, params = {}, strictEquality = false) {
-        let activeState = this.getState()
+        let activeState = this.getState();
 
         if (!activeState) return false
 
         if (strictEquality || activeState.name === name) {
-            return this.areStatesEqual(makeState(name, params), activeState)
+            return this.areStatesEqual(makeState(name, params), activeState);
         }
 
-        return this.areStatesDescendants(makeState(name, params), activeState)
+        return this.areStatesDescendants(makeState(name, params), activeState);
     }
 
     /**
@@ -260,7 +245,7 @@ class Router5 {
     areStatesEqual(state1, state2) {
         return state1.name === state2.name &&
            Object.keys(state1.params).length === Object.keys(state2.params).length &&
-           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p])
+           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p]);
     }
 
     /**
@@ -270,11 +255,11 @@ class Router5 {
      * @return {Boolean}            Whether the two provided states are related
      */
     areStatesDescendants(parentState, childState) {
-        let regex = new RegExp('^' + parentState.name + '\\.(.*)$')
-        if (!regex.test(childState.name)) return false
+        let regex = new RegExp('^' + parentState.name + '\\.(.*)$');
+        if (!regex.test(childState.name)) return false;
         // If child state name extends parent state name, and all parent state params
         // are in child state params.
-        return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p])
+        return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p]);
     }
 
 
@@ -282,29 +267,29 @@ class Router5 {
      * @private
      */
     _invokeListeners(name, ...args) {
-        (this._cbs[name] || []).forEach(cb => cb(...args))
+        (this._cbs[name] || []).forEach(cb => cb(...args));
     }
 
     /**
      * @private
      */
     _addListener(name, cb, replace) {
-        let normalizedName = name.replace(/^(\*|\^|=)/, '')
+        let normalizedName = name.replace(/^(\*|\^|=)/, '');
         if (normalizedName && !/^\$/.test(name)) {
-            let segments = this.rootNode.getSegmentsByName(normalizedName)
-            if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
+            let segments = this.rootNode.getSegmentsByName(normalizedName);
+            if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`);
         }
-        if (!this._cbs[name]) this._cbs[name] = []
-        this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb)
-        return this
+        if (!this._cbs[name]) this._cbs[name] = [];
+        this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb);
+        return this;
     }
 
     /**
      * @private
      */
     _removeListener(name, cb) {
-        if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(callback => callback !== cb)
-        return this
+        if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(callback => callback !== cb);
+        return this;
     }
 
     /**
@@ -313,7 +298,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     addListener(cb) {
-        return this._addListener('*', cb)
+        return this._addListener('*', cb);
     }
 
     /**
@@ -322,7 +307,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     removeListener(cb) {
-        return this._removeListener('*', cb)
+        return this._removeListener('*', cb);
     }
 
     /**
@@ -343,7 +328,7 @@ class Router5 {
      */
     removeNodeListener(name, cb) {
         this._cbs['^' + name] = [];
-        return this
+        return this;
     }
 
     /**
@@ -353,7 +338,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     addRouteListener(name, cb) {
-        return this._addListener('=' + name, cb)
+        return this._addListener('=' + name, cb);
     }
 
     /**
@@ -363,7 +348,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     removeRouteListener(name, cb) {
-        return this._removeListener('=' + name, cb)
+        return this._removeListener('=' + name, cb);
     }
 
     /**
@@ -372,7 +357,7 @@ class Router5 {
      * @return {Router5}     The router instance
      */
     onTransitionStart(cb) {
-        return this._addListener('$start', cb)
+        return this._addListener('$start', cb);
     }
 
     /**
@@ -381,7 +366,7 @@ class Router5 {
      * @return {Router5}     The router instance
      */
     offTransitionStart(cb) {
-        return this._removeListener('$start', cb)
+        return this._removeListener('$start', cb);
     }
 
     /**
@@ -390,7 +375,7 @@ class Router5 {
      * @return {Router5}     The router instance
      */
     onTransitionCancel(cb) {
-        return this._addListener('$cancel', cb)
+        return this._addListener('$cancel', cb);
     }
 
     /**
@@ -399,7 +384,7 @@ class Router5 {
      * @return {Router5}     The router instance
      */
     offTransitionCancel(cb) {
-        return this._removeListener('$cancel', cb)
+        return this._removeListener('$cancel', cb);
     }
 
     /**
@@ -408,7 +393,7 @@ class Router5 {
      * @return {Router5}     The router instance
      */
     onTransitionError(cb) {
-        return this._addListener('$error', cb)
+        return this._addListener('$error', cb);
     }
 
     /**
@@ -417,7 +402,7 @@ class Router5 {
      * @return {Router5}     The router instance
      */
     offTransitionError(cb) {
-        return this._removeListener('$error', cb)
+        return this._removeListener('$error', cb);
     }
 
     /**
@@ -426,9 +411,9 @@ class Router5 {
      * @param  {Object} component The component instance
      */
     registerComponent(name, component) {
-        if (this._cmps[name]) console.warn(`A component was alread registered for route node ${name}.`)
-        this._cmps[name] = component
-        return this
+        if (this._cmps[name]) console.warn(`A component was alread registered for route node ${name}.`);
+        this._cmps[name] = component;
+        return this;
     }
 
     /**
@@ -437,7 +422,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     deregisterComponent(name) {
-        delete this._cmps[name]
+        delete this._cmps[name];
     }
 
     /**
@@ -448,15 +433,15 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     canActivate(name, canActivate) {
-        this._canAct[name] = canActivate
-        return this
+        this._canAct[name] = canActivate;
+        return this;
     }
 
     /**
      * @private
      */
     getLocation() {
-        return browser.getLocation(this.options)
+        return browser.getLocation(this.options);
     }
 
     /**
@@ -467,13 +452,13 @@ class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
-        return this._buildUrl(this.rootNode.buildPath(route, params))
+        return this._buildUrl(this.rootNode.buildPath(route, params));
     }
 
     _buildUrl(path) {
         return this.options.base +
             (this.options.useHash ? '#' + this.options.hashPrefix : '') +
-            path
+            path;
     }
 
     /**
@@ -484,7 +469,7 @@ class Router5 {
      * @return {String}        The built Path
      */
     buildPath(route, params) {
-        return this.rootNode.buildPath(route, params)
+        return this.rootNode.buildPath(route, params);
     }
 
     /**
@@ -493,8 +478,8 @@ class Router5 {
      * @return {Object}        The matched state object (null if no match)
      */
     matchPath(path) {
-        let match = this.rootNode.matchPath(path, this.options.trailingSlash)
-        return match ? makeState(match.name, match.params, path) : null
+        let match = this.rootNode.matchPath(path, this.options.trailingSlash);
+        return match ? makeState(match.name, match.params, path) : null;
     }
 
     /**
@@ -503,21 +488,21 @@ class Router5 {
      * @return {String}     The extracted path
      */
     urlToPath(url) {
-        let match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/)
-        let path = match ? match[1] : url
+        let match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
+        let path = match ? match[1] : url;
 
-        let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/)
+        let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
 
-        if (!pathParts) throw new Error(`Could not parse url ${url}`)
+        if (!pathParts) throw new Error(`Could not parse url ${url}`);
 
-        let [pathname, hash, search] = pathParts.slice(1)
-        let opts = this.options
+        let [pathname, hash, search] = pathParts.slice(1);
+        let opts = this.options;
 
         return (
             opts.useHash
             ? hash.replace(new RegExp('^#' + opts.hashPrefix), '')
             : pathname.replace(new RegExp('^' + opts.base), '')
-        ) + (search || '')
+        ) + (search || '');
     }
 
     /**
@@ -526,7 +511,7 @@ class Router5 {
      * @return {Object}        The matched state object (null if no match)
      */
     matchUrl(url) {
-        return this.matchPath(this.urlToPath(url))
+        return this.matchPath(this.urlToPath(url));
     }
 
     /**
@@ -535,28 +520,28 @@ class Router5 {
     _transition(toState, fromState, done) {
         // Cancel current transition
         if (this._tr) this._tr()
-        this._invokeListeners('$start', toState, fromState)
+        this._invokeListeners('$start', toState, fromState);
 
         let tr = transition(this, toState, fromState, (err) => {
             this._tr = null
 
             if (err) {
-                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$cancel', toState, fromState)
-                else this._invokeListeners('$error', toState, fromState, err)
+                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$cancel', toState, fromState);
+                else this._invokeListeners('$error', toState, fromState, err);
 
-                if (done) done(err)
+                if (done) done(err);
                 return
             }
 
-            this.lastKnownState = toState
-            this._invokeListeners('=' + toState.name, toState, fromState)
-            this._invokeListeners('*', toState, fromState)
+            this.lastKnownState = toState;
+            this._invokeListeners('=' + toState.name, toState, fromState);
+            this._invokeListeners('*', toState, fromState);
 
-            if (done) done(null, toState)
+            if (done) done(null, toState);
         })
 
-        this._tr = tr
-        return () => !tr || tr()
+        this._tr = tr;
+        return () => !tr || tr();
     }
 
     /**
@@ -570,42 +555,42 @@ class Router5 {
      */
     navigate(name, params = {}, opts = {}, done) {
         if (!this.started) {
-            if (done) done(constants.ROUTER_NOT_STARTED)
-            return
+            if (done) done(constants.ROUTER_NOT_STARTED);
+            return;
         }
 
-        if (!browser.getState()) opts.replace = true
+        if (!browser.getState()) opts.replace = true;
 
-        let path  = this.buildPath(name, params)
-        let url  = this.buildUrl(name, params)
+        let path  = this.buildPath(name, params);
+        let url  = this.buildUrl(name, params);
 
         if (!path) {
-            if (done) done(constants.ROUTE_NOT_FOUND)
-            this._invokeListeners('$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND)
+            if (done) done(constants.ROUTE_NOT_FOUND);
+            this._invokeListeners('$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
             return
         }
 
-        let toState = makeState(name, params, path)
-        this.lastStateAttempt = toState
-        let sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false
+        let toState = makeState(name, params, path);
+        this.lastStateAttempt = toState;
+        let sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
 
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
-            if (done) done(constants.SAME_STATES)
-            this._invokeListeners('$error', toState, this.lastKnownState, constants.SAME_STATES)
+            if (done) done(constants.SAME_STATES);
+            this._invokeListeners('$error', toState, this.lastKnownState, constants.SAME_STATES);
             return
         }
 
         // Transition and amend history
         return this._transition(toState, sameStates ? null : this.lastKnownState, (err, state) => {
             if (err) {
-                if (done) done(err)
-                return
+                if (done) done(err);
+                return;
             }
 
-            this.updateBrowserState(this.lastStateAttempt, url, opts.replace)
-            if (done) done(null, state)
+            this.updateBrowserState(this.lastStateAttempt, url, opts.replace);
+            if (done) done(null, state);
         })
     }
 
@@ -621,4 +606,19 @@ class Router5 {
     }
 }
 
-export default Router5
+/**
+ * Error codes
+ * @type {Object}
+ */
+Router5.ERR = constants;
+
+/**
+ * An helper function to return instructions for a transition:
+ * intersection route name, route names to deactivate, route names to activate
+ * @param  {Object} toState   The state to go to
+ * @param  {Object} fromState The state to go from
+ * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
+ */
+Router5.transitionPath = transitionPath;
+
+export default Router5;
