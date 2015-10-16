@@ -30,6 +30,7 @@ class Router5 {
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
         this._setBase();
+        this.registeredPlugins = {};
         // Bind onPopState
         this.boundOnPopState = this.onPopState.bind(this);
     }
@@ -75,6 +76,26 @@ class Router5 {
     addNode(name, path, canActivate) {
         this.rootNode.addNode(name, path);
         if (canActivate) this._canAct[name] = canActivate;
+        return this;
+    }
+
+    usePlugin(plugin) {
+        if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
+
+        const pluginMethods = ['onStart', 'onSuccess', 'onStart', 'onError', 'onCancel'];
+        const defined = pluginMethods.concat('init').some(method => plugin[method] !== undefined);
+
+        if (!defined) throw new Error(`[router5] plugin ${plugin.name} has none of the expected methods implemented`);
+        this.registeredPlugins[plugin.name] = plugin;
+
+        if (plugin.init) plugin.init(this);
+
+        pluginMethods.forEach(method => {
+            if (plugin[method]) {
+                this._addListener(method.toLowerCase().replace(/^on/, '$'), plugin[method]);
+            }
+
+        });
         return this;
     }
 
@@ -274,135 +295,8 @@ class Router5 {
      * @private
      */
     _addListener(name, cb, replace) {
-        let normalizedName = name.replace(/^(\*|\^|=)/, '');
-        if (normalizedName && !/^\$/.test(name)) {
-            let segments = this.rootNode.getSegmentsByName(normalizedName);
-            if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`);
-        }
-        if (!this._cbs[name]) this._cbs[name] = [];
-        this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb);
+        this._cbs[name] = (this._cbs[name] || []).concat(cb);
         return this;
-    }
-
-    /**
-     * @private
-     */
-    _removeListener(name, cb) {
-        if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(callback => callback !== cb);
-        return this;
-    }
-
-    /**
-     * Add a route change listener
-     * @param {Function} cb The listener to add
-     * @return {Router5} The router instance
-     */
-    addListener(cb) {
-        return this._addListener('*', cb);
-    }
-
-    /**
-     * Remove a route change listener
-     * @param  {Function} cb The listener to remove
-     * @return {Router5} The router instance
-     */
-    removeListener(cb) {
-        return this._removeListener('*', cb);
-    }
-
-    /**
-     * Add a node change listener
-     * @param {String}   name The route segment full name
-     * @param {Function} cb   The listener to add
-     * @return {Router5} The router instance
-     */
-    addNodeListener(name, cb) {
-        return this._addListener('^' + name, cb, true);
-    }
-
-    /**
-     * Remove a node change listener
-     * @param {String}   name The route segment full name
-     * @param {Function} cb   The listener to remove
-     * @return {Router5} The router instance
-     */
-    removeNodeListener(name, cb) {
-        this._cbs['^' + name] = [];
-        return this;
-    }
-
-    /**
-     * Add a route change listener
-     * @param {String}   name The route name to listen to
-     * @param {Function} cb   The listener to add
-     * @return {Router5} The router instance
-     */
-    addRouteListener(name, cb) {
-        return this._addListener('=' + name, cb);
-    }
-
-    /**
-     * Remove a route change listener
-     * @param {String}   name The route name to listen to
-     * @param {Function} cb   The listener to remove
-     * @return {Router5} The router instance
-     */
-    removeRouteListener(name, cb) {
-        return this._removeListener('=' + name, cb);
-    }
-
-    /**
-     * Add a transition start callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    onTransitionStart(cb) {
-        return this._addListener('$start', cb);
-    }
-
-    /**
-     * Remove a transition start callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    offTransitionStart(cb) {
-        return this._removeListener('$start', cb);
-    }
-
-    /**
-     * Add a transition cancel callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    onTransitionCancel(cb) {
-        return this._addListener('$cancel', cb);
-    }
-
-    /**
-     * Remove a transition cancel callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    offTransitionCancel(cb) {
-        return this._removeListener('$cancel', cb);
-    }
-
-    /**
-     * Add a transition error callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    onTransitionError(cb) {
-        return this._addListener('$error', cb);
-    }
-
-    /**
-     * Remove a transition error callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    offTransitionError(cb) {
-        return this._removeListener('$error', cb);
     }
 
     /**
@@ -493,7 +387,7 @@ class Router5 {
 
         let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
 
-        if (!pathParts) throw new Error(`Could not parse url ${url}`);
+        if (!pathParts) throw new Error(`[router5] Could not parse url ${url}`);
 
         let [pathname, hash, search] = pathParts.slice(1);
         let opts = this.options;
@@ -534,8 +428,7 @@ class Router5 {
             }
 
             this.lastKnownState = toState;
-            this._invokeListeners('=' + toState.name, toState, fromState);
-            this._invokeListeners('*', toState, fromState);
+            this._invokeListeners('$success', toState, fromState);
 
             if (done) done(null, toState);
         })

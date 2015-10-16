@@ -2,16 +2,19 @@
     if (typeof define === 'function' && define.amd) {
         define(['exports', 'module'], factory);
     } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-        factory(exports, module, require(require('path').join(__dirname, '../dist/commonjs')).Router5, require('route-node'));
+        factory(exports, module,
+            require('..').Router5,
+            require('..').RouteNode,
+            require('..').listenersPlugin
+        );
     } else {
         var mod = {
             exports: {}
         };
-        console.log(global.RouteNode);
-        factory(mod.exports, mod, global.Router5, global.RouteNode);
+        factory(mod.exports, mod, global.Router5, global.RouteNode, global.listenersPlugin);
         global.createRouter = mod.exports;
     }
-})(this, function (exports, module, Router5, RouteNode) {
+})(this, function (exports, module, Router5, RouteNode, listenersPlugin) {
     'use strict';
 
     module.exports = createRouter;
@@ -44,7 +47,8 @@
             .add(ordersRoute)
             .addNode('index', '/')
             .addNode('home', '/home')
-            .addNode('admin', '/admin',   function canActivate() { return false; });
+            .addNode('admin', '/admin',   function canActivate() { return false; })
+            .usePlugin(listenersPlugin());
     }
 });
 

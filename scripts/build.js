@@ -8,16 +8,17 @@ var argv        = require('yargs').argv;
 var router5Version = require('../package.json').version;
 var getOptions     = require('./babel-options');
 var files = [
-    path.join(__dirname, '../modules/index.js'),
-    path.join(__dirname, '../modules/constants.js'),
-    path.join(__dirname, '../modules/browser.js'),
-    path.join(__dirname, '../modules/async.js'),
-    path.join(__dirname, '../modules/transition.js'),
-    path.join(__dirname, '../modules/router5.js')
+    path.join(__dirname, '..', 'modules/index.js'),
+    path.join(__dirname, '..', 'modules/constants.js'),
+    path.join(__dirname, '..', 'modules/browser.js'),
+    path.join(__dirname, '..', 'modules/async.js'),
+    path.join(__dirname, '..', 'modules/transition.js'),
+    path.join(__dirname, '..', 'modules/router5.js'),
+    path.join(__dirname, '..', 'modules/plugins/listeners.js')
 ];
 
 function buildFactory(module, dest, file) {
-    return function buildCommonJsModuel(done) {
+    return function buildCommonJsModule(done) {
         babel.transformFile(file, getOptions(module), function (err, result) {
             if (!err) fs.writeFile(path.join(__dirname, '..', dest), result.code, done);
             else done(err);
@@ -77,11 +78,12 @@ function buildBundle(done) {
             var globalFooter = '\n}(window));\n';
             var globalExport = '\n\n' +
                 '    window.RouteNode = RouteNode;\n' +
-                '    window.Router5 = Router5;\n';
+                '    window.Router5 = Router5;\n' +
+                '    window.listenersPlugin = listenersPlugin;\n';
 
             var amdHeader = "\ndefine('router5', [], function () {\n";
             var amdFooter = '\n});\n';
-            var amdExport = '\n\n    return {RouteNode: RouteNode, Router5: Router5};';
+            var amdExport = '\n\n    return {RouteNode: RouteNode, Router5: Router5, listenersPlugin: listenersPlugin};';
 
             var useStrict = "'use strict';\n";
 
@@ -104,28 +106,38 @@ function exit(err) {
 if (argv.test) {
     async.series([
         mkdirp.bind(null, 'dist/test'),
+        mkdirp.bind(null, 'dist/test/plugins'),
         buildFactory('ignore', 'dist/test/constants.js',  files[1]),
         buildFactory('ignore', 'dist/test/browser.js',    files[2]),
         buildFactory('ignore', 'dist/test/async.js',      files[3]),
         buildFactory('ignore', 'dist/test/transition.js', files[4]),
-        buildFactory('ignore', 'dist/test/router5.js',    files[5])
+        buildFactory('ignore', 'dist/test/router5.js',    files[5]),
+        buildFactory('ignore', 'dist/test/plugins/listeners.js', files[6])
     ], exit);
 } else {
-    async.parallel([
-        buildFactory('common', 'dist/commonjs/index.js',      files[0]),
-        buildFactory('common', 'dist/commonjs/constants.js',  files[1]),
-        buildFactory('common', 'dist/commonjs/browser.js',    files[2]),
-        buildFactory('common', 'dist/commonjs/async.js',      files[3]),
-        buildFactory('common', 'dist/commonjs/transition.js', files[4]),
-        buildFactory('common', 'dist/commonjs/router5.js',    files[5]),
+    async.series([
+        mkdirp.bind(null, 'dist/commonjs'),
+        mkdirp.bind(null, 'dist/commonjs/plugins'),
+        mkdirp.bind(null, 'dist/umd'),
+        mkdirp.bind(null, 'dist/umd/plugins'),
+        async.parallel.bind(async, [
+            buildFactory('common', 'dist/commonjs/index.js',      files[0]),
+            buildFactory('common', 'dist/commonjs/constants.js',  files[1]),
+            buildFactory('common', 'dist/commonjs/browser.js',    files[2]),
+            buildFactory('common', 'dist/commonjs/async.js',      files[3]),
+            buildFactory('common', 'dist/commonjs/transition.js', files[4]),
+            buildFactory('common', 'dist/commonjs/router5.js',    files[5]),
+            buildFactory('common', 'dist/commonjs/plugins/listeners.js', files[6]),
 
-        buildFactory('umd',    'dist/umd/index.js',           files[0]),
-        buildFactory('umd',    'dist/umd/constants.js',       files[1]),
-        buildFactory('umd',    'dist/umd/browser.js',         files[2]),
-        buildFactory('umd',    'dist/umd/async.js',           files[3]),
-        buildFactory('umd',    'dist/umd/transition.js',      files[4]),
-        buildFactory('umd',    'dist/umd/router5.js',         files[5]),
+            buildFactory('umd',    'dist/umd/index.js',           files[0]),
+            buildFactory('umd',    'dist/umd/constants.js',       files[1]),
+            buildFactory('umd',    'dist/umd/browser.js',         files[2]),
+            buildFactory('umd',    'dist/umd/async.js',           files[3]),
+            buildFactory('umd',    'dist/umd/transition.js',      files[4]),
+            buildFactory('umd',    'dist/umd/router5.js',         files[5]),
+            buildFactory('umd',    'dist/umd/plugins/listeners.js', files[6]),
 
-        buildBundle
+            buildBundle
+        ])
     ], exit);
 }

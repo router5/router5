@@ -35,7 +35,7 @@ function transition(router, toState, fromState, callback) {
     let cancel = () => cancelled = true;
     let done = (err) => callback(cancelled ? constants.TRANSITION_CANCELLED : err);
 
-    let {intersection, toDeactivate, toActivate} = transitionPath(toState, fromState);
+    let {toDeactivate, toActivate} = transitionPath(toState, fromState);
 
     let canDeactivate = (toState, fromState, cb) => {
         let canDeactivateFunctions = toDeactivate
@@ -70,21 +70,9 @@ function transition(router, toState, fromState, callback) {
         )
     };
 
-    let nodeListenerFn = router._cbs['^' + intersection];
-    let nodeListener = (toState, fromState, cb) => {
-        let listeners = nodeListenerFn
-
-        asyncProcess(
-            isCancelled, listeners, toState, fromState,
-            err => cb(err ? constants.NODE_LISTENER_ERR : null),
-            true
-        )
-    };
-
     let pipeline = (fromState ? [canDeactivate] : [])
         .concat(canActivate)
-        .concat(middlewareFn ? middleware : [])
-        .concat(nodeListenerFn && nodeListenerFn.length ? nodeListener : []);
+        .concat(middlewareFn ? middleware : []);
 
     asyncProcess(isCancelled, pipeline, toState, fromState, done);
 

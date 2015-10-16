@@ -34,7 +34,7 @@ describe('router5', function () {
     testRouter(false);
 
     // With hash
-    // testRouter(true);
+    testRouter(true);
 });
 
 function testRouter(useHash) {
@@ -52,6 +52,7 @@ function testRouter(useHash) {
     describe(useHash ? 'with using URL hash part' : 'without using URL hash part', function () {
         function flushListeners() {
             router._cbs = {};
+            router.usePlugin(listenersPlugin());
         }
 
         beforeEach(flushListeners);
@@ -210,16 +211,11 @@ function testRouter(useHash) {
             router.setOption('defaultRoute', 'home');
             window.history.replaceState({}, '', base);
             spyOn(listeners, 'global').and.callThrough();
-            spyOn(listeners, 'noop').and.callThrough();
             router.addNodeListener('', listeners.global);
-            router.onTransitionStart(listeners.noop);
 
             router.start(function (err, state) {
                 expect(state).toEqual({name: 'home', path: '/home', params: {}});
                 expect(listeners.global).toHaveBeenCalled();
-                expect(listeners.noop).toHaveBeenCalled();
-                router.offTransitionStart(listeners.noop);
-                expect(router._cbs['$start'].length).toBe(0);
                 done();
             });
         });
@@ -443,28 +439,19 @@ function testRouter(useHash) {
         });
 
         it('should block navigation if a route cannot be activated', function (done) {
-            spyOn(listeners, 'noop').and.callThrough();
-            router.onTransitionError(listeners.noop);
             router.navigate('home', {}, {}, function () {
-                router.navigate('admin', {}, {}, function () {
+                router.navigate('admin', {}, {}, function (err) {
+                expect(err).toBe(Router5.ERR.CANNOT_ACTIVATE);
                     expect(router.isActive('home')).toBe(true);
-                    expect(listeners.noop).toHaveBeenCalled();
-                    router.offTransitionError(listeners.noop);
-                    expect(router._cbs['$error'].length).toBe(0);
                     done();
                 });
             });
         });
 
-        it('should be able to cancel a transition and should invoke onTransitionCancel listeners', function (done) {
-            spyOn(listeners, 'noop');
-            router.onTransitionCancel(listeners.noop);
+        it('should be able to cancel a transition', function (done) {
             router.canActivate('admin', function canActivate(done) { return Promise.resolve(); });
             var cancel = router.navigate('admin', {}, {}, function (err) {
                 expect(err).toBe(Router5.ERR.TRANSITION_CANCELLED);
-                expect(listeners.noop).toHaveBeenCalled();
-                router.offTransitionCancel(listeners.noop);
-                expect(router._cbs['$cancel'].length).toBe(0);
                 done();
             });
             cancel();
