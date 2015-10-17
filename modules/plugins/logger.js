@@ -1,26 +1,36 @@
-function onSuccess(toState, fromState) {
-    console.log('success');
+function onStart() {
+    console.log('router started');
 }
 
-function onError(toState, fromState, err) {
-    console.log('error');
+function onStop() {
+    console.log('router stopped');
 }
 
-function onCancel(toState, fromState) {
-    console.log('cancelled');
+function onTransitionSuccess(toState, fromState) {
+    console.log('Transition success');
 }
 
-function onStart(toState, fromState) {
-    console.log('started');
+function onTransitionError(toState, fromState, err) {
+    console.log('Transition error');
+}
+
+function onTransitionCancel(toState, fromState) {
+    console.log('Transition cancelled');
+}
+
+function onTransitionStart(toState, fromState) {
+    console.log('Transition started');
 }
 
 function logger() {
     return {
         pluginName: 'logger',
-        onSuccess,
-        onError,
-        onCancel,
-        onStart
+        onStart,
+        onStop,
+        onTransitionSuccess,
+        onTransitionError,
+        onTransitionCancel,
+        onTransitionStart
     };
 }
 

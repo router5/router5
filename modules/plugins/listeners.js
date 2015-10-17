@@ -59,7 +59,7 @@ export default function listenersPlugin() {
         (listeners[name] || []).forEach(cb => cb(toState, fromState));
     }
 
-    function onSuccess(toState, fromState) {
+    function onTransitionSuccess(toState, fromState) {
         const intersection = transitionIntersection(toState, fromState);
         const { name } = toState;
 
@@ -72,5 +72,5 @@ export default function listenersPlugin() {
         listeners = {};
    }
 
-   return { name: pluginName, init, onSuccess, flush };
+   return { name: pluginName, init, onTransitionSuccess, flush };
 }

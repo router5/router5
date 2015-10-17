@@ -82,7 +82,7 @@ class Router5 {
     usePlugin(plugin) {
         if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
 
-        const pluginMethods = ['onStart', 'onSuccess', 'onStart', 'onError', 'onCancel'];
+        const pluginMethods = ['onStart', 'onStop', 'onTransitionStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
         const defined = pluginMethods.concat('init').some(method => plugin[method] !== undefined);
 
         if (!defined) throw new Error(`[router5] plugin ${plugin.name} has none of the expected methods implemented`);
@@ -172,13 +172,14 @@ class Router5 {
         }
 
         this.started = true;
+        this._invokeListeners('$start');
         let opts = this.options;
 
         // callback
         let cb = (err, state, invokeErrCb = true) => {
             browser.addPopstateListener(this.boundOnPopState);
             if (done) done(err, state);
-            if (err && invokeErrCb) this._invokeListeners('$error', state, null, err);
+            if (err && invokeErrCb) this._invokeListeners('$transitionerror', state, null, err);
         }
 
         // Get start path
@@ -226,6 +227,7 @@ class Router5 {
         this.lastKnownState = null;
         this.lastStateAttempt = null;
         this.started = false;
+        this._invokeListeners('$stop');
 
         browser.removePopstateListener(this.boundOnPopState);
         return this;
@@ -414,21 +416,21 @@ class Router5 {
     _transition(toState, fromState, done) {
         // Cancel current transition
         if (this._tr) this._tr()
-        this._invokeListeners('$start', toState, fromState);
+        this._invokeListeners('$transitionstart', toState, fromState);
 
         let tr = transition(this, toState, fromState, (err) => {
             this._tr = null
 
             if (err) {
-                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$cancel', toState, fromState);
-                else this._invokeListeners('$error', toState, fromState, err);
+                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$transitioncancel', toState, fromState);
+                else this._invokeListeners('$transitionerror', toState, fromState, err);
 
                 if (done) done(err);
                 return
             }
 
             this.lastKnownState = toState;
-            this._invokeListeners('$success', toState, fromState);
+            this._invokeListeners('$transitionsuccess', toState, fromState);
 
             if (done) done(null, toState);
         })
@@ -459,7 +461,7 @@ class Router5 {
 
         if (!path) {
             if (done) done(constants.ROUTE_NOT_FOUND);
-            this._invokeListeners('$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
+            this._invokeListeners('$transitionerror', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
             return
         }
 
@@ -471,7 +473,7 @@ class Router5 {
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
             if (done) done(constants.SAME_STATES);
-            this._invokeListeners('$error', toState, this.lastKnownState, constants.SAME_STATES);
+            this._invokeListeners('$transitionerror', toState, this.lastKnownState, constants.SAME_STATES);
             return
         }
 
