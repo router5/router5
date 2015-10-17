@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.8.0
+ * @version 0.9.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -137,9 +137,9 @@ define('router5', [], function () {
         return val !== undefined && val !== null && val !== '' ? '=' + val : '';
     };
     
-    var serialise = function serialise(key, val) {
+    var _serialise = function _serialise(key, val) {
         return Array.isArray(val) ? val.map(function (v) {
-            return serialise(key, v);
+            return _serialise(key, v);
         }).join('&') : key + toSerialisable(val);
     };
     
@@ -148,6 +148,11 @@ define('router5', [], function () {
             key: 'createPath',
             value: function createPath(path) {
                 return new Path(path);
+            }
+        }, {
+            key: 'serialise',
+            value: function serialise(key, val) {
+                return _serialise(key, val);
             }
         }]);
     
@@ -309,7 +314,7 @@ define('router5', [], function () {
                 var searchPart = this.queryParams.filter(function (p) {
                     return Object.keys(params).indexOf(p) !== -1;
                 }).map(function (p) {
-                    return serialise(p, params[p]);
+                    return _serialise(p, params[p]);
                 }).join('&');
     
                 return base + (searchPart ? '?' + searchPart : '');
@@ -1120,23 +1125,27 @@ define('router5', [], function () {
              * Whether or not the given route name with specified params is active.
              * @param  {String}   name             The route name
              * @param  {Object}   [params={}]      The route parameters
-             * @param  {Boolean}  [equality=false] If set to false (default), isActive will return true
-             *                                     if the provided route name and params are descendants
-             *                                     of the active state.
-             * @return {Boolean}                   Whether nor not the route is active
+             * @param  {Boolean}  [strictEquality=false] If set to false (default), isActive will return true
+             *                                           if the provided route name and params are descendants
+             *                                           of the active state.
+             * @param  {Boolean}   [ignoreQueryParams=true] Whether or not to ignore URL query parameters when
+             *                                              comparing the two states together.
+             *                                              query parameters when comparing two states together.
+             * @return {Boolean}                    Whether nor not the route is active
              */
         }, {
             key: 'isActive',
             value: function isActive(name) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
                 var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+                var ignoreQueryParams = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
     
                 var activeState = this.getState();
     
                 if (!activeState) return false;
     
                 if (strictEquality || activeState.name === name) {
-                    return this.areStatesEqual(makeState(name, params), activeState);
+                    return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams);
                 }
     
                 return this.areStatesDescendants(makeState(name, params), activeState);
@@ -1148,7 +1157,24 @@ define('router5', [], function () {
         }, {
             key: 'areStatesEqual',
             value: function areStatesEqual(state1, state2) {
-                return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
+                var _this4 = this;
+    
+                var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+    
+                if (state1.name !== state2.name) return false;
+    
+                var getUrlParams = function getUrlParams(name) {
+                    return _this4.rootNode.getSegmentsByName(name).map(function (segment) {
+                        return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
+                    }).reduce(function (params, p) {
+                        return params.concat(p);
+                    }, []);
+                };
+    
+                var state1Params = getUrlParams(state1.name);
+                var state2Params = getUrlParams(state2.name);
+    
+                return state1Params.length === state2Params.length && state1Params.every(function (p) {
                     return state1.params[p] === state2.params[p];
                 });
             }
@@ -1486,25 +1512,25 @@ define('router5', [], function () {
         }, {
             key: '_transition',
             value: function _transition(toState, fromState, done) {
-                var _this4 = this;
+                var _this5 = this;
     
                 // Cancel current transition
                 if (this._tr) this._tr();
                 this._invokeListeners('$start', toState, fromState);
     
                 var tr = transition(this, toState, fromState, function (err) {
-                    _this4._tr = null;
+                    _this5._tr = null;
     
                     if (err) {
-                        if (err === constants.TRANSITION_CANCELLED) _this4._invokeListeners('$cancel', toState, fromState);else _this4._invokeListeners('$error', toState, fromState, err);
+                        if (err === constants.TRANSITION_CANCELLED) _this5._invokeListeners('$cancel', toState, fromState);else _this5._invokeListeners('$error', toState, fromState, err);
     
                         if (done) done(err);
                         return;
                     }
     
-                    _this4.lastKnownState = toState;
-                    _this4._invokeListeners('=' + toState.name, toState, fromState);
-                    _this4._invokeListeners('*', toState, fromState);
+                    _this5.lastKnownState = toState;
+                    _this5._invokeListeners('=' + toState.name, toState, fromState);
+                    _this5._invokeListeners('*', toState, fromState);
     
                     if (done) done(null, toState);
                 });
@@ -1529,7 +1555,7 @@ define('router5', [], function () {
             value: function navigate(name, params, opts, done) {
                 if (params === undefined) params = {};
     
-                var _this5 = this;
+                var _this6 = this;
     
                 if (opts === undefined) opts = {};
     
@@ -1568,7 +1594,7 @@ define('router5', [], function () {
                         return;
                     }
     
-                    _this5.updateBrowserState(_this5.lastStateAttempt, url, opts.replace);
+                    _this6.updateBrowserState(_this6.lastStateAttempt, url, opts.replace);
                     if (done) done(null, state);
                 });
             }
