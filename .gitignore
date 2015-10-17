@@ -1,5 +1,6 @@
 /node_modules
-/dist/test
+/dist
+/temp
 /coverage
 saucelabs.js
 npm-debug.log

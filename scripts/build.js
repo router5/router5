@@ -105,20 +105,17 @@ function exit(err) {
 
 if (argv.test) {
     async.series([
-        mkdirp.bind(null, 'dist/test'),
-        mkdirp.bind(null, 'dist/test/plugins'),
-        buildFactory('ignore', 'dist/test/constants.js',  files[1]),
-        buildFactory('ignore', 'dist/test/browser.js',    files[2]),
-        buildFactory('ignore', 'dist/test/async.js',      files[3]),
-        buildFactory('ignore', 'dist/test/transition.js', files[4]),
-        buildFactory('ignore', 'dist/test/router5.js',    files[5]),
-        buildFactory('ignore', 'dist/test/plugins/listeners.js', files[6])
+        mkdirp.bind(null, 'temp/test/plugins'),
+        buildFactory('ignore', 'temp/test/constants.js',  files[1]),
+        buildFactory('ignore', 'temp/test/browser.js',    files[2]),
+        buildFactory('ignore', 'temp/test/async.js',      files[3]),
+        buildFactory('ignore', 'temp/test/transition.js', files[4]),
+        buildFactory('ignore', 'temp/test/router5.js',    files[5]),
+        buildFactory('ignore', 'temp/test/plugins/listeners.js', files[6])
     ], exit);
 } else {
     async.series([
-        mkdirp.bind(null, 'dist/commonjs'),
         mkdirp.bind(null, 'dist/commonjs/plugins'),
-        mkdirp.bind(null, 'dist/umd'),
         mkdirp.bind(null, 'dist/umd/plugins'),
         async.parallel.bind(async, [
             buildFactory('common', 'dist/commonjs/index.js',      files[0]),
