@@ -42,29 +42,6 @@
      */
 
     var Router5 = (function () {
-        _createClass(Router5, null, [{
-            key: 'ERR',
-
-            /**
-             * Error codes
-             * @type {Object}
-             */
-            value: _constants2['default'],
-
-            /**
-             * An helper function to return instructions for a transition:
-             * intersection route name, route names to deactivate, route names to activate
-             * @param  {Object} toState   The state to go to
-             * @param  {Object} fromState The state to go from
-             * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
-             */
-            enumerable: true
-        }, {
-            key: 'transitionPath',
-            value: _transition2.transitionPath,
-            enumerable: true
-        }]);
-
         function Router5(routes) {
             var _this = this;
 
@@ -90,9 +67,15 @@
                 return _this.options[opt] = opts[opt];
             });
             this._setBase();
+            this.registeredPlugins = {};
             // Bind onPopState
             this.boundOnPopState = this.onPopState.bind(this);
         }
+
+        /**
+         * Error codes
+         * @type {Object}
+         */
 
         /**
          * @private
@@ -146,6 +129,30 @@
                 if (canActivate) this._canAct[name] = canActivate;
                 return this;
             }
+        }, {
+            key: 'usePlugin',
+            value: function usePlugin(plugin) {
+                var _this2 = this;
+
+                if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
+
+                var pluginMethods = ['onStart', 'onStop', 'onTransitionStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+                var defined = pluginMethods.concat('init').some(function (method) {
+                    return plugin[method] !== undefined;
+                });
+
+                if (!defined) throw new Error('[router5] plugin ' + plugin.name + ' has none of the expected methods implemented');
+                this.registeredPlugins[plugin.name] = plugin;
+
+                if (plugin.init) plugin.init(this);
+
+                pluginMethods.forEach(function (method) {
+                    if (plugin[method]) {
+                        _this2._addListener(method.toLowerCase().replace(/^on/, '$'), plugin[method]);
+                    }
+                });
+                return this;
+            }
 
             /**
              * @private
@@ -153,7 +160,7 @@
         }, {
             key: 'onPopState',
             value: function onPopState(evt) {
-                var _this2 = this;
+                var _this3 = this;
 
                 // Do nothing if no state or if last know state is poped state (it should never happen)
                 var newState = !evt.state || !evt.state.name;
@@ -173,19 +180,19 @@
                 this._transition(state, this.lastKnownState, function (err, toState) {
                     if (err) {
                         if (err === _constants2['default'].CANNOT_DEACTIVATE) {
-                            var url = _this2.buildUrl(_this2.lastKnownState.name, _this2.lastKnownState.params);
+                            var url = _this3.buildUrl(_this3.lastKnownState.name, _this3.lastKnownState.params);
                             if (!newState) {
                                 // Keep history state unchanged but use current URL
-                                _this2.updateBrowserState(state, url, true);
+                                _this3.updateBrowserState(state, url, true);
                             }
                             // else do nothing or history will be messed up
                             // TODO: history.back()?
                         } else {
                                 // Force navigation to default state
-                                _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
+                                _this3.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                             }
                     } else {
-                        _this2.updateBrowserState(toState, _this2.buildUrl(toState.name, toState.params), newState);
+                        _this3.updateBrowserState(toState, _this3.buildUrl(toState.name, toState.params), newState);
                     }
                 });
             }
@@ -212,7 +219,7 @@
         }, {
             key: 'start',
             value: function start() {
-                var _this3 = this;
+                var _this4 = this;
 
                 var args = [].concat(_slice.call(arguments));
                 var lastArg = args.slice(-1)[0];
@@ -231,15 +238,16 @@
                 }
 
                 this.started = true;
+                this._invokeListeners('$start');
                 var opts = this.options;
 
                 // callback
                 var cb = function cb(err, state) {
                     var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
-                    _browser2['default'].addPopstateListener(_this3.boundOnPopState);
+                    _browser2['default'].addPopstateListener(_this4.boundOnPopState);
                     if (done) done(err, state);
-                    if (err && invokeErrCb) _this3._invokeListeners('$error', state, null, err);
+                    if (err && invokeErrCb) _this4._invokeListeners('$transitionerror', state, null, err);
                 };
 
                 // Get start path
@@ -248,19 +256,19 @@
                 if (!startState) {
                     (function () {
                         // If no supplied start state, get start state
-                        startState = _this3.matchPath(startPath);
+                        startState = _this4.matchPath(startPath);
                         // Navigate to default function
                         var navigateToDefault = function navigateToDefault() {
-                            return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
+                            return _this4.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
                                 return cb(err, state, false);
                             });
                         };
                         // If matched start path
                         if (startState) {
-                            _this3.lastStateAttempt = startState;
-                            _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
+                            _this4.lastStateAttempt = startState;
+                            _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, function (err, state) {
                                 if (!err) {
-                                    _this3.updateBrowserState(_this3.lastKnownState, _this3.buildUrl(startState.name, startState.params), true);
+                                    _this4.updateBrowserState(_this4.lastKnownState, _this4.buildUrl(startState.name, startState.params), true);
                                     cb(null, state);
                                 } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
@@ -293,6 +301,7 @@
                 this.lastKnownState = null;
                 this.lastStateAttempt = null;
                 this.started = false;
+                this._invokeListeners('$stop');
 
                 _browser2['default'].removePopstateListener(this.boundOnPopState);
                 return this;
@@ -312,23 +321,27 @@
              * Whether or not the given route name with specified params is active.
              * @param  {String}   name             The route name
              * @param  {Object}   [params={}]      The route parameters
-             * @param  {Boolean}  [equality=false] If set to false (default), isActive will return true
-             *                                     if the provided route name and params are descendants
-             *                                     of the active state.
-             * @return {Boolean}                   Whether nor not the route is active
+             * @param  {Boolean}  [strictEquality=false] If set to false (default), isActive will return true
+             *                                           if the provided route name and params are descendants
+             *                                           of the active state.
+             * @param  {Boolean}   [ignoreQueryParams=true] Whether or not to ignore URL query parameters when
+             *                                              comparing the two states together.
+             *                                              query parameters when comparing two states together.
+             * @return {Boolean}                    Whether nor not the route is active
              */
         }, {
             key: 'isActive',
             value: function isActive(name) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
                 var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+                var ignoreQueryParams = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
                 var activeState = this.getState();
 
                 if (!activeState) return false;
 
                 if (strictEquality || activeState.name === name) {
-                    return this.areStatesEqual(makeState(name, params), activeState);
+                    return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams);
                 }
 
                 return this.areStatesDescendants(makeState(name, params), activeState);
@@ -340,7 +353,24 @@
         }, {
             key: 'areStatesEqual',
             value: function areStatesEqual(state1, state2) {
-                return state1.name === state2.name && Object.keys(state1.params).length === Object.keys(state2.params).length && Object.keys(state1.params).every(function (p) {
+                var _this5 = this;
+
+                var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
+                if (state1.name !== state2.name) return false;
+
+                var getUrlParams = function getUrlParams(name) {
+                    return _this5.rootNode.getSegmentsByName(name).map(function (segment) {
+                        return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
+                    }).reduce(function (params, p) {
+                        return params.concat(p);
+                    }, []);
+                };
+
+                var state1Params = getUrlParams(state1.name);
+                var state2Params = getUrlParams(state2.name);
+
+                return state1Params.length === state2Params.length && state1Params.every(function (p) {
                     return state1.params[p] === state2.params[p];
                 });
             }
@@ -384,163 +414,8 @@
         }, {
             key: '_addListener',
             value: function _addListener(name, cb, replace) {
-                var normalizedName = name.replace(/^(\*|\^|=)/, '');
-                if (normalizedName && !/^\$/.test(name)) {
-                    var segments = this.rootNode.getSegmentsByName(normalizedName);
-                    if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
-                }
-                if (!this._cbs[name]) this._cbs[name] = [];
-                this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb);
+                this._cbs[name] = (this._cbs[name] || []).concat(cb);
                 return this;
-            }
-
-            /**
-             * @private
-             */
-        }, {
-            key: '_removeListener',
-            value: function _removeListener(name, cb) {
-                if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(function (callback) {
-                    return callback !== cb;
-                });
-                return this;
-            }
-
-            /**
-             * Add a route change listener
-             * @param {Function} cb The listener to add
-             * @return {Router5} The router instance
-             */
-        }, {
-            key: 'addListener',
-            value: function addListener(cb) {
-                return this._addListener('*', cb);
-            }
-
-            /**
-             * Remove a route change listener
-             * @param  {Function} cb The listener to remove
-             * @return {Router5} The router instance
-             */
-        }, {
-            key: 'removeListener',
-            value: function removeListener(cb) {
-                return this._removeListener('*', cb);
-            }
-
-            /**
-             * Add a node change listener
-             * @param {String}   name The route segment full name
-             * @param {Function} cb   The listener to add
-             * @return {Router5} The router instance
-             */
-        }, {
-            key: 'addNodeListener',
-            value: function addNodeListener(name, cb) {
-                return this._addListener('^' + name, cb, true);
-            }
-
-            /**
-             * Remove a node change listener
-             * @param {String}   name The route segment full name
-             * @param {Function} cb   The listener to remove
-             * @return {Router5} The router instance
-             */
-        }, {
-            key: 'removeNodeListener',
-            value: function removeNodeListener(name, cb) {
-                this._cbs['^' + name] = [];
-                return this;
-            }
-
-            /**
-             * Add a route change listener
-             * @param {String}   name The route name to listen to
-             * @param {Function} cb   The listener to add
-             * @return {Router5} The router instance
-             */
-        }, {
-            key: 'addRouteListener',
-            value: function addRouteListener(name, cb) {
-                return this._addListener('=' + name, cb);
-            }
-
-            /**
-             * Remove a route change listener
-             * @param {String}   name The route name to listen to
-             * @param {Function} cb   The listener to remove
-             * @return {Router5} The router instance
-             */
-        }, {
-            key: 'removeRouteListener',
-            value: function removeRouteListener(name, cb) {
-                return this._removeListener('=' + name, cb);
-            }
-
-            /**
-             * Add a transition start callback
-             * @param  {Function} cb The callback
-             * @return {Router5}     The router instance
-             */
-        }, {
-            key: 'onTransitionStart',
-            value: function onTransitionStart(cb) {
-                return this._addListener('$start', cb);
-            }
-
-            /**
-             * Remove a transition start callback
-             * @param  {Function} cb The callback
-             * @return {Router5}     The router instance
-             */
-        }, {
-            key: 'offTransitionStart',
-            value: function offTransitionStart(cb) {
-                return this._removeListener('$start', cb);
-            }
-
-            /**
-             * Add a transition cancel callback
-             * @param  {Function} cb The callback
-             * @return {Router5}     The router instance
-             */
-        }, {
-            key: 'onTransitionCancel',
-            value: function onTransitionCancel(cb) {
-                return this._addListener('$cancel', cb);
-            }
-
-            /**
-             * Remove a transition cancel callback
-             * @param  {Function} cb The callback
-             * @return {Router5}     The router instance
-             */
-        }, {
-            key: 'offTransitionCancel',
-            value: function offTransitionCancel(cb) {
-                return this._removeListener('$cancel', cb);
-            }
-
-            /**
-             * Add a transition error callback
-             * @param  {Function} cb The callback
-             * @return {Router5}     The router instance
-             */
-        }, {
-            key: 'onTransitionError',
-            value: function onTransitionError(cb) {
-                return this._addListener('$error', cb);
-            }
-
-            /**
-             * Remove a transition error callback
-             * @param  {Function} cb The callback
-             * @return {Router5}     The router instance
-             */
-        }, {
-            key: 'offTransitionError',
-            value: function offTransitionError(cb) {
-                return this._removeListener('$error', cb);
             }
 
             /**
@@ -646,7 +521,7 @@
 
                 var pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
 
-                if (!pathParts) throw new Error('Could not parse url ' + url);
+                if (!pathParts) throw new Error('[router5] Could not parse url ' + url);
 
                 var _pathParts$slice = pathParts.slice(1);
 
@@ -678,25 +553,24 @@
         }, {
             key: '_transition',
             value: function _transition(toState, fromState, done) {
-                var _this4 = this;
+                var _this6 = this;
 
                 // Cancel current transition
                 if (this._tr) this._tr();
-                this._invokeListeners('$start', toState, fromState);
+                this._invokeListeners('$transitionstart', toState, fromState);
 
                 var tr = (0, _transition2.transition)(this, toState, fromState, function (err) {
-                    _this4._tr = null;
+                    _this6._tr = null;
 
                     if (err) {
-                        if (err === _constants2['default'].TRANSITION_CANCELLED) _this4._invokeListeners('$cancel', toState, fromState);else _this4._invokeListeners('$error', toState, fromState, err);
+                        if (err === _constants2['default'].TRANSITION_CANCELLED) _this6._invokeListeners('$transitioncancel', toState, fromState);else _this6._invokeListeners('$transitionerror', toState, fromState, err);
 
                         if (done) done(err);
                         return;
                     }
 
-                    _this4.lastKnownState = toState;
-                    _this4._invokeListeners('=' + toState.name, toState, fromState);
-                    _this4._invokeListeners('*', toState, fromState);
+                    _this6.lastKnownState = toState;
+                    _this6._invokeListeners('$transitionsuccess', toState, fromState);
 
                     if (done) done(null, toState);
                 });
@@ -721,7 +595,7 @@
             value: function navigate(name, params, opts, done) {
                 if (params === undefined) params = {};
 
-                var _this5 = this;
+                var _this7 = this;
 
                 if (opts === undefined) opts = {};
 
@@ -737,7 +611,7 @@
 
                 if (!path) {
                     if (done) done(_constants2['default'].ROUTE_NOT_FOUND);
-                    this._invokeListeners('$error', null, this.lastKnownState, _constants2['default'].ROUTE_NOT_FOUND);
+                    this._invokeListeners('$transitionerror', null, this.lastKnownState, _constants2['default'].ROUTE_NOT_FOUND);
                     return;
                 }
 
@@ -749,7 +623,7 @@
                 // (no desactivation and no callbacks)
                 if (sameStates && !opts.reload) {
                     if (done) done(_constants2['default'].SAME_STATES);
-                    this._invokeListeners('$error', toState, this.lastKnownState, _constants2['default'].SAME_STATES);
+                    this._invokeListeners('$transitionerror', toState, this.lastKnownState, _constants2['default'].SAME_STATES);
                     return;
                 }
 
@@ -760,7 +634,7 @@
                         return;
                     }
 
-                    _this5.updateBrowserState(_this5.lastStateAttempt, url, opts.replace);
+                    _this7.updateBrowserState(_this7.lastStateAttempt, url, opts.replace);
                     if (done) done(null, state);
                 });
             }
@@ -784,6 +658,17 @@
 
         return Router5;
     })();
+
+    Router5.ERR = _constants2['default'];
+
+    /**
+     * An helper function to return instructions for a transition:
+     * intersection route name, route names to deactivate, route names to activate
+     * @param  {Object} toState   The state to go to
+     * @param  {Object} fromState The state to go from
+     * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
+     */
+    Router5.transitionPath = _transition2.transitionPath;
 
     module.exports = Router5;
 });

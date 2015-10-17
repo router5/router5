@@ -430,11 +430,11 @@ function testRouter(useHash) {
             expect(router.isActive('users')).toBe(true);
             expect(router.isActive('users', {}, true)).toBe(false);
 
-            router.navigate('section.view', {section: 'section1', id: 12});
+            router.navigate('section.query', {section: 'section1'});
             expect(router.isActive('section', {section: 'section1'})).toBe(true);
-            expect(router.isActive('section.view', {section: 'section1', id: 12})).toBe(true);
-            expect(router.isActive('section.view', {section: 'section2', id: 12})).toBe(false);
-            expect(router.isActive('section.view', {section: 'section1', id: 123})).toBe(false);
+            expect(router.isActive('section.query', {section: 'section1', param1: '123'})).toBe(true);
+            expect(router.isActive('section.query', {section: 'section2'})).toBe(false);
+            expect(router.isActive('section.query', {section: 'section1', param2: '123'}, false, false)).toBe(false);
             expect(router.isActive('users.view', {id: 123})).toBe(false);
         });
 

@@ -6,13 +6,11 @@
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-function identity() {
-    var _arguments = arguments;
-
+var identity = function identity(arg) {
     return function () {
-        return _arguments[0];
+        return arg;
     };
-}
+};
 var noop = function noop() {};
 
 /**

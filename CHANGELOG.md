@@ -1,3 +1,18 @@
+<a name="0.9.0"></a>
+# 0.9.0 (2015-10-17)
+
+
+### Features
+
+* add ignoreQueryParams argument in router.isActive(), default to true ([c10dd0b](https://github.com/router5/router5/commit/c10dd0b)), closes [router5/router5-react#8](https://github.com/router5/router5-react/issues/8)
+
+
+### BREAKING CHANGES
+
+* isActive will now ignore query parameters by default.
+
+
+
 <a name="0.8.0"></a>
 # 0.8.0 (2015-10-12)
 

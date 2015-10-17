@@ -245,18 +245,21 @@ class Router5 {
      * Whether or not the given route name with specified params is active.
      * @param  {String}   name             The route name
      * @param  {Object}   [params={}]      The route parameters
-     * @param  {Boolean}  [equality=false] If set to false (default), isActive will return true
-     *                                     if the provided route name and params are descendants
-     *                                     of the active state.
-     * @return {Boolean}                   Whether nor not the route is active
+     * @param  {Boolean}  [strictEquality=false] If set to false (default), isActive will return true
+     *                                           if the provided route name and params are descendants
+     *                                           of the active state.
+     * @param  {Boolean}   [ignoreQueryParams=true] Whether or not to ignore URL query parameters when
+     *                                              comparing the two states together.
+     *                                              query parameters when comparing two states together.
+     * @return {Boolean}                    Whether nor not the route is active
      */
-    isActive(name, params = {}, strictEquality = false) {
-        let activeState = this.getState();
+    isActive(name, params = {}, strictEquality = false, ignoreQueryParams = true) {
+        let activeState = this.getState()
 
         if (!activeState) return false
 
         if (strictEquality || activeState.name === name) {
-            return this.areStatesEqual(makeState(name, params), activeState);
+            return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams)
         }
 
         return this.areStatesDescendants(makeState(name, params), activeState);
@@ -265,10 +268,18 @@ class Router5 {
     /**
      * @private
      */
-    areStatesEqual(state1, state2) {
-        return state1.name === state2.name &&
-           Object.keys(state1.params).length === Object.keys(state2.params).length &&
-           Object.keys(state1.params).every(p => state1.params[p] === state2.params[p]);
+    areStatesEqual(state1, state2, ignoreQueryParams = true) {
+        if (state1.name !== state2.name) return false;
+
+        const getUrlParams = name => this.rootNode
+            .getSegmentsByName(name)
+            .map(segment => segment.parser[ignoreQueryParams ? 'urlParams' : 'params'])
+            .reduce((params, p) => params.concat(p), []);
+
+        const state1Params = getUrlParams(state1.name);
+        const state2Params = getUrlParams(state2.name);
+
+        return state1Params.length === state2Params.length && state1Params.every(p => state1.params[p] === state2.params[p]);
     }
 
     /**

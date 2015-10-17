@@ -60,7 +60,6 @@
 
         var _transitionPath = transitionPath(toState, fromState);
 
-        var intersection = _transitionPath.intersection;
         var toDeactivate = _transitionPath.toDeactivate;
         var toActivate = _transitionPath.toActivate;
 
@@ -99,16 +98,7 @@
             });
         };
 
-        var nodeListenerFn = router._cbs['^' + intersection];
-        var nodeListener = function nodeListener(toState, fromState, cb) {
-            var listeners = nodeListenerFn;
-
-            (0, _asyncProcess['default'])(isCancelled, listeners, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null);
-            }, true);
-        };
-
-        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(nodeListenerFn && nodeListenerFn.length ? nodeListener : []);
+        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
 
         (0, _asyncProcess['default'])(isCancelled, pipeline, toState, fromState, done);
 
