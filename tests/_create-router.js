@@ -28,7 +28,8 @@
     ]);
 
     var sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
-        new RouteNode('view', '/view/:id')
+        new RouteNode('view', '/view/:id'),
+        new RouteNode('query', '/query?param2&param3')
     ]);
 
     function createRouter(base, useHash, hashPrefix) {
