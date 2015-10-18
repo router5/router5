@@ -1,3 +1,13 @@
+<a name="0.9.1"></a>
+## 0.9.1 (2015-10-18)
+
+
+### Bug Fixes
+
+* don't use array destructuring to avoid the use of Symbol ([db1af75](https://github.com/router5/router5/commit/db1af75))
+
+
+
 <a name="0.9.0"></a>
 # 0.9.0 (2015-10-17)
 
