@@ -156,7 +156,7 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     start() {
-        let args = [...arguments];
+        let args = Array.prototype.slice.call(arguments);
         let lastArg = args.slice(-1)[0];
         let done = (lastArg instanceof Function) ? lastArg : null;
         let startPath, startState;

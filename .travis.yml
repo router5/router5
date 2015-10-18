@@ -7,7 +7,6 @@ before_script:
 script:
   - npm run lint
   - npm run build
-  - npm run buildTest
   - npm run test
   # - npm run test-sauce
 after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

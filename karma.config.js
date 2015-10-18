@@ -93,7 +93,6 @@ module.exports = function(config) {
         browsers: sauce ? Object.keys(customLaunchers) : ['Firefox'],
 
         files: [
-            'node_modules/bluebird/js/browser/bluebird.js',
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
             'node_modules/route-node/dist/umd/route-node.js',
             'temp/test/constants.js',
