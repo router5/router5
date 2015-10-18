@@ -521,7 +521,9 @@ class Router5 {
 
         if (!pathParts) throw new Error(`Could not parse url ${url}`)
 
-        let [pathname, hash, search] = pathParts.slice(1)
+        const pathname = pathParts[1];
+        const hash     = pathParts[2];
+        const search   = pathParts[3];
         let opts = this.options
 
         return (
