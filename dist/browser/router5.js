@@ -2,7 +2,7 @@
 
 /**
  * @license
- * @version 0.9.0
+ * @version 0.9.1
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -817,8 +817,6 @@
     
         return cancel;
     }
-    var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-    
     
     
     var makeState = function makeState(name, params, path) {
@@ -1315,14 +1313,9 @@
     
                 if (!pathParts) throw new Error('[router5] Could not parse url ' + url);
     
-                var _pathParts$slice = pathParts.slice(1);
-    
-                var _pathParts$slice2 = _slicedToArray(_pathParts$slice, 3);
-    
-                var pathname = _pathParts$slice2[0];
-                var hash = _pathParts$slice2[1];
-                var search = _pathParts$slice2[2];
-    
+                var pathname = pathParts[1];
+                var hash = pathParts[2];
+                var search = pathParts[3];
                 var opts = this.options;
     
                 return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : pathname.replace(new RegExp('^' + opts.base), '')) + (search || '');
