@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.9.1
+ * @version 0.9.2
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -967,7 +967,7 @@
                     this.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                     return;
                 }
-                if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
+                if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState, false)) {
                     return;
                 }
     
@@ -1560,7 +1560,7 @@
     
                 var toState = makeState(name, params, path);
                 this.lastStateAttempt = toState;
-                var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
+                var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false;
     
                 // Do not proceed further if states are the same and no reload
                 // (no desactivation and no callbacks)

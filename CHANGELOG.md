@@ -1,3 +1,13 @@
+<a name="0.9.2"></a>
+## 0.9.2 (2015-10-19)
+
+
+### Bug Fixes
+
+* don't ignore query params when navigating and comparing states ([f15ed29](https://github.com/router5/router5/commit/f15ed29))
+
+
+
 <a name="0.9.1"></a>
 ## 0.9.1 (2015-10-18)
 
