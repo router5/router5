@@ -17,7 +17,7 @@ var files = [
 ];
 
 var globalWrapper = {
-    header: '\n(function (window) {\n',
+    header: '\n(function (window) {\n"use strict";\n\n',
     footer: '\n}(window));\n',
     export: '\n\n' +
             '    window.RouteNode = RouteNode;\n' +
@@ -26,7 +26,7 @@ var globalWrapper = {
 }
 
 var amdWrapper = {
-    header: "\ndefine('router5', [], function () {\n",
+    header: '\ndefine(\'router5\', [], function () {\n"use strict";\n\n',
     footer: '\n});\n',
     export: '\n\n    return {RouteNode: RouteNode, Router5: Router5, listenersPlugin: listenersPlugin};'
 }

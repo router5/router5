@@ -32,11 +32,6 @@ function getExpectedPath(useHash, path) {
     return useHash ? '#' + hashPrefix + path : path;
 }
 
-function getPath(useHash) {
-    if (useHash) return window.location.hash + window.location.search;
-    return window.location.pathname.replace(new RegExp('^' + base), '') + window.location.search;
-}
-
 describe('router5', function () {
     // Without hash
     testRouter(false);
@@ -76,6 +71,17 @@ function testRouter(useHash) {
             expect(router.buildPath('users.list')).toBe('/users/list');
         });
 
+        it('should buildUrl', function () {
+            expect(router.buildUrl('users.list')).toBe(base + getExpectedPath(useHash, '/users/list'));
+            expect(router.buildUrl('users.view', {id: 1})).toBe(base + getExpectedPath(useHash, '/users/view/1'));
+        });
+
+        it('should return base', function () {
+            if (useHash) {
+                expect(browser.getBase()).toEqual(base);
+            }
+        });
+
         it('should be able to extract the path of an URL', function () {
             expect(router.urlToPath(makeUrl('/home'))).toBe('/home');
             expect(function () {
@@ -89,13 +95,11 @@ function testRouter(useHash) {
         });
 
         it('should start with the default route', function (done) {
-            expect(getPath(useHash)).toBe('');
             expect(router.getState()).toEqual(null)
             expect(router.isActive('home')).toEqual(false)
 
             router.start(function () {
                 expect(router.started).toBe(true);
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/home'));
                 expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
@@ -122,8 +126,8 @@ function testRouter(useHash) {
             router.lastKnownState = null;
             router.lastStateAttempt = null;
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/about'));
-            router.start(function () {
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/home'));
+            router.start(function (err, state) {
+                expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -132,7 +136,7 @@ function testRouter(useHash) {
             router.stop();
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/admin'));
             router.start(function (err) {
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/home'));
+                expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -173,7 +177,6 @@ function testRouter(useHash) {
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
             router.start(function (err, state) {
                 expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
-                expect(router.getLocation()).toBe('/users/list');
                 router.setOption('trailingSlash', 0);
                 done();
             });
@@ -185,7 +188,6 @@ function testRouter(useHash) {
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
             router.start(function (err, state) {
                 expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
-                expect(router.getLocation()).toBe('/users/list');
                 router.setOption('trailingSlash', 0);
                 done();
             });
@@ -214,8 +216,8 @@ function testRouter(useHash) {
         });
 
         it('should be able to navigate to routes', function (done) {
-            router.navigate('users.view', {id: 123}, {}, function (err) {
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/users/view/123'));
+            router.navigate('users.view', {id: 123}, {}, function (err, state) {
+                expect(state).toEqual({name: 'users.view', params: {id: 123}, path: '/users/view/123'});
                 done();
             });
         });
@@ -240,53 +242,25 @@ function testRouter(useHash) {
             });
         });
 
-        it('should handle popstate events', function (done) {
-            var homeState = {name: 'home', params: {}, path: '/home'};
-            var evt = {};
-            router.onPopState(evt);
-            setTimeout(function () {
-                expect(router.getState()).not.toEqual(homeState);
-
-                evt.state = homeState;
-                router.onPopState(evt);
-
-                setTimeout(function () {
-                    expect(router.getState()).toEqual(homeState);
-
-                    router.navigate('users', {}, {}, function () {
-                        router.registerComponent('users', {canDeactivate: function () { return false; }});
-                        // Nothing will happen
-                        router.onPopState(evt);
-                        // Push to queue
-                        setTimeout(function () {
-                            expect(router.getState()).not.toEqual(homeState);
-                            router.deregisterComponent('users');
-                            done();
-                        });
-                    });
-                });
-            });
-        });
-
         it('should be able to stop routing', function (done) {
-            router.navigate('orders.pending', {}, {}, function () {
+            router.navigate('users', {}, {}, function () {
                 router.stop();
                 expect(router.started).toBe(false);
-                router.navigate('users.list', {}, {}, function () {
-                    expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/orders/pending'));
+                router.navigate('users.list', {}, {}, function (err) {
+                    expect(err).toEqual(Router5.ERR.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
-                    done();
+                    router.start(done);
                 });
             });
         });
 
-        it('should not start with default route if current path matches an existing route', function (done) {
-            router.start(function () {
-                expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/orders/pending'));
-                done();
-            });
-        });
+        // it('should not start with default route if current path matches an existing route', function (done) {
+        //     router.start(function (err, state) {
+        //         expect(router.getState()).toEqual({name: 'orders.pending', params: {}, path: '/orders/pending'});
+        //         done();
+        //     });
+        // });
 
         it('should be able to register components', function () {
             router.registerComponent('users.view', {});
@@ -311,7 +285,7 @@ function testRouter(useHash) {
                     }
                 });
                 router.navigate('users', {}, {}, function () {
-                    expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/users/list'));
+                    expect(router.getState()).toEqual({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
                     router.deregisterComponent('users.list');
@@ -321,7 +295,7 @@ function testRouter(useHash) {
                         }
                     });
                     router.navigate('users', {}, {}, function () {
-                        expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/users'));
+                        expect(router.getState()).toEqual({name: 'users', params: {}, path: '/users'});
                         done();
                     });
                 });

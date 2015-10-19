@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @license
  * @version 0.9.2
@@ -26,6 +24,8 @@
  * SOFTWARE.
  */
 (function (window) {
+"use strict";
+
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
     
     function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -622,16 +622,6 @@
         TRANSITION_CANCELLED: 'CANCELLED'
     };
     /**
-     * Dumb functions
-     */
-    var identity = function identity(arg) {
-        return function () {
-            return arg;
-        };
-    };
-    var noop = function noop() {};
-    
-    /**
      * Browser detection
      */
     var isBrowser = typeof window !== 'undefined';
@@ -643,46 +633,24 @@
         return window.location.pathname.replace(/\/$/, '');
     };
     
-    var pushState = function pushState(state, title, path) {
-        return window.history.pushState(state, title, path);
-    };
-    
-    var replaceState = function replaceState(state, title, path) {
-        return window.history.replaceState(state, title, path);
-    };
-    
-    var addPopstateListener = function addPopstateListener(fn) {
-        return window.addEventListener('popstate', fn);
-    };
-    
-    var removePopstateListener = function removePopstateListener(fn) {
-        return window.removeEventListener('popstate', fn);
-    };
-    
     var getLocation = function getLocation(opts) {
         var path = opts.useHash ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + opts.base), '');
         return path + window.location.search;
     };
-    
-    var getState = function getState() {
-        return window.history.state;
-    };
-    
     /**
      * Export browser object
      */
     var browser = {};
     if (isBrowser) {
-        browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation, getState: getState };
+        browser = { getBase: getBase, getLocation: getLocation };
     } else {
         browser = {
-            getBase: identity(''),
-            pushState: noop,
-            replaceState: noop,
-            addPopstateListener: noop,
-            removePopstateListener: noop,
-            getLocation: identity(''),
-            getState: identity(null)
+            getBase: function getBase() {
+                return '';
+            },
+            getLocation: function getLocation() {
+                return '';
+            }
         };
     }
     function asyncProcess(isCancelled, functions, toState, fromState, callback) {
@@ -856,7 +824,6 @@
             this._setBase();
             this.registeredPlugins = {};
             // Bind onPopState
-            this.boundOnPopState = this.onPopState.bind(this);
         }
     
         /**
@@ -942,49 +909,6 @@
             }
     
             /**
-             * @private
-             */
-        }, {
-            key: 'onPopState',
-            value: function onPopState(evt) {
-                var _this3 = this;
-    
-                // Do nothing if no state or if last know state is poped state (it should never happen)
-                var newState = !evt.state || !evt.state.name;
-                var state = evt.state || this.matchPath(this.getLocation());
-                var opts = this.options;
-    
-                if (!state) {
-                    // If current state is already the default route, we will have a double entry
-                    // Navigating back and forth will emit SAME_STATES error
-                    this.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
-                    return;
-                }
-                if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState, false)) {
-                    return;
-                }
-    
-                this._transition(state, this.lastKnownState, function (err, toState) {
-                    if (err) {
-                        if (err === constants.CANNOT_DEACTIVATE) {
-                            var url = _this3.buildUrl(_this3.lastKnownState.name, _this3.lastKnownState.params);
-                            if (!newState) {
-                                // Keep history state unchanged but use current URL
-                                _this3.updateBrowserState(state, url, true);
-                            }
-                            // else do nothing or history will be messed up
-                            // TODO: history.back()?
-                        } else {
-                                // Force navigation to default state
-                                _this3.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
-                            }
-                    } else {
-                        _this3.updateBrowserState(toState, _this3.buildUrl(toState.name, toState.params), newState);
-                    }
-                });
-            }
-    
-            /**
              * Set a transition middleware function
              * @param {Function} fn The middleware function
              */
@@ -1006,7 +930,7 @@
         }, {
             key: 'start',
             value: function start() {
-                var _this4 = this;
+                var _this3 = this;
     
                 var args = Array.prototype.slice.call(arguments);
                 var lastArg = args.slice(-1)[0];
@@ -1032,9 +956,9 @@
                 var cb = function cb(err, state) {
                     var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
     
-                    browser.addPopstateListener(_this4.boundOnPopState);
                     if (done) done(err, state);
-                    if (err && invokeErrCb) _this4._invokeListeners('$$error', state, null, err);
+                    if (!err) _this3._invokeListeners('$$success', state, null, { replace: true });
+                    if (err && invokeErrCb) _this3._invokeListeners('$$error', state, null, err);
                 };
     
                 // Get start path
@@ -1043,19 +967,18 @@
                 if (!startState) {
                     (function () {
                         // If no supplied start state, get start state
-                        startState = _this4.matchPath(startPath);
+                        startState = _this3.matchPath(startPath);
                         // Navigate to default function
                         var navigateToDefault = function navigateToDefault() {
-                            return _this4.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
+                            return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
                                 return cb(err, state, false);
                             });
                         };
                         // If matched start path
                         if (startState) {
-                            _this4.lastStateAttempt = startState;
-                            _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, function (err, state) {
+                            _this3.lastStateAttempt = startState;
+                            _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
                                 if (!err) {
-                                    _this4.updateBrowserState(_this4.lastKnownState, _this4.buildUrl(startState.name, startState.params), true);
                                     cb(null, state);
                                 } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
@@ -1070,10 +993,9 @@
                 } else {
                     // Initialise router with provided start state
                     this.lastKnownState = startState;
-                    this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
                     cb(null, startState);
                 }
-                // Listen to popstate
+    
                 return this;
             }
     
@@ -1090,7 +1012,6 @@
                 this.started = false;
                 this._invokeListeners('$stop');
     
-                browser.removePopstateListener(this.boundOnPopState);
                 return this;
             }
     
@@ -1140,14 +1061,14 @@
         }, {
             key: 'areStatesEqual',
             value: function areStatesEqual(state1, state2) {
-                var _this5 = this;
+                var _this4 = this;
     
                 var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
     
                 if (state1.name !== state2.name) return false;
     
                 var getUrlParams = function getUrlParams(name) {
-                    return _this5.rootNode.getSegmentsByName(name).map(function (segment) {
+                    return _this4.rootNode.getSegmentsByName(name).map(function (segment) {
                         return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
                     }).reduce(function (params, p) {
                         return params.concat(p);
@@ -1264,6 +1185,10 @@
             value: function buildUrl(route, params) {
                 return this._buildUrl(this.rootNode.buildPath(route, params));
             }
+    
+            /**
+             * @private
+             */
         }, {
             key: '_buildUrl',
             value: function _buildUrl(path) {
@@ -1335,24 +1260,23 @@
         }, {
             key: '_transition',
             value: function _transition(toState, fromState, done) {
-                var _this6 = this;
+                var _this5 = this;
     
                 // Cancel current transition
                 if (this._tr) this._tr();
                 this._invokeListeners('$$start', toState, fromState);
     
                 var tr = transition(this, toState, fromState, function (err) {
-                    _this6._tr = null;
+                    _this5._tr = null;
     
                     if (err) {
-                        if (err === constants.TRANSITION_CANCELLED) _this6._invokeListeners('$$cancel', toState, fromState);else _this6._invokeListeners('$$error', toState, fromState, err);
+                        if (err === constants.TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
     
                         if (done) done(err);
                         return;
                     }
     
-                    _this6.lastKnownState = toState;
-                    _this6._invokeListeners('$$success', toState, fromState);
+                    _this5.lastKnownState = toState;
     
                     if (done) done(null, toState);
                 });
@@ -1377,7 +1301,7 @@
             value: function navigate(name, params, opts, done) {
                 if (params === undefined) params = {};
     
-                var _this7 = this;
+                var _this6 = this;
     
                 if (opts === undefined) opts = {};
     
@@ -1386,10 +1310,7 @@
                     return;
                 }
     
-                if (!browser.getState()) opts.replace = true;
-    
                 var path = this.buildPath(name, params);
-                var url = this.buildUrl(name, params);
     
                 if (!path) {
                     if (done) done(constants.ROUTE_NOT_FOUND);
@@ -1409,6 +1330,8 @@
                     return;
                 }
     
+                var fromState = sameStates ? null : this.lastKnownState;
+    
                 // Transition and amend history
                 return this._transition(toState, sameStates ? null : this.lastKnownState, function (err, state) {
                     if (err) {
@@ -1416,25 +1339,9 @@
                         return;
                     }
     
-                    _this7.updateBrowserState(_this7.lastStateAttempt, url, opts.replace);
+                    _this6._invokeListeners('$$success', toState, fromState, opts);
                     if (done) done(null, state);
                 });
-            }
-    
-            /**
-             * Update the browser history
-             * @param {Object}  stateObject     State object to be used
-             * @param {string}  url             Absolute url to be used
-             * @param {boolean} [replace=false] If replaceState or pushState should be used
-             * @param {string}  [title='']      The title to be used for history
-             */
-        }, {
-            key: 'updateBrowserState',
-            value: function updateBrowserState(stateObject, url) {
-                var replace = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-                var title = arguments.length <= 3 || arguments[3] === undefined ? '' : arguments[3];
-    
-                browser[replace ? 'replaceState' : 'pushState'](stateObject, title, url);
             }
         }]);
     
