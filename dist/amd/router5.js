@@ -926,7 +926,7 @@ define('router5', [], function () {
     
                 if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
     
-                var pluginMethods = ['onStart', 'onStop', 'onTransitionStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+                var pluginMethods = ['onStart', 'onStop', 'onStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
                 var defined = pluginMethods.concat('init').some(function (method) {
                     return plugin[method] !== undefined;
                 });
@@ -938,7 +938,7 @@ define('router5', [], function () {
     
                 pluginMethods.forEach(function (method) {
                     if (plugin[method]) {
-                        _this2._addListener(method.toLowerCase().replace(/^on/, '$'), plugin[method]);
+                        _this2._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
                     }
                 });
                 return this;
@@ -1037,7 +1037,7 @@ define('router5', [], function () {
     
                     browser.addPopstateListener(_this4.boundOnPopState);
                     if (done) done(err, state);
-                    if (err && invokeErrCb) _this4._invokeListeners('$transitionerror', state, null, err);
+                    if (err && invokeErrCb) _this4._invokeListeners('$$error', state, null, err);
                 };
     
                 // Get start path
@@ -1342,20 +1342,20 @@ define('router5', [], function () {
     
                 // Cancel current transition
                 if (this._tr) this._tr();
-                this._invokeListeners('$transitionstart', toState, fromState);
+                this._invokeListeners('$$start', toState, fromState);
     
                 var tr = transition(this, toState, fromState, function (err) {
                     _this6._tr = null;
     
                     if (err) {
-                        if (err === constants.TRANSITION_CANCELLED) _this6._invokeListeners('$transitioncancel', toState, fromState);else _this6._invokeListeners('$transitionerror', toState, fromState, err);
+                        if (err === constants.TRANSITION_CANCELLED) _this6._invokeListeners('$$cancel', toState, fromState);else _this6._invokeListeners('$$error', toState, fromState, err);
     
                         if (done) done(err);
                         return;
                     }
     
                     _this6.lastKnownState = toState;
-                    _this6._invokeListeners('$transitionsuccess', toState, fromState);
+                    _this6._invokeListeners('$$success', toState, fromState);
     
                     if (done) done(null, toState);
                 });
@@ -1396,7 +1396,7 @@ define('router5', [], function () {
     
                 if (!path) {
                     if (done) done(constants.ROUTE_NOT_FOUND);
-                    this._invokeListeners('$transitionerror', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
+                    this._invokeListeners('$$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
                     return;
                 }
     
@@ -1408,7 +1408,7 @@ define('router5', [], function () {
                 // (no desactivation and no callbacks)
                 if (sameStates && !opts.reload) {
                     if (done) done(constants.SAME_STATES);
-                    this._invokeListeners('$transitionerror', toState, this.lastKnownState, constants.SAME_STATES);
+                    this._invokeListeners('$$error', toState, this.lastKnownState, constants.SAME_STATES);
                     return;
                 }
     

@@ -10,6 +10,16 @@ var listeners = {
     noop: function () {}
 };
 
+var myPlugin = {
+    name: 'PLUGIN_NAME',
+    init: function (router) {
+        router.myCustomMethod = function () {};
+    },
+    onTransitionStart: function onTransitionStart() {},
+    onTransitionSuccess: function onTransitionSuccess() {},
+    onTransitionError: function onTransitionError() {}
+};
+
 var base = window.location.pathname;
 
 var hashPrefix = '!';
@@ -45,7 +55,7 @@ function testRouter(useHash) {
 
     describe(useHash ? 'with using URL hash part' : 'without using URL hash part', function () {
         function flushListeners() {
-            // router._cbs = {};
+            router._cbs = {};
         }
 
         beforeEach(flushListeners);
@@ -351,6 +361,12 @@ function testRouter(useHash) {
                 done();
             });
             cancel();
+        });
+
+        it('should register plugins', function() {
+            router.usePlugin(myPlugin);
+            expect(router.myCustomMethod).not.toBe(undefined);
+            expect(router.registeredPlugins[myPlugin.name]).toEqual(myPlugin);
         });
 
         it('should support a transition middleware', function (done) {
