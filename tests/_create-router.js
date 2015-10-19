@@ -48,8 +48,7 @@
             .add(ordersRoute)
             .addNode('index', '/')
             .addNode('home', '/home')
-            .addNode('admin', '/admin',   function canActivate() { return false; })
-            .usePlugin(listenersPlugin());
+            .addNode('admin', '/admin',   function canActivate() { return false; });
     }
 });
 

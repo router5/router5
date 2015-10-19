@@ -1,12 +1,6 @@
 var router = null;
 
 var listeners = {
-    global: function (newState, oldState) {
-        return;
-    },
-    node: function nodeListener(newState, oldState) {
-        // Do nothing
-    },
     transition: function (fromState, toState, done) {
         done(null);
     },
@@ -51,8 +45,7 @@ function testRouter(useHash) {
 
     describe(useHash ? 'with using URL hash part' : 'without using URL hash part', function () {
         function flushListeners() {
-            router._cbs = {};
-            router.usePlugin(listenersPlugin());
+            // router._cbs = {};
         }
 
         beforeEach(flushListeners);
@@ -184,13 +177,10 @@ function testRouter(useHash) {
         it('should start with the provided state', function (done) {
             router.stop();
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/home'));
-            spyOn(listeners, 'global').and.callThrough();
-            router.addListener('', listeners.global);
             var homeState = {name: 'home', params: {}, path: '/home'};
             router.start(homeState, function (err, state) {
                 expect(state).toEqual(homeState);
                 expect(router.lastKnownState).toEqual(homeState);
-                expect(listeners.global).not.toHaveBeenCalled();
                 done();
             });
         });
@@ -202,20 +192,6 @@ function testRouter(useHash) {
 
             router.start(function(err, state) {
                 expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
-                done();
-            });
-        });
-
-        it('should call root node listener on first transition', function (done) {
-            router.stop();
-            router.setOption('defaultRoute', 'home');
-            window.history.replaceState({}, '', base);
-            spyOn(listeners, 'global').and.callThrough();
-            router.addNodeListener('', listeners.global);
-
-            router.start(function (err, state) {
-                expect(state).toEqual({name: 'home', path: '/home', params: {}});
-                expect(listeners.global).toHaveBeenCalled();
                 done();
             });
         });
@@ -234,27 +210,15 @@ function testRouter(useHash) {
             });
         });
 
-        it('should invoke listeners on navigation', function (done) {
-            router.navigate('home', {}, {}, function () {
-                var previousState = router.lastKnownState;
-                spyOn(listeners, 'global').and.callThrough();
-                router.addListener(listeners.global);
-
-                router.navigate('orders.pending', {}, {}, function () {
-                    expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/orders/pending'));
-                    expect(listeners.global).toHaveBeenCalledWith(router.lastKnownState, previousState);
-                    done();
-                });
-            });
-        });
-
-        it('should invoke listeners on navigation to same state if reload is set to true', function (done) {
+        it('should navigate to same state if reload is set to true', function (done) {
             router.navigate('orders.pending', {}, {}, function (err, state) {
-                expect(err).toBe(Router5.ERR.SAME_STATES);
+                router.navigate('orders.pending', {}, {}, function (err, state) {
+                    expect(err).toBe(Router5.ERR.SAME_STATES);
 
-                router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
-                    expect(err).toBe(null);
-                    done();
+                    router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
+                        expect(err).toBe(null);
+                        done();
+                    });
                 });
             });
         });
@@ -287,25 +251,6 @@ function testRouter(useHash) {
             });
         });
 
-        it('should be able to remove listeners', function (done) {
-            spyOn(listeners, 'global').and.callThrough();
-
-            router.navigate('orders.view', {id: 123}, {replace: true}, function () {
-                expect(listeners.global).not.toHaveBeenCalled();
-                done();
-            });
-        });
-
-        it('should not invoke listeners if trying to navigate to the current route', function (done) {
-            spyOn(listeners, 'global').and.callThrough();
-            router.addListener(listeners.global);
-
-            router.navigate('orders.view', {id: 123}, {}, function () {
-                expect(listeners.global).not.toHaveBeenCalled();
-                done();
-            });
-        });
-
         it('should be able to stop routing', function (done) {
             router.navigate('orders.pending', {}, {}, function () {
                 router.stop();
@@ -324,55 +269,6 @@ function testRouter(useHash) {
                 expect(getPath(useHash)).toBe(getExpectedPath(useHash, '/orders/pending'));
                 done();
             });
-        });
-
-        it('should invoke node listeners', function (done) {
-            router.navigate('users.list', {}, {}, function () {
-                spyOn(listeners, 'node').and.callThrough();
-                router.addNodeListener('users', listeners.node);
-                router.navigate('users.view', {id: 1}, {}, function () {
-                    expect(listeners.node).toHaveBeenCalled();
-                    router.navigate('users.view', {id: 1}, {}, function() {
-                        router.navigate('users.view', {id: 2}, {}, function(err, state) {
-                            expect(listeners.node.calls.count()).toBe(2);
-                            done();
-                        })
-                    });
-                });
-            });
-        });
-
-        it('should invoke node listeners on root', function (done) {
-            router.navigate('orders', {}, {}, function () {
-                spyOn(listeners, 'node').and.returnValue(true);
-                router.addNodeListener('', listeners.node);
-                router.navigate('users', {}, {}, function () {
-                    expect(listeners.node).toHaveBeenCalled();
-                    router.removeNodeListener('', listeners.node);
-                    done();
-                });
-            });
-        });
-
-        it('should invoke route listeners', function (done) {
-            router.navigate('users.list', {}, {}, function () {
-                spyOn(listeners, 'node').and.callThrough();
-                router.addRouteListener('users', listeners.node);
-                router.navigate('users', {}, {}, function () {
-                    expect(listeners.node).toHaveBeenCalled();
-                    router.removeRouteListener('users', listeners.node);
-                    done();
-                });
-            });
-        });
-
-        it('should warn when trying to register a listener on a non-existing node', function () {
-            spyOn(console, 'warn');
-            router.addNodeListener('fake.node', listeners.node);
-            expect(console.warn).toHaveBeenCalled();
-            router.removeNodeListener('fake.node', listeners.node);
-            // Removing twice shouldn't throw an error
-            router.removeNodeListener('fake.node', listeners.node);
         });
 
         it('should be able to register components', function () {

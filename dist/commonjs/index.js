@@ -14,9 +14,5 @@ var _routeNode = require('route-node');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
 
-var _pluginsListeners = require('./plugins/listeners');
-
-var _pluginsListeners2 = _interopRequireDefault(_pluginsListeners);
-
-exports['default'] = { Router5: _router52['default'], RouteNode: _routeNode2['default'], listenersPlugin: _pluginsListeners2['default'] };
+exports['default'] = { Router5: _router52['default'], RouteNode: _routeNode2['default'] };
 module.exports = exports['default'];
