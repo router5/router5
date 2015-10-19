@@ -398,7 +398,7 @@ class Router5 {
         let match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
         let path = match ? match[1] : url;
 
-        let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
+        let pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
 
         if (!pathParts) throw new Error(`[router5] Could not parse url ${url}`);
 

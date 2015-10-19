@@ -1306,7 +1306,7 @@ define('router5', [], function () {
                 var match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
                 var path = match ? match[1] : url;
     
-                var pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/);
+                var pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
     
                 if (!pathParts) throw new Error('[router5] Could not parse url ' + url);
     

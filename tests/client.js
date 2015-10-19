@@ -78,6 +78,9 @@ function testRouter(useHash) {
 
         it('should be able to extract the path of an URL', function () {
             expect(router.urlToPath(makeUrl('/home'))).toBe('/home');
+            expect(function () {
+                router.urlToPath('');
+            }).toThrow();
         });
 
         it('should match an URL', function () {
