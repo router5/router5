@@ -14,6 +14,7 @@ let getLocation = (opts) => {
         : window.location.pathname.replace(new RegExp('^' + opts.base), '');
     return path + window.location.search;
 };
+
 /**
  * Export browser object
  */
