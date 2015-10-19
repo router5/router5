@@ -168,7 +168,7 @@ var Router5 = (function () {
                 this.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                 return;
             }
-            if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState)) {
+            if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState, false)) {
                 return;
             }
 
@@ -607,7 +607,7 @@ var Router5 = (function () {
 
             var toState = makeState(name, params, path);
             this.lastStateAttempt = toState;
-            var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt) : false;
+            var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false;
 
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
