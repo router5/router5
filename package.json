@@ -11,7 +11,8 @@
     "test": "npm run test-client && npm run test-server",
     "test-sauce": "karma start karma.config.js --sauce",
     "clog": "node scripts/changelog.js",
-    "lint": "eslint modules"
+    "lint": "eslint modules",
+    "release": "./scripts/release.js"
   },
   "repository": {
     "type": "git",

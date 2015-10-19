@@ -18,7 +18,6 @@ var VERSION = run('npm --no-git-tag-version version ' + versionType, false);
 
 run('npm run lint');
 run('npm run build');
-run('npm run buildTest');
 run('npm test');
 run('npm run clog');
 
