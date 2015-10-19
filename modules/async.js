@@ -17,7 +17,7 @@ export default function asyncProcess(isCancelled, functions, toState, fromState,
         }
 
         return false;
-    }
+    };
 
     let iterate = (err) => {
         if (err) callback(err);
@@ -25,7 +25,7 @@ export default function asyncProcess(isCancelled, functions, toState, fromState,
             remainingSteps = remainingSteps.slice(1);
             next();
         }
-    }
+    };
 
     let next = () => {
         if (isCancelled()) {
@@ -34,7 +34,7 @@ export default function asyncProcess(isCancelled, functions, toState, fromState,
             let finished = processFn(iterate);
             if (finished) callback(null);
         }
-    }
+    };
 
     next();
 }

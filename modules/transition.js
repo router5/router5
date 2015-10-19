@@ -8,7 +8,7 @@ function transitionPath(toState, fromState) {
         return name.split('.').reduce((ids, name) => {
             return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
         }, []);
-    }
+    };
 
     let i;
     let fromStateIds = fromState ? nameToIDs(fromState.name) : [];
@@ -62,12 +62,12 @@ function transition(router, toState, fromState, callback) {
 
     let middlewareFn = router._onTr;
     let middleware = (toState, fromState, cb) => {
-        let mwareFunction = [middlewareFn]
+        let mwareFunction = [middlewareFn];
 
         asyncProcess(
             isCancelled, mwareFunction, toState, fromState,
             err => cb(err ? constants.TRANSITION_ERR : null)
-        )
+        );
     };
 
     let pipeline = (fromState ? [canDeactivate] : [])

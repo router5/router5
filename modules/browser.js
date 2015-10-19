@@ -27,14 +27,14 @@ let getLocation = (opts) => {
         ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '')
         : window.location.pathname.replace(new RegExp('^' + opts.base), '');
     return path + window.location.search;
-}
+};
 
 let getState = () => window.history.state;
 
 /**
  * Export browser object
  */
-let browser = {}
+let browser = {};
 if (isBrowser) {
     browser = {getBase, pushState, replaceState, addPopstateListener, removePopstateListener, getLocation, getState};
 } else {

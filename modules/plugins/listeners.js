@@ -5,7 +5,7 @@ function transitionIntersection(toState, fromState) {
         return name.split('.').reduce((ids, name) => {
             return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
         }, []);
-    }
+    };
 
     let i;
     const fromStateIds = fromState ? nameToIDs(fromState.name) : [];
@@ -29,7 +29,7 @@ export default function listenersPlugin() {
         const removeListener = (name, cb) => {
             if (listeners[name]) listeners[name] = listeners[name].filter(callback => callback !== cb);
             return router;
-        }
+        };
 
         const addListener = (name, cb, replace) => {
             const normalizedName = name.replace(/^(\*|\^|=)/, '');
@@ -43,7 +43,7 @@ export default function listenersPlugin() {
             listeners[name] = (replace ? [] : listeners[name]).concat(cb);
 
             return router;
-        }
+        };
 
         router.addListener = (cb) => addListener('*', cb);
         router.removeListener = (cb) => removeListener('*', cb);

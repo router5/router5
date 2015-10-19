@@ -135,7 +135,7 @@ class Router5 {
             } else {
                 this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), newState);
             }
-        })
+        });
     }
 
     /**
@@ -180,7 +180,7 @@ class Router5 {
             browser.addPopstateListener(this.boundOnPopState);
             if (done) done(err, state);
             if (err && invokeErrCb) this._invokeListeners('$transitionerror', state, null, err);
-        }
+        };
 
         // Get start path
         if (!startPath && !startState) startPath = this.getLocation();
@@ -200,7 +200,7 @@ class Router5 {
                     }
                     else if (opts.defaultRoute) navigateToDefault();
                     else cb(err, null, false);
-                })
+                });
             } else if (opts.defaultRoute) {
                 // If default, navigate to default
                 navigateToDefault();
@@ -210,7 +210,7 @@ class Router5 {
             }
         } else {
             // Initialise router with provided start state
-            this.lastKnownState = startState
+            this.lastKnownState = startState;
             this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
             cb(null, startState);
         }
@@ -254,12 +254,12 @@ class Router5 {
      * @return {Boolean}                    Whether nor not the route is active
      */
     isActive(name, params = {}, strictEquality = false, ignoreQueryParams = true) {
-        let activeState = this.getState()
+        let activeState = this.getState();
 
-        if (!activeState) return false
+        if (!activeState) return false;
 
         if (strictEquality || activeState.name === name) {
-            return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams)
+            return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams);
         }
 
         return this.areStatesDescendants(makeState(name, params), activeState);
@@ -405,7 +405,7 @@ class Router5 {
         const pathname = pathParts[1];
         const hash     = pathParts[2];
         const search   = pathParts[3];
-        let opts = this.options
+        let opts = this.options;
 
         return (
             opts.useHash
@@ -428,25 +428,25 @@ class Router5 {
      */
     _transition(toState, fromState, done) {
         // Cancel current transition
-        if (this._tr) this._tr()
+        if (this._tr) this._tr();
         this._invokeListeners('$transitionstart', toState, fromState);
 
         let tr = transition(this, toState, fromState, (err) => {
-            this._tr = null
+            this._tr = null;
 
             if (err) {
                 if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$transitioncancel', toState, fromState);
                 else this._invokeListeners('$transitionerror', toState, fromState, err);
 
                 if (done) done(err);
-                return
+                return;
             }
 
             this.lastKnownState = toState;
             this._invokeListeners('$transitionsuccess', toState, fromState);
 
             if (done) done(null, toState);
-        })
+        });
 
         this._tr = tr;
         return () => !tr || tr();
@@ -475,7 +475,7 @@ class Router5 {
         if (!path) {
             if (done) done(constants.ROUTE_NOT_FOUND);
             this._invokeListeners('$transitionerror', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
-            return
+            return;
         }
 
         let toState = makeState(name, params, path);
@@ -487,7 +487,7 @@ class Router5 {
         if (sameStates && !opts.reload) {
             if (done) done(constants.SAME_STATES);
             this._invokeListeners('$transitionerror', toState, this.lastKnownState, constants.SAME_STATES);
-            return
+            return;
         }
 
         // Transition and amend history
@@ -499,7 +499,7 @@ class Router5 {
 
             this.updateBrowserState(this.lastStateAttempt, url, opts.replace);
             if (done) done(null, state);
-        })
+        });
     }
 
     /**
