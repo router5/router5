@@ -1,5 +1,4 @@
 export default function asyncProcess(isCancelled, functions, toState, fromState, callback, allowNoResult = false) {
-    isCancelled = isCancelled || (() => false);
     let remainingSteps = functions || [];
 
     let processFn = (done) => {

@@ -20,6 +20,10 @@ var myPlugin = {
     onTransitionError: function onTransitionError() {}
 };
 
+var myUnamedPlugin = {
+    onTransitionStart: function onTransitionStart() {}
+};
+
 var base = window.location.pathname;
 
 var hashPrefix = '!';
@@ -363,11 +367,28 @@ function testRouter(useHash) {
             cancel();
         });
 
-        it('should register plugins', function() {
+        it('should register plugins', function () {
             router.usePlugin(myPlugin);
             expect(router.myCustomMethod).not.toBe(undefined);
             expect(router.registeredPlugins[myPlugin.name]).toEqual(myPlugin);
+
+            router.navigate('orders', {}, {}, function (err, state) {
+                // expect(myPlugin.onTransitionStart).toHaveBeenCalled();
+                // expect(myPlugin.onTransitionSuccess).toHaveBeenCalled();
+            });
         });
+
+        it('should throw if a plugin has none of the expected methods', function () {
+            expect(function () {
+                router.usePlugin({});
+            }).toThrow();
+        });
+
+        it('should warn when registering unamed plugins', function() {
+            spyOn(console, 'warn');
+            router.usePlugin(myUnamedPlugin);
+            expect(console.warn).toHaveBeenCalled();
+        })
 
         it('should support a transition middleware', function (done) {
             spyOn(listeners, 'transition').and.callThrough();
