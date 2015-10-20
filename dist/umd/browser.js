@@ -14,8 +14,6 @@
     /**
      * Browser detection
      */
-    'use strict';
-
     var isBrowser = typeof window !== 'undefined';
 
     /**

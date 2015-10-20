@@ -105,7 +105,7 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-          'temp/test/*.js': ['coverage']
+          'temp/test/!(browser).js': ['coverage']
         },
 
         plugins: [

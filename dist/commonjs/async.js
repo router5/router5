@@ -1,14 +1,12 @@
-'use strict';
-
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
 exports['default'] = asyncProcess;
 
 function asyncProcess(isCancelled, functions, toState, fromState, callback) {
-    var allowNoResult = arguments.length <= 5 || arguments[5] === undefined ? false : arguments[5];
+    var allowBool = arguments.length <= 5 || arguments[5] === undefined ? true : arguments[5];
 
-    var remainingSteps = functions || [];
+    var remainingSteps = functions;
 
     var processFn = function processFn(done) {
         if (!remainingSteps.length) return true;
@@ -16,7 +14,7 @@ function asyncProcess(isCancelled, functions, toState, fromState, callback) {
         var len = remainingSteps[0].length;
         var res = remainingSteps[0](toState, fromState, done);
 
-        if (typeof res === 'boolean') {
+        if (allowBool && typeof res === 'boolean') {
             done(res ? null : true);
         } else if (res && typeof res.then === 'function') {
             res.then(function () {
@@ -24,9 +22,8 @@ function asyncProcess(isCancelled, functions, toState, fromState, callback) {
             }, function () {
                 return done(true);
             });
-        } else if (len < 3 && allowNoResult) {
-            done(null);
         }
+        // else: wait for done to be called
 
         return false;
     };

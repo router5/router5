@@ -1,24 +1,23 @@
-export default function asyncProcess(isCancelled, functions, toState, fromState, callback, allowNoResult = false) {
-    let remainingSteps = functions || [];
+export default function asyncProcess(isCancelled, functions, toState, fromState, callback, allowBool = true) {
+    let remainingSteps = functions;
 
-    let processFn = (done) => {
+    const processFn = (done) => {
         if (!remainingSteps.length) return true;
 
-        let len = remainingSteps[0].length;
-        let res = remainingSteps[0](toState, fromState, done);
+        const len = remainingSteps[0].length;
+        const res = remainingSteps[0](toState, fromState, done);
 
-        if (typeof res === 'boolean') {
+        if (allowBool && typeof res === 'boolean') {
             done(res ? null : true);
         } else if (res && typeof res.then === 'function') {
             res.then(() => done(null), () => done(true));
-        } else if (len < 3 && allowNoResult) {
-            done(null);
         }
+        // else: wait for done to be called
 
         return false;
     };
 
-    let iterate = (err) => {
+    const iterate = (err) => {
         if (err) callback(err);
         else {
             remainingSteps = remainingSteps.slice(1);
@@ -26,11 +25,11 @@ export default function asyncProcess(isCancelled, functions, toState, fromState,
         }
     };
 
-    let next = () => {
+    const next = () => {
         if (isCancelled()) {
             callback(null);
         } else {
-            let finished = processFn(iterate);
+            const finished = processFn(iterate);
             if (finished) callback(null);
         }
     };

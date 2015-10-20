@@ -60,9 +60,9 @@ function transition(router, toState, fromState, callback) {
         );
     };
 
-    let middlewareFn = router._onTr;
+    let middlewareFn = router.mware;
     let middleware = (toState, fromState, cb) => {
-        let mwareFunction = [middlewareFn];
+        let mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         asyncProcess(
             isCancelled, mwareFunction, toState, fromState,

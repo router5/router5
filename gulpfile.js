@@ -34,7 +34,7 @@ function build(modules, dest) {
     return function() {
         return gulp
             .src(files, {base: 'modules'})
-            .pipe(babel({modules: modules}))
+            .pipe(babel({modules: modules, blacklist: ['strict']}))
             .pipe(gulp.dest(dest));
     };
 }

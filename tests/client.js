@@ -357,6 +357,7 @@ function testRouter(useHash) {
 
         it('should throw if a plugin has none of the expected methods', function () {
             expect(function () {
+                spyOn(console, 'warn');
                 router.usePlugin({});
             }).toThrow();
         });
@@ -369,7 +370,7 @@ function testRouter(useHash) {
 
         it('should support a transition middleware', function (done) {
             spyOn(listeners, 'transition').and.callThrough();
-            router.onTransition(listeners.transition);
+            router.useMiddleware(listeners.transition);
             router.navigate('users', {}, {}, function (err, state) {
                 expect(listeners.transition).toHaveBeenCalled();
                 expect(err).toBe(null);
@@ -379,10 +380,21 @@ function testRouter(useHash) {
 
         it('should fail transition if middleware returns an error', function (done) {
             spyOn(listeners, 'transitionErr').and.callThrough();
-            router.onTransition(listeners.transitionErr);
+            router.useMiddleware(listeners.transitionErr);
             router.navigate('home', {}, {}, function (err, state) {
                 expect(listeners.transitionErr).toHaveBeenCalled();
                 expect(err).toBe(Router5.ERR.TRANSITION_ERR);
+                done();
+            });
+        });
+
+        it('should be able to take more than one middleware', function (done) {
+            spyOn(listeners, 'transition').and.callThrough();
+            spyOn(listeners, 'transitionErr').and.callThrough();
+            router.useMiddleware(listeners.transition, listeners.transitionErr);
+            router.navigate('home', {}, {}, function (err, state) {
+                expect(listeners.transition).toHaveBeenCalled();
+                expect(listeners.transitionErr).toHaveBeenCalled();
                 done();
             });
         });

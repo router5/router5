@@ -1,11 +1,9 @@
-/**
- * Browser detection
- */
-'use strict';
-
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
+/**
+ * Browser detection
+ */
 var isBrowser = typeof window !== 'undefined';
 
 /**

@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 0.9.2
+ * @version 1.0.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -655,9 +655,9 @@ define('router5', [], function () {
         };
     }
     function asyncProcess(isCancelled, functions, toState, fromState, callback) {
-        var allowNoResult = arguments.length <= 5 || arguments[5] === undefined ? false : arguments[5];
+        var allowBool = arguments.length <= 5 || arguments[5] === undefined ? true : arguments[5];
     
-        var remainingSteps = functions || [];
+        var remainingSteps = functions;
     
         var processFn = function processFn(done) {
             if (!remainingSteps.length) return true;
@@ -665,7 +665,7 @@ define('router5', [], function () {
             var len = remainingSteps[0].length;
             var res = remainingSteps[0](toState, fromState, done);
     
-            if (typeof res === 'boolean') {
+            if (allowBool && typeof res === 'boolean') {
                 done(res ? null : true);
             } else if (res && typeof res.then === 'function') {
                 res.then(function () {
@@ -673,9 +673,8 @@ define('router5', [], function () {
                 }, function () {
                     return done(true);
                 });
-            } else if (len < 3 && allowNoResult) {
-                done(null);
             }
+            // else: wait for done to be called
     
             return false;
         };
@@ -768,9 +767,9 @@ define('router5', [], function () {
             });
         };
     
-        var middlewareFn = router._onTr;
+        var middlewareFn = router.mware;
         var middleware = function middleware(toState, fromState, cb) {
-            var mwareFunction = [middlewareFn];
+            var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
     
             asyncProcess(isCancelled, mwareFunction, toState, fromState, function (err) {
                 return cb(err ? constants.TRANSITION_ERR : null);
@@ -806,7 +805,7 @@ define('router5', [], function () {
             _classCallCheck(this, Router5);
     
             this.started = false;
-            this._onTr = null;
+            this.mware = null;
             this._cbs = {};
             this._cmps = {};
             this._canAct = {};
@@ -910,13 +909,13 @@ define('router5', [], function () {
             }
     
             /**
-             * Set a transition middleware function
+             * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
              * @param {Function} fn The middleware function
              */
         }, {
-            key: 'onTransition',
-            value: function onTransition(fn) {
-                this._onTr = fn;
+            key: 'useMiddleware',
+            value: function useMiddleware() {
+                this.mware = Array.prototype.slice.call(arguments);
                 return this;
             }
     

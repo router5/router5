@@ -11,8 +11,6 @@
         global.transition = mod.exports;
     }
 })(this, function (exports, module, _async, _constants) {
-    'use strict';
-
     function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
     var _asyncProcess = _interopRequireDefault(_async);
@@ -89,9 +87,9 @@
             });
         };
 
-        var middlewareFn = router._onTr;
+        var middlewareFn = router.mware;
         var middleware = function middleware(toState, fromState, cb) {
-            var mwareFunction = [middlewareFn];
+            var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
             (0, _asyncProcess['default'])(isCancelled, mwareFunction, toState, fromState, function (err) {
                 return cb(err ? _constants2['default'].TRANSITION_ERR : null);

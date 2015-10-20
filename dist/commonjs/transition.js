@@ -1,5 +1,3 @@
-'use strict';
-
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
@@ -84,9 +82,9 @@ function transition(router, toState, fromState, callback) {
         });
     };
 
-    var middlewareFn = router._onTr;
+    var middlewareFn = router.mware;
     var middleware = function middleware(toState, fromState, cb) {
-        var mwareFunction = [middlewareFn];
+        var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         (0, _async2['default'])(isCancelled, mwareFunction, toState, fromState, function (err) {
             return cb(err ? _constants2['default'].TRANSITION_ERR : null);

@@ -11,8 +11,6 @@
         global.router5 = mod.exports;
     }
 })(this, function (exports, module, _routeNode, _transition2, _constants, _browser) {
-    'use strict';
-
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
     function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -46,7 +44,7 @@
             _classCallCheck(this, Router5);
 
             this.started = false;
-            this._onTr = null;
+            this.mware = null;
             this._cbs = {};
             this._cmps = {};
             this._canAct = {};
@@ -150,13 +148,13 @@
             }
 
             /**
-             * Set a transition middleware function
+             * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
              * @param {Function} fn The middleware function
              */
         }, {
-            key: 'onTransition',
-            value: function onTransition(fn) {
-                this._onTr = fn;
+            key: 'useMiddleware',
+            value: function useMiddleware() {
+                this.mware = Array.prototype.slice.call(arguments);
                 return this;
             }
 

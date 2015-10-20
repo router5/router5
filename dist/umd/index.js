@@ -11,8 +11,6 @@
     global.index = mod.exports;
   }
 })(this, function (exports, module, _router5, _routeNode) {
-  'use strict';
-
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
   var _Router5 = _interopRequireDefault(_router5);

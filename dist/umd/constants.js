@@ -11,8 +11,6 @@
         global.constants = mod.exports;
     }
 })(this, function (exports, module) {
-    'use strict';
-
     var constants = {
         ROUTER_NOT_STARTED: 'NOT_STARTED',
         ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',

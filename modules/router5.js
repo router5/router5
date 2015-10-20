@@ -15,7 +15,7 @@ let makeState = (name, params, path) => ({name, params, path});
 class Router5 {
     constructor(routes, opts = {}) {
         this.started = false;
-        this._onTr = null;
+        this.mware = null;
         this._cbs = {};
         this._cmps = {};
         this._canAct = {};
@@ -99,11 +99,11 @@ class Router5 {
     }
 
     /**
-     * Set a transition middleware function
+     * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
      * @param {Function} fn The middleware function
      */
-    onTransition(fn) {
-        this._onTr = fn;
+    useMiddleware() {
+        this.mware = Array.prototype.slice.call(arguments);
         return this;
     }
 

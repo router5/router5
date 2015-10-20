@@ -1,5 +1,3 @@
-'use strict';
-
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
@@ -45,7 +43,7 @@ var Router5 = (function () {
         _classCallCheck(this, Router5);
 
         this.started = false;
-        this._onTr = null;
+        this.mware = null;
         this._cbs = {};
         this._cmps = {};
         this._canAct = {};
@@ -149,13 +147,13 @@ var Router5 = (function () {
         }
 
         /**
-         * Set a transition middleware function
+         * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
          * @param {Function} fn The middleware function
          */
     }, {
-        key: 'onTransition',
-        value: function onTransition(fn) {
-            this._onTr = fn;
+        key: 'useMiddleware',
+        value: function useMiddleware() {
+            this.mware = Array.prototype.slice.call(arguments);
             return this;
         }
 
