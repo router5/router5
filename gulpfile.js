@@ -21,14 +21,13 @@ var globalWrapper = {
     footer: '\n}(window));\n',
     export: '\n\n' +
             '    window.RouteNode = RouteNode;\n' +
-            '    window.Router5 = Router5;\n' +
-            '    window.listenersPlugin = listenersPlugin;\n'
+            '    window.Router5 = Router5;\n'
 }
 
 var amdWrapper = {
     header: '\ndefine(\'router5\', [], function () {\n"use strict";\n\n',
     footer: '\n});\n',
-    export: '\n\n    return {RouteNode: RouteNode, Router5: Router5, listenersPlugin: listenersPlugin};'
+    export: '\n\n    return {RouteNode: RouteNode, Router5: Router5};'
 }
 
 function build(modules, dest) {

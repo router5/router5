@@ -4,17 +4,16 @@
     } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
         factory(exports, module,
             require('..').Router5,
-            require('..').RouteNode,
-            require('..').listenersPlugin
+            require('..').RouteNode
         );
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, mod, global.Router5, global.RouteNode, global.listenersPlugin);
+        factory(mod.exports, mod, global.Router5, global.RouteNode);
         global.createRouter = mod.exports;
     }
-})(this, function (exports, module, Router5, RouteNode, listenersPlugin) {
+})(this, function (exports, module, Router5, RouteNode) {
     'use strict';
 
     module.exports = createRouter;

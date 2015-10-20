@@ -637,6 +637,7 @@ define('router5', [], function () {
         var path = opts.useHash ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + opts.base), '');
         return path + window.location.search;
     };
+    
     /**
      * Export browser object
      */
@@ -1359,5 +1360,5 @@ define('router5', [], function () {
      */
     Router5.transitionPath = transitionPath;
 
-    return {RouteNode: RouteNode, Router5: Router5, listenersPlugin: listenersPlugin};
+    return {RouteNode: RouteNode, Router5: Router5};
 });

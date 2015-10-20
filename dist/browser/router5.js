@@ -637,6 +637,7 @@
         var path = opts.useHash ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + opts.base), '');
         return path + window.location.search;
     };
+    
     /**
      * Export browser object
      */
@@ -1361,6 +1362,5 @@
 
     window.RouteNode = RouteNode;
     window.Router5 = Router5;
-    window.listenersPlugin = listenersPlugin;
 
 }(window));
