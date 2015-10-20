@@ -36,7 +36,7 @@ You can read more about motivations behind it here: [Why router5?](http://router
 To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)
 
 
-<iframe src="//slides.com/thomasroch/deck/embed" width="100%" height="500" scrolling="no" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+[![Slides preview](https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png)](http://slides.com/thomasroch/deck)
 
 
 ### Features
