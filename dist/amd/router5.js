@@ -610,6 +610,43 @@ define('router5', [], function () {
     
         return RouteNode;
     })();
+    function loggerPlugin() {
+        var startGroup = function startGroup() {
+            return console.group('Router transition');
+        };
+        var endGroup = function endGroup() {
+            return console.groupEnd('Router transition');
+        };
+    
+        return {
+            name: 'LOGGER',
+            onStart: function onStart() {
+                console.info('Router started');
+            },
+            onStop: function onStop() {
+                console.info('Router stopped');
+            },
+            onTransitionStart: function onTransitionStart(toState, fromState) {
+                endGroup();
+                startGroup();
+                console.log('Transition started from state');
+                console.log(fromState);
+                console.log('To state');
+                console.log(toState);
+            },
+            onTransitionCancel: function onTransitionCancel(toState, fromState) {
+                console.warn('Transition cancelled');
+            },
+            onTransitionError: function onTransitionError(toState, fromState, err) {
+                console.warn('Transition error with code ' + err);
+                endGroup();
+            },
+            onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
+                console.log('Transition success');
+                endGroup();
+            }
+        };
+    }
     var constants = {
         ROUTER_NOT_STARTED: 'NOT_STARTED',
         ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
@@ -890,7 +927,7 @@ define('router5', [], function () {
     
                 if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
     
-                var pluginMethods = ['onStart', 'onStop', 'onStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+                var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
                 var defined = pluginMethods.concat('init').some(function (method) {
                     return plugin[method] !== undefined;
                 });
@@ -905,6 +942,7 @@ define('router5', [], function () {
                         _this2._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
                     }
                 });
+    
                 return this;
             }
     
@@ -1358,6 +1396,8 @@ define('router5', [], function () {
      * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
      */
     Router5.transitionPath = transitionPath;
+    
+    Router5.loggerPlugin = loggerPlugin;
 
     return {RouteNode: RouteNode, Router5: Router5};
 });

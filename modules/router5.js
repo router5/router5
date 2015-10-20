@@ -2,6 +2,7 @@ import RouteNode  from 'route-node';
 import {transition, transitionPath} from './transition';
 import constants  from './constants';
 import browser    from './browser';
+import loggerPlugin from './logger';
 
 let makeState = (name, params, path) => ({name, params, path});
 
@@ -81,7 +82,7 @@ class Router5 {
     usePlugin(plugin) {
         if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
 
-        const pluginMethods = ['onStart', 'onStop', 'onStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+        const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
         const defined = pluginMethods.concat('init').some(method => plugin[method] !== undefined);
 
         if (!defined) throw new Error(`[router5] plugin ${plugin.name} has none of the expected methods implemented`);
@@ -95,6 +96,7 @@ class Router5 {
             }
 
         });
+
         return this;
     }
 
@@ -475,5 +477,7 @@ Router5.ERR = constants;
  * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
  */
 Router5.transitionPath = transitionPath;
+
+Router5.loggerPlugin = loggerPlugin;
 
 export default Router5;

@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['exports', 'module', 'route-node', './transition', './constants', './browser'], factory);
+        define(['exports', 'module', 'route-node', './transition', './constants', './browser', './logger'], factory);
     } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-        factory(exports, module, require('route-node'), require('./transition'), require('./constants'), require('./browser'));
+        factory(exports, module, require('route-node'), require('./transition'), require('./constants'), require('./browser'), require('./logger'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, mod, global.RouteNode, global.transition, global.constants, global.browser);
+        factory(mod.exports, mod, global.RouteNode, global.transition, global.constants, global.browser, global.loggerPlugin);
         global.router5 = mod.exports;
     }
-})(this, function (exports, module, _routeNode, _transition2, _constants, _browser) {
+})(this, function (exports, module, _routeNode, _transition2, _constants, _browser, _logger) {
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
     function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -22,6 +22,8 @@
     var _constants2 = _interopRequireDefault(_constants);
 
     var _browser2 = _interopRequireDefault(_browser);
+
+    var _loggerPlugin = _interopRequireDefault(_logger);
 
     var makeState = function makeState(name, params, path) {
         return { name: name, params: params, path: path };
@@ -129,7 +131,7 @@
 
                 if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
 
-                var pluginMethods = ['onStart', 'onStop', 'onStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+                var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
                 var defined = pluginMethods.concat('init').some(function (method) {
                     return plugin[method] !== undefined;
                 });
@@ -144,6 +146,7 @@
                         _this2._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
                     }
                 });
+
                 return this;
             }
 
@@ -597,6 +600,8 @@
      * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
      */
     Router5.transitionPath = _transition2.transitionPath;
+
+    Router5.loggerPlugin = _loggerPlugin['default'];
 
     module.exports = Router5;
 });

@@ -99,13 +99,14 @@ module.exports = function(config) {
             'temp/test/browser.js',
             'temp/test/async.js',
             'temp/test/transition.js',
+            'temp/test/logger.js',
             'temp/test/router5.js',
             'tests/_create-router.js',
             'tests/client.js'
         ],
 
         preprocessors: {
-          'temp/test/!(browser).js': ['coverage']
+          'temp/test/!(browser|logger).js': ['coverage']
         },
 
         plugins: [

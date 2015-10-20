@@ -22,6 +22,10 @@ var _browser = require('./browser');
 
 var _browser2 = _interopRequireDefault(_browser);
 
+var _logger = require('./logger');
+
+var _logger2 = _interopRequireDefault(_logger);
+
 var makeState = function makeState(name, params, path) {
     return { name: name, params: params, path: path };
 };
@@ -128,7 +132,7 @@ var Router5 = (function () {
 
             if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
 
-            var pluginMethods = ['onStart', 'onStop', 'onStart', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+            var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
             var defined = pluginMethods.concat('init').some(function (method) {
                 return plugin[method] !== undefined;
             });
@@ -143,6 +147,7 @@ var Router5 = (function () {
                     _this2._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
                 }
             });
+
             return this;
         }
 
@@ -596,6 +601,8 @@ Router5.ERR = _constants2['default'];
  * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
  */
 Router5.transitionPath = _transition2.transitionPath;
+
+Router5.loggerPlugin = _logger2['default'];
 
 exports['default'] = Router5;
 module.exports = exports['default'];
