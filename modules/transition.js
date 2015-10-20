@@ -3,17 +3,17 @@ import constants from './constants';
 
 export default {transition, transitionPath};
 
-function transitionPath(toState, fromState) {
-    let nameToIDs = name => {
-        return name.split('.').reduce((ids, name) => {
-            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-        }, []);
-    };
+const nameToIDs = name => {
+    return name.split('.').reduce((ids, name) => {
+        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+    }, []);
+};
 
+function transitionPath(toState, fromState) {
     let i;
-    let fromStateIds = fromState ? nameToIDs(fromState.name) : [];
-    let toStateIds = nameToIDs(toState.name);
-    let maxI = Math.min(fromStateIds.length, toStateIds.length);
+    const fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+    const toStateIds = nameToIDs(toState.name);
+    const maxI = Math.min(fromStateIds.length, toStateIds.length);
 
     if (fromState && fromState.name === toState.name) i = Math.max(maxI - 1, 0);
     else {
@@ -22,22 +22,22 @@ function transitionPath(toState, fromState) {
         }
     }
 
-    let toDeactivate = fromStateIds.slice(i).reverse();
-    let toActivate   = toStateIds.slice(i);
-    let intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
+    const toDeactivate = fromStateIds.slice(i).reverse();
+    const toActivate   = toStateIds.slice(i);
+    const intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
 
     return {intersection, toDeactivate, toActivate};
 }
 
 function transition(router, toState, fromState, callback) {
     let cancelled = false;
-    let isCancelled = () => cancelled;
-    let cancel = () => cancelled = true;
-    let done = (err) => callback(cancelled ? constants.TRANSITION_CANCELLED : err);
+    const isCancelled = () => cancelled;
+    const cancel = () => cancelled = true;
+    const done = (err) => callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
 
-    let {toDeactivate, toActivate} = transitionPath(toState, fromState);
+    const {toDeactivate, toActivate} = transitionPath(toState, fromState);
 
-    let canDeactivate = (toState, fromState, cb) => {
+    const canDeactivate = (toState, fromState, cb) => {
         let canDeactivateFunctions = toDeactivate
             .map(name => router._cmps[name])
             .filter(comp => comp && comp.canDeactivate)
@@ -49,7 +49,7 @@ function transition(router, toState, fromState, callback) {
         );
     };
 
-    let canActivate = (toState, fromState, cb) => {
+    const canActivate = (toState, fromState, cb) => {
         let canActivateFunctions = toActivate
             .map(name => router._canAct[name])
             .filter(_ => _);
@@ -60,8 +60,8 @@ function transition(router, toState, fromState, callback) {
         );
     };
 
-    let middlewareFn = router.mware;
-    let middleware = (toState, fromState, cb) => {
+    const middlewareFn = router.mware;
+    const middleware = (toState, fromState, cb) => {
         let mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         asyncProcess(
@@ -70,9 +70,20 @@ function transition(router, toState, fromState, callback) {
         );
     };
 
+    const cleanNonActive = () => {
+        if (router.options.autoCleanUp) {
+            const activeSegments = nameToIDs(toState.name);
+            Object.keys(router._cmps).filter(name => {
+                if (name.indexOf(activeSegments) === -1) router.deregisterComponent(name);
+            });
+        }
+        return true;
+    };
+
     let pipeline = (fromState ? [canDeactivate] : [])
         .concat(canActivate)
-        .concat(middlewareFn ? middleware : []);
+        .concat(middlewareFn ? middleware : [])
+        .concat(cleanNonActive);
 
     asyncProcess(isCancelled, pipeline, toState, fromState, done);
 

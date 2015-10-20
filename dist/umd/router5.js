@@ -57,7 +57,8 @@
                 useHash: false,
                 hashPrefix: '',
                 base: '',
-                trailingSlash: 0
+                trailingSlash: 0,
+                autoCleanUp: true
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];

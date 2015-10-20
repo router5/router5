@@ -736,13 +736,13 @@
     }
     
     
-    function transitionPath(toState, fromState) {
-        var nameToIDs = function nameToIDs(name) {
-            return name.split('.').reduce(function (ids, name) {
-                return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-            }, []);
-        };
+    var nameToIDs = function nameToIDs(name) {
+        return name.split('.').reduce(function (ids, name) {
+            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+        }, []);
+    };
     
+    function transitionPath(toState, fromState) {
         var i = undefined;
         var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
         var toStateIds = nameToIDs(toState.name);
@@ -770,7 +770,7 @@
             return cancelled = true;
         };
         var done = function done(err) {
-            return callback(cancelled ? constants.TRANSITION_CANCELLED : err);
+            return callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
         };
     
         var _transitionPath = transitionPath(toState, fromState);
@@ -813,7 +813,19 @@
             });
         };
     
-        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
+        var cleanNonActive = function cleanNonActive() {
+            if (router.options.autoCleanUp) {
+                (function () {
+                    var activeSegments = nameToIDs(toState.name);
+                    Object.keys(router._cmps).filter(function (name) {
+                        if (name.indexOf(activeSegments) === -1) router.deregisterComponent(name);
+                    });
+                })();
+            }
+            return true;
+        };
+    
+        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(cleanNonActive);
     
         asyncProcess(isCancelled, pipeline, toState, fromState, done);
     
@@ -853,7 +865,8 @@
                 useHash: false,
                 hashPrefix: '',
                 base: '',
-                trailingSlash: 0
+                trailingSlash: 0,
+                autoCleanUp: true
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];

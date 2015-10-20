@@ -14,13 +14,13 @@ var _constants2 = _interopRequireDefault(_constants);
 
 exports['default'] = { transition: transition, transitionPath: transitionPath };
 
-function transitionPath(toState, fromState) {
-    var nameToIDs = function nameToIDs(name) {
-        return name.split('.').reduce(function (ids, name) {
-            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-        }, []);
-    };
+var nameToIDs = function nameToIDs(name) {
+    return name.split('.').reduce(function (ids, name) {
+        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+    }, []);
+};
 
+function transitionPath(toState, fromState) {
     var i = undefined;
     var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
     var toStateIds = nameToIDs(toState.name);
@@ -48,7 +48,7 @@ function transition(router, toState, fromState, callback) {
         return cancelled = true;
     };
     var done = function done(err) {
-        return callback(cancelled ? _constants2['default'].TRANSITION_CANCELLED : err);
+        return callback(isCancelled() ? _constants2['default'].TRANSITION_CANCELLED : err);
     };
 
     var _transitionPath = transitionPath(toState, fromState);
@@ -91,7 +91,19 @@ function transition(router, toState, fromState, callback) {
         });
     };
 
-    var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
+    var cleanNonActive = function cleanNonActive() {
+        if (router.options.autoCleanUp) {
+            (function () {
+                var activeSegments = nameToIDs(toState.name);
+                Object.keys(router._cmps).filter(function (name) {
+                    if (name.indexOf(activeSegments) === -1) router.deregisterComponent(name);
+                });
+            })();
+        }
+        return true;
+    };
+
+    var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(cleanNonActive);
 
     (0, _async2['default'])(isCancelled, pipeline, toState, fromState, done);
 
