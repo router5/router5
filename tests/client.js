@@ -264,16 +264,16 @@ function testRouter(useHash) {
 
         it('should be able to register components', function () {
             router.registerComponent('users.view', {});
-            expect(Object.keys(router._cmps).length).toBe(1);
+            expect(router._cmps['users.view']).not.toBe(undefined);
 
             router.registerComponent('users.list', {});
-            expect(Object.keys(router._cmps).length).toBe(2);
+            expect(router._cmps['users.list']).not.toBe(undefined);
 
             router.deregisterComponent('users.list');
-            expect(Object.keys(router._cmps).length).toBe(1);
+            expect(router._cmps['users.list']).toBe(undefined);
 
             router.deregisterComponent('users.view');
-            expect(Object.keys(router._cmps).length).toBe(0);
+            expect(router._cmps['users.view']).toBe(undefined);
         });
 
         it('should block navigation if a component refuses deactivation', function (done) {
@@ -284,7 +284,8 @@ function testRouter(useHash) {
                         return Promise.reject();
                     }
                 });
-                router.navigate('users', {}, {}, function () {
+                router.navigate('users', {}, {}, function (err) {
+                    expect(err).toBe(Router5.ERR.CANNOT_DEACTIVATE);
                     expect(router.getState()).toEqual({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
@@ -296,10 +297,34 @@ function testRouter(useHash) {
                     });
                     router.navigate('users', {}, {}, function () {
                         expect(router.getState()).toEqual({name: 'users', params: {}, path: '/users'});
+                        // Auto clean up
+                        expect(router._cmps['users.list']).toBe(undefined);
                         done();
                     });
                 });
             });
+        });
+
+        it('should register can deactivate status', function (done) {
+            router.navigate('users.list', {}, {}, function (err) {
+                router.canDeactivate('users.list', false);
+                router.navigate('users', {}, {}, function (err) {
+                    expect(err).toBe(Router5.ERR.CANNOT_DEACTIVATE);
+                    router.canDeactivate('users.list', true);
+                    router.navigate('users', {}, {}, function (err) {
+                        expect(err).toBe(null);
+                        done();
+                    });
+                });
+            });
+        });
+
+        it('should throw if trying to use canDeactivate with autoCleanUp to false', function () {
+            router.setOption('autoCleanUp', false);
+            expect(function () {
+                router.canDeactivate('users.list', true);
+            }).toThrow();
+            router.setOption('autoCleanUp', true);
         });
 
         it('should warn when trying to register a component twice', function () {

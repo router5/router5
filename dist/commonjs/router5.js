@@ -378,8 +378,26 @@ var Router5 = (function () {
     }, {
         key: 'registerComponent',
         value: function registerComponent(name, component) {
-            if (this._cmps[name]) console.warn('A component was alread registered for route node ' + name + '.');
+            var warn = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
+            if (this._cmps[name] && warn) console.warn('A component was alread registered for route node ' + name + '.');
             this._cmps[name] = component;
+            return this;
+        }
+
+        /**
+         * Update the "canDeactivate" status.
+         * @param  {String}  name          The route segment full name
+         * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
+         * @return {[type]}               [description]
+         */
+    }, {
+        key: 'canDeactivate',
+        value: function canDeactivate(name, _canDeactivate) {
+            if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
+            this.registerComponent(name, { canDeactivate: function canDeactivate(toState, fromState) {
+                    return _canDeactivate;
+                } }, false);
             return this;
         }
 
@@ -391,7 +409,7 @@ var Router5 = (function () {
     }, {
         key: 'deregisterComponent',
         value: function deregisterComponent(name) {
-            delete this._cmps[name];
+            this._cmps[name] = undefined;
         }
 
         /**

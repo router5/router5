@@ -770,7 +770,15 @@
             return cancelled = true;
         };
         var done = function done(err) {
-            return callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
+            if (!err && !isCancelled() && router.options.autoCleanUp) {
+                (function () {
+                    var activeSegments = nameToIDs(toState.name);
+                    Object.keys(router._cmps).filter(function (name) {
+                        if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
+                    });
+                })();
+            }
+            callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
         };
     
         var _transitionPath = transitionPath(toState, fromState);
@@ -813,19 +821,7 @@
             });
         };
     
-        var cleanNonActive = function cleanNonActive() {
-            if (router.options.autoCleanUp) {
-                (function () {
-                    var activeSegments = nameToIDs(toState.name);
-                    Object.keys(router._cmps).filter(function (name) {
-                        if (name.indexOf(activeSegments) === -1) router.deregisterComponent(name);
-                    });
-                })();
-            }
-            return true;
-        };
-    
-        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(cleanNonActive);
+        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
     
         asyncProcess(isCancelled, pipeline, toState, fromState, done);
     
@@ -1185,8 +1181,26 @@
         }, {
             key: 'registerComponent',
             value: function registerComponent(name, component) {
-                if (this._cmps[name]) console.warn('A component was alread registered for route node ' + name + '.');
+                var warn = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+    
+                if (this._cmps[name] && warn) console.warn('A component was alread registered for route node ' + name + '.');
                 this._cmps[name] = component;
+                return this;
+            }
+    
+            /**
+             * Update the "canDeactivate" status.
+             * @param  {String}  name          The route segment full name
+             * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
+             * @return {[type]}               [description]
+             */
+        }, {
+            key: 'canDeactivate',
+            value: function canDeactivate(name, _canDeactivate) {
+                if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
+                this.registerComponent(name, { canDeactivate: function canDeactivate(toState, fromState) {
+                        return _canDeactivate;
+                    } }, false);
                 return this;
             }
     
@@ -1198,7 +1212,7 @@
         }, {
             key: 'deregisterComponent',
             value: function deregisterComponent(name) {
-                delete this._cmps[name];
+                this._cmps[name] = undefined;
             }
     
             /**

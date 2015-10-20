@@ -277,9 +277,21 @@ class Router5 {
      * @param  {String} name      The route segment full name
      * @param  {Object} component The component instance
      */
-    registerComponent(name, component) {
-        if (this._cmps[name]) console.warn(`A component was alread registered for route node ${name}.`);
+    registerComponent(name, component, warn = true) {
+        if (this._cmps[name] && warn) console.warn(`A component was alread registered for route node ${name}.`);
         this._cmps[name] = component;
+        return this;
+    }
+
+    /**
+     * Update the "canDeactivate" status.
+     * @param  {String}  name          The route segment full name
+     * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
+     * @return {[type]}               [description]
+     */
+    canDeactivate(name, canDeactivate) {
+        if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
+        this.registerComponent(name, { canDeactivate: (toState, fromState) => canDeactivate }, false);
         return this;
     }
 
@@ -289,7 +301,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     deregisterComponent(name) {
-        delete this._cmps[name];
+        this._cmps[name] = undefined;
     }
 
     /**

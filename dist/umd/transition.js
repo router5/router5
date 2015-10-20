@@ -53,7 +53,15 @@
             return cancelled = true;
         };
         var done = function done(err) {
-            return callback(isCancelled() ? _constants2['default'].TRANSITION_CANCELLED : err);
+            if (!err && !isCancelled() && router.options.autoCleanUp) {
+                (function () {
+                    var activeSegments = nameToIDs(toState.name);
+                    Object.keys(router._cmps).filter(function (name) {
+                        if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
+                    });
+                })();
+            }
+            callback(isCancelled() ? _constants2['default'].TRANSITION_CANCELLED : err);
         };
 
         var _transitionPath = transitionPath(toState, fromState);
@@ -96,19 +104,7 @@
             });
         };
 
-        var cleanNonActive = function cleanNonActive() {
-            if (router.options.autoCleanUp) {
-                (function () {
-                    var activeSegments = nameToIDs(toState.name);
-                    Object.keys(router._cmps).filter(function (name) {
-                        if (name.indexOf(activeSegments) === -1) router.deregisterComponent(name);
-                    });
-                })();
-            }
-            return true;
-        };
-
-        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(cleanNonActive);
+        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
 
         (0, _asyncProcess['default'])(isCancelled, pipeline, toState, fromState, done);
 

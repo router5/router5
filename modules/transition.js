@@ -33,7 +33,15 @@ function transition(router, toState, fromState, callback) {
     let cancelled = false;
     const isCancelled = () => cancelled;
     const cancel = () => cancelled = true;
-    const done = (err) => callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
+    const done = (err) => {
+        if (!err && !isCancelled() && router.options.autoCleanUp) {
+            const activeSegments = nameToIDs(toState.name);
+            Object.keys(router._cmps).filter(name => {
+                if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
+            });
+        }
+        callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
+    };
 
     const {toDeactivate, toActivate} = transitionPath(toState, fromState);
 
@@ -70,20 +78,9 @@ function transition(router, toState, fromState, callback) {
         );
     };
 
-    const cleanNonActive = () => {
-        if (router.options.autoCleanUp) {
-            const activeSegments = nameToIDs(toState.name);
-            Object.keys(router._cmps).filter(name => {
-                if (name.indexOf(activeSegments) === -1) router.deregisterComponent(name);
-            });
-        }
-        return true;
-    };
-
     let pipeline = (fromState ? [canDeactivate] : [])
         .concat(canActivate)
-        .concat(middlewareFn ? middleware : [])
-        .concat(cleanNonActive);
+        .concat(middlewareFn ? middleware : []);
 
     asyncProcess(isCancelled, pipeline, toState, fromState, done);
 
