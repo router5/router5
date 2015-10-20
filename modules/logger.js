@@ -4,10 +4,10 @@ function loggerPlugin() {
 
     return {
         name: 'LOGGER',
-        onStart: function () {
+        onStart() {
             console.info('Router started');
         },
-        onStop: function () {
+        onStop() {
             console.info('Router stopped');
         },
         onTransitionStart(toState, fromState) {
@@ -29,7 +29,7 @@ function loggerPlugin() {
             console.log('Transition success');
             endGroup();
         }
-    }
+    };
 }
 
 export default loggerPlugin;
