@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-function routeNode(nodeName) {
+function routeNode(nodeName, register = false) {
     return function routeNodeWrapper(RouteSegment) {
         class RouteNode extends Component {
             constructor(props, context) {
@@ -17,6 +17,10 @@ function routeNode(nodeName) {
                 this.router.addNodeListener(nodeName, this.nodeListener);
             }
 
+            componentDidMount() {
+                if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
+            }
+
             componentWillUnmout() {
                 this.router.removeNodeListener(nodeName, this.nodeListener);
             }
@@ -24,7 +28,9 @@ function routeNode(nodeName) {
             render() {
                 const props = this.props;
                 const { previousRoute, route } = this.state;
-                return React.createElement(RouteSegment, {...props, previousRoute, route});
+                const component = React.createElement(RouteSegment, {...props, previousRoute, route, ref: register ? 'wrappedInstance' : undefined});
+
+                return component;
             }
         }
 
@@ -36,4 +42,4 @@ function routeNode(nodeName) {
     };
 }
 
-export default RouteSegment;
+export default routeNode;

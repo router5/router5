@@ -186,12 +186,14 @@ define('reactRouter5', ['react'], function (React) {
     var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
     
     
-    var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+    var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
     
     
     function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
     
     function routeNode(nodeName) {
+        var register = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    
         return function routeNodeWrapper(RouteSegment) {
             var RouteNode = (function (_Component) {
                 _inherits(RouteNode, _Component);
@@ -217,6 +219,11 @@ define('reactRouter5', ['react'], function (React) {
                 }
     
                 _createClass(RouteNode, [{
+                    key: 'componentDidMount',
+                    value: function componentDidMount() {
+                        if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
+                    }
+                }, {
                     key: 'componentWillUnmout',
                     value: function componentWillUnmout() {
                         this.router.removeNodeListener(nodeName, this.nodeListener);
@@ -229,7 +236,9 @@ define('reactRouter5', ['react'], function (React) {
                         var previousRoute = _state.previousRoute;
                         var route = _state.route;
     
-                        return React.createElement(RouteSegment, _extends({}, props, { previousRoute: previousRoute, route: route }));
+                        var component = React.createElement(RouteSegment, _extends({}, props, { previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
+    
+                        return component;
                     }
                 }]);
     
