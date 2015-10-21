@@ -4,6 +4,10 @@ export default class Router extends Component {
     constructor(props, context) {
         super(props, context);
         this.router = props.router;
+        this.state = {
+            previousRoute: null,
+            route: router.getState()
+        };
     }
 
     getChildContext() {
@@ -11,10 +15,7 @@ export default class Router extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const { store } = this;
-        const { store: nextStore } = nextProps;
-
-        if (router !== nextRouter) {
+        if (this.props.router !== nextProps.router) {
             console.error('[react-router5][Router]does not support changing the router object.');
         }
     }

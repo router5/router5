@@ -132,6 +132,10 @@ define('reactRouter5', [], function () {
     
             _get(Object.getPrototypeOf(Router.prototype), 'constructor', this).call(this, props, context);
             this.router = props.router;
+            this.state = {
+                previousRoute: null,
+                route: router.getState()
+            };
         }
     
         _createClass(Router, [{
@@ -142,10 +146,7 @@ define('reactRouter5', [], function () {
         }, {
             key: 'componentWillReceiveProps',
             value: function componentWillReceiveProps(nextProps) {
-                var store = this.store;
-                var nextStore = nextProps.store;
-    
-                if (router !== nextRouter) {
+                if (this.props.router !== nextProps.router) {
                     console.error('[react-router5][Router]does not support changing the router object.');
                 }
             }
