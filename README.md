@@ -1,20 +1,13 @@
 [![npm version](https://badge.fury.io/js/router5.svg)](http://badge.fury.io/js/router5)
 [![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5)
 [![Coverage Status](https://coveralls.io/repos/router5/router5/badge.svg)](https://coveralls.io/r/router5/router5)
-
-# router5
-
 [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 > Official website: [router5.github.io](http://router5.github.io)
 
-A simple, powerful, modular and extensible router, based on [route-node](https://github.com/troch/route-node)
-and [path-parser](https://github.com/troch/path-parser).
+# router5
 
-
-### What is it?
-
-It is a __router__, organising __named routes__ in a __tree__ and handling route transitions.
+A simple, powerful, modular and extensible router, organising your __named routes__ in a __tree__ and handling route transitions.
 In its simplest form, Router5 processes routing __instructions__ and outputs __state__ updates.
 
 
@@ -31,13 +24,9 @@ _Router5_ is library and framework agnostic, and makes no asumption on your impl
 It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
-You can read more about motivations behind it here: [Why router5?](http://router5.github.io/docs/why-router5.html).
-
-To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)
-
-
 [![Slides preview](https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png)](http://slides.com/thomasroch/deck)
 
+To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)
 
 ### Features
 
@@ -74,7 +63,7 @@ function per node. Supports asynchronous results.
 
 ### API
 
-- [API Reference](http://router5.github.io/docs/preventing-navigation.html)
+- [API Reference](http://router5.github.io/docs/api-reference.html)
 
 
 ### Examples
@@ -89,6 +78,10 @@ function per node. Supports asynchronous results.
 - [router5-deku](https://github.com/router5/router5-deku)
 - [cyclejs driver gist](https://gist.github.com/axefrog/217e522282a7948737e1)
 
+
+### Contributing
+
+Please read [contributing guidelines](./CONTRIBUTING.md).
 
 ### Related
 

@@ -9,5 +9,6 @@ bower.json
 gulpfile.js
 saucelabs.js
 CHANGELOG.md
+CONTRIBUTING.md
 .editorconfig
 .eslintrc

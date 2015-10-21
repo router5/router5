@@ -28,6 +28,8 @@
     "tests",
     "bower.json",
     "README.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
     ".travis.yml",
     "karma.config.js",
     "package.json",
