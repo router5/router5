@@ -24,7 +24,9 @@ _Router5_ is library and framework agnostic, and makes no asumption on your impl
 It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
-[![Slides preview](https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png)](http://slides.com/thomasroch/deck)
+<p align="center">
+    [![Slides preview](https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png)](http://slides.com/thomasroch/deck)
+</p>
 
 To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)
 
