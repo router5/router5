@@ -4,10 +4,6 @@ export default class Router extends Component {
     constructor(props, context) {
         super(props, context);
         this.router = props.router;
-        this.state = {
-            previousRoute: null,
-            route: router.getState()
-        };
     }
 
     getChildContext() {

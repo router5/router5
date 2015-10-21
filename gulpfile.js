@@ -10,14 +10,16 @@ var files = [
     'modules/*.js'
 ];
 
+var importFix = '    var Component = React.Component;\n    var PropTypes = React.PropTypes;\n    var Children = React.Children;\n\n';
+
 var globalWrapper = {
-    header: '\n(function (window) {\n"use strict";\n\n',
+    header: '\n(function (window) {\n"use strict";\n\n' + importFix,
     footer: '\n}(window));\n',
     export: '\n\n    window.reactRouter5 = {Link: Link, Router: Router, routeNode: routeNode};\n'
 }
 
 var amdWrapper = {
-    header: '\ndefine(\'reactRouter5\', [], function () {\n"use strict";\n\n',
+    header: '\ndefine(\'reactRouter5\', [\'react\'], function (React) {\n"use strict";\n\n' + importFix,
     footer: '\n});\n',
     export: '\n\n    return {Link: Link, Router: Router, routeNode: routeNode};'
 }

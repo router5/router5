@@ -26,6 +26,10 @@
 (function (window) {
 "use strict";
 
+    var Component = React.Component;
+    var PropTypes = React.PropTypes;
+    var Children = React.Children;
+
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
     
     var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -42,9 +46,20 @@
     
             _get(Object.getPrototypeOf(Link.prototype), 'constructor', this).call(this, props, context);
             this.router = context.router;
+    
+            this.isActive = this.isActive.bind(this);
+            this.clickHandler = this.clickHandler.bind(this);
+            this.routeChangeHandler = this.routeChangeHandler.bind(this);
+    
+            this.state = { active: this.isActive() };
         }
     
         _createClass(Link, [{
+            key: 'isActive',
+            value: function isActive() {
+                return this.router.isActive(this.props.routeName, this.props.routeParams);
+            }
+        }, {
             key: 'clickHandler',
             value: function clickHandler(evt) {
                 if (this.props.onClick) {
@@ -59,23 +74,23 @@
     
                 if (evt.button === 0 && !comboKey) {
                     evt.preventDefault();
-                    router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+                    this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
                 }
             }
         }, {
             key: 'routeChangeHandler',
             value: function routeChangeHandler(toState, fromState) {
-                this.setState({ active: router.isActive(this.props.routeName, this.props.routeParams) });
+                this.setState({ active: this.isActive() });
             }
         }, {
             key: 'componentDidMount',
             value: function componentDidMount() {
-                router.addListener(this.routeChangeHandler);
+                this.router.addListener(this.routeChangeHandler);
             }
         }, {
             key: 'componentWillUnmount',
             value: function componentWillUnmount() {
-                router.removeListener(this.routeChangeHandler);
+                this.router.removeListener(this.routeChangeHandler);
             }
         }, {
             key: 'render',
@@ -85,6 +100,7 @@
                 var routeParams = _props.routeParams;
                 var className = _props.className;
                 var activeClassName = _props.activeClassName;
+                var children = _props.children;
                 var active = this.state.active;
     
                 var href = this.router.buildUrl(routeName, routeParams);
@@ -92,7 +108,7 @@
     
                 var onClick = this.clickHandler;
     
-                return React.createElement('a', { href: href, className: linkclassName, onClick: onClick }, props.children);
+                return React.createElement('a', { href: href, className: linkclassName, onClick: onClick }, children);
             }
         }]);
     
@@ -132,10 +148,6 @@
     
             _get(Object.getPrototypeOf(Router.prototype), 'constructor', this).call(this, props, context);
             this.router = props.router;
-            this.state = {
-                previousRoute: null,
-                route: router.getState()
-            };
         }
     
         _createClass(Router, [{
@@ -197,10 +209,19 @@
                     if (!this.router.registeredPlugins.LISTENERS) {
                         throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
                     }
-                    this.router.addNodeListener(nodeName, nodeListener);
+                    this.state = {
+                        previousRoute: null,
+                        route: router.getState()
+                    };
+                    this.router.addNodeListener(nodeName, this.nodeListener);
                 }
     
                 _createClass(RouteNode, [{
+                    key: 'componentWillUnmout',
+                    value: function componentWillUnmout() {
+                        this.router.removeNodeListener(nodeName, this.nodeListener);
+                    }
+                }, {
                     key: 'render',
                     value: function render() {
                         var props = this.props;
@@ -215,14 +236,11 @@
                 return RouteNode;
             })(Component);
     
-            RouteNode.propTypes = {
-                nodeName: PropTypes.string.isRequired,
-                nodeListener: PropTypes.func
-            };
-    
             RouteNode.contextTypes = {
                 router: PropTypes.object.isRequired
             };
+    
+            return RouteNode;
         };
     }
 

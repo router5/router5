@@ -38,10 +38,19 @@ function routeNode(nodeName) {
                 if (!this.router.registeredPlugins.LISTENERS) {
                     throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
                 }
-                this.router.addNodeListener(nodeName, nodeListener);
+                this.state = {
+                    previousRoute: null,
+                    route: router.getState()
+                };
+                this.router.addNodeListener(nodeName, this.nodeListener);
             }
 
             _createClass(RouteNode, [{
+                key: 'componentWillUnmout',
+                value: function componentWillUnmout() {
+                    this.router.removeNodeListener(nodeName, this.nodeListener);
+                }
+            }, {
                 key: 'render',
                 value: function render() {
                     var props = this.props;
@@ -56,14 +65,11 @@ function routeNode(nodeName) {
             return RouteNode;
         })(_react.Component);
 
-        RouteNode.propTypes = {
-            nodeName: _react.PropTypes.string.isRequired,
-            nodeListener: _react.PropTypes.func
-        };
-
         RouteNode.contextTypes = {
             router: _react.PropTypes.object.isRequired
         };
+
+        return RouteNode;
     };
 }
 

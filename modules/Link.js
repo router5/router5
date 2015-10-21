@@ -6,6 +6,16 @@ class Link extends Component {
     constructor(props, context) {
         super(props, context);
         this.router = context.router;
+
+        this.isActive = this.isActive.bind(this);
+        this.clickHandler = this.clickHandler.bind(this);
+        this.routeChangeHandler = this.routeChangeHandler.bind(this);
+
+        this.state = { active: this.isActive() };
+    }
+
+    isActive() {
+        return this.router.isActive(this.props.routeName, this.props.routeParams)
     }
 
     clickHandler(evt) {
@@ -21,24 +31,24 @@ class Link extends Component {
 
         if (evt.button === 0 && !comboKey) {
             evt.preventDefault();
-            router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+            this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
         }
     }
 
     routeChangeHandler(toState, fromState) {
-        this.setState({active: router.isActive(this.props.routeName, this.props.routeParams)});
+        this.setState({active: this.isActive()});
     }
 
     componentDidMount() {
-        router.addListener(this.routeChangeHandler);
+        this.router.addListener(this.routeChangeHandler);
     }
 
     componentWillUnmount() {
-        router.removeListener(this.routeChangeHandler);
+        this.router.removeListener(this.routeChangeHandler);
     }
 
     render() {
-        const { routeName, routeParams, className, activeClassName } = this.props;
+        const { routeName, routeParams, className, activeClassName, children } = this.props;
         const { active } = this.state;
 
         const href =  this.router.buildUrl(routeName, routeParams);
@@ -47,7 +57,7 @@ class Link extends Component {
 
         const onClick = this.clickHandler;
 
-        return React.createElement('a', {href, className: linkclassName, onClick}, props.children);
+        return React.createElement('a', {href, className: linkclassName, onClick}, children);
     }
 }
 

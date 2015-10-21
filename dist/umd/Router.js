@@ -33,10 +33,6 @@
 
             _get(Object.getPrototypeOf(Router.prototype), 'constructor', this).call(this, props, context);
             this.router = props.router;
-            this.state = {
-                previousRoute: null,
-                route: router.getState()
-            };
         }
 
         _createClass(Router, [{

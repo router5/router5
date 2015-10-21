@@ -35,9 +35,20 @@
 
             _get(Object.getPrototypeOf(Link.prototype), 'constructor', this).call(this, props, context);
             this.router = context.router;
+
+            this.isActive = this.isActive.bind(this);
+            this.clickHandler = this.clickHandler.bind(this);
+            this.routeChangeHandler = this.routeChangeHandler.bind(this);
+
+            this.state = { active: this.isActive() };
         }
 
         _createClass(Link, [{
+            key: 'isActive',
+            value: function isActive() {
+                return this.router.isActive(this.props.routeName, this.props.routeParams);
+            }
+        }, {
             key: 'clickHandler',
             value: function clickHandler(evt) {
                 if (this.props.onClick) {
@@ -52,23 +63,23 @@
 
                 if (evt.button === 0 && !comboKey) {
                     evt.preventDefault();
-                    router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+                    this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
                 }
             }
         }, {
             key: 'routeChangeHandler',
             value: function routeChangeHandler(toState, fromState) {
-                this.setState({ active: router.isActive(this.props.routeName, this.props.routeParams) });
+                this.setState({ active: this.isActive() });
             }
         }, {
             key: 'componentDidMount',
             value: function componentDidMount() {
-                router.addListener(this.routeChangeHandler);
+                this.router.addListener(this.routeChangeHandler);
             }
         }, {
             key: 'componentWillUnmount',
             value: function componentWillUnmount() {
-                router.removeListener(this.routeChangeHandler);
+                this.router.removeListener(this.routeChangeHandler);
             }
         }, {
             key: 'render',
@@ -78,6 +89,7 @@
                 var routeParams = _props.routeParams;
                 var className = _props.className;
                 var activeClassName = _props.activeClassName;
+                var children = _props.children;
                 var active = this.state.active;
 
                 var href = this.router.buildUrl(routeName, routeParams);
@@ -85,7 +97,7 @@
 
                 var onClick = this.clickHandler;
 
-                return _React['default'].createElement('a', { href: href, className: linkclassName, onClick: onClick }, props.children);
+                return _React['default'].createElement('a', { href: href, className: linkclassName, onClick: onClick }, children);
             }
         }]);
 
