@@ -1,119 +1,80 @@
-# router5-react
+# react-router5
 
-> This is a draft, examples below are untested
+High-order components and components for React when using [router5](https://github.com/router5/router5).
 
-A few helpers to use [router5](https://github.com/router5/router5) with React and reduce boilerplate code.
+This package replaces `router5-react` which is deprecated.
 
-__router5-react__ exports two factories, each take a Router5 instance as unique argument:
+### Requirements
 
-- linkFactory
-- segmentMixinFactory
+- react >= 0.14.0
+- router5 >= 1.0.0
 
-The reason for using factories is for you to create a `Link` component and a `SegmentMixin` mixin
-with access to your router instance. I considered using context, but I prefer to keep components
-and mixins as functional as possible.
 
-This makes the use of Router5 with React very flexible, and you can choose how to organise your
-code. Below is one example of how you can use those helpers:
+### Router HOC
 
+It will add your router instance in context.
 
 ```javascript
-import React from 'react'
-import {Router5} from 'router5'
-import {linkFactory, segmentMixinFactory} from 'router5-react'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Router } from 'react-router5';
+import App from './App';
+import router from './router';
 
-var router = new Router5()
-    .setOption('useHash', true)
-    .setOption('defaultRoute', 'inbox')
-    // Routes
-    .addNode('inbox',            '/inbox')
-    .addNode('inbox.message',    '/message/:id')
-    .addNode('compose',          '/compose')
-    .addNode('contacts',         '/contacts')
-    .start()
+ReactDOM.render(
+    <Router router={ router }><App /></Router>,
+    document.getElementById('app')
+);
+```
 
-var Link = linkFactory(router)
-var SegmentMixin = segmentMixinFactory(router)
+### RouteNode HOC
 
-export {router, Link, SegmentMixin}
+High-order component to wrap a route node component.
+
+__Note:__ your router needs to use `router5-listeners` plugin.
+
+```javascript
+import React from 'react';
+import { routeNode } from 'react-router5';
+import { Home, About, NotFound } from './components';
+
+export default RootNode;
+
+function RootNode(props) {
+    const { previousRoute, route } from props;
+
+    switch (route.name) {
+        case 'home':
+            return <Home/>;
+        case 'about':
+            return <About/>;
+        default:
+            return <NotFound/>;
+    };
+}
+
 ```
 
 ### Link component
 
 ```javascript
-import React from 'react'
-import {Link} from './router'
+import React from 'react';
+import { Link } from 'react-router5';
 
-let Link = linkFactory(router)
+export default Menu;
 
-let Menu = React.createClass({
-    render() {
-        let params = {id: 1}
-        return (<nav>
-            <Link routeName="users.view" routeParams={params} routeOptions={reload: true}>View user 1</Link>
+function Menu(props) {
+    return (
+        <nav>
+            <Link routeName='home' routeOptions={{reload: true}}>Home</Link>
 
-            <Link routeName="users.list">List users</Link>
-        </nav>)
-    }
-})
-
-export Menu
+            <Link routeName='about' routeOptions={{reload: true}}>About</Link>
+        </nav>
+    );
+}
 ```
 
-### Route segment mixin
 
-This segment will take care of the following:
+### Contributing
 
-- Register and deregister component instance with router
-- Add and remove route node listener
-
-```javascript
-import React from 'react'
-import {SegmentMixin} from './router'
-
-import UserView from './user-view'
-import UsersList from './users-list'
-
-let UsersComponent = React.createClass({
-    mixins: [SegmentMixin('users', (toRoute, fromRoute) => {
-        // You can use this, it will be bound to your function in Mixin
-        let that = this
-
-        if (toRoute.name === 'users.view') {
-            // pseudo-code
-            xhr.getUser(1).then((user) => {
-                that.setState({route: toRoute, data: user})
-            })
-        }
-
-        if (toRoute.name === 'users.list') {
-            // pseudo-code
-            xhr.getUsers().then((users) => {
-                that.setState({route: toRoute, data: users})
-            })
-        }
-    })]
-
-    getInitialState() {
-        return {
-            route: router.getState()
-        }
-    },
-
-    canDeactivate() {
-        return true
-    },
-
-    render() {
-        if (this.state.route.name === 'users.view') {
-            return <UserView user={this.state.data} />
-        }
-
-        if (this.state.route.name === 'users.list') {
-            return <UserList users={this.state.data} />
-        }
-    }
-})
-
-export UsersComponent
-```
+Please read [contributing guidelines](https://github.com/router5/router5/blob/master/CONTRIBUTING.md) on router5 repository.

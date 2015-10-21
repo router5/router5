@@ -6,16 +6,16 @@ Object.defineProperty(exports, '__esModule', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _linkFactory = require('./link-factory');
+var _Link = require('./Link');
 
-var _linkFactory2 = _interopRequireDefault(_linkFactory);
+var _Link2 = _interopRequireDefault(_Link);
 
-var _segmentMixinFactory = require('./segment-mixin-factory');
+var _routeNode = require('./route-node');
 
-var _segmentMixinFactory2 = _interopRequireDefault(_segmentMixinFactory);
+var _routeNode2 = _interopRequireDefault(_routeNode);
 
 exports['default'] = {
-    linkFactory: _linkFactory2['default'],
-    segmentMixinFactory: _segmentMixinFactory2['default']
+    Link: _Link2['default'],
+    routeNode: _routeNode2['default']
 };
 module.exports = exports['default'];

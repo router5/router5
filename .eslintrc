@@ -1,0 +1,57 @@
+{
+    // Parser
+    "parser": "babel-eslint",
+    // ECMA Features
+    "ecmaFeatures": {
+        "arrowFunctions": true,
+        "blockBindings": true,
+        "classes": true,
+        "defaultParams": true,
+        "destructuring": true,
+        "modules": true,
+        "objectLiteralComputedProperties": true,
+        "templateStrings": true
+    },
+    "rules": {
+        // Possible Errors
+        "no-dupe-args": 2,
+        "no-dupe-keys": 2,
+        "no-empty": 2,
+        "no-func-assign": 2,
+        "no-inner-declarations": 2,
+        "no-unreachable": 2,
+        "no-unexpected-multiline": 2,
+        // Best practices
+        "consistent-return": 0,
+        "curly": [2, "multi-line"],
+        "eqeqeq": 2,
+        "no-else-return": 2,
+        "no-multi-spaces": 0,
+        // Strict mode
+        "strict": 0,
+        // Variables
+        "no-shadow": 0,
+        "no-unused-vars": 0,
+        "no-use-before-define": 0,
+        // Style
+        "brace-style": [2, "1tbs"],
+        "comma-spacing": [2, {"before": false, "after": true}],
+        "comma-style": [2, "last"],
+        "consistent-this":  [2, "that"],
+        "lines-around-comment": [2, {"allowBlockStart": true}],
+        "key-spacing": 0,
+        "new-parens": 0,
+        "quotes": [2, "single", "avoid-escape"],
+        "no-underscore-dangle": 0,
+        "no-unneeded-ternary": 2,
+        "semi": 2,
+        // ES6
+        "no-var": 2,
+        "no-this-before-super": 2,
+        "object-shorthand": 2,
+    },
+    "env": {
+        "node": true,
+        "browser": true
+    }
+}

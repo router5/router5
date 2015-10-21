@@ -1,7 +1,7 @@
-import linkFactory from './link-factory'
-import segmentMixinFactory from './segment-mixin-factory'
+import Link from './Link';
+import routeNode from './route-node';
 
 export default {
-    linkFactory,
-    segmentMixinFactory
-}
+    Link,
+    routeNode
+};
