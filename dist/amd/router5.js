@@ -694,21 +694,25 @@ define('router5', [], function () {
     function asyncProcess(isCancelled, functions, toState, fromState, callback) {
         var allowBool = arguments.length <= 5 || arguments[5] === undefined ? true : arguments[5];
     
-        var remainingSteps = functions;
+        var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
     
         var processFn = function processFn(done) {
-            if (!remainingSteps.length) return true;
+            if (!remainingFunctions.length) return true;
     
-            var len = remainingSteps[0].length;
-            var res = remainingSteps[0](toState, fromState, done);
+            var isMapped = typeof remainingFunctions[0] === 'string';
+            var errVal = isMapped ? remainingFunctions[0] : true;
+            var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+    
+            var len = stepFn.length;
+            var res = stepFn(toState, fromState, done);
     
             if (allowBool && typeof res === 'boolean') {
-                done(res ? null : true);
+                done(res ? null : errVal);
             } else if (res && typeof res.then === 'function') {
                 res.then(function () {
                     return done(null);
                 }, function () {
-                    return done(true);
+                    return done(errVal);
                 });
             }
             // else: wait for done to be called
@@ -718,7 +722,7 @@ define('router5', [], function () {
     
         var iterate = function iterate(err) {
             if (err) callback(err);else {
-                remainingSteps = remainingSteps.slice(1);
+                remainingFunctions = remainingFunctions.slice(1);
                 next();
             }
         };
@@ -734,7 +738,9 @@ define('router5', [], function () {
     
         next();
     }
+    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
     
+    function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
     
     var nameToIDs = function nameToIDs(name) {
         return name.split('.').reduce(function (ids, name) {
@@ -778,7 +784,7 @@ define('router5', [], function () {
                     });
                 })();
             }
-            callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
+            callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err);
         };
     
         var _transitionPath = transitionPath(toState, fromState);
@@ -787,28 +793,26 @@ define('router5', [], function () {
         var toActivate = _transitionPath.toActivate;
     
         var canDeactivate = function canDeactivate(toState, fromState, cb) {
-            var canDeactivateFunctions = toDeactivate.map(function (name) {
-                return router._cmps[name];
-            }).filter(function (comp) {
-                return comp && comp.canDeactivate;
-            }).map(function (comp) {
-                return comp.canDeactivate;
-            });
+            var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
+                return router._cmps[name] && router._cmps[name].canDeactivate;
+            }).reduce(function (fnMap, name) {
+                return _extends({}, fnMap, _defineProperty({}, name, router._cmps[name].canDeactivate));
+            }, {});
     
-            asyncProcess(isCancelled, canDeactivateFunctions, toState, fromState, function (err) {
-                return cb(err ? constants.CANNOT_DEACTIVATE : null);
+            asyncProcess(isCancelled, canDeactivateFunctionMap, toState, fromState, function (err) {
+                return cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null);
             });
         };
     
         var canActivate = function canActivate(toState, fromState, cb) {
-            var canActivateFunctions = toActivate.map(function (name) {
+            var canActivateFunctionMap = toActivate.filter(function (name) {
                 return router._canAct[name];
-            }).filter(function (_) {
-                return _;
-            });
+            }).reduce(function (fnMap, name) {
+                return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
+            }, {});
     
-            asyncProcess(isCancelled, canActivateFunctions, toState, fromState, function (err) {
-                return cb(err ? constants.CANNOT_ACTIVATE : null);
+            asyncProcess(isCancelled, canActivateFunctionMap, toState, fromState, function (err) {
+                return cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null);
             });
         };
     
@@ -817,7 +821,7 @@ define('router5', [], function () {
             var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
     
             asyncProcess(isCancelled, mwareFunction, toState, fromState, function (err) {
-                return cb(err ? constants.TRANSITION_ERR : null);
+                return cb(err ? { code: constants.TRANSITION_ERR } : null);
             });
         };
     
@@ -986,7 +990,7 @@ define('router5', [], function () {
                     startState = undefined;
     
                 if (this.started) {
-                    if (done) done(constants.ROUTER_ALREADY_STARTED);
+                    if (done) done({ code: constants.ROUTER_ALREADY_STARTED });
                     return this;
                 }
     
@@ -1034,7 +1038,7 @@ define('router5', [], function () {
                             navigateToDefault();
                         } else {
                             // No start match, no default => do nothing
-                            cb(constants.ROUTE_NOT_FOUND, null);
+                            cb({ code: constants.ROUTE_NOT_FOUND, path: startPath }, null);
                         }
                     })();
                 } else {
@@ -1335,7 +1339,7 @@ define('router5', [], function () {
                     _this5._tr = null;
     
                     if (err) {
-                        if (err === constants.TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
+                        if (err.code === constants.TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
     
                         if (done) done(err);
                         return;
@@ -1371,15 +1375,16 @@ define('router5', [], function () {
                 if (opts === undefined) opts = {};
     
                 if (!this.started) {
-                    if (done) done(constants.ROUTER_NOT_STARTED);
+                    if (done) done({ code: constants.ROUTER_NOT_STARTED });
                     return;
                 }
     
                 var path = this.buildPath(name, params);
     
                 if (!path) {
-                    if (done) done(constants.ROUTE_NOT_FOUND);
-                    this._invokeListeners('$$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
+                    var err = { code: constants.ROUTE_NOT_FOUND };
+                    if (done) done(err);
+                    this._invokeListeners('$$error', null, this.lastKnownState, err);
                     return;
                 }
     
@@ -1390,8 +1395,9 @@ define('router5', [], function () {
                 // Do not proceed further if states are the same and no reload
                 // (no desactivation and no callbacks)
                 if (sameStates && !opts.reload) {
-                    if (done) done(constants.SAME_STATES);
-                    this._invokeListeners('$$error', toState, this.lastKnownState, constants.SAME_STATES);
+                    var err = { code: constants.SAME_STATES };
+                    if (done) done(err);
+                    this._invokeListeners('$$error', toState, this.lastKnownState, err);
                     return;
                 }
     

@@ -11,7 +11,11 @@
         global.transition = mod.exports;
     }
 })(this, function (exports, module, _async, _constants) {
+    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
     function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+    function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
     var _asyncProcess = _interopRequireDefault(_async);
 
@@ -61,7 +65,7 @@
                     });
                 })();
             }
-            callback(isCancelled() ? _constants2['default'].TRANSITION_CANCELLED : err);
+            callback(isCancelled() ? { code: _constants2['default'].TRANSITION_CANCELLED } : err);
         };
 
         var _transitionPath = transitionPath(toState, fromState);
@@ -70,28 +74,26 @@
         var toActivate = _transitionPath.toActivate;
 
         var canDeactivate = function canDeactivate(toState, fromState, cb) {
-            var canDeactivateFunctions = toDeactivate.map(function (name) {
-                return router._cmps[name];
-            }).filter(function (comp) {
-                return comp && comp.canDeactivate;
-            }).map(function (comp) {
-                return comp.canDeactivate;
-            });
+            var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
+                return router._cmps[name] && router._cmps[name].canDeactivate;
+            }).reduce(function (fnMap, name) {
+                return _extends({}, fnMap, _defineProperty({}, name, router._cmps[name].canDeactivate));
+            }, {});
 
-            (0, _asyncProcess['default'])(isCancelled, canDeactivateFunctions, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].CANNOT_DEACTIVATE : null);
+            (0, _asyncProcess['default'])(isCancelled, canDeactivateFunctionMap, toState, fromState, function (err) {
+                return cb(err ? { code: _constants2['default'].CANNOT_DEACTIVATE, segment: err } : null);
             });
         };
 
         var canActivate = function canActivate(toState, fromState, cb) {
-            var canActivateFunctions = toActivate.map(function (name) {
+            var canActivateFunctionMap = toActivate.filter(function (name) {
                 return router._canAct[name];
-            }).filter(function (_) {
-                return _;
-            });
+            }).reduce(function (fnMap, name) {
+                return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
+            }, {});
 
-            (0, _asyncProcess['default'])(isCancelled, canActivateFunctions, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].CANNOT_ACTIVATE : null);
+            (0, _asyncProcess['default'])(isCancelled, canActivateFunctionMap, toState, fromState, function (err) {
+                return cb(err ? { code: _constants2['default'].CANNOT_ACTIVATE, segment: err } : null);
             });
         };
 
@@ -100,7 +102,7 @@
             var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
             (0, _asyncProcess['default'])(isCancelled, mwareFunction, toState, fromState, function (err) {
-                return cb(err ? _constants2['default'].TRANSITION_ERR : null);
+                return cb(err ? { code: _constants2['default'].TRANSITION_ERR } : null);
             });
         };
 

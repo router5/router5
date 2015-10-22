@@ -183,7 +183,7 @@ var Router5 = (function () {
                 startState = undefined;
 
             if (this.started) {
-                if (done) done(_constants2['default'].ROUTER_ALREADY_STARTED);
+                if (done) done({ code: _constants2['default'].ROUTER_ALREADY_STARTED });
                 return this;
             }
 
@@ -231,7 +231,7 @@ var Router5 = (function () {
                         navigateToDefault();
                     } else {
                         // No start match, no default => do nothing
-                        cb(_constants2['default'].ROUTE_NOT_FOUND, null);
+                        cb({ code: _constants2['default'].ROUTE_NOT_FOUND, path: startPath }, null);
                     }
                 })();
             } else {
@@ -532,7 +532,7 @@ var Router5 = (function () {
                 _this5._tr = null;
 
                 if (err) {
-                    if (err === _constants2['default'].TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
+                    if (err.code === _constants2['default'].TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
 
                     if (done) done(err);
                     return;
@@ -568,15 +568,16 @@ var Router5 = (function () {
             if (opts === undefined) opts = {};
 
             if (!this.started) {
-                if (done) done(_constants2['default'].ROUTER_NOT_STARTED);
+                if (done) done({ code: _constants2['default'].ROUTER_NOT_STARTED });
                 return;
             }
 
             var path = this.buildPath(name, params);
 
             if (!path) {
-                if (done) done(_constants2['default'].ROUTE_NOT_FOUND);
-                this._invokeListeners('$$error', null, this.lastKnownState, _constants2['default'].ROUTE_NOT_FOUND);
+                var err = { code: _constants2['default'].ROUTE_NOT_FOUND };
+                if (done) done(err);
+                this._invokeListeners('$$error', null, this.lastKnownState, err);
                 return;
             }
 
@@ -587,8 +588,9 @@ var Router5 = (function () {
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) {
-                if (done) done(_constants2['default'].SAME_STATES);
-                this._invokeListeners('$$error', toState, this.lastKnownState, _constants2['default'].SAME_STATES);
+                var err = { code: _constants2['default'].SAME_STATES };
+                if (done) done(err);
+                this._invokeListeners('$$error', toState, this.lastKnownState, err);
                 return;
             }
 

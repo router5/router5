@@ -40,31 +40,30 @@ function transition(router, toState, fromState, callback) {
                 if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
             });
         }
-        callback(isCancelled() ? constants.TRANSITION_CANCELLED : err);
+        callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err);
     };
 
     const {toDeactivate, toActivate} = transitionPath(toState, fromState);
 
     const canDeactivate = (toState, fromState, cb) => {
-        let canDeactivateFunctions = toDeactivate
-            .map(name => router._cmps[name])
-            .filter(comp => comp && comp.canDeactivate)
-            .map(comp => comp.canDeactivate);
+        let canDeactivateFunctionMap = toDeactivate
+            .filter(name => router._cmps[name] && router._cmps[name].canDeactivate)
+            .reduce((fnMap, name) => ({ ...fnMap, [name]: router._cmps[name].canDeactivate }), {});
 
         asyncProcess(
-            isCancelled, canDeactivateFunctions, toState, fromState,
-            err => cb(err ? constants.CANNOT_DEACTIVATE : null)
+            isCancelled, canDeactivateFunctionMap, toState, fromState,
+            err => cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null)
         );
     };
 
     const canActivate = (toState, fromState, cb) => {
-        let canActivateFunctions = toActivate
-            .map(name => router._canAct[name])
-            .filter(_ => _);
+        const canActivateFunctionMap = toActivate
+            .filter(name => router._canAct[name])
+            .reduce((fnMap, name) => ({ ...fnMap, [name]: router._canAct[name] }), {});
 
         asyncProcess(
-            isCancelled, canActivateFunctions, toState, fromState,
-            err => cb(err ? constants.CANNOT_ACTIVATE : null)
+            isCancelled, canActivateFunctionMap, toState, fromState,
+            err => cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null)
         );
     };
 
@@ -74,7 +73,7 @@ function transition(router, toState, fromState, callback) {
 
         asyncProcess(
             isCancelled, mwareFunction, toState, fromState,
-            err => cb(err ? constants.TRANSITION_ERR : null)
+            err => cb(err ? { code: constants.TRANSITION_ERR } : null)
         );
     };
 

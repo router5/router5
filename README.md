@@ -10,22 +10,12 @@
 A simple, powerful, modular and extensible router, organising your __named routes__ in a __tree__ and handling route transitions.
 In its simplest form, Router5 processes routing __instructions__ and outputs __state__ updates.
 
-
-```
-                   __________________
-                  |                  |
-    Instruction   |                  |   State
-    ------------->|     ROUTER5      |---------->
-                  |                  |
-                  |__________________|
-```
-
 _Router5_ is library and framework agnostic, and makes no asumption on your implementation.
 It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
 <p align="center">
-    [![Slides preview](https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png)](http://slides.com/thomasroch/deck)
+    <a href="http://slides.com/thomasroch/deck"><img alt="Router5 slides" src="https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png" /></a>
 </p>
 
 To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)

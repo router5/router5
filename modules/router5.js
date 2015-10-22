@@ -125,7 +125,7 @@ class Router5 {
         let startPath, startState;
 
         if (this.started) {
-            if (done) done(constants.ROUTER_ALREADY_STARTED);
+            if (done) done({ code: constants.ROUTER_ALREADY_STARTED });
             return this;
         }
 
@@ -168,7 +168,7 @@ class Router5 {
                 navigateToDefault();
             } else {
                 // No start match, no default => do nothing
-                cb(constants.ROUTE_NOT_FOUND, null);
+                cb({ code: constants.ROUTE_NOT_FOUND, path: startPath }, null);
             }
         } else {
             // Initialise router with provided start state
@@ -410,7 +410,7 @@ class Router5 {
             this._tr = null;
 
             if (err) {
-                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$$cancel', toState, fromState);
+                if (err.code === constants.TRANSITION_CANCELLED) this._invokeListeners('$$cancel', toState, fromState);
                 else this._invokeListeners('$$error', toState, fromState, err);
 
                 if (done) done(err);
@@ -437,15 +437,16 @@ class Router5 {
      */
     navigate(name, params = {}, opts = {}, done) {
         if (!this.started) {
-            if (done) done(constants.ROUTER_NOT_STARTED);
+            if (done) done({ code: constants.ROUTER_NOT_STARTED });
             return;
         }
 
         const path  = this.buildPath(name, params);
 
         if (!path) {
-            if (done) done(constants.ROUTE_NOT_FOUND);
-            this._invokeListeners('$$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND);
+            const err = { code: constants.ROUTE_NOT_FOUND };
+            if (done) done(err);
+            this._invokeListeners('$$error', null, this.lastKnownState, err);
             return;
         }
 
@@ -456,8 +457,9 @@ class Router5 {
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
-            if (done) done(constants.SAME_STATES);
-            this._invokeListeners('$$error', toState, this.lastKnownState, constants.SAME_STATES);
+            const err = { code: constants.SAME_STATES };
+            if (done) done(err);
+            this._invokeListeners('$$error', toState, this.lastKnownState, err);
             return;
         }
 

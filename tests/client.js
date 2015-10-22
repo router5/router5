@@ -107,7 +107,7 @@ function testRouter(useHash) {
 
         it('should give an error if trying to start when already started', function (done) {
             router.start(function (err) {
-                expect(err).toBe(Router5.ERR.ROUTER_ALREADY_STARTED);
+                expect(err.code).toBe(Router5.ERR.ROUTER_ALREADY_STARTED);
                 done();
             });
         });
@@ -146,7 +146,8 @@ function testRouter(useHash) {
             router.setOption('defaultRoute', null);
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/admin'));
             router.start(function (err) {
-                expect(err).toBe(Router5.ERR.CANNOT_ACTIVATE)
+                expect(err.code).toBe(Router5.ERR.CANNOT_ACTIVATE);
+                expect(err.segment).toBe('admin');
                 done();
             });
         });
@@ -156,7 +157,7 @@ function testRouter(useHash) {
             router.setOption('defaultRoute', null);
             window.history.replaceState({}, '', base + getExpectedPath(useHash, ''));
             router.start(function (err) {
-                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -165,7 +166,7 @@ function testRouter(useHash) {
             router.stop();
             window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
             router.start(function (err, state) {
-                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 expect(state).toBe(null);
                 done();
             });
@@ -210,7 +211,7 @@ function testRouter(useHash) {
             window.history.replaceState({}, '', base);
 
             router.start(function(err, state) {
-                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -224,7 +225,7 @@ function testRouter(useHash) {
 
         it('should return an error if trying to navigate to an unknown route', function (done) {
             router.navigate('fake.route', {}, {}, function (err, state) {
-                expect(err).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -232,7 +233,7 @@ function testRouter(useHash) {
         it('should navigate to same state if reload is set to true', function (done) {
             router.navigate('orders.pending', {}, {}, function (err, state) {
                 router.navigate('orders.pending', {}, {}, function (err, state) {
-                    expect(err).toBe(Router5.ERR.SAME_STATES);
+                    expect(err.code).toBe(Router5.ERR.SAME_STATES);
 
                     router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
                         expect(err).toBe(null);
@@ -247,7 +248,7 @@ function testRouter(useHash) {
                 router.stop();
                 expect(router.started).toBe(false);
                 router.navigate('users.list', {}, {}, function (err) {
-                    expect(err).toEqual(Router5.ERR.ROUTER_NOT_STARTED);
+                    expect(err.code).toEqual(Router5.ERR.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
                     router.start(done);
@@ -285,7 +286,8 @@ function testRouter(useHash) {
                     }
                 });
                 router.navigate('users', {}, {}, function (err) {
-                    expect(err).toBe(Router5.ERR.CANNOT_DEACTIVATE);
+                    expect(err.code).toBe(Router5.ERR.CANNOT_DEACTIVATE);
+                    expect(err.segment).toBe('users.list');
                     expect(router.getState()).toEqual({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
@@ -309,7 +311,8 @@ function testRouter(useHash) {
             router.navigate('users.list', {}, {}, function (err) {
                 router.canDeactivate('users.list', false);
                 router.navigate('users', {}, {}, function (err) {
-                    expect(err).toBe(Router5.ERR.CANNOT_DEACTIVATE);
+                    expect(err.code).toBe(Router5.ERR.CANNOT_DEACTIVATE);
+                    expect(err.segment).toBe('users.list');
                     router.canDeactivate('users.list', true);
                     router.navigate('users', {}, {}, function (err) {
                         expect(err).toBe(null);
@@ -353,7 +356,8 @@ function testRouter(useHash) {
         it('should block navigation if a route cannot be activated', function (done) {
             router.navigate('home', {}, {}, function () {
                 router.navigate('admin', {}, {}, function (err) {
-                expect(err).toBe(Router5.ERR.CANNOT_ACTIVATE);
+                    expect(err.code).toBe(Router5.ERR.CANNOT_ACTIVATE);
+                    expect(err.segment).toBe('admin');
                     expect(router.isActive('home')).toBe(true);
                     done();
                 });
@@ -363,7 +367,7 @@ function testRouter(useHash) {
         it('should be able to cancel a transition', function (done) {
             router.canActivate('admin', function canActivate(done) { return Promise.resolve(); });
             var cancel = router.navigate('admin', {}, {}, function (err) {
-                expect(err).toBe(Router5.ERR.TRANSITION_CANCELLED);
+                expect(err.code).toBe(Router5.ERR.TRANSITION_CANCELLED);
                 done();
             });
             cancel();
@@ -408,7 +412,7 @@ function testRouter(useHash) {
             router.useMiddleware(listeners.transitionErr);
             router.navigate('home', {}, {}, function (err, state) {
                 expect(listeners.transitionErr).toHaveBeenCalled();
-                expect(err).toBe(Router5.ERR.TRANSITION_ERR);
+                expect(err.code).toBe(Router5.ERR.TRANSITION_ERR);
                 done();
             });
         });
