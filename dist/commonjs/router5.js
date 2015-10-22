@@ -181,7 +181,7 @@ var Router5 = (function () {
                             _this2.navigate(opts.defaultRoute, opts.defaultParams, { reload: true, replace: true });
                         }
                 } else {
-                    _this2.updateBrowserState(toState, _this2.buildUrl(toState.name, toState.params), newState);
+                    _this2.updateBrowserState(toState, _this2.buildUrl(toState.name, toState.params), !newState);
                 }
             });
         }
