@@ -655,7 +655,6 @@ define('router5', [], function () {
         CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
         CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
         TRANSITION_ERR: 'TRANSITION_ERR',
-        NODE_LISTENER_ERR: 'NODE_ERR',
         TRANSITION_CANCELLED: 'CANCELLED'
     };
     function asyncProcess(isCancelled, functions, toState, fromState, callback) {
@@ -844,6 +843,7 @@ define('router5', [], function () {
     
         /**
          * Error codes
+         * @static
          * @type {Object}
          */
     
@@ -1151,10 +1151,10 @@ define('router5', [], function () {
             }
     
             /**
-             * Update the "canDeactivate" status.
+             * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
              * @param  {String}  name          The route segment full name
              * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
-             * @return {[type]}               [description]
+             * @return {[type]}
              */
         }, {
             key: 'canDeactivate',
@@ -1373,6 +1373,7 @@ define('router5', [], function () {
     /**
      * An helper function to return instructions for a transition:
      * intersection route name, route names to deactivate, route names to activate
+     * @static
      * @param  {Object} toState   The state to go to
      * @param  {Object} fromState The state to go from
      * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys

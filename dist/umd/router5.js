@@ -67,6 +67,7 @@
 
         /**
          * Error codes
+         * @static
          * @type {Object}
          */
 
@@ -374,10 +375,10 @@
             }
 
             /**
-             * Update the "canDeactivate" status.
+             * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
              * @param  {String}  name          The route segment full name
              * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
-             * @return {[type]}               [description]
+             * @return {[type]}
              */
         }, {
             key: 'canDeactivate',
@@ -596,6 +597,7 @@
     /**
      * An helper function to return instructions for a transition:
      * intersection route name, route names to deactivate, route names to activate
+     * @static
      * @param  {Object} toState   The state to go to
      * @param  {Object} fromState The state to go from
      * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
