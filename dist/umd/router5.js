@@ -481,7 +481,7 @@
                 var search = pathParts[3] || '';
                 var opts = this.options;
 
-                return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname) + search;
+                return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : opts.base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname) + search;
             }
 
             /**

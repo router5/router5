@@ -370,7 +370,7 @@ class Router5 {
         return (
             opts.useHash
             ? hash.replace(new RegExp('^#' + opts.hashPrefix), '')
-            : (base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname)
+            : (opts.base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname)
         ) + search;
     }
 
