@@ -127,7 +127,7 @@ class Router5 {
                     this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
                 }
             } else {
-                this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), newState)
+                this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), !newState)
             }
         })
     }
