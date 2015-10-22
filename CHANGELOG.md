@@ -27,6 +27,16 @@
 
 
 
+<a name="0.9.3"></a>
+## 0.9.3 (2015-10-22)
+
+
+### Bug Fixes
+
+* fix state replacement on popstate ([a3ccbd3](https://github.com/router5/router5/commit/a3ccbd3)), closes [#24](https://github.com/router5/router5/issues/24)
+
+
+
 <a name="0.9.2"></a>
 ## 0.9.2 (2015-10-19)
 
