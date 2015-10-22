@@ -44,12 +44,11 @@ function testRouter(useHash) {
     var router;
 
     beforeAll(function () {
-        router = createRouter(base, useHash, hashPrefix)
+        router = createRouter(base, useHash, hashPrefix);
     });
 
     afterAll(function () {
         router.stop();
-        window.history.replaceState({}, '', base);
     });
 
     describe(useHash ? 'with using URL hash part' : 'without using URL hash part', function () {
@@ -76,12 +75,6 @@ function testRouter(useHash) {
             expect(router.buildUrl('users.view', {id: 1})).toBe(base + getExpectedPath(useHash, '/users/view/1'));
         });
 
-        it('should return base', function () {
-            if (useHash) {
-                expect(browser.getBase()).toEqual(base);
-            }
-        });
-
         it('should be able to extract the path of an URL', function () {
             expect(router.urlToPath(makeUrl('/home'))).toBe('/home');
             expect(function () {
@@ -98,7 +91,7 @@ function testRouter(useHash) {
             expect(router.getState()).toEqual(null)
             expect(router.isActive('home')).toEqual(false)
 
-            router.start(function () {
+            router.start('', function () {
                 expect(router.started).toBe(true);
                 expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
@@ -106,7 +99,7 @@ function testRouter(useHash) {
         });
 
         it('should give an error if trying to start when already started', function (done) {
-            router.start(function (err) {
+            router.start('', function (err) {
                 expect(err.code).toBe(Router5.ERR.ROUTER_ALREADY_STARTED);
                 done();
             });
@@ -114,8 +107,7 @@ function testRouter(useHash) {
 
         it('should start with the start route if matched', function (done) {
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/view/123'));
-            router.start(function (err, state) {
+            router.start('/users/view/123', function (err, state) {
                 expect(state).toEqual({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
                 done();
             });
@@ -125,8 +117,7 @@ function testRouter(useHash) {
             router.stop();
             router.lastKnownState = null;
             router.lastStateAttempt = null;
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/about'));
-            router.start(function (err, state) {
+            router.start('/about', function (err, state) {
                 expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
@@ -134,8 +125,7 @@ function testRouter(useHash) {
 
         it('should start with the default route if navigation to start route is not allowed', function (done) {
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/admin'));
-            router.start(function (err) {
+            router.start('/admin', function (err) {
                 expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
@@ -144,8 +134,7 @@ function testRouter(useHash) {
         it('should start with an error if navigation to start route is not allowed and no default route is specified', function (done) {
             router.stop();
             router.setOption('defaultRoute', null);
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/admin'));
-            router.start(function (err) {
+            router.start('/admin', function (err) {
                 expect(err.code).toBe(Router5.ERR.CANNOT_ACTIVATE);
                 expect(err.segment).toBe('admin');
                 done();
@@ -155,8 +144,7 @@ function testRouter(useHash) {
         it('should start with a not found error if no matched start state and no default route', function (done) {
             router.stop();
             router.setOption('defaultRoute', null);
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, ''));
-            router.start(function (err) {
+            router.start('', function (err) {
                 expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
@@ -164,8 +152,7 @@ function testRouter(useHash) {
 
         it('should not match an URL with extra trailing slashes', function (done) {
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
-            router.start(function (err, state) {
+            router.start('/users/list/', function (err, state) {
                 expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 expect(state).toBe(null);
                 done();
@@ -175,8 +162,7 @@ function testRouter(useHash) {
         it('should match an URL with extra trailing slashes', function (done) {
             router.setOption('trailingSlash', 1);
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
-            router.start(function (err, state) {
+            router.start('/users/list/', function (err, state) {
                 expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
                 router.setOption('trailingSlash', 0);
                 done();
@@ -186,8 +172,7 @@ function testRouter(useHash) {
         it('should match an URL with extra trailing slashes', function (done) {
             router.setOption('trailingSlash', 1);
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/users/list/'));
-            router.start(function (err, state) {
+            router.start('/users/list/', function (err, state) {
                 expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
                 router.setOption('trailingSlash', 0);
                 done();
@@ -196,7 +181,6 @@ function testRouter(useHash) {
 
         it('should start with the provided state', function (done) {
             router.stop();
-            window.history.replaceState({}, '', base + getExpectedPath(useHash, '/home'));
             var homeState = {name: 'home', params: {}, path: '/home'};
             router.start(homeState, function (err, state) {
                 expect(state).toEqual(homeState);
@@ -208,9 +192,8 @@ function testRouter(useHash) {
         it('should return an error if default route access is not found', function (done) {
             router.stop();
             router.setOption('defaultRoute', 'fake.route');
-            window.history.replaceState({}, '', base);
 
-            router.start(function(err, state) {
+            router.start('', function(err, state) {
                 expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
@@ -251,7 +234,7 @@ function testRouter(useHash) {
                     expect(err.code).toEqual(Router5.ERR.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
-                    router.start(done);
+                    router.start('', done);
                 });
             });
         });

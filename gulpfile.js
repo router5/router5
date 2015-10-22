@@ -10,7 +10,6 @@ var files = [
     'modules/index.js',
     'modules/logger.js',
     'modules/constants.js',
-    'modules/browser.js',
     'modules/async.js',
     'modules/transition.js',
     'modules/router5.js'

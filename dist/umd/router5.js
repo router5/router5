@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['exports', 'module', 'route-node', './transition', './constants', './browser', './logger'], factory);
+        define(['exports', 'module', 'route-node', './transition', './constants', './logger'], factory);
     } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-        factory(exports, module, require('route-node'), require('./transition'), require('./constants'), require('./browser'), require('./logger'));
+        factory(exports, module, require('route-node'), require('./transition'), require('./constants'), require('./logger'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, mod, global.RouteNode, global.transition, global.constants, global.browser, global.loggerPlugin);
+        factory(mod.exports, mod, global.RouteNode, global.transition, global.constants, global.loggerPlugin);
         global.router5 = mod.exports;
     }
-})(this, function (exports, module, _routeNode, _transition2, _constants, _browser, _logger) {
+})(this, function (exports, module, _routeNode, _transition2, _constants, _logger) {
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
     function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -20,8 +20,6 @@
     var _RouteNode = _interopRequireDefault(_routeNode);
 
     var _constants2 = _interopRequireDefault(_constants);
-
-    var _browser2 = _interopRequireDefault(_browser);
 
     var _loggerPlugin = _interopRequireDefault(_logger);
 
@@ -56,14 +54,13 @@
             this.options = {
                 useHash: false,
                 hashPrefix: '',
-                base: '',
+                base: false,
                 trailingSlash: 0,
                 autoCleanUp: true
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
             });
-            this._setBase();
             this.registeredPlugins = {};
             // Bind onPopState
         }
@@ -74,26 +71,16 @@
          */
 
         /**
-         * @private
+         * Set an option value
+         * @param  {String} opt The option to set
+         * @param  {*}      val The option value
+         * @return {Router5}    The Router5 instance
          */
 
         _createClass(Router5, [{
-            key: '_setBase',
-            value: function _setBase() {
-                if (this.options.useHash && !this.options.base) this.options.base = _browser2['default'].getBase();
-            }
-
-            /**
-             * Set an option value
-             * @param  {String} opt The option to set
-             * @param  {*}      val The option value
-             * @return {Router5}    The Router5 instance
-             */
-        }, {
             key: 'setOption',
             value: function setOption(opt, val) {
                 this.options[opt] = val;
-                if (opt === 'useHash') this._setBase();
                 return this;
             }
 
@@ -186,14 +173,14 @@
                     return this;
                 }
 
+                this.started = true;
+                this._invokeListeners('$start');
+                var opts = this.options;
+
                 if (args.length > 0) {
                     if (typeof args[0] === 'string') startPath = args[0];
                     if (typeof args[0] === 'object') startState = args[0];
                 }
-
-                this.started = true;
-                this._invokeListeners('$start');
-                var opts = this.options;
 
                 // callback
                 var cb = function cb(err, state) {
@@ -205,12 +192,14 @@
                 };
 
                 // Get start path
-                if (!startPath && !startState) startPath = this.getLocation();
+                if (startPath === undefined && startState === undefined && this.getLocation) {
+                    startPath = this.getLocation();
+                }
 
                 if (!startState) {
                     (function () {
                         // If no supplied start state, get start state
-                        startState = _this3.matchPath(startPath);
+                        startState = startPath === undefined ? null : _this3.matchPath(startPath);
                         // Navigate to default function
                         var navigateToDefault = function navigateToDefault() {
                             return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
@@ -426,15 +415,6 @@
             }
 
             /**
-             * @private
-             */
-        }, {
-            key: 'getLocation',
-            value: function getLocation() {
-                return _browser2['default'].getLocation(this.options);
-            }
-
-            /**
              * Generates an URL from a route name and route params.
              * The generated URL will be prefixed by hash if useHash is set to true
              * @param  {String} route  The route name
@@ -444,7 +424,7 @@
         }, {
             key: 'buildUrl',
             value: function buildUrl(route, params) {
-                return this._buildUrl(this.rootNode.buildPath(route, params));
+                return this._buildUrl(this.buildPath(route, params));
             }
 
             /**
@@ -453,7 +433,7 @@
         }, {
             key: '_buildUrl',
             value: function _buildUrl(path) {
-                return this.options.base + (this.options.useHash ? '#' + this.options.hashPrefix : '') + path;
+                return (this.options.base || '') + (this.options.useHash ? '#' + this.options.hashPrefix : '') + path;
             }
 
             /**
@@ -497,11 +477,11 @@
                 if (!pathParts) throw new Error('[router5] Could not parse url ' + url);
 
                 var pathname = pathParts[1];
-                var hash = pathParts[2];
-                var search = pathParts[3];
+                var hash = pathParts[2] || '';
+                var search = pathParts[3] || '';
                 var opts = this.options;
 
-                return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : pathname.replace(new RegExp('^' + opts.base), '')) + (search || '');
+                return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname) + search;
             }
 
             /**

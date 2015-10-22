@@ -1,7 +1,6 @@
 import RouteNode  from 'route-node';
 import {transition, transitionPath} from './transition';
 import constants  from './constants';
-import browser    from './browser';
 import loggerPlugin from './logger';
 
 let makeState = (name, params, path) => ({name, params, path});
@@ -26,21 +25,13 @@ class Router5 {
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: '',
+            base: false,
             trailingSlash: 0,
             autoCleanUp: true
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
-        this._setBase();
         this.registeredPlugins = {};
         // Bind onPopState
-    }
-
-    /**
-     * @private
-     */
-    _setBase() {
-        if (this.options.useHash && !this.options.base) this.options.base = browser.getBase();
     }
 
     /**
@@ -51,7 +42,6 @@ class Router5 {
      */
     setOption(opt, val) {
         this.options[opt] = val;
-        if (opt === 'useHash') this._setBase();
         return this;
     }
 
@@ -129,14 +119,14 @@ class Router5 {
             return this;
         }
 
+        this.started = true;
+        this._invokeListeners('$start');
+        const opts = this.options;
+
         if (args.length > 0) {
             if (typeof args[0] === 'string') startPath = args[0];
             if (typeof args[0] === 'object') startState = args[0];
         }
-
-        this.started = true;
-        this._invokeListeners('$start');
-        const opts = this.options;
 
         // callback
         const cb = (err, state, invokeErrCb = true) => {
@@ -146,11 +136,13 @@ class Router5 {
         };
 
         // Get start path
-        if (!startPath && !startState) startPath = this.getLocation();
+        if (startPath === undefined && startState === undefined && this.getLocation) {
+            startPath = this.getLocation();
+        }
 
         if (!startState) {
             // If no supplied start state, get start state
-            startState = this.matchPath(startPath);
+            startState = startPath === undefined ? null : this.matchPath(startPath);
             // Navigate to default function
             const navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false));
             // If matched start path
@@ -317,13 +309,6 @@ class Router5 {
     }
 
     /**
-     * @private
-     */
-    getLocation() {
-        return browser.getLocation(this.options);
-    }
-
-    /**
      * Generates an URL from a route name and route params.
      * The generated URL will be prefixed by hash if useHash is set to true
      * @param  {String} route  The route name
@@ -331,14 +316,14 @@ class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
-        return this._buildUrl(this.rootNode.buildPath(route, params));
+        return this._buildUrl(this.buildPath(route, params));
     }
 
     /**
      * @private
      */
     _buildUrl(path) {
-        return this.options.base +
+        return (this.options.base || '') +
             (this.options.useHash ? '#' + this.options.hashPrefix : '') +
             path;
     }
@@ -378,15 +363,15 @@ class Router5 {
         if (!pathParts) throw new Error(`[router5] Could not parse url ${url}`);
 
         const pathname = pathParts[1];
-        const hash     = pathParts[2];
-        const search   = pathParts[3];
+        const hash     = pathParts[2] || '';
+        const search   = pathParts[3] || '';
         const opts = this.options;
 
         return (
             opts.useHash
             ? hash.replace(new RegExp('^#' + opts.hashPrefix), '')
-            : pathname.replace(new RegExp('^' + opts.base), '')
-        ) + (search || '');
+            : (base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname)
+        ) + search;
     }
 
     /**
