@@ -1,8 +1,8 @@
 (function (global, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['exports', 'module', './Link', './route-node', './RouterProvider'], factory);
+        define(['exports', 'module', './Link', './routeNode', './RouterProvider'], factory);
     } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-        factory(exports, module, require('./Link'), require('./route-node'), require('./RouterProvider'));
+        factory(exports, module, require('./Link'), require('./routeNode'), require('./RouterProvider'));
     } else {
         var mod = {
             exports: {}

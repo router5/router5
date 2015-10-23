@@ -10,7 +10,7 @@ var _Link = require('./Link');
 
 var _Link2 = _interopRequireDefault(_Link);
 
-var _routeNode = require('./route-node');
+var _routeNode = require('./routeNode');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
 
