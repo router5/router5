@@ -1,13 +1,18 @@
 # react-router5
 
-High-order components and components for React when using [router5](https://github.com/router5/router5).
+> High-order components and components for React when using [router5](https://github.com/router5/router5).
 
 This package replaces `router5-react` which is deprecated.
 
+### Example
+
+Code here: [https://github.com/router5/examples/tree/master/apps/react](https://github.com/router5/examples/tree/master/apps/react)
+Demo here: [http://localhost:8080/docs/with-react.html#/inbox](http://localhost:8080/docs/with-react.html#/inbox)
+
 ### Requirements
 
-- react >= 0.14.0
-- router5 >= 1.0.0
+- react >= __0.14.0__
+- router5 >= __1.0.0__
 
 
 ### RouterProvider HOC
@@ -29,29 +34,32 @@ ReactDOM.render(
 
 ### RouteNode HOC
 
-High-order component to wrap a route node component.
+__routeNode(nodeName, registerComponent = false)__: high-order component to wrap a route node component.
+
+- Specify your component node name (`''` if root node)
+- If you set `registerComponent` to true, you cannot use functional stateless components as `routeNode` make uses of _refs_.
 
 __Note:__ your router needs to use `router5-listeners` plugin.
 
 ```javascript
 import React from 'react';
 import { routeNode } from 'react-router5';
-import { Home, About, NotFound } from './components';
+import { UserView, UserList, NotFound } from './components';
 
-export default RootNode;
-
-function RootNode(props) {
+function Users(props) {
     const { previousRoute, route } from props;
 
     switch (route.name) {
-        case 'home':
-            return <Home/>;
-        case 'about':
-            return <About/>;
+        case 'users.list':
+            return <UserList/>;
+        case 'users.view':
+            return <UserView/>;
         default:
             return <NotFound/>;
     };
 }
+
+export default routeNode('users')(Users);
 
 ```
 
@@ -60,8 +68,6 @@ function RootNode(props) {
 ```javascript
 import React from 'react';
 import { Link } from 'react-router5';
-
-export default Menu;
 
 function Menu(props) {
     return (
@@ -72,6 +78,8 @@ function Menu(props) {
         </nav>
     );
 }
+
+export default Menu;
 ```
 
 

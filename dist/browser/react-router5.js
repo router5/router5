@@ -249,6 +249,8 @@
                 router: PropTypes.object.isRequired
             };
     
+            RouteNode.displayName = 'RouteNode[' + RouteSegment + ']';
+    
             return RouteNode;
         };
     }

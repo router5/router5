@@ -78,6 +78,8 @@ function routeNode(nodeName) {
             router: _react.PropTypes.object.isRequired
         };
 
+        RouteNode.displayName = 'RouteNode[' + RouteSegment + ']';
+
         return RouteNode;
     };
 }
