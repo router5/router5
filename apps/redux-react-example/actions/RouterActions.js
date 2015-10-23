@@ -1,8 +1,7 @@
-import types from 'redux-react-example/constants/ActionTypes'
-
-export function updateState(state) {
+export function updateState(toState, fromState) {
     return {
-        types: types.UPDATE_STATE,
-        state
-    }
+        type: 'UPDATE_STATE',
+        toState,
+        fromState
+    };
 }

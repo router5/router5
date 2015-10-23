@@ -1,22 +1,24 @@
-import React from 'react'
-import {router} from 'common/router'
-import Home from 'redux-react-example/components/home'
+import React, { Component, createElement } from 'react';
+import Home from './components/home';
+import Admin from './components/admin';
+import Menu from './components/menu';
+import { routeNode } from 'router5-react';
 
-export default class App extends React.Component {
-    static components = {
-        home: Home
-        // users: Users
-    }
+const components = {
+    home: Home,
+    admin: Admin
+};
 
-    state = {
-        state: router.getState()
-    }
-
-    constructor(props) {
-        super(props)
-    }
-
+class App extends Component {
     render() {
-        return React.createElement(App.components.home)
+        const { route } = this.props;
+        return (
+            <div>
+                <Menu />
+                { createElement(components[route.name]) }
+            </div>
+        );
     }
 }
+
+export default routeNode('')(App);

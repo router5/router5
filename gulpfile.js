@@ -69,6 +69,7 @@ function copyLibs() {
         .pipe(gulp.dest(path.join(build, 'scripts')));
 }
 
+gulp.task('buildApp', buildApp);
 gulp.task('build', gulp.series(cleanApp, gulp.parallel(buildApp, copyIndex, copyLibs)));
 
 function watch() {
