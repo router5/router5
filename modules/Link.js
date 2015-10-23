@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 
-export default Link;
-
 class Link extends Component {
     constructor(props, context) {
         super(props, context);
@@ -80,3 +78,5 @@ Link.defaultProps = {
     routeParams:     {},
     routeOptions:    {}
 };
+
+export default Link;

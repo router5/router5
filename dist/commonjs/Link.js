@@ -18,8 +18,6 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-exports['default'] = Link;
-
 var Link = (function (_Component) {
     _inherits(Link, _Component);
 
@@ -116,4 +114,6 @@ Link.defaultProps = {
     routeParams: {},
     routeOptions: {}
 };
+
+exports['default'] = Link;
 module.exports = exports['default'];

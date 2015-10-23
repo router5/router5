@@ -25,8 +25,6 @@
 
     var _React = _interopRequireDefault(_react);
 
-    module.exports = Link;
-
     var Link = (function (_Component) {
         _inherits(Link, _Component);
 
@@ -123,4 +121,6 @@
         routeParams: {},
         routeOptions: {}
     };
+
+    module.exports = Link;
 });
