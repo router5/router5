@@ -15,7 +15,7 @@ class Link extends Component {
     }
 
     isActive() {
-        return this.router.isActive(this.props.routeName, this.props.routeParams)
+        return this.router.isActive(this.props.routeName, this.props.routeParams);
     }
 
     clickHandler(evt) {

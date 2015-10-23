@@ -1,6 +1,6 @@
 import React, { Component, PropTypes, Children } from 'react';
 
-export default class Router extends Component {
+class RouterProvider extends Component {
     constructor(props, context) {
         super(props, context);
         this.router = props.router;
@@ -22,11 +22,13 @@ export default class Router extends Component {
     }
 }
 
-Router.propTypes = {
+RouterProvider.propTypes = {
     router:   PropTypes.object.isRequired,
     children: PropTypes.element.isRequired
 };
 
-Router.childContextTypes = {
+RouterProvider.childContextTypes = {
     router:   PropTypes.object.isRequired
 };
+
+export default RouterProvider;

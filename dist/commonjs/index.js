@@ -14,13 +14,13 @@ var _routeNode = require('./route-node');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
 
-var _Router = require('./Router');
+var _RouterProvider = require('./RouterProvider');
 
-var _Router2 = _interopRequireDefault(_Router);
+var _RouterProvider2 = _interopRequireDefault(_RouterProvider);
 
 exports['default'] = {
     Link: _Link2['default'],
     routeNode: _routeNode2['default'],
-    Router: _Router2['default']
+    RouterProvider: _RouterProvider2['default']
 };
 module.exports = exports['default'];

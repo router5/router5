@@ -10,19 +10,19 @@ This package replaces `router5-react` which is deprecated.
 - router5 >= 1.0.0
 
 
-### Router HOC
+### RouterProvider HOC
 
 It will add your router instance in context.
 
 ```javascript
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router } from 'react-router5';
+import { RouterProvider } from 'react-router5';
 import App from './App';
 import router from './router';
 
 ReactDOM.render(
-    <Router router={ router }><App /></Router>,
+    <RouterProvider router={ router }><App /></RouterProvider>,
     document.getElementById('app')
 );
 ```

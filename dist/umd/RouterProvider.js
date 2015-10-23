@@ -8,7 +8,7 @@
             exports: {}
         };
         factory(mod.exports, mod, global.React);
-        global.Router = mod.exports;
+        global.RouterProvider = mod.exports;
     }
 })(this, function (exports, module, _react) {
     'use strict';
@@ -25,17 +25,17 @@
 
     var _React = _interopRequireDefault(_react);
 
-    var Router = (function (_Component) {
-        _inherits(Router, _Component);
+    var RouterProvider = (function (_Component) {
+        _inherits(RouterProvider, _Component);
 
-        function Router(props, context) {
-            _classCallCheck(this, Router);
+        function RouterProvider(props, context) {
+            _classCallCheck(this, RouterProvider);
 
-            _get(Object.getPrototypeOf(Router.prototype), 'constructor', this).call(this, props, context);
+            _get(Object.getPrototypeOf(RouterProvider.prototype), 'constructor', this).call(this, props, context);
             this.router = props.router;
         }
 
-        _createClass(Router, [{
+        _createClass(RouterProvider, [{
             key: 'getChildContext',
             value: function getChildContext() {
                 return { router: this.router };
@@ -56,17 +56,17 @@
             }
         }]);
 
-        return Router;
+        return RouterProvider;
     })(_react.Component);
 
-    module.exports = Router;
-
-    Router.propTypes = {
+    RouterProvider.propTypes = {
         router: _react.PropTypes.object.isRequired,
         children: _react.PropTypes.element.isRequired
     };
 
-    Router.childContextTypes = {
+    RouterProvider.childContextTypes = {
         router: _react.PropTypes.object.isRequired
     };
+
+    module.exports = RouterProvider;
 });

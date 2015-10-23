@@ -140,17 +140,17 @@
     
     function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
     
-    var Router = (function (_Component) {
-        _inherits(Router, _Component);
+    var RouterProvider = (function (_Component) {
+        _inherits(RouterProvider, _Component);
     
-        function Router(props, context) {
-            _classCallCheck(this, Router);
+        function RouterProvider(props, context) {
+            _classCallCheck(this, RouterProvider);
     
-            _get(Object.getPrototypeOf(Router.prototype), 'constructor', this).call(this, props, context);
+            _get(Object.getPrototypeOf(RouterProvider.prototype), 'constructor', this).call(this, props, context);
             this.router = props.router;
         }
     
-        _createClass(Router, [{
+        _createClass(RouterProvider, [{
             key: 'getChildContext',
             value: function getChildContext() {
                 return { router: this.router };
@@ -171,15 +171,15 @@
             }
         }]);
     
-        return Router;
+        return RouterProvider;
     })(Component);
     
-    Router.propTypes = {
+    RouterProvider.propTypes = {
         router: PropTypes.object.isRequired,
         children: PropTypes.element.isRequired
     };
     
-    Router.childContextTypes = {
+    RouterProvider.childContextTypes = {
         router: PropTypes.object.isRequired
     };
     

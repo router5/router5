@@ -1,9 +1,9 @@
 import Link from './Link';
 import routeNode from './route-node';
-import Router from './Router';
+import RouterProvider from './RouterProvider';
 
 export default {
     Link,
     routeNode,
-    Router
+    RouterProvider
 };
