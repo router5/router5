@@ -213,7 +213,7 @@ define('reactRouter5', ['react'], function (React) {
                     }
                     this.state = {
                         previousRoute: null,
-                        route: router.getState()
+                        route: this.router.getState()
                     };
                     this.router.addNodeListener(nodeName, this.nodeListener);
                 }
