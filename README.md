@@ -1,13 +1,16 @@
 # Router5 examples
 
-A mix of playground code and examples: currently working on a `react + baobab + router5` example. I also consider
-creating a `react + redux + router5` example.
-
 > Work in progress
+
+Currently includes:
+
+- Example with React (http://router5.github.io/docs/with-react.html)[http://router5.github.io/docs/with-react.html]
+- Example with Redux (Work in progress)
+
 
 ## Build
 
-    $ gulp build --app [app-name]
+    $ npm run build -- --app [appDirectory]
 
-App names: `baobab-react-example` or `redux-react-example`
+App directories: `react` or `react redux`
 

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { RouterProvider } from 'router5-react';
 import ReactDOM from 'react-dom';
 import App from './app';
-import createRouter from 'common/create-router'
+import createRouter from './create-router'
 import routes from './routes';
 import configureStore from './store';
 
