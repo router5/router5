@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "chance": "^0.7.6",
+    "deku": "^0.5.6",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-redux": "^4.0.0",
@@ -33,7 +34,9 @@
     "redux-thunk": "^1.0.0",
     "reselect": "^2.0.0",
     "router5": "router5/router5-react#one-zero-zero",
+    "router5-deku": "router5/router5-deku#one-zero-zero",
     "router5-history": "router5/router5-history",
-    "router5-listeners": "router5/router5-listeners"
+    "router5-listeners": "router5/router5-listeners",
+    "virtual-element": "^1.2.0"
   }
 }
