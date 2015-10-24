@@ -15,13 +15,13 @@ var importFix = '    var Component = React.Component;\n    var PropTypes = React
 var globalWrapper = {
     header: '\n(function (window) {\n"use strict";\n\n' + importFix,
     footer: '\n}(window));\n',
-    export: '\n\n    window.reactRouter5 = {Link: Link, Router: Router, routeNode: routeNode};\n'
+    export: '\n\n    window.reactRouter5 = {Link: Link, RouterProvider: RouterProvider, routeNode: routeNode};\n'
 }
 
 var amdWrapper = {
     header: '\ndefine(\'reactRouter5\', [\'react\'], function (React) {\n"use strict";\n\n' + importFix,
     footer: '\n});\n',
-    export: '\n\n    return {Link: Link, Router: Router, routeNode: routeNode};'
+    export: '\n\n    return {Link: Link, RouterProvider: RouterProvider, routeNode: routeNode};'
 }
 
 function build(modules, dest) {

@@ -255,6 +255,6 @@
         };
     }
 
-    window.reactRouter5 = {Link: Link, Router: Router, routeNode: routeNode};
+    window.reactRouter5 = {Link: Link, RouterProvider: RouterProvider, routeNode: routeNode};
 
 }(window));

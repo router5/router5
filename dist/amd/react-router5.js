@@ -255,5 +255,5 @@ define('reactRouter5', ['react'], function (React) {
         };
     }
 
-    return {Link: Link, Router: Router, routeNode: routeNode};
+    return {Link: Link, RouterProvider: RouterProvider, routeNode: routeNode};
 });
