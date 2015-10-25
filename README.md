@@ -11,7 +11,16 @@ Currently includes:
 
 ## Build an examples
 
-    $ npm run build -- --app [appDirectory]
+```sh
+npm run build -- --app [appDirectory]
+```
 
 App directories: `react`, `deku` or `react redux`
 
+## Run an example
+
+Serve the root directory of this repository, you can use [http-server](https://github.com/indexzero/http-server):
+
+```sh
+http-server -s -p 9000
+```

@@ -10,8 +10,8 @@ module.exports = {
         './apps/' + app + '/main.js'
     ],
     output: {
-        path: 'build/' + app,
-        filename: 'bundle.js'
+        path: 'build/',
+        filename: 'app.js'
     },
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin()
