@@ -51,7 +51,7 @@ function transition(router, toState, fromState, callback) {
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router._cmps[name].canDeactivate }), {});
 
         asyncProcess(
-            isCancelled, canDeactivateFunctionMap, toState, fromState,
+            canDeactivateFunctionMap, { isCancelled, toState, fromState },
             err => cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null)
         );
     };
@@ -62,7 +62,7 @@ function transition(router, toState, fromState, callback) {
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router._canAct[name] }), {});
 
         asyncProcess(
-            isCancelled, canActivateFunctionMap, toState, fromState,
+            canActivateFunctionMap, { isCancelled, toState, fromState },
             err => cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null)
         );
     };
@@ -72,7 +72,7 @@ function transition(router, toState, fromState, callback) {
         let mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         asyncProcess(
-            isCancelled, mwareFunction, toState, fromState,
+            mwareFunction, { isCancelled, toState, fromState, context: { cancel, router } },
             (err, state) => cb(err ? { code: constants.TRANSITION_ERR } : null, state || toState)
         );
     };
@@ -81,7 +81,7 @@ function transition(router, toState, fromState, callback) {
         .concat(canActivate)
         .concat(middlewareFn ? middleware : []);
 
-    asyncProcess(isCancelled, pipeline, toState, fromState, done);
+    asyncProcess(pipeline, { isCancelled, toState, fromState }, done);
 
     return cancel;
 }

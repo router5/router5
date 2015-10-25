@@ -7,6 +7,16 @@ var listeners = {
             params: toState.params,
             path: toState.path,
             hitMware: true
+        };
+        expect(Object.keys(this)).toEqual(['cancel', 'router']);
+        done(null, newState);
+    },
+    transitionMutate:  function (toState, fromState, done) {
+        var newState = {
+            name: toState.name + 'modified',
+            params: toState.params,
+            path: toState.path,
+            hitMware: true
         }
         done(null, newState);
     },
@@ -384,7 +394,7 @@ function testRouter(useHash) {
             spyOn(console, 'warn');
             router.usePlugin(myUnamedPlugin);
             expect(console.warn).toHaveBeenCalled();
-        })
+        });
 
         it('should support a transition middleware', function (done) {
             spyOn(listeners, 'transition').and.callThrough();
@@ -392,6 +402,16 @@ function testRouter(useHash) {
             router.navigate('users', {}, {}, function (err, state) {
                 expect(listeners.transition).toHaveBeenCalled();
                 expect(state.hitMware).toBe(true);
+                expect(err).toBe(null);
+                done();
+            });
+        });
+
+        it('should refuse to mutate its state during a transition', function (done) {
+            spyOn(console, 'error').and.callThrough();
+            router.useMiddleware(listeners.transitionMutate);
+            router.navigate('orders', {}, {}, function (err, state) {
+                expect(console.error).toHaveBeenCalled();
                 expect(err).toBe(null);
                 done();
             });

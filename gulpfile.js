@@ -29,11 +29,11 @@ var amdWrapper = {
     export: '\n\n    return {RouteNode: RouteNode, Router5: Router5};'
 }
 
-function build(modules, dest) {
+function build(modules, dest, blacklist) {
     return function() {
         return gulp
             .src(files, {base: 'modules'})
-            .pipe(babel({modules: modules, blacklist: ['strict']}))
+            .pipe(babel({modules: modules, auxiliaryCommentBefore: 'istanbul ignore next'}))
             .pipe(gulp.dest(dest));
     };
 }

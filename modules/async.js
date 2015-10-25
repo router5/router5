@@ -1,4 +1,4 @@
-export default function asyncProcess(isCancelled, functions, toState, fromState, callback, allowBool = true) {
+export default function asyncProcess(functions, { isCancelled, toState, fromState, context }, callback, allowBool = true) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     const initialFromState = { ...fromState };
@@ -10,7 +10,9 @@ export default function asyncProcess(isCancelled, functions, toState, fromState,
 
         const isMapped = typeof remainingFunctions[0] === 'string';
         const errVal = isMapped ? remainingFunctions[0] : true;
-        const stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+        let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+        stepFn = context ? stepFn.bind(context) : stepFn;
+
 
         const len = stepFn.length;
         const res = stepFn(toState, fromState, done);
@@ -29,8 +31,8 @@ export default function asyncProcess(isCancelled, functions, toState, fromState,
         if (err) callback(err);
         else {
             if (val && isState(val)) {
-                if (hasStateChanged(val)) console.warn('[router5][transition] State name or params changed during transition process.');
-                toState = val;
+                if (hasStateChanged(val)) console.error('[router5][transition] State values changed during transition process and ignored.');
+                else toState = val;
             }
             remainingFunctions = remainingFunctions.slice(1);
             next();
