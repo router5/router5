@@ -21,7 +21,7 @@ var listeners = {
         done(null, newState);
     },
     transitionErr: function (toState, fromState, done) {
-        done(true);
+        done({ reason: 'because' });
     },
     noop: function () {}
 };
@@ -423,6 +423,7 @@ function testRouter(useHash) {
             router.navigate('home', {}, {}, function (err, state) {
                 expect(listeners.transitionErr).toHaveBeenCalled();
                 expect(err.code).toBe(Router5.ERR.TRANSITION_ERR);
+                expect(err.reason).toBe('because');
                 done();
             });
         });

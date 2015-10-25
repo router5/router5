@@ -9,7 +9,7 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         if (!remainingFunctions.length) return true;
 
         const isMapped = typeof remainingFunctions[0] === 'string';
-        const errVal = isMapped ? remainingFunctions[0] : true;
+        const errVal = isMapped ? remainingFunctions[0] : {};
         let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
         stepFn = context ? stepFn.bind(context) : stepFn;
 

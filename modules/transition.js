@@ -73,7 +73,10 @@ function transition(router, toState, fromState, callback) {
 
         asyncProcess(
             mwareFunction, { isCancelled, toState, fromState, context: { cancel, router } },
-            (err, state) => cb(err ? { code: constants.TRANSITION_ERR } : null, state || toState)
+            (err, state) => {
+                const errObj = err ? (typeof err === 'object' ? err : { error: err }) : null;
+                cb(err ? { code: constants.TRANSITION_ERR, ...errObj } : null, state || toState);
+            }
         );
     };
 
