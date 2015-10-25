@@ -22,7 +22,7 @@ function loggerPlugin() {
             console.warn('Transition cancelled');
         },
         onTransitionError(toState, fromState, err) {
-            console.warn('Transition error with code ' + err);
+            console.warn('Transition error with code ' + err.code);
             endGroup();
         },
         onTransitionSuccess(toState, fromState) {

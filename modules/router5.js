@@ -3,7 +3,14 @@ import {transition, transitionPath} from './transition';
 import constants  from './constants';
 import loggerPlugin from './logger';
 
-let makeState = (name, params, path) => ({name, params, path});
+let makeState = (name, params, path) => {
+    const state = {};
+    const setProp = (key, value) => Object.defineProperty(state, key, { value, enumerable: true });
+    setProp('name', name);
+    setProp('params', params);
+    setProp('path', path);
+    return state;
+};
 
 /**
  * Create a new Router5 instance
@@ -391,7 +398,8 @@ class Router5 {
         if (this._tr) this._tr();
         this._invokeListeners('$$start', toState, fromState);
 
-        const tr = transition(this, toState, fromState, (err) => {
+        const tr = transition(this, toState, fromState, (err, state) => {
+            state = state || toState;
             this._tr = null;
 
             if (err) {
@@ -402,9 +410,9 @@ class Router5 {
                 return;
             }
 
-            this.lastKnownState = toState;
+            this.lastKnownState = state; // toState or modified state?
 
-            if (done) done(null, toState);
+            if (done) done(null, state);
         });
 
         this._tr = tr;

@@ -33,14 +33,14 @@ function transition(router, toState, fromState, callback) {
     let cancelled = false;
     const isCancelled = () => cancelled;
     const cancel = () => cancelled = true;
-    const done = (err) => {
+    const done = (err, state) => {
         if (!err && !isCancelled() && router.options.autoCleanUp) {
             const activeSegments = nameToIDs(toState.name);
             Object.keys(router._cmps).filter(name => {
                 if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
             });
         }
-        callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err);
+        callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
     };
 
     const {toDeactivate, toActivate} = transitionPath(toState, fromState);
@@ -73,7 +73,7 @@ function transition(router, toState, fromState, callback) {
 
         asyncProcess(
             isCancelled, mwareFunction, toState, fromState,
-            err => cb(err ? { code: constants.TRANSITION_ERR } : null)
+            (err, state) => cb(err ? { code: constants.TRANSITION_ERR } : null, state || toState)
         );
     };
 

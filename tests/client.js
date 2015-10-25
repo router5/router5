@@ -1,10 +1,16 @@
 var router = null;
 
 var listeners = {
-    transition: function (fromState, toState, done) {
-        done(null);
+    transition: function (toState, fromState, done) {
+        var newState = {
+            name: toState.name,
+            params: toState.params,
+            path: toState.path,
+            hitMware: true
+        }
+        done(null, newState);
     },
-    transitionErr: function (fromState, toState, done) {
+    transitionErr: function (toState, fromState, done) {
         done(true);
     },
     noop: function () {}
@@ -385,6 +391,7 @@ function testRouter(useHash) {
             router.useMiddleware(listeners.transition);
             router.navigate('users', {}, {}, function (err, state) {
                 expect(listeners.transition).toHaveBeenCalled();
+                expect(state.hitMware).toBe(true);
                 expect(err).toBe(null);
                 done();
             });
