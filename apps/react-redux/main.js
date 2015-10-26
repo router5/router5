@@ -2,15 +2,15 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { RouterProvider } from 'router5-react';
 import ReactDOM from 'react-dom';
-import App from './app';
+import App from './components/App';
 import createRouter from './create-router'
-import routes from './routes';
 import configureStore from './store';
 
-const router = createRouter(routes);
-const store = configureStore({});
+const router = createRouter();
 
 router.start((err, state) => {
+    const store = configureStore(router, { router: { route: state }});
+
     const wrappedApp = (
         <Provider store={ store } >
             <RouterProvider router= { router }>
@@ -20,4 +20,4 @@ router.start((err, state) => {
     );
 
     ReactDOM.render(wrappedApp, document.getElementById('app'));
-})
+});

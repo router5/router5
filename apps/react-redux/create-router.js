@@ -3,17 +3,19 @@ import listenersPlugin from 'router5-listeners';
 import historyPlugin from 'router5-history';
 
 export default function createRouter(routes) {
-    let router = new Router5([], {
-            useHash: true,
-            defaultRoute: 'home'
-        })
+    const router = new Router5()
+        .setOption('useHash', true)
+        // .setOption('hashPrefix', '!')
+        .setOption('defaultRoute', 'inbox')
+        // Routes
+        .addNode('inbox',         '/inbox')
+        .addNode('inbox.message', '/message/:id')
+        .addNode('compose',       '/compose')
+        .addNode('contacts',      '/contacts')
+        // Plugins
+        // .usePlugin(Router5.loggerPlugin())
         .usePlugin(listenersPlugin())
-        .usePlugin(historyPlugin())
-        .useMiddleware((toState, fromState, done) => {
-            done(null);
-        });
-
-    routes.forEach(route => router.addNode(route.name, route.path, route.canActivate));
+        .usePlugin(historyPlugin());
 
     return router;
 };
