@@ -58,7 +58,7 @@ function transitionSuccess(route, previousRoute) {
 
 function transitionError(route, previousRoute, transitionError) {
     return {
-        type: _actionTypes2['default'].TRANSITION_SUCCESS,
+        type: _actionTypes2['default'].TRANSITION_ERROR,
         route: route,
         previousRoute: previousRoute,
         transitionError: transitionError

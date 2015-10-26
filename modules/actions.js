@@ -39,7 +39,7 @@ export function transitionSuccess(route, previousRoute) {
 
 export function transitionError(route, previousRoute, transitionError) {
     return {
-        type: actionTypes.TRANSITION_SUCCESS,
+        type: actionTypes.TRANSITION_ERROR,
         route,
         previousRoute,
         transitionError
