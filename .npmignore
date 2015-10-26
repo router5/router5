@@ -1,0 +1,9 @@
+**/.*,
+node_modules,
+scripts,
+npm-debug.log,
+bower.json,
+README.md,
+CHANGELOG.md,
+package.json,
+gulpfile.js
