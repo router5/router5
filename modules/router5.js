@@ -395,7 +395,7 @@ class Router5 {
      */
     _transition(toState, fromState, done) {
         // Cancel current transition
-        if (this._tr) this._tr();
+        this.cancel();
         this._invokeListeners('$$start', toState, fromState);
 
         const tr = transition(this, toState, fromState, (err, state) => {
@@ -417,6 +417,14 @@ class Router5 {
 
         this._tr = tr;
         return () => !tr || tr();
+    }
+
+    /**
+     * Undocumented for now
+     * @private
+     */
+    cancel() {
+        if (this._tr) this._tr();
     }
 
     /**

@@ -408,7 +408,7 @@ function testRouter(useHash) {
         });
 
         it('should refuse to mutate its state during a transition', function (done) {
-            spyOn(console, 'error').and.callThrough();
+            spyOn(console, 'error');
             router.useMiddleware(listeners.transitionMutate);
             router.navigate('orders', {}, {}, function (err, state) {
                 expect(console.error).toHaveBeenCalled();
