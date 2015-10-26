@@ -30,9 +30,10 @@ var amdWrapper = {
 }
 
 function build(modules, dest, blacklist) {
+    var srcFiles = files.concat(modules === 'ignore' ? ['node_modules/router5.transition-path/modules/index.js'] : []);
     return function() {
         return gulp
-            .src(files, {base: 'modules'})
+            .src(srcFiles, {base: 'modules'})
             .pipe(babel({modules: modules, auxiliaryCommentBefore: 'istanbul ignore next'}))
             .pipe(gulp.dest(dest));
     };
@@ -42,8 +43,9 @@ function buildBundle(dest, wrapper) {
     return function() {
         return gulp
             .src([
-                     'node_modules/route-node/node_modules/path-parser/modules/Path.js',
-                     'node_modules/route-node/modules/RouteNode.js'
+                    'node_modules/router5.transition-path/modules/index.js',
+                    'node_modules/route-node/node_modules/path-parser/modules/Path.js',
+                    'node_modules/route-node/modules/RouteNode.js'
                  ].concat(files.slice(1))
              )
             .pipe(babel({modules: 'ignore', blacklist: ['strict']}))
