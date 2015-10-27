@@ -1,5 +1,5 @@
 {
-  "name": "router5-react",
+  "name": "react-router5",
   "version": "1.0.0",
   "description": "router5 helpers for React",
   "main": "dist/commonjs/index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/router5/router5-react.git"
+    "url": "https://github.com/router5/react-router5.git"
   },
   "keywords": [
     "router",
@@ -25,9 +25,9 @@
   "author": "Thomas Roch",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/router5/router5-react/issues"
+    "url": "https://github.com/router5/react-router5/issues"
   },
-  "homepage": "http://router5.github.com/router5/router5-react",
+  "homepage": "http://router5.github.com/router5/react-router5",
   "devDependencies": {
     "router5": "router5/router5#one-zero-zero",
     "babel": "^5.8.23",
