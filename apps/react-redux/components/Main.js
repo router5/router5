@@ -1,5 +1,4 @@
 import React, { createElement } from 'react';
-import { routeNode } from 'react-router5';
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import Inbox from './Inbox';
