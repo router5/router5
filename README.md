@@ -6,8 +6,9 @@ Currently includes:
 
 - Example with React [http://router5.github.io/docs/with-react.html](http://router5.github.io/docs/with-react.html)
 - Example with Deku [http://router5.github.io/docs/with-deku.html](http://router5.github.io/docs/with-deku.html)
-- Example with React and Redux (Work in progress)
+- Example with React and Redux
 
+It demonstrates different ways to use router5 functionalities.
 
 ## Build an examples
 

@@ -1,8 +1,15 @@
 import React from 'react';
-import { getEmail } from '../api';
+import { connect } from 'react-redux';
+import find from 'lodash.find';
+
+function mapStateToProps(state, props) {
+    return {
+        email: find(state.emails, { id: props.messageId })
+    };
+}
 
 export default function Message(props) {
-    const { mailTitle, mailMessage } = getEmail(props.messageId);
+    const { mailTitle, mailMessage } = props.email;
 
     return (
         <section className='mail'>
@@ -11,3 +18,5 @@ export default function Message(props) {
         </section>
     );
 }
+
+export default connect(mapStateToProps)(Message);

@@ -1,49 +1,52 @@
-import React, { Component } from 'react';
-import { routeNode } from 'router5-react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import { bindActionCreators } from 'redux';
+import { updateTitle, updateMessage } from '../actions/draft';
+
+const draftSelector = createSelector(
+    state => state.draft,
+    state => state.router,
+    (draft, router) => ({
+        title: draft.title,
+        message: draft.message,
+        error: hasCannotDeactivateError(router.transitionError)
+    })
+);
+
+function hasCannotDeactivateError(error) {
+    return error && error.code === 'CANNOT_DEACTIVATE' && error.segment === 'compose';
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ updateTitle, updateMessage }, dispatch);
+}
 
 class Compose extends Component {
     constructor(props, context) {
         super(props, context);
-        this.state = {
-            title: undefined,
-            message: undefined
-        };
-        this.updateTitle = this.updateTitle.bind(this);
-        this.updateMessage = this.updateMessage.bind(this);
-        this.canDeactivate = this.canDeactivate.bind(this);
-    }
-
-    canDeactivate() {
-        if (this.state.title || this.state.message) {
-            this.setState({ warning: true })
-            return false;
-        }
-
-        return true;
-    }
-
-    updateTitle(evt) {
-        this.setState({title: evt.target.value, warning: false});
-    }
-
-    updateMessage(evt) {
-        this.setState({message: evt.target.value, warning: false});
+        this.router = context.router;
     }
 
     render() {
-        const {title, message, warning} = this.state;
+        const { title, message, error, updateTitle, updateMessage } = this.props
+        this.router.canDeactivate('compose', !title && !message);
 
         return (
             <div className='compose'>
                 <h4>Compose a new message</h4>
 
-                <input name='title' value={ title } onChange={ this.updateTitle } />
-                <textarea name='message' value={ message } onChange={ this.updateMessage } />
+                <input name='title' value={ title } onChange={ evt => updateTitle(evt.target.value) } />
+                <textarea name='message' value={ message } onChange={ evt => updateMessage(evt.target.value) } />
 
-                { warning ? <p>Clear inputs before continuing</p> : null }
+                { error ? <p>Clear inputs before continuing</p> : null }
             </div>
         );
     }
 }
 
-export default routeNode('compose', true)(Compose);
+Compose.contextTypes = {
+    router: PropTypes.object.isRequired
+};
+
+export default connect(draftSelector, mapDispatchToProps)(Compose);

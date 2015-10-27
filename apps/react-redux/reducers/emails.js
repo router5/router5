@@ -1,4 +1,4 @@
-const emails = [
+const initialState = [
     {
         "id": "1",
         "mailTitle": "Why router5?",
@@ -16,17 +16,9 @@ const emails = [
     }
 ];
 
-export function getEmails() {
-    return emails;
-}
-
-export function getEmail(id) {
-    let index;
-
-    if (emails) {
-        for (index in emails) {
-            if (emails[index].id === id) return emails[index];
-        }
+export default function emails(state = initialState, action) {
+    switch (action.type) {
+        default:
+            return state;
     }
-    return null;
 }
