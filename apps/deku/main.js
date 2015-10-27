@@ -1,6 +1,6 @@
 import { tree, render } from 'deku';
 import element from 'virtual-element';
-import { routerPlugin } from 'router5-deku';
+import { routerPlugin } from 'deku-router5';
 import App from './components/App';
 import router from './router';
 

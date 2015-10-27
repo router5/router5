@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { RouterProvider } from 'router5-react';
+import { RouterProvider } from 'react-router5';
 import ReactDOM from 'react-dom';
 import App from './components/App';
 import createRouter from './create-router'

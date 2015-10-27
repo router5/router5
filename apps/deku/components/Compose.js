@@ -1,5 +1,5 @@
 import element from 'virtual-element';
-import { routeNode } from 'router5-deku';
+import { routeNode } from 'deku-router5';
 
 const Compose = {
     intitalState(props) {

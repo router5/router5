@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'router5-react';
+import { Link } from 'react-router5';
 
 export default function Nav(props) {
     return (

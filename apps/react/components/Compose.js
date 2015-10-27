@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { routeNode } from 'router5-react';
+import { routeNode } from 'react-router5';
 
 class Compose extends Component {
     constructor(props, context) {

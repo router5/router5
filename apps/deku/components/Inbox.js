@@ -1,7 +1,7 @@
 import element from 'virtual-element';
 import InboxList from './InboxList';
 import Message from './Message';
-import { routeNode } from 'router5-deku';
+import { routeNode } from 'deku-router5';
 import { getEmails } from '../api';
 
 const Inbox = {

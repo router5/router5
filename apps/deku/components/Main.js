@@ -1,5 +1,5 @@
 import element from 'virtual-element';
-import { routeNode } from 'router5-deku';
+import { routeNode } from 'deku-router5';
 import Inbox from './Inbox';
 import Compose from './Compose';
 import NotFound from './NotFound';

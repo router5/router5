@@ -1,5 +1,5 @@
 import element from 'virtual-element';
-import { Link } from 'router5-deku';
+import { Link } from 'deku-router5';
 
 const Nav = {
     render({ props }) {
