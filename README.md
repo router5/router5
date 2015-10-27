@@ -122,5 +122,5 @@ function Root({ route }) {
     }
 }
 
-export default connect(routeNodeSelector('')(Root));
+export default connect(routeNodeSelector(''))(Root);
 ```
