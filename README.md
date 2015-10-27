@@ -45,11 +45,13 @@ function per node. Supports asynchronous results.
 ### Guides
 
 - [Configuring routes](http://router5.github.io/docs/configuring-routes.html)
+- [Router options](http://router5.github.io/docs/router-options.html)
 - [Path syntax](http://router5.github.io/docs/path-syntax.html)
 - [Navigation](http://router5.github.io/docs/navigation.html)
 - [Preventing navigation](http://router5.github.io/docs/preventing-navigation.html)
-- [Listeners](http://router5.github.io/docs/listeners.html)
+- [Middleware functions](http://router5.github.io/docs/middleware.html)
 - [Transition](http://router5.github.io/docs/transition.html)
+- [Using plugins](http://router5.github.io/docs/plugins.html)
 - [Universal applications](http://router5.github.io/docs/universal-applications.html)
 
 
@@ -61,6 +63,7 @@ function per node. Supports asynchronous results.
 ### Examples
 
 - [With React](http://router5.github.io/docs/with-react.html)
+- [With React and Redux](http://router5.github.io/docs/with-react-redux.html)
 - [With Deku](http://router5.github.io/docs/with-deku.html)
 
 
