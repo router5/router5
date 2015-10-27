@@ -27,6 +27,10 @@
 
     var _React = _interopRequireDefault(_react);
 
+    function getDisplayName(component) {
+        return component.displayName || component.name || 'Component';
+    }
+
     function routeNode(nodeName) {
         var register = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
@@ -85,7 +89,7 @@
                 router: _react.PropTypes.object.isRequired
             };
 
-            RouteNode.displayName = 'RouteNode[' + RouteSegment + ']';
+            RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';
 
             return RouteNode;
         };

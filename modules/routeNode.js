@@ -1,5 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 
+function getDisplayName(component) {
+    return component.displayName || component.name || 'Component';
+}
+
 function routeNode(nodeName, register = false) {
     return function routeNodeWrapper(RouteSegment) {
         class RouteNode extends Component {
@@ -38,7 +42,7 @@ function routeNode(nodeName, register = false) {
             router:       PropTypes.object.isRequired
         };
 
-        RouteNode.displayName = 'RouteNode[' + RouteSegment + ']'
+        RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';
 
         return RouteNode;
     };
