@@ -1,11 +1,10 @@
 # redux-router5
 
 > Router5 integration with redux. If you develop with React, use this package with __[react-redux](https://github.com/rackt/react-redux)__
-and __[react-router5](https://github.com/router5/react-router5)__.
+and __[react-router5](https://github.com/router5/react-router5)__. Using router5 with redux removes the need to include _router5-listeners_.
 
-__[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__
+__[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
 
-Using router5 with redux removes the need to include _router5-listeners_.
 
 ## How to use
 
@@ -67,20 +66,22 @@ const store = configureStore(router, { router: { route: state }});
 router.start();
 ```
 
-Under the hood, it simply add a plugin to your router instance so your router
-dispatch actions on transition start, error, success and cancel. It also relay
-`navigateTo` actions to the router.
+Under the hood, it simply adds a plugin to your router instance so your router
+dispatches actions on transition start, error, success and cancel (You can read more about router5 plugins [here](http://router5.github.io/docs/plugins.html)).
+It also relay `navigateTo` actions to the router.
 
 
 ## router5Reducer
 
-A simple reducer which is added by `router5Middleware`. It will manage a piece of your state with the following data attributes:
+A simple reducer which is added by `router5Middleware`. __Note:__  use `router` for your reducer key name, other names are not yet supported.
+`router5Reducer` will manage a piece of your state containing the following data attributes:
 
 - route
 - previousRoute
 - transitionRoute (the current transitioning route)
-- transitionError
+- transitionError (the last error which occured)
 
+`route` and `previousRoute` have a `name`, `params` and `path` properties.
 
 ## Actions
 
