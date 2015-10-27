@@ -21,14 +21,12 @@
 
     var _routeNodeSelector2 = _interopRequireDefault(_routeNodeSelector);
 
-    var _actions2 = _interopRequireDefault(_actions);
-
     var _actionTypes2 = _interopRequireDefault(_actionTypes);
 
     module.exports = {
         router5Middleware: _router5Middleware2['default'],
         router5Reducer: _router5Reducer2['default'],
-        actions: _actions2['default'],
+        actions: _actions,
         actionTypes: _actionTypes2['default'],
         routeNodeSelector: _routeNodeSelector2['default']
     };
