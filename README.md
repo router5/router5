@@ -5,11 +5,12 @@ and __[react-router5](https://github.com/router5/react-router5)__.
 
 __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__
 
+Using router5 with redux removes the need to include _router5-listeners_.
 
 ## How to use
 
 - Create and configure your router instance
-- Create your store with `router5Middleware`
+- Create and configure your store including `router5Middleware` and `router5Reducer`
 - Use `routeNodeSelector` on route nodes in your component tree
 - Use provided actions to perform routing
 
@@ -70,9 +71,6 @@ import { actions } from 'redux-router5';
 
 `routeNodeSelector` is a selector created with [reselect](https://github.com/rackt/reselect). It is designed to be used on a route node
 and works with `connect` higher-order component from `react-redux`.
-
-It is designed to replace node listeners provided by [router5-listeners](https://github.com/router5/router5-listeners). When using redux with router5,
-you don't need to use listeners at all.
 
 ```javascript
 import { connect } from 'react-redux';
