@@ -15,7 +15,7 @@ It favours __convention over configuration__, by giving you the means to observe
 and to react to them. Afterall, why treat route changes any different than data changes?
 
 <p align="center">
-    <a href="http://slides.com/thomasroch/deck"><img alt="Router5 slides" src="https://raw.githubusercontent.com/router5/router5.github.io/one-zero-zero/img/slices_preview.png" /></a>
+    <a href="http://slides.com/thomasroch/deck"><img alt="Router5 slides" src="https://raw.githubusercontent.com/router5/router5.github.io/master/img/slices_preview.png" /></a>
 </p>
 
 To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)
