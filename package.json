@@ -32,6 +32,7 @@
     "react-dom": "^0.14.0",
     "react-redux": "^4.0.0",
     "redux": "^3.0.3",
+    "redux-router5": "router5/redux-router5",
     "redux-thunk": "^1.0.0",
     "reselect": "^2.0.0",
     "router5": "router5/router5-react#one-zero-zero",
