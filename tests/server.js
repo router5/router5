@@ -1,5 +1,4 @@
 var path = require('path');
-var Router5 = require(path.join(__dirname, '../dist/commonjs')).Router5;
 var createRouter = require('./_create-router');
 
 var should    = require('should');

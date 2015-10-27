@@ -1,3 +1,32 @@
+<a name="1.0.0"></a>
+# 1.0.0 (2015-10-22)
+
+
+### Features
+
+* add autoCleanUp option to automatically deregister components ([8a1db8c](https://github.com/router5/router5/commit/8a1db8c))
+* add canDeactivate function for boolean values ([13b3015](https://github.com/router5/router5/commit/13b3015))
+* add logger plugin ([e2c9570](https://github.com/router5/router5/commit/e2c9570))
+* add support for more than one  middleware function ([de60d30](https://github.com/router5/router5/commit/de60d30))
+* add support for plugins and make listeners a plugin ([02196f6](https://github.com/router5/router5/commit/02196f6))
+* output errors as objects with code property rather than string ([885c1de](https://github.com/router5/router5/commit/885c1de))
+* remove browser history management from router ([361b500](https://github.com/router5/router5/commit/361b500))
+
+
+### BREAKING CHANGES
+
+* errors are now objects and not error codes (strings) to allow more descriptive errors. For instance, CANNOT_ACTIVATE and CANNOT_DEACTIVATE error objects will contain a 'segment' key
+
+* components will now be deregistered automatically by default, to turn it off set autoCleanUp option to false
+
+* onTransition() is now deprecated in favour of useMiddleware()
+
+* history is now managed by a plugin (router5-history). See docs for how to use.
+
+* listeners are now managed by a plugin (router5-listeners)
+
+
+
 <a name="0.9.3"></a>
 ## 0.9.3 (2015-10-22)
 

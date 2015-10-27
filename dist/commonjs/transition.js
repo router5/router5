@@ -1,10 +1,12 @@
-'use strict';
-
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var _async = require('./async');
 
@@ -16,13 +18,13 @@ var _constants2 = _interopRequireDefault(_constants);
 
 exports['default'] = { transition: transition, transitionPath: transitionPath };
 
-function transitionPath(toState, fromState) {
-    var nameToIDs = function nameToIDs(name) {
-        return name.split('.').reduce(function (ids, name) {
-            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-        }, []);
-    };
+var nameToIDs = function nameToIDs(name) {
+    return name.split('.').reduce(function (ids, name) {
+        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+    }, []);
+};
 
+function transitionPath(toState, fromState) {
     var i = undefined;
     var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
     var toStateIds = nameToIDs(toState.name);
@@ -50,60 +52,56 @@ function transition(router, toState, fromState, callback) {
         return cancelled = true;
     };
     var done = function done(err) {
-        return callback(cancelled ? _constants2['default'].TRANSITION_CANCELLED : err);
+        if (!err && !isCancelled() && router.options.autoCleanUp) {
+            (function () {
+                var activeSegments = nameToIDs(toState.name);
+                Object.keys(router._cmps).filter(function (name) {
+                    if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
+                });
+            })();
+        }
+        callback(isCancelled() ? { code: _constants2['default'].TRANSITION_CANCELLED } : err);
     };
 
     var _transitionPath = transitionPath(toState, fromState);
 
-    var intersection = _transitionPath.intersection;
     var toDeactivate = _transitionPath.toDeactivate;
     var toActivate = _transitionPath.toActivate;
 
     var canDeactivate = function canDeactivate(toState, fromState, cb) {
-        var canDeactivateFunctions = toDeactivate.map(function (name) {
-            return router._cmps[name];
-        }).filter(function (comp) {
-            return comp && comp.canDeactivate;
-        }).map(function (comp) {
-            return comp.canDeactivate;
-        });
+        var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
+            return router._cmps[name] && router._cmps[name].canDeactivate;
+        }).reduce(function (fnMap, name) {
+            return _extends({}, fnMap, _defineProperty({}, name, router._cmps[name].canDeactivate));
+        }, {});
 
-        (0, _async2['default'])(isCancelled, canDeactivateFunctions, toState, fromState, function (err) {
-            return cb(err ? _constants2['default'].CANNOT_DEACTIVATE : null);
+        (0, _async2['default'])(isCancelled, canDeactivateFunctionMap, toState, fromState, function (err) {
+            return cb(err ? { code: _constants2['default'].CANNOT_DEACTIVATE, segment: err } : null);
         });
     };
 
     var canActivate = function canActivate(toState, fromState, cb) {
-        var canActivateFunctions = toActivate.map(function (name) {
+        var canActivateFunctionMap = toActivate.filter(function (name) {
             return router._canAct[name];
-        }).filter(function (_) {
-            return _;
-        });
+        }).reduce(function (fnMap, name) {
+            return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
+        }, {});
 
-        (0, _async2['default'])(isCancelled, canActivateFunctions, toState, fromState, function (err) {
-            return cb(err ? _constants2['default'].CANNOT_ACTIVATE : null);
+        (0, _async2['default'])(isCancelled, canActivateFunctionMap, toState, fromState, function (err) {
+            return cb(err ? { code: _constants2['default'].CANNOT_ACTIVATE, segment: err } : null);
         });
     };
 
-    var middlewareFn = router._onTr;
+    var middlewareFn = router.mware;
     var middleware = function middleware(toState, fromState, cb) {
-        var mwareFunction = [middlewareFn];
+        var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         (0, _async2['default'])(isCancelled, mwareFunction, toState, fromState, function (err) {
-            return cb(err ? _constants2['default'].TRANSITION_ERR : null);
+            return cb(err ? { code: _constants2['default'].TRANSITION_ERR } : null);
         });
     };
 
-    var nodeListenerFn = router._cbs['^' + intersection];
-    var nodeListener = function nodeListener(toState, fromState, cb) {
-        var listeners = nodeListenerFn;
-
-        (0, _async2['default'])(isCancelled, listeners, toState, fromState, function (err) {
-            return cb(err ? _constants2['default'].NODE_LISTENER_ERR : null);
-        }, true);
-    };
-
-    var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []).concat(nodeListenerFn && nodeListenerFn.length ? nodeListener : []);
+    var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
 
     (0, _async2['default'])(isCancelled, pipeline, toState, fromState, done);
 

@@ -1,9 +1,17 @@
-import RouteNode  from 'route-node'
-import {transition, transitionPath} from './transition'
-import constants  from './constants'
-import browser    from './browser'
+import RouteNode  from 'route-node';
+import transitionPath from 'router5.transition-path';
+import transition from './transition';
+import constants  from './constants';
+import loggerPlugin from './logger';
 
-let makeState = (name, params, path) => ({name, params, path})
+let makeState = (name, params, path) => {
+    const state = {};
+    const setProp = (key, value) => Object.defineProperty(state, key, { value, enumerable: true });
+    setProp('name', name);
+    setProp('params', params);
+    setProp('path', path);
+    return state;
+};
 
 /**
  * Create a new Router5 instance
@@ -13,47 +21,25 @@ let makeState = (name, params, path) => ({name, params, path})
  * @return {Router5} The router instance
  */
 class Router5 {
-    /**
-     * Error codes
-     * @type {Object}
-     */
-    static ERR = constants
-
-    /**
-     * An helper function to return instructions for a transition:
-     * intersection route name, route names to deactivate, route names to activate
-     * @param  {Object} toState   The state to go to
-     * @param  {Object} fromState The state to go from
-     * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
-     */
-    static transitionPath = transitionPath
-
     constructor(routes, opts = {}) {
-        this.started = false
-        this._onTr = null
-        this._cbs = {}
-        this._cmps = {}
-        this._canAct = {}
-        this.lastStateAttempt = null
-        this.lastKnownState = null
-        this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes)
+        this.started = false;
+        this.mware = null;
+        this._cbs = {};
+        this._cmps = {};
+        this._canAct = {};
+        this.lastStateAttempt = null;
+        this.lastKnownState = null;
+        this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
         this.options = {
             useHash: false,
             hashPrefix: '',
-            base: '',
-            trailingSlash: 0
-        }
-        Object.keys(opts).forEach(opt => this.options[opt] = opts[opt])
-        this._setBase()
+            base: false,
+            trailingSlash: 0,
+            autoCleanUp: true
+        };
+        Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
+        this.registeredPlugins = {};
         // Bind onPopState
-        this.boundOnPopState = this.onPopState.bind(this)
-    }
-
-    /**
-     * @private
-     */
-    _setBase() {
-        if (this.options.useHash && !this.options.base) this.options.base = browser.getBase()
     }
 
     /**
@@ -63,9 +49,8 @@ class Router5 {
      * @return {Router5}    The Router5 instance
      */
     setOption(opt, val) {
-        this.options[opt] = val
-        if (opt === 'useHash') this._setBase()
-        return this
+        this.options[opt] = val;
+        return this;
     }
 
     /**
@@ -74,8 +59,8 @@ class Router5 {
      * @return {Router5}  The Router5 instance
      */
     add(routes) {
-        this.rootNode.add(routes)
-        return this
+        this.rootNode.add(routes);
+        return this;
     }
 
     /**
@@ -88,57 +73,39 @@ class Router5 {
      * @return {Router5}             The Router5 instance
      */
     addNode(name, path, canActivate) {
-        this.rootNode.addNode(name, path)
-        if (canActivate) this._canAct[name] = canActivate
-        return this
+        this.rootNode.addNode(name, path);
+        if (canActivate) this._canAct[name] = canActivate;
+        return this;
     }
 
-    /**
-     * @private
-     */
-    onPopState(evt) {
-        // Do nothing if no state or if last know state is poped state (it should never happen)
-        let newState = !evt.state || !evt.state.name
-        let state = evt.state || this.matchPath(this.getLocation())
-        let opts = this.options
+    usePlugin(plugin) {
+        if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
 
-        if (!state) {
-            // If current state is already the default route, we will have a double entry
-            // Navigating back and forth will emit SAME_STATES error
-            this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
-            return
-        }
-        if (this.lastKnownState && this.areStatesEqual(state, this.lastKnownState, false)) {
-            return
-        }
+        const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+        const defined = pluginMethods.concat('init').some(method => plugin[method] !== undefined);
 
-        this._transition(state, this.lastKnownState, (err, toState) => {
-            if (err) {
-                if (err === constants.CANNOT_DEACTIVATE) {
-                    let url = this.buildUrl(this.lastKnownState.name, this.lastKnownState.params)
-                    if (!newState) {
-                        // Keep history state unchanged but use current URL
-                        this.updateBrowserState(state, url, true);
-                    }
-                    // else do nothing or history will be messed up
-                    // TODO: history.back()?
-                } else {
-                    // Force navigation to default state
-                    this.navigate(opts.defaultRoute, opts.defaultParams, {reload: true, replace: true})
-                }
-            } else {
-                this.updateBrowserState(toState, this.buildUrl(toState.name, toState.params), !newState)
+        if (!defined) throw new Error(`[router5] plugin ${plugin.name} has none of the expected methods implemented`);
+        this.registeredPlugins[plugin.name] = plugin;
+
+        if (plugin.init) plugin.init(this);
+
+        pluginMethods.forEach(method => {
+            if (plugin[method]) {
+                this._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
             }
-        })
+
+        });
+
+        return this;
     }
 
     /**
-     * Set a transition middleware function
+     * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
      * @param {Function} fn The middleware function
      */
-    onTransition(fn) {
-        this._onTr = fn
-        return this
+    useMiddleware() {
+        this.mware = Array.prototype.slice.call(arguments);
+        return this;
     }
 
     /**
@@ -150,65 +117,66 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     start() {
-        let args = [...arguments]
-        let lastArg = args.slice(-1)[0]
-        let done = (lastArg instanceof Function) ? lastArg : null
-        let startPath, startState
+        const args = Array.prototype.slice.call(arguments);
+        const lastArg = args.slice(-1)[0];
+        const done = (lastArg instanceof Function) ? lastArg : null;
+        let startPath, startState;
 
         if (this.started) {
-            if (done) done(constants.ROUTER_ALREADY_STARTED)
-            return this
+            if (done) done({ code: constants.ROUTER_ALREADY_STARTED });
+            return this;
         }
+
+        this.started = true;
+        this._invokeListeners('$start');
+        const opts = this.options;
 
         if (args.length > 0) {
-            if (typeof args[0] === 'string') startPath = args[0]
-            if (typeof args[0] === 'object') startState = args[0]
+            if (typeof args[0] === 'string') startPath = args[0];
+            if (typeof args[0] === 'object') startState = args[0];
         }
-
-        this.started = true
-        let opts = this.options
 
         // callback
-        let cb = (err, state, invokeErrCb = true) => {
-            browser.addPopstateListener(this.boundOnPopState)
-            if (done) done(err, state)
-            if (err && invokeErrCb) this._invokeListeners('$error', state, null, err)
-        }
+        const cb = (err, state, invokeErrCb = true) => {
+            if (done) done(err, state);
+            if (!err) this._invokeListeners('$$success', state, null, {replace: true});
+            if (err && invokeErrCb) this._invokeListeners('$$error', state, null, err);
+        };
 
         // Get start path
-        if (!startPath && !startState) startPath = this.getLocation()
+        if (startPath === undefined && startState === undefined && this.getLocation) {
+            startPath = this.getLocation();
+        }
 
         if (!startState) {
             // If no supplied start state, get start state
-            startState = this.matchPath(startPath)
+            startState = startPath === undefined ? null : this.matchPath(startPath);
             // Navigate to default function
-            let navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false))
+            const navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false));
             // If matched start path
             if (startState) {
-                this.lastStateAttempt = startState
+                this.lastStateAttempt = startState;
                 this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
                     if (!err) {
-                        this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
-                        cb(null, state)
+                        cb(null, state);
                     }
-                    else if (opts.defaultRoute) navigateToDefault()
-                    else cb(err, null, false)
-                })
+                    else if (opts.defaultRoute) navigateToDefault();
+                    else cb(err, null, false);
+                });
             } else if (opts.defaultRoute) {
                 // If default, navigate to default
-                navigateToDefault()
+                navigateToDefault();
             } else {
                 // No start match, no default => do nothing
-                cb(constants.ROUTE_NOT_FOUND, null)
+                cb({ code: constants.ROUTE_NOT_FOUND, path: startPath }, null);
             }
         } else {
             // Initialise router with provided start state
-            this.lastKnownState = startState
-            this.updateBrowserState(this.lastKnownState, this.buildUrl(startState.name, startState.params), true);
-            cb(null, startState)
+            this.lastKnownState = startState;
+            cb(null, startState);
         }
-        // Listen to popstate
-        return this
+
+        return this;
     }
 
     /**
@@ -216,13 +184,13 @@ class Router5 {
      * @return {Router5} The router instance
      */
     stop() {
-        if (!this.started) return this
-        this.lastKnownState = null
-        this.lastStateAttempt = null
-        this.started = false
+        if (!this.started) return this;
+        this.lastKnownState = null;
+        this.lastStateAttempt = null;
+        this.started = false;
+        this._invokeListeners('$stop');
 
-        browser.removePopstateListener(this.boundOnPopState)
-        return this
+        return this;
     }
 
     /**
@@ -230,7 +198,7 @@ class Router5 {
      * @return {Object} The current state
      */
     getState() {
-        return this.lastKnownState
+        return this.lastKnownState;
     }
 
     /**
@@ -246,15 +214,15 @@ class Router5 {
      * @return {Boolean}                    Whether nor not the route is active
      */
     isActive(name, params = {}, strictEquality = false, ignoreQueryParams = true) {
-        let activeState = this.getState()
+        const activeState = this.getState();
 
-        if (!activeState) return false
+        if (!activeState) return false;
 
         if (strictEquality || activeState.name === name) {
-            return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams)
+            return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams);
         }
 
-        return this.areStatesDescendants(makeState(name, params), activeState)
+        return this.areStatesDescendants(makeState(name, params), activeState);
     }
 
     /**
@@ -281,11 +249,11 @@ class Router5 {
      * @return {Boolean}            Whether the two provided states are related
      */
     areStatesDescendants(parentState, childState) {
-        let regex = new RegExp('^' + parentState.name + '\\.(.*)$')
-        if (!regex.test(childState.name)) return false
+        const regex = new RegExp('^' + parentState.name + '\\.(.*)$');
+        if (!regex.test(childState.name)) return false;
         // If child state name extends parent state name, and all parent state params
         // are in child state params.
-        return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p])
+        return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p]);
     }
 
 
@@ -293,142 +261,15 @@ class Router5 {
      * @private
      */
     _invokeListeners(name, ...args) {
-        (this._cbs[name] || []).forEach(cb => cb(...args))
+        (this._cbs[name] || []).forEach(cb => cb(...args));
     }
 
     /**
      * @private
      */
     _addListener(name, cb, replace) {
-        let normalizedName = name.replace(/^(\*|\^|=)/, '')
-        if (normalizedName && !/^\$/.test(name)) {
-            let segments = this.rootNode.getSegmentsByName(normalizedName)
-            if (!segments) console.warn(`No route found for ${normalizedName}, listener might never be called!`)
-        }
-        if (!this._cbs[name]) this._cbs[name] = []
-        this._cbs[name] = (replace ? [] : this._cbs[name]).concat(cb)
-        return this
-    }
-
-    /**
-     * @private
-     */
-    _removeListener(name, cb) {
-        if (this._cbs[name]) this._cbs[name] = this._cbs[name].filter(callback => callback !== cb)
-        return this
-    }
-
-    /**
-     * Add a route change listener
-     * @param {Function} cb The listener to add
-     * @return {Router5} The router instance
-     */
-    addListener(cb) {
-        return this._addListener('*', cb)
-    }
-
-    /**
-     * Remove a route change listener
-     * @param  {Function} cb The listener to remove
-     * @return {Router5} The router instance
-     */
-    removeListener(cb) {
-        return this._removeListener('*', cb)
-    }
-
-    /**
-     * Add a node change listener
-     * @param {String}   name The route segment full name
-     * @param {Function} cb   The listener to add
-     * @return {Router5} The router instance
-     */
-    addNodeListener(name, cb) {
-        return this._addListener('^' + name, cb, true);
-    }
-
-    /**
-     * Remove a node change listener
-     * @param {String}   name The route segment full name
-     * @param {Function} cb   The listener to remove
-     * @return {Router5} The router instance
-     */
-    removeNodeListener(name, cb) {
-        this._cbs['^' + name] = [];
-        return this
-    }
-
-    /**
-     * Add a route change listener
-     * @param {String}   name The route name to listen to
-     * @param {Function} cb   The listener to add
-     * @return {Router5} The router instance
-     */
-    addRouteListener(name, cb) {
-        return this._addListener('=' + name, cb)
-    }
-
-    /**
-     * Remove a route change listener
-     * @param {String}   name The route name to listen to
-     * @param {Function} cb   The listener to remove
-     * @return {Router5} The router instance
-     */
-    removeRouteListener(name, cb) {
-        return this._removeListener('=' + name, cb)
-    }
-
-    /**
-     * Add a transition start callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    onTransitionStart(cb) {
-        return this._addListener('$start', cb)
-    }
-
-    /**
-     * Remove a transition start callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    offTransitionStart(cb) {
-        return this._removeListener('$start', cb)
-    }
-
-    /**
-     * Add a transition cancel callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    onTransitionCancel(cb) {
-        return this._addListener('$cancel', cb)
-    }
-
-    /**
-     * Remove a transition cancel callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    offTransitionCancel(cb) {
-        return this._removeListener('$cancel', cb)
-    }
-
-    /**
-     * Add a transition error callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    onTransitionError(cb) {
-        return this._addListener('$error', cb)
-    }
-
-    /**
-     * Remove a transition error callback
-     * @param  {Function} cb The callback
-     * @return {Router5}     The router instance
-     */
-    offTransitionError(cb) {
-        return this._removeListener('$error', cb)
+        this._cbs[name] = (this._cbs[name] || []).concat(cb);
+        return this;
     }
 
     /**
@@ -436,10 +277,22 @@ class Router5 {
      * @param  {String} name      The route segment full name
      * @param  {Object} component The component instance
      */
-    registerComponent(name, component) {
-        if (this._cmps[name]) console.warn(`A component was alread registered for route node ${name}.`)
-        this._cmps[name] = component
-        return this
+    registerComponent(name, component, warn = true) {
+        if (this._cmps[name] && warn) console.warn(`A component was alread registered for route node ${name}.`);
+        this._cmps[name] = component;
+        return this;
+    }
+
+    /**
+     * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
+     * @param  {String}  name          The route segment full name
+     * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
+     * @return {[type]}
+     */
+    canDeactivate(name, canDeactivate) {
+        if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
+        this.registerComponent(name, { canDeactivate: (toState, fromState) => canDeactivate }, false);
+        return this;
     }
 
     /**
@@ -448,7 +301,7 @@ class Router5 {
      * @return {Router5} The router instance
      */
     deregisterComponent(name) {
-        delete this._cmps[name]
+        this._cmps[name] = undefined;
     }
 
     /**
@@ -459,15 +312,8 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     canActivate(name, canActivate) {
-        this._canAct[name] = canActivate
-        return this
-    }
-
-    /**
-     * @private
-     */
-    getLocation() {
-        return browser.getLocation(this.options)
+        this._canAct[name] = canActivate;
+        return this;
     }
 
     /**
@@ -478,13 +324,16 @@ class Router5 {
      * @return {String}        The built URL
      */
     buildUrl(route, params) {
-        return this._buildUrl(this.rootNode.buildPath(route, params))
+        return this._buildUrl(this.buildPath(route, params));
     }
 
+    /**
+     * @private
+     */
     _buildUrl(path) {
-        return this.options.base +
+        return (this.options.base || '') +
             (this.options.useHash ? '#' + this.options.hashPrefix : '') +
-            path
+            path;
     }
 
     /**
@@ -495,7 +344,7 @@ class Router5 {
      * @return {String}        The built Path
      */
     buildPath(route, params) {
-        return this.rootNode.buildPath(route, params)
+        return this.rootNode.buildPath(route, params);
     }
 
     /**
@@ -504,8 +353,8 @@ class Router5 {
      * @return {Object}        The matched state object (null if no match)
      */
     matchPath(path) {
-        let match = this.rootNode.matchPath(path, this.options.trailingSlash)
-        return match ? makeState(match.name, match.params, path) : null
+        const match = this.rootNode.matchPath(path, this.options.trailingSlash);
+        return match ? makeState(match.name, match.params, path) : null;
     }
 
     /**
@@ -514,23 +363,23 @@ class Router5 {
      * @return {String}     The extracted path
      */
     urlToPath(url) {
-        let match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/)
-        let path = match ? match[1] : url
+        const match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
+        const path = match ? match[1] : url;
 
-        let pathParts = path.match(/^(.*?)(#.*?)?(\?.*)?$/)
+        const pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
 
-        if (!pathParts) throw new Error(`Could not parse url ${url}`)
+        if (!pathParts) throw new Error(`[router5] Could not parse url ${url}`);
 
         const pathname = pathParts[1];
-        const hash     = pathParts[2];
-        const search   = pathParts[3];
-        let opts = this.options
+        const hash     = pathParts[2] || '';
+        const search   = pathParts[3] || '';
+        const opts = this.options;
 
         return (
             opts.useHash
             ? hash.replace(new RegExp('^#' + opts.hashPrefix), '')
-            : pathname.replace(new RegExp('^' + opts.base), '')
-        ) + (search || '')
+            : (opts.base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname)
+        ) + search;
     }
 
     /**
@@ -539,7 +388,7 @@ class Router5 {
      * @return {Object}        The matched state object (null if no match)
      */
     matchUrl(url) {
-        return this.matchPath(this.urlToPath(url))
+        return this.matchPath(this.urlToPath(url));
     }
 
     /**
@@ -547,29 +396,36 @@ class Router5 {
      */
     _transition(toState, fromState, done) {
         // Cancel current transition
-        if (this._tr) this._tr()
-        this._invokeListeners('$start', toState, fromState)
+        this.cancel();
+        this._invokeListeners('$$start', toState, fromState);
 
-        let tr = transition(this, toState, fromState, (err) => {
-            this._tr = null
+        const tr = transition(this, toState, fromState, (err, state) => {
+            state = state || toState;
+            this._tr = null;
 
             if (err) {
-                if (err === constants.TRANSITION_CANCELLED) this._invokeListeners('$cancel', toState, fromState)
-                else this._invokeListeners('$error', toState, fromState, err)
+                if (err.code === constants.TRANSITION_CANCELLED) this._invokeListeners('$$cancel', toState, fromState);
+                else this._invokeListeners('$$error', toState, fromState, err);
 
-                if (done) done(err)
-                return
+                if (done) done(err);
+                return;
             }
 
-            this.lastKnownState = toState
-            this._invokeListeners('=' + toState.name, toState, fromState)
-            this._invokeListeners('*', toState, fromState)
+            this.lastKnownState = state; // toState or modified state?
 
-            if (done) done(null, toState)
-        })
+            if (done) done(null, state);
+        });
 
-        this._tr = tr
-        return () => !tr || tr()
+        this._tr = tr;
+        return () => !tr || tr();
+    }
+
+    /**
+     * Undocumented for now
+     * @private
+     */
+    cancel() {
+        if (this._tr) this._tr();
     }
 
     /**
@@ -583,55 +439,64 @@ class Router5 {
      */
     navigate(name, params = {}, opts = {}, done) {
         if (!this.started) {
-            if (done) done(constants.ROUTER_NOT_STARTED)
-            return
+            if (done) done({ code: constants.ROUTER_NOT_STARTED });
+            return;
         }
 
-        if (!browser.getState()) opts.replace = true
-
-        let path  = this.buildPath(name, params)
-        let url  = this.buildUrl(name, params)
+        const path  = this.buildPath(name, params);
 
         if (!path) {
-            if (done) done(constants.ROUTE_NOT_FOUND)
-            this._invokeListeners('$error', null, this.lastKnownState, constants.ROUTE_NOT_FOUND)
-            return
+            const err = { code: constants.ROUTE_NOT_FOUND };
+            if (done) done(err);
+            this._invokeListeners('$$error', null, this.lastKnownState, err);
+            return;
         }
 
-        let toState = makeState(name, params, path)
-        this.lastStateAttempt = toState
-        let sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false
+        const toState = makeState(name, params, path);
+        this.lastStateAttempt = toState;
+        const sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false;
 
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
-            if (done) done(constants.SAME_STATES)
-            this._invokeListeners('$error', toState, this.lastKnownState, constants.SAME_STATES)
-            return
+            const err = { code: constants.SAME_STATES };
+            if (done) done(err);
+            this._invokeListeners('$$error', toState, this.lastKnownState, err);
+            return;
         }
+
+        const fromState = sameStates ? null : this.lastKnownState;
 
         // Transition and amend history
         return this._transition(toState, sameStates ? null : this.lastKnownState, (err, state) => {
             if (err) {
-                if (done) done(err)
-                return
+                if (done) done(err);
+                return;
             }
 
-            this.updateBrowserState(this.lastStateAttempt, url, opts.replace)
-            if (done) done(null, state)
-        })
-    }
-
-    /**
-     * Update the browser history
-     * @param {Object}  stateObject     State object to be used
-     * @param {string}  url             Absolute url to be used
-     * @param {boolean} [replace=false] If replaceState or pushState should be used
-     * @param {string}  [title='']      The title to be used for history
-     */
-    updateBrowserState(stateObject, url, replace = false, title = '') {
-        browser[replace ? 'replaceState' : 'pushState'](stateObject, title, url);
+            this._invokeListeners('$$success', toState, fromState, opts);
+            if (done) done(null, state);
+        });
     }
 }
 
-export default Router5
+/**
+ * Error codes
+ * @static
+ * @type {Object}
+ */
+Router5.ERR = constants;
+
+/**
+ * An helper function to return instructions for a transition:
+ * intersection route name, route names to deactivate, route names to activate
+ * @static
+ * @param  {Object} toState   The state to go to
+ * @param  {Object} fromState The state to go from
+ * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
+ */
+Router5.transitionPath = transitionPath;
+
+Router5.loggerPlugin = loggerPlugin;
+
+export default Router5;

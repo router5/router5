@@ -1,5 +1,3 @@
-'use strict';
-
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
@@ -11,7 +9,6 @@ var constants = {
     CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
     CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
     TRANSITION_ERR: 'TRANSITION_ERR',
-    NODE_LISTENER_ERR: 'NODE_ERR',
     TRANSITION_CANCELLED: 'CANCELLED'
 };
 

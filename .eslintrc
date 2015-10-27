@@ -44,7 +44,7 @@
         "quotes": [2, "single", "avoid-escape"],
         "no-underscore-dangle": 0,
         "no-unneeded-ternary": 2,
-        "semi": 0,
+        "semi": 2,
         // ES6
         "no-var": 2,
         "no-this-before-super": 2,

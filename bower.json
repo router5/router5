@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "0.9.3",
+  "version": "1.0.0",
   "homepage": "http://router5.github.io",
   "authors": [
     "Thomas Roch <thomas.c.roch@gmail.com>"
@@ -28,6 +28,8 @@
     "tests",
     "bower.json",
     "README.md",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md",
     ".travis.yml",
     "karma.config.js",
     "package.json",

@@ -93,20 +93,20 @@ module.exports = function(config) {
         browsers: sauce ? Object.keys(customLaunchers) : ['Firefox'],
 
         files: [
-            'node_modules/bluebird/js/browser/bluebird.js',
             'node_modules/route-node/node_modules/path-parser/dist/umd/path-parser.js',
             'node_modules/route-node/dist/umd/route-node.js',
-            'dist/test/constants.js',
-            'dist/test/browser.js',
-            'dist/test/async.js',
-            'dist/test/transition.js',
-            'dist/test/router5.js',
+            'temp/node_modules/router5.transition-path/modules/index.js',
+            'temp/test/constants.js',
+            'temp/test/async.js',
+            'temp/test/transition.js',
+            'temp/test/logger.js',
+            'temp/test/router5.js',
             'tests/_create-router.js',
             'tests/client.js'
         ],
 
         preprocessors: {
-          'dist/test/*.js': ['coverage']
+          'temp/test/!(browser|logger).js': ['coverage']
         },
 
         plugins: [

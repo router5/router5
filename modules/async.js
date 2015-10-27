@@ -1,40 +1,52 @@
-export default function asyncProcess(isCancelled, functions, toState, fromState, callback, allowNoResult = false) {
-    isCancelled = isCancelled || (() => false)
-    let remainingSteps = functions || []
+export default function asyncProcess(functions, { isCancelled, toState, fromState, context }, callback, allowBool = true) {
+    let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
-    let processFn = (done) => {
-        if (!remainingSteps.length) return true
+    const initialFromState = { ...fromState };
+    const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+    const hasStateChanged = state => state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
 
-        let len = remainingSteps[0].length
-        let res = remainingSteps[0](toState, fromState, done)
+    const processFn = (done) => {
+        if (!remainingFunctions.length) return true;
 
-        if (typeof res === 'boolean') {
-            done(res ? null : true);
+        const isMapped = typeof remainingFunctions[0] === 'string';
+        const errVal = isMapped ? remainingFunctions[0] : {};
+        let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+        stepFn = context ? stepFn.bind(context) : stepFn;
+
+
+        const len = stepFn.length;
+        const res = stepFn(toState, fromState, done);
+
+        if (allowBool && typeof res === 'boolean') {
+            done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
-            res.then(() => done(null), () => done(true))
-        } else if (len < 3 && allowNoResult) {
-            done(null)
+            res.then(resVal => done(null, resVal), () => done(errVal));
         }
+        // else: wait for done to be called
 
-        return false
-    }
+        return false;
+    };
 
-    let iterate = (err) => {
-        if (err) callback(err)
+    const iterate = (err, val) => {
+        if (err) callback(err);
         else {
-            remainingSteps = remainingSteps.slice(1)
-            next()
+            if (val && isState(val)) {
+                if (hasStateChanged(val)) console.error('[router5][transition] State values changed during transition process and ignored.');
+                else toState = val;
+            }
+            remainingFunctions = remainingFunctions.slice(1);
+            next();
         }
-    }
+    };
 
-    let next = () => {
+    const next = () => {
         if (isCancelled()) {
-            callback(null)
+            callback(null);
         } else {
-            let finished = processFn(iterate)
-            if (finished) callback(null)
+            const finished = processFn(iterate);
+            if (finished) callback(null, toState);
         }
-    }
+    };
 
-    next()
+    next();
 }

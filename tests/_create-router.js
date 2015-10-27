@@ -2,12 +2,14 @@
     if (typeof define === 'function' && define.amd) {
         define(['exports', 'module'], factory);
     } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-        factory(exports, module, require(require('path').join(__dirname, '../dist/commonjs')).Router5, require('route-node'));
+        factory(exports, module,
+            require('..').Router5,
+            require('..').RouteNode
+        );
     } else {
         var mod = {
             exports: {}
         };
-        console.log(global.RouteNode);
         factory(mod.exports, mod, global.Router5, global.RouteNode);
         global.createRouter = mod.exports;
     }

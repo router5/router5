@@ -11,8 +11,6 @@
         global.constants = mod.exports;
     }
 })(this, function (exports, module) {
-    'use strict';
-
     var constants = {
         ROUTER_NOT_STARTED: 'NOT_STARTED',
         ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
@@ -21,7 +19,6 @@
         CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
         CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
         TRANSITION_ERR: 'TRANSITION_ERR',
-        NODE_LISTENER_ERR: 'NODE_ERR',
         TRANSITION_CANCELLED: 'CANCELLED'
     };
 

@@ -6,8 +6,7 @@ const constants = {
     CANNOT_DEACTIVATE      : 'CANNOT_DEACTIVATE',
     CANNOT_ACTIVATE        : 'CANNOT_ACTIVATE',
     TRANSITION_ERR         : 'TRANSITION_ERR',
-    NODE_LISTENER_ERR      : 'NODE_ERR',
     TRANSITION_CANCELLED   : 'CANCELLED'
-}
+};
 
-export default constants
+export default constants;
