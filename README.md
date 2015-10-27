@@ -14,6 +14,32 @@ Using router5 with redux removes the need to include _router5-listeners_.
 - Use `routeNodeSelector` on route nodes in your component tree
 - Use provided actions to perform routing
 
+### With React
+
+```javascript
+import { ReactDOM } from 'react-dom';
+import { RouterProvider } from 'react-router5';
+import { Provider } from 'react-redux';
+import React from 'react';
+import App from './app';
+import createRouter from './create-router';
+import configureStore from './store';
+
+const router = createRouter();
+const store = configureStore(router);
+
+ReactDOM.render(
+    (
+        <Provider store={ store }>
+            <RouterProvider router={ router }>
+                <App />
+            </RouterProvider> 
+        </Provider>
+    ),
+    document.getElementById('app')
+);
+```
+
 
 ## router5Middleware
 
@@ -21,7 +47,6 @@ Using router5 with redux removes the need to include _router5-listeners_.
 import createRouter from './create-router';
 import { compose, createStore, applyMiddleware, combineReducers } from 'redux';
 import { router5Middleware, router5Reducer } from 'redux-router5';
-
 
 function configureStore(router, initialState = {}) {
     const createStoreWithMiddleware = applyMiddleware(router5Middleware(router))(createStore);
