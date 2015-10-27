@@ -38,8 +38,8 @@ function per node. Supports asynchronous results.
 
 ### Plugins
 
-- __[router5-listeners](/router5/router5-listeners)__: allows you to add route change and node listenerns. Node listeners are triggered if that named route node is the node a component tree needs to be re-rendered from.
-- __[router5-history](/router5/router5-history)__: updates your browser URL and state using HTML5 history API and listens to popstate events. Supports use of hash in URL, but session history is still required: deciding to use a hash or not is therefore not a decision based on browser support, but rather a decision based on server capabilities!
+- __[router5-listeners](https://github.com/router5/router5-listeners)__: allows you to add route change and node listenerns. Node listeners are triggered if that named route node is the node a component tree needs to be re-rendered from.
+- __[router5-history](https://github.com/router5/router5-history)__: updates your browser URL and state using HTML5 history API and listens to popstate events. Supports use of hash in URL, but session history is still required: deciding to use a hash or not is therefore not a decision based on browser support, but rather a decision based on server capabilities!
 
 
 ### Guides
