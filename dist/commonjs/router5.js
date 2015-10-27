@@ -1,10 +1,17 @@
+'use strict';
+
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
+// istanbul ignore next
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+// istanbul ignore next
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+// istanbul ignore next
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -12,7 +19,13 @@ var _routeNode = require('route-node');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
 
+var _router5TransitionPath = require('router5.transition-path');
+
+var _router5TransitionPath2 = _interopRequireDefault(_router5TransitionPath);
+
 var _transition2 = require('./transition');
+
+var _transition3 = _interopRequireDefault(_transition2);
 
 var _constants = require('./constants');
 
@@ -23,7 +36,14 @@ var _logger = require('./logger');
 var _logger2 = _interopRequireDefault(_logger);
 
 var makeState = function makeState(name, params, path) {
-    return { name: name, params: params, path: path };
+    var state = {};
+    var setProp = function setProp(key, value) {
+        return Object.defineProperty(state, key, { value: value, enumerable: true });
+    };
+    setProp('name', name);
+    setProp('params', params);
+    setProp('path', path);
+    return state;
 };
 
 /**
@@ -36,6 +56,8 @@ var makeState = function makeState(name, params, path) {
 
 var Router5 = (function () {
     function Router5(routes) {
+        // istanbul ignore next
+
         var _this = this;
 
         var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
@@ -115,6 +137,8 @@ var Router5 = (function () {
     }, {
         key: 'usePlugin',
         value: function usePlugin(plugin) {
+            // istanbul ignore next
+
             var _this2 = this;
 
             if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
@@ -160,6 +184,8 @@ var Router5 = (function () {
     }, {
         key: 'start',
         value: function start() {
+            // istanbul ignore next
+
             var _this3 = this;
 
             var args = Array.prototype.slice.call(arguments);
@@ -293,6 +319,8 @@ var Router5 = (function () {
     }, {
         key: 'areStatesEqual',
         value: function areStatesEqual(state1, state2) {
+            // istanbul ignore next
+
             var _this4 = this;
 
             var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
@@ -501,13 +529,16 @@ var Router5 = (function () {
     }, {
         key: '_transition',
         value: function _transition(toState, fromState, done) {
+            // istanbul ignore next
+
             var _this5 = this;
 
             // Cancel current transition
-            if (this._tr) this._tr();
+            this.cancel();
             this._invokeListeners('$$start', toState, fromState);
 
-            var tr = (0, _transition2.transition)(this, toState, fromState, function (err) {
+            var tr = (0, _transition3['default'])(this, toState, fromState, function (err, state) {
+                state = state || toState;
                 _this5._tr = null;
 
                 if (err) {
@@ -517,15 +548,25 @@ var Router5 = (function () {
                     return;
                 }
 
-                _this5.lastKnownState = toState;
+                _this5.lastKnownState = state; // toState or modified state?
 
-                if (done) done(null, toState);
+                if (done) done(null, state);
             });
 
             this._tr = tr;
             return function () {
                 return !tr || tr();
             };
+        }
+
+        /**
+         * Undocumented for now
+         * @private
+         */
+    }, {
+        key: 'cancel',
+        value: function cancel() {
+            if (this._tr) this._tr();
         }
 
         /**
@@ -541,6 +582,7 @@ var Router5 = (function () {
         key: 'navigate',
         value: function navigate(name, params, opts, done) {
             if (params === undefined) params = {};
+            // istanbul ignore next
 
             var _this6 = this;
 
@@ -601,7 +643,7 @@ Router5.ERR = _constants2['default'];
  * @param  {Object} fromState The state to go from
  * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
  */
-Router5.transitionPath = _transition2.transitionPath;
+Router5.transitionPath = _router5TransitionPath2['default'];
 
 Router5.loggerPlugin = _logger2['default'];
 

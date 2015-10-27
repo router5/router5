@@ -11,6 +11,8 @@
         global.logger = mod.exports;
     }
 })(this, function (exports, module) {
+    'use strict';
+
     function loggerPlugin() {
         var startGroup = function startGroup() {
             return console.group('Router transition');
@@ -39,7 +41,7 @@
                 console.warn('Transition cancelled');
             },
             onTransitionError: function onTransitionError(toState, fromState, err) {
-                console.warn('Transition error with code ' + err);
+                console.warn('Transition error with code ' + err.code);
                 endGroup();
             },
             onTransitionSuccess: function onTransitionSuccess(toState, fromState) {

@@ -1,3 +1,5 @@
+'use strict';
+
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
@@ -29,7 +31,7 @@ function loggerPlugin() {
             console.warn('Transition cancelled');
         },
         onTransitionError: function onTransitionError(toState, fromState, err) {
-            console.warn('Transition error with code ' + err);
+            console.warn('Transition error with code ' + err.code);
             endGroup();
         },
         onTransitionSuccess: function onTransitionSuccess(toState, fromState) {

@@ -26,6 +26,36 @@
 define('router5', [], function () {
 "use strict";
 
+    function transitionPath(toState, fromState) {
+        function nameToIDs(name) {
+            return name.split('.').reduce(function (ids, name) {
+                return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+            }, []);
+        }
+    
+        var i = undefined;
+        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+        var toStateIds = nameToIDs(toState.name);
+        var maxI = Math.min(fromStateIds.length, toStateIds.length);
+    
+        if (fromState && fromState.name === toState.name) {
+            i = Math.max(maxI - 1, 0);
+        } else {
+            for (i = 0; i < maxI; i += 1) {
+                if (fromStateIds[i] !== toStateIds[i]) break;
+            }
+        }
+    
+        var toDeactivate = fromStateIds.slice(i).reverse();
+        var toActivate = toStateIds.slice(i);
+        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
+    
+        return {
+            intersection: intersection,
+            toDeactivate: toDeactivate,
+            toActivate: toActivate
+        };
+    }
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
     
     function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -638,7 +668,7 @@ define('router5', [], function () {
                 console.warn('Transition cancelled');
             },
             onTransitionError: function onTransitionError(toState, fromState, err) {
-                console.warn('Transition error with code ' + err);
+                console.warn('Transition error with code ' + err.code);
                 endGroup();
             },
             onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
@@ -657,17 +687,32 @@ define('router5', [], function () {
         TRANSITION_ERR: 'TRANSITION_ERR',
         TRANSITION_CANCELLED: 'CANCELLED'
     };
-    function asyncProcess(isCancelled, functions, toState, fromState, callback) {
-        var allowBool = arguments.length <= 5 || arguments[5] === undefined ? true : arguments[5];
+    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+    
+    function asyncProcess(functions, _ref, callback) {
+        var isCancelled = _ref.isCancelled;
+        var toState = _ref.toState;
+        var fromState = _ref.fromState;
+        var context = _ref.context;
+        var allowBool = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
     
         var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
+    
+        var initialFromState = _extends({}, fromState);
+        var isState = function isState(obj) {
+            return typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+        };
+        var hasStateChanged = function hasStateChanged(state) {
+            return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
+        };
     
         var processFn = function processFn(done) {
             if (!remainingFunctions.length) return true;
     
             var isMapped = typeof remainingFunctions[0] === 'string';
-            var errVal = isMapped ? remainingFunctions[0] : true;
+            var errVal = isMapped ? remainingFunctions[0] : {};
             var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+            stepFn = context ? stepFn.bind(context) : stepFn;
     
             var len = stepFn.length;
             var res = stepFn(toState, fromState, done);
@@ -675,8 +720,8 @@ define('router5', [], function () {
             if (allowBool && typeof res === 'boolean') {
                 done(res ? null : errVal);
             } else if (res && typeof res.then === 'function') {
-                res.then(function () {
-                    return done(null);
+                res.then(function (resVal) {
+                    return done(null, resVal);
                 }, function () {
                     return done(errVal);
                 });
@@ -686,8 +731,11 @@ define('router5', [], function () {
             return false;
         };
     
-        var iterate = function iterate(err) {
+        var iterate = function iterate(err, val) {
             if (err) callback(err);else {
+                if (val && isState(val)) {
+                    if (hasStateChanged(val)) console.error('[router5][transition] State values changed during transition process and ignored.');else toState = val;
+                }
                 remainingFunctions = remainingFunctions.slice(1);
                 next();
             }
@@ -698,13 +746,12 @@ define('router5', [], function () {
                 callback(null);
             } else {
                 var finished = processFn(iterate);
-                if (finished) callback(null);
+                if (finished) callback(null, toState);
             }
         };
     
         next();
     }
-    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
     
     function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
     
@@ -714,25 +761,6 @@ define('router5', [], function () {
         }, []);
     };
     
-    function transitionPath(toState, fromState) {
-        var i = undefined;
-        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
-        var toStateIds = nameToIDs(toState.name);
-        var maxI = Math.min(fromStateIds.length, toStateIds.length);
-    
-        if (fromState && fromState.name === toState.name) i = Math.max(maxI - 1, 0);else {
-            for (i = 0; i < maxI; i += 1) {
-                if (fromStateIds[i] !== toStateIds[i]) break;
-            }
-        }
-    
-        var toDeactivate = fromStateIds.slice(i).reverse();
-        var toActivate = toStateIds.slice(i);
-        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
-    
-        return { intersection: intersection, toDeactivate: toDeactivate, toActivate: toActivate };
-    }
-    
     function transition(router, toState, fromState, callback) {
         var cancelled = false;
         var isCancelled = function isCancelled() {
@@ -741,7 +769,7 @@ define('router5', [], function () {
         var cancel = function cancel() {
             return cancelled = true;
         };
-        var done = function done(err) {
+        var done = function done(err, state) {
             if (!err && !isCancelled() && router.options.autoCleanUp) {
                 (function () {
                     var activeSegments = nameToIDs(toState.name);
@@ -750,7 +778,7 @@ define('router5', [], function () {
                     });
                 })();
             }
-            callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err);
+            callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
         };
     
         var _transitionPath = transitionPath(toState, fromState);
@@ -765,7 +793,7 @@ define('router5', [], function () {
                 return _extends({}, fnMap, _defineProperty({}, name, router._cmps[name].canDeactivate));
             }, {});
     
-            asyncProcess(isCancelled, canDeactivateFunctionMap, toState, fromState, function (err) {
+            asyncProcess(canDeactivateFunctionMap, { isCancelled: isCancelled, toState: toState, fromState: fromState }, function (err) {
                 return cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null);
             });
         };
@@ -777,7 +805,7 @@ define('router5', [], function () {
                 return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
             }, {});
     
-            asyncProcess(isCancelled, canActivateFunctionMap, toState, fromState, function (err) {
+            asyncProcess(canActivateFunctionMap, { isCancelled: isCancelled, toState: toState, fromState: fromState }, function (err) {
                 return cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null);
             });
         };
@@ -786,21 +814,29 @@ define('router5', [], function () {
         var middleware = function middleware(toState, fromState, cb) {
             var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
     
-            asyncProcess(isCancelled, mwareFunction, toState, fromState, function (err) {
-                return cb(err ? { code: constants.TRANSITION_ERR } : null);
+            asyncProcess(mwareFunction, { isCancelled: isCancelled, toState: toState, fromState: fromState, context: { cancel: cancel, router: router } }, function (err, state) {
+                var errObj = err ? typeof err === 'object' ? err : { error: err } : null;
+                cb(err ? _extends({ code: constants.TRANSITION_ERR }, errObj) : null, state || toState);
             });
         };
     
         var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
     
-        asyncProcess(isCancelled, pipeline, toState, fromState, done);
+        asyncProcess(pipeline, { isCancelled: isCancelled, toState: toState, fromState: fromState }, done);
     
         return cancel;
     }
     
     
     var makeState = function makeState(name, params, path) {
-        return { name: name, params: params, path: path };
+        var state = {};
+        var setProp = function setProp(key, value) {
+            return Object.defineProperty(state, key, { value: value, enumerable: true });
+        };
+        setProp('name', name);
+        setProp('params', params);
+        setProp('path', path);
+        return state;
     };
     
     /**
@@ -1281,10 +1317,11 @@ define('router5', [], function () {
                 var _this5 = this;
     
                 // Cancel current transition
-                if (this._tr) this._tr();
+                this.cancel();
                 this._invokeListeners('$$start', toState, fromState);
     
-                var tr = transition(this, toState, fromState, function (err) {
+                var tr = transition(this, toState, fromState, function (err, state) {
+                    state = state || toState;
                     _this5._tr = null;
     
                     if (err) {
@@ -1294,15 +1331,25 @@ define('router5', [], function () {
                         return;
                     }
     
-                    _this5.lastKnownState = toState;
+                    _this5.lastKnownState = state; // toState or modified state?
     
-                    if (done) done(null, toState);
+                    if (done) done(null, state);
                 });
     
                 this._tr = tr;
                 return function () {
                     return !tr || tr();
                 };
+            }
+    
+            /**
+             * Undocumented for now
+             * @private
+             */
+        }, {
+            key: 'cancel',
+            value: function cancel() {
+                if (this._tr) this._tr();
             }
     
             /**
