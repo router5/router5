@@ -30,7 +30,7 @@ const store = configureStore(router);
 
 router.start(() => {
     ReactDOM.render(
-    (
+        (
             <Provider store={ store }>
                 <RouterProvider router={ router }>
                     <App />
