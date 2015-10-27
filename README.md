@@ -28,16 +28,18 @@ import configureStore from './store';
 const router = createRouter();
 const store = configureStore(router);
 
-ReactDOM.render(
+router.start(() => {
+    ReactDOM.render(
     (
-        <Provider store={ store }>
-            <RouterProvider router={ router }>
-                <App />
-            </RouterProvider> 
-        </Provider>
-    ),
-    document.getElementById('app')
-);
+            <Provider store={ store }>
+                <RouterProvider router={ router }>
+                    <App />
+                </RouterProvider> 
+            </Provider>
+        ),
+        document.getElementById('app')
+    );
+});
 ```
 
 
