@@ -41,6 +41,10 @@ router.start(() => {
 });
 ```
 
+Note: `RouterProvider` comes from `react-router5`. It simply adds your router instance in your application context
+which might be needed if you want to use `router.isActive()` or other instance specific methods. Instead
+of using `RouterProvider`, you can use `withContext()` from [recompose](https://github.com/rackt/recompose).
+
 
 ## router5Middleware
 
@@ -100,25 +104,30 @@ import { actions } from 'redux-router5';
 `routeNodeSelector` is a selector created with [reselect](https://github.com/rackt/reselect). It is designed to be used on a route node
 and works with `connect` higher-order component from `react-redux`.
 
+Then on each active route node, it is just a matter of returning the right component depending on the current route. [router5.helpers](https://github.com/router5/helpers) provides
+a set of functions to help making those decisions (useful if you have nested routes).
+
 ```javascript
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { Home, About, Contact, Admin, NotFound } from './components';
+import { startsWithSegment } from 'router5.helpers';
 
 function Root({ route }) {
     const { params, name } = route;
 
-    switch (name) {
-        case 'home':
-            return <Home params={ params } />
-        case 'about':
-            return <About params={ params } />
-        case 'contact':
-            return <Contact params={ params } />
-        case 'admin':
-            return <Admin params={ params } />
-        default:
-            return <NotFound />
+    const testRoute = startsWithSegment(name);
+
+    if (testRoute('home')) {
+        return <Home params={ params } />;
+    } else if (testRoute('about')) {
+        return <About params={ params } />;
+    } else if (testRoute('contact')) {
+        return <Contact params={ params } />;
+    } else if (testRoute('admin')) {
+        return <Admin params={ params } />;
+    } else {
+        return <NotFound />;
     }
 }
 
