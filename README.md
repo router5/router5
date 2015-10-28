@@ -104,7 +104,14 @@ import { actions } from 'redux-router5';
 `routeNodeSelector` is a selector created with [reselect](https://github.com/rackt/reselect). It is designed to be used on a route node
 and works with `connect` higher-order component from `react-redux`.
 
-Then on each active route node, it is just a matter of returning the right component depending on the current route. [router5.helpers](https://github.com/router5/helpers) provides
+If your routes are nested, you'll have a few route nodes in your application. On each route change, only _one_ route node needs to be re-rendered.
+That route node is the highest common node between your previous route and your current route. `routeNodeSelector` will only trigger a re-render
+when it needs to.
+
+Then it is just a matter of returning the right component depending on the current route. Your virtual tree will react to route changes, all of that
+by simply __leveraging the power of connect and reselect__!
+
+[router5.helpers](https://github.com/router5/helpers) provides
 a set of functions to help making those decisions (useful if you have nested routes).
 
 ```javascript
