@@ -4,10 +4,10 @@
 
 This package replaces `router5-react` which is deprecated.
 
-### Example
+### Examples
 
-Code here: [https://github.com/router5/examples/tree/master/apps/react](https://github.com/router5/examples/tree/master/apps/react)
-Demo here: [http://localhost:8080/docs/with-react.html#/inbox](http://localhost:8080/docs/with-react.html#/inbox)
+* [Example project](https://github.com/router5/examples/tree/master/apps/react)
+* [Demo](https://router5.github.io/docs/with-react.html#/inbox)
 
 ### Requirements
 
