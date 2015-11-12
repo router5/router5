@@ -1,9 +1,9 @@
 # Router5 examples
 
 - Example with React [http://router5.github.io/docs/with-react.html](http://router5.github.io/docs/with-react.html)
-- Example with React and Redux [http://router5.github.io/docs/with-redux-react.html](http://router5.github.io/docs/with-redux-react.html)
+- Example with React and Redux [http://router5.github.io/docs/with-redux-react.html](http://router5.github.io/docs/with-react-redux.html)
 - Example with Deku [http://router5.github.io/docs/with-deku.html](http://router5.github.io/docs/with-deku.html)
-- Example with Deku and Redux [http://router5.github.io/docs/with-deku.html](http://router5.github.io/docs/with-redux-deku.html)
+- Example with Deku and Redux [http://router5.github.io/docs/with-deku.html](http://router5.github.io/docs/with-deku-redux.html)
 
 It demonstrates different ways to use router5 functionalities.
 
