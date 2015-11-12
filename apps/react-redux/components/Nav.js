@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actions } from 'redux-router5';
 
-
 class Nav extends Component {
     constructor(props, context) {
         super(props);
