@@ -7,10 +7,11 @@
 
 It demonstrates different ways to use router5 functionalities.
 
-## Build an examples
+## Build an example
 
 ```sh
-npm run build -- --app [appDirectory]
+npm run build -- --app <example-dir>
+# e.g. npm run build -- --app deku-redux
 ```
 
 App directories: `react`, `deku`, `react-redux` or `deku-redux`
@@ -20,6 +21,7 @@ App directories: `react`, `deku`, `react-redux` or `deku-redux`
 Serve the root directory of this repository, you can use [http-server](https://github.com/indexzero/http-server):
 
 ```sh
+npm install http-server -g
 http-server -s -p 9000
 ```
 
