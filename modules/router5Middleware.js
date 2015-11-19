@@ -19,8 +19,11 @@ function routerPlugin(dispatch) {
 }
 
 export default function replaceRoutesMiddleware(router) {
-    return ({ dispatch }) => {
+    return store => {
+        const { dispatch } = store;
+        router.setAdditionalArgs(store);
         router.usePlugin(routerPlugin(dispatch));
+
 
         return next => action => {
             if (action.type === actionTypes.NAVIGATE_TO) {
