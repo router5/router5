@@ -83,7 +83,7 @@ var Router5 = (function () {
             return _this.options[opt] = opts[opt];
         });
         this.registeredPlugins = {};
-        // Bind onPopState
+        this._extraArgs = [];
     }
 
     /**
@@ -104,6 +104,27 @@ var Router5 = (function () {
         value: function setOption(opt, val) {
             this.options[opt] = val;
             return this;
+        }
+
+        /**
+         * Set additional arguments used in lifecycle functions.
+         * Additional arguments are used in canActivate and canDeactivate in first positions (before `toState`).
+         * @param  {Array} args The additional arguments
+         */
+    }, {
+        key: 'setAdditionalArgs',
+        value: function setAdditionalArgs(args) {
+            this._extraArgs = Array.isArray(args) ? args : [args];
+            return this;
+        }
+
+        /**
+         * Return additional arguments used in lifecycle functions
+         */
+    }, {
+        key: 'getAdditionalArgs',
+        value: function getAdditionalArgs() {
+            return this._extraArgs;
         }
 
         /**

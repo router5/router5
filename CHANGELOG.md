@@ -1,3 +1,13 @@
+<a name="1.1.0"></a>
+# 1.1.0 (2015-11-19)
+
+
+### Features
+
+* add support for additional arguments in canActivate and canDeactivate functions ([6f1006b](https://github.com/router5/router5/commit/6f1006b))
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2015-10-27)
 

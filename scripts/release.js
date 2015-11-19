@@ -21,10 +21,10 @@ run('git add -A');
 run('git add dist -f');
 run('git commit -m "chore: ' + VERSION + '"');
 run('git tag ' + VERSION);
-run('git push origin master');
-run('git push --tags');
+// run('git push origin master');
+// run('git push --tags');
 
-run('npm publish');
+// run('npm publish');
 
 function run(cmd, log) {
     log = log === undefined ? true : log;

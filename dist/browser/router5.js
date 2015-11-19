@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 1.0.0
+ * @version 1.1.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -694,6 +694,7 @@
         var toState = _ref.toState;
         var fromState = _ref.fromState;
         var context = _ref.context;
+        var additionalArgs = _ref.additionalArgs;
         var allowBool = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
     
         var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
@@ -712,10 +713,9 @@
             var isMapped = typeof remainingFunctions[0] === 'string';
             var errVal = isMapped ? remainingFunctions[0] : {};
             var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
-            stepFn = context ? stepFn.bind(context) : stepFn;
     
-            var len = stepFn.length;
-            var res = stepFn(toState, fromState, done);
+            // const len = stepFn.length;
+            var res = stepFn.apply(context || null, additionalArgs.concat([toState, fromState, done]));
     
             if (allowBool && typeof res === 'boolean') {
                 done(res ? null : errVal);
@@ -763,6 +763,7 @@
     
     function transition(router, toState, fromState, callback) {
         var cancelled = false;
+        var additionalArgs = router.getAdditionalArgs();
         var isCancelled = function isCancelled() {
             return cancelled;
         };
@@ -786,6 +787,8 @@
         var toDeactivate = _transitionPath.toDeactivate;
         var toActivate = _transitionPath.toActivate;
     
+        var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState, additionalArgs: [] };
+    
         var canDeactivate = function canDeactivate(toState, fromState, cb) {
             var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
                 return router._cmps[name] && router._cmps[name].canDeactivate;
@@ -793,7 +796,7 @@
                 return _extends({}, fnMap, _defineProperty({}, name, router._cmps[name].canDeactivate));
             }, {});
     
-            asyncProcess(canDeactivateFunctionMap, { isCancelled: isCancelled, toState: toState, fromState: fromState }, function (err) {
+            asyncProcess(canDeactivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
                 return cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null);
             });
         };
@@ -805,7 +808,7 @@
                 return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
             }, {});
     
-            asyncProcess(canActivateFunctionMap, { isCancelled: isCancelled, toState: toState, fromState: fromState }, function (err) {
+            asyncProcess(canActivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
                 return cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null);
             });
         };
@@ -814,7 +817,7 @@
         var middleware = function middleware(toState, fromState, cb) {
             var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
     
-            asyncProcess(mwareFunction, { isCancelled: isCancelled, toState: toState, fromState: fromState, context: { cancel: cancel, router: router } }, function (err, state) {
+            asyncProcess(mwareFunction, _extends({}, asyncBase, { context: { cancel: cancel, router: router } }), function (err, state) {
                 var errObj = err ? typeof err === 'object' ? err : { error: err } : null;
                 cb(err ? _extends({ code: constants.TRANSITION_ERR }, errObj) : null, state || toState);
             });
@@ -822,7 +825,7 @@
     
         var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
     
-        asyncProcess(pipeline, { isCancelled: isCancelled, toState: toState, fromState: fromState }, done);
+        asyncProcess(pipeline, asyncBase, done);
     
         return cancel;
     }
@@ -874,7 +877,7 @@
                 return _this.options[opt] = opts[opt];
             });
             this.registeredPlugins = {};
-            // Bind onPopState
+            this._extraArgs = [];
         }
     
         /**
@@ -895,6 +898,27 @@
             value: function setOption(opt, val) {
                 this.options[opt] = val;
                 return this;
+            }
+    
+            /**
+             * Set additional arguments used in lifecycle functions.
+             * Additional arguments are used in canActivate and canDeactivate in first positions (before `toState`).
+             * @param  {Array} args The additional arguments
+             */
+        }, {
+            key: 'setAdditionalArgs',
+            value: function setAdditionalArgs(args) {
+                this._extraArgs = Array.isArray(args) ? args : [args];
+                return this;
+            }
+    
+            /**
+             * Return additional arguments used in lifecycle functions
+             */
+        }, {
+            key: 'getAdditionalArgs',
+            value: function getAdditionalArgs() {
+                return this._extraArgs;
             }
     
             /**

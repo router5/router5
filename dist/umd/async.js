@@ -24,6 +24,7 @@
         var toState = _ref.toState;
         var fromState = _ref.fromState;
         var context = _ref.context;
+        var additionalArgs = _ref.additionalArgs;
         var allowBool = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
         var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
@@ -42,10 +43,9 @@
             var isMapped = typeof remainingFunctions[0] === 'string';
             var errVal = isMapped ? remainingFunctions[0] : {};
             var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
-            stepFn = context ? stepFn.bind(context) : stepFn;
 
-            var len = stepFn.length;
-            var res = stepFn(toState, fromState, done);
+            // const len = stepFn.length;
+            var res = stepFn.apply(context || null, additionalArgs.concat([toState, fromState, done]));
 
             if (allowBool && typeof res === 'boolean') {
                 done(res ? null : errVal);

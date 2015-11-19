@@ -37,6 +37,7 @@ var nameToIDs = function nameToIDs(name) {
 
 function transition(router, toState, fromState, callback) {
     var cancelled = false;
+    var additionalArgs = router.getAdditionalArgs();
     var isCancelled = function isCancelled() {
         return cancelled;
     };
@@ -60,6 +61,8 @@ function transition(router, toState, fromState, callback) {
     var toDeactivate = _transitionPath.toDeactivate;
     var toActivate = _transitionPath.toActivate;
 
+    var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState, additionalArgs: [] };
+
     var canDeactivate = function canDeactivate(toState, fromState, cb) {
         var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
             return router._cmps[name] && router._cmps[name].canDeactivate;
@@ -67,7 +70,7 @@ function transition(router, toState, fromState, callback) {
             return _extends({}, fnMap, _defineProperty({}, name, router._cmps[name].canDeactivate));
         }, {});
 
-        (0, _async2['default'])(canDeactivateFunctionMap, { isCancelled: isCancelled, toState: toState, fromState: fromState }, function (err) {
+        (0, _async2['default'])(canDeactivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
             return cb(err ? { code: _constants2['default'].CANNOT_DEACTIVATE, segment: err } : null);
         });
     };
@@ -79,7 +82,7 @@ function transition(router, toState, fromState, callback) {
             return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
         }, {});
 
-        (0, _async2['default'])(canActivateFunctionMap, { isCancelled: isCancelled, toState: toState, fromState: fromState }, function (err) {
+        (0, _async2['default'])(canActivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
             return cb(err ? { code: _constants2['default'].CANNOT_ACTIVATE, segment: err } : null);
         });
     };
@@ -88,7 +91,7 @@ function transition(router, toState, fromState, callback) {
     var middleware = function middleware(toState, fromState, cb) {
         var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
-        (0, _async2['default'])(mwareFunction, { isCancelled: isCancelled, toState: toState, fromState: fromState, context: { cancel: cancel, router: router } }, function (err, state) {
+        (0, _async2['default'])(mwareFunction, _extends({}, asyncBase, { context: { cancel: cancel, router: router } }), function (err, state) {
             var errObj = err ? typeof err === 'object' ? err : { error: err } : null;
             cb(err ? _extends({ code: _constants2['default'].TRANSITION_ERR }, errObj) : null, state || toState);
         });
@@ -96,7 +99,7 @@ function transition(router, toState, fromState, callback) {
 
     var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
 
-    (0, _async2['default'])(pipeline, { isCancelled: isCancelled, toState: toState, fromState: fromState }, done);
+    (0, _async2['default'])(pipeline, asyncBase, done);
 
     return cancel;
 }
