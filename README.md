@@ -48,7 +48,7 @@ router.start(() => {
 
 Note: `RouterProvider` comes from `react-router5`. It simply adds your router instance in your application context
 which might be needed if you want to use `router.isActive()` or other instance specific methods. Instead
-of using `RouterProvider`, you can use `withContext()` from [recompose](https://github.com/rackt/recompose).
+of using `RouterProvider`, you can use `withContext()` from [recompose](https://github.com/acdlite/recompose).
 
 
 ## router5Middleware
