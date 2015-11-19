@@ -12,6 +12,7 @@ const nameToIDs = name => {
 
 function transition(router, toState, fromState, callback) {
     let cancelled = false;
+    const additionalArgs = router.getAdditionalArgs();
     const isCancelled = () => cancelled;
     const cancel = () => cancelled = true;
     const done = (err, state) => {
@@ -25,6 +26,7 @@ function transition(router, toState, fromState, callback) {
     };
 
     const {toDeactivate, toActivate} = transitionPath(toState, fromState);
+    const asyncBase = { isCancelled, toState, fromState, additionalArgs: [] };
 
     const canDeactivate = (toState, fromState, cb) => {
         let canDeactivateFunctionMap = toDeactivate
@@ -32,7 +34,7 @@ function transition(router, toState, fromState, callback) {
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router._cmps[name].canDeactivate }), {});
 
         asyncProcess(
-            canDeactivateFunctionMap, { isCancelled, toState, fromState },
+            canDeactivateFunctionMap, { ...asyncBase, additionalArgs },
             err => cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null)
         );
     };
@@ -43,7 +45,7 @@ function transition(router, toState, fromState, callback) {
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router._canAct[name] }), {});
 
         asyncProcess(
-            canActivateFunctionMap, { isCancelled, toState, fromState },
+            canActivateFunctionMap, { ...asyncBase, additionalArgs },
             err => cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null)
         );
     };
@@ -53,7 +55,7 @@ function transition(router, toState, fromState, callback) {
         let mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         asyncProcess(
-            mwareFunction, { isCancelled, toState, fromState, context: { cancel, router } },
+            mwareFunction, { ...asyncBase, context: { cancel, router } },
             (err, state) => {
                 const errObj = err ? (typeof err === 'object' ? err : { error: err }) : null;
                 cb(err ? { code: constants.TRANSITION_ERR, ...errObj } : null, state || toState);
@@ -65,7 +67,7 @@ function transition(router, toState, fromState, callback) {
         .concat(canActivate)
         .concat(middlewareFn ? middleware : []);
 
-    asyncProcess(pipeline, { isCancelled, toState, fromState }, done);
+    asyncProcess(pipeline, asyncBase, done);
 
     return cancel;
 }

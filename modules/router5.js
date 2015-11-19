@@ -39,7 +39,7 @@ class Router5 {
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
         this.registeredPlugins = {};
-        // Bind onPopState
+        this._extraArgs = [];
     }
 
     /**
@@ -51,6 +51,23 @@ class Router5 {
     setOption(opt, val) {
         this.options[opt] = val;
         return this;
+    }
+
+    /**
+     * Set additional arguments used in lifecycle functions.
+     * Additional arguments are used in canActivate and canDeactivate in first positions (before `toState`).
+     * @param  {Array} args The additional arguments
+     */
+    setAdditionalArgs(args) {
+        this._extraArgs = Array.isArray(args) ? args : [args];
+        return this;
+    }
+
+    /**
+     * Return additional arguments used in lifecycle functions
+     */
+    getAdditionalArgs() {
+        return this._extraArgs;
     }
 
     /**
