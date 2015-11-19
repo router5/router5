@@ -1,0 +1,16 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/router5/redux-router5/compare/v1.0.0...v1.1.0) (2015-11-19)
+
+
+### Features
+
+* add store as an additional argument to router canActivate and canDeactivate func ([0e46f91](https://github.com/router5/redux-router5/commit/0e46f91))
+
+
+
+<a name="1.0.0"></a>
+# 1.0.0 (2015-10-27)
+
+
+
+

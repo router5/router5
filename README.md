@@ -5,6 +5,10 @@ and __[react-router5](https://github.com/router5/react-router5)__. Using router5
 
 __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
 
+## Requirements
+
+- __router5 >= 1.1.0__
+- __redux >= 3.0.0__
 
 ## How to use
 
@@ -12,6 +16,7 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 - Create and configure your store including `router5Middleware` and `router5Reducer`
 - Use `routeNodeSelector` on route nodes in your component tree
 - Use provided actions to perform routing
+- Since __router5@1.1.0__, `canActivate` and `canDeactivate` functions take `store` as their first argument
 
 ### With React
 
