@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 1.1.0
+ * @version 1.1.1
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -160,12 +160,12 @@
         return searchPart.split('&').map(function (_) {
             return _.split('=');
         }).reduce(function (obj, m) {
-            return appendQueryParam(obj, m[0], m[1]);
+            return appendQueryParam(obj, m[0], m[1] ? decodeURIComponent(m[1]) : m[1]);
         }, {});
     };
     
     var toSerialisable = function toSerialisable(val) {
-        return val !== undefined && val !== null && val !== '' ? '=' + val : '';
+        return val !== undefined && val !== null && val !== '' ? '=' + encodeURIComponent(val) : '';
     };
     
     var _serialise = function _serialise(key, val) {
@@ -369,13 +369,13 @@
         var remainingSearchParams = searchPart.split('&').reduce(function (obj, p) {
             var splitParam = p.split('=');
             var key = splitParam[0];
-            var val = splitParam[1];
+            var val = decodeURIComponent(splitParam[1]);
             if (params.indexOf(key) === -1) obj[key] = val || '';
             return obj;
         }, {});
     
         var remainingSearchPart = Object.keys(remainingSearchParams).map(function (p) {
-            return [p].concat(isSerialisable(remainingSearchParams[p]) ? remainingSearchParams[p] : []);
+            return [p].concat(isSerialisable(remainingSearchParams[p]) ? encodeURIComponent(remainingSearchParams[p]) : []);
         }).map(function (p) {
             return p.join('=');
         }).join('&');
