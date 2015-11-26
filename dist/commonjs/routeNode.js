@@ -32,29 +32,31 @@ function routeNode(nodeName) {
             _inherits(RouteNode, _Component);
 
             function RouteNode(props, context) {
-                var _this = this;
-
                 _classCallCheck(this, RouteNode);
 
                 _get(Object.getPrototypeOf(RouteNode.prototype), 'constructor', this).call(this, props, context);
                 this.router = context.router;
-                this.nodeListener = function (toState, fromState) {
-                    return _this.setState({ previousRoute: fromState, route: toState });
-                };
-                if (!this.router.registeredPlugins.LISTENERS) {
-                    throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
-                }
                 this.state = {
                     previousRoute: null,
                     route: this.router.getState()
                 };
-                this.router.addNodeListener(nodeName, this.nodeListener);
             }
 
             _createClass(RouteNode, [{
                 key: 'componentDidMount',
                 value: function componentDidMount() {
+                    var _this = this;
+
                     if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
+
+                    if (!this.router.registeredPlugins.LISTENERS) {
+                        throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
+                    }
+
+                    this.nodeListener = function (toState, fromState) {
+                        return _this.setState({ previousRoute: fromState, route: toState });
+                    };
+                    this.router.addNodeListener(nodeName, this.nodeListener);
                 }
             }, {
                 key: 'componentWillUnmout',
