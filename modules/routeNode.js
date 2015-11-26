@@ -10,19 +10,21 @@ function routeNode(nodeName, register = false) {
             constructor(props, context) {
                 super(props, context);
                 this.router = context.router;
-                this.nodeListener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
-                if (!this.router.registeredPlugins.LISTENERS) {
-                    throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
-                }
                 this.state = {
                     previousRoute: null,
                     route: this.router.getState()
                 };
-                this.router.addNodeListener(nodeName, this.nodeListener);
             }
 
             componentDidMount() {
                 if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
+
+                if (!this.router.registeredPlugins.LISTENERS) {
+                    throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
+                }
+
+                this.nodeListener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
+                this.router.addNodeListener(nodeName, this.nodeListener);
             }
 
             componentWillUnmout() {
