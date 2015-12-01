@@ -72,7 +72,8 @@ function per node. Supports asynchronous results.
 - [react-router5](https://github.com/router5/react-router5)
 - [redux-router5](https://github.com/router5/redux-router5)
 - [deku-router5](https://github.com/router5/deku-router5)
-- [cyclejs driver gist](https://gist.github.com/axefrog/217e522282a7948737e1)
+- [router5-link-interceptor](https://github.com/jas-chen/router5-link-interceptor)
+- [cycle-router5](https://github.com/axefrog/cycle-router5) (out of date)
 
 
 ### Contributing
