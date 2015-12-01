@@ -48,6 +48,17 @@ function getExpectedPath(useHash, path) {
     return useHash ? '#' + hashPrefix + path : path;
 }
 
+function omitMeta(obj) {
+    if (!obj._meta) {
+        console.log('no meta')
+    }
+    return {
+        name: obj.name,
+        params: obj.params,
+        path: obj.path
+    };
+}
+
 describe('router5', function () {
     // Without hash
     testRouter(false);
@@ -99,17 +110,17 @@ function testRouter(useHash) {
         });
 
         it('should match an URL', function () {
-            expect(router.matchUrl(makeUrl('/home'))).toEqual({name: 'home', params: {}, path: '/home'});
-            expect(router.matchUrl(makeUrl('/users/view/1'))).toEqual({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
+            expect(omitMeta(router.matchUrl(makeUrl('/home')))).toEqual({name: 'home', params: {}, path: '/home'});
+            expect(omitMeta(router.matchUrl(makeUrl('/users/view/1')))).toEqual({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
         });
 
         it('should start with the default route', function (done) {
-            expect(router.getState()).toEqual(null)
-            expect(router.isActive('home')).toEqual(false)
+            expect(router.getState()).toBe(null)
+            expect(router.isActive('home')).toBe(false)
 
             router.start('', function () {
                 expect(router.started).toBe(true);
-                expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
+                expect(omitMeta(router.getState())).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -124,7 +135,7 @@ function testRouter(useHash) {
         it('should start with the start route if matched', function (done) {
             router.stop();
             router.start('/users/view/123', function (err, state) {
-                expect(state).toEqual({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
+                expect(omitMeta(state)).toEqual({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
                 done();
             });
         });
@@ -134,7 +145,7 @@ function testRouter(useHash) {
             router.lastKnownState = null;
             router.lastStateAttempt = null;
             router.start('/about', function (err, state) {
-                expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
+                expect(omitMeta(router.getState())).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -142,7 +153,7 @@ function testRouter(useHash) {
         it('should start with the default route if navigation to start route is not allowed', function (done) {
             router.stop();
             router.start('/admin', function (err) {
-                expect(router.getState()).toEqual({name: 'home', params: {}, path: '/home'});
+                expect(omitMeta(router.getState())).toEqual({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -179,7 +190,7 @@ function testRouter(useHash) {
             router.setOption('trailingSlash', 1);
             router.stop();
             router.start('/users/list/', function (err, state) {
-                expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
+                expect(omitMeta(state)).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
                 router.setOption('trailingSlash', 0);
                 done();
             });
@@ -189,7 +200,7 @@ function testRouter(useHash) {
             router.setOption('trailingSlash', 1);
             router.stop();
             router.start('/users/list/', function (err, state) {
-                expect(state).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
+                expect(omitMeta(state)).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
                 router.setOption('trailingSlash', 0);
                 done();
             });
@@ -197,7 +208,7 @@ function testRouter(useHash) {
 
         it('should start with the provided state', function (done) {
             router.stop();
-            var homeState = {name: 'home', params: {}, path: '/home'};
+            var homeState = {name: 'home', params: {}, path: '/home', _meta: {'home': {}}};
             router.start(homeState, function (err, state) {
                 expect(state).toEqual(homeState);
                 expect(router.lastKnownState).toEqual(homeState);
@@ -217,7 +228,7 @@ function testRouter(useHash) {
 
         it('should be able to navigate to routes', function (done) {
             router.navigate('users.view', {id: 123}, {}, function (err, state) {
-                expect(state).toEqual({name: 'users.view', params: {id: 123}, path: '/users/view/123'});
+                expect(omitMeta(state)).toEqual({name: 'users.view', params: {id: 123}, path: '/users/view/123'});
                 done();
             });
         });
@@ -247,7 +258,7 @@ function testRouter(useHash) {
                 router.stop();
                 expect(router.started).toBe(false);
                 router.navigate('users.list', {}, {}, function (err) {
-                    expect(err.code).toEqual(Router5.ERR.ROUTER_NOT_STARTED);
+                    expect(err.code).toBe(Router5.ERR.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
                     router.start('', done);
@@ -287,7 +298,7 @@ function testRouter(useHash) {
                 router.navigate('users', {}, {}, function (err) {
                     expect(err.code).toBe(Router5.ERR.CANNOT_DEACTIVATE);
                     expect(err.segment).toBe('users.list');
-                    expect(router.getState()).toEqual({name: 'users.list', params: {}, path: '/users/list'});
+                    expect(omitMeta(router.getState())).toEqual({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
                     router.deregisterComponent('users.list');
@@ -297,7 +308,7 @@ function testRouter(useHash) {
                         }
                     });
                     router.navigate('users', {}, {}, function () {
-                        expect(router.getState()).toEqual({name: 'users', params: {}, path: '/users'});
+                        expect(omitMeta(router.getState())).toEqual({name: 'users', params: {}, path: '/users'});
                         // Auto clean up
                         expect(router._cmps['users.list']).toBe(undefined);
                         done();
