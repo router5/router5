@@ -1,3 +1,13 @@
+<a name="1.2.0"></a>
+# 1.2.0 (2015-12-01)
+
+
+### Bug Fixes
+
+* update route-node and router5.transition-path (fix issues around computing trans ([be02867](https://github.com/router5/router5/commit/be02867))
+
+
+
 <a name="1.1.1"></a>
 ## 1.1.1 (2015-11-24)
 

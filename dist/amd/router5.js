@@ -26,28 +26,83 @@
 define('router5', [], function () {
 "use strict";
 
-    function transitionPath(toState, fromState) {
-        function nameToIDs(name) {
-            return name.split('.').reduce(function (ids, name) {
-                return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-            }, []);
-        }
+    function nameToIDs(name) {
+        return name.split('.').reduce(function (ids, name) {
+            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+        }, []);
+    }
     
-        var i = undefined;
+    function extractSegmentParams(name, state) {
+        if (!state._meta || !state._meta[name]) return {};
+    
+        return Object.keys(state._meta[name]).reduce(function (params, p) {
+            params[p] = state.params[p];
+            return params;
+        }, {});
+    }
+    
+    function transitionPath(toState, fromState) {
         var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
         var toStateIds = nameToIDs(toState.name);
         var maxI = Math.min(fromStateIds.length, toStateIds.length);
     
-        if (fromState && fromState.name === toState.name) {
-            i = Math.max(maxI - 1, 0);
-        } else {
+        function pointOfDifference() {
+            var i = undefined;
+    
+            var _loop = function () {
+                var left = fromStateIds[i];
+                var right = toStateIds[i];
+    
+                if (left !== right) return {
+                        v: i
+                    };
+    
+                var leftParams = extractSegmentParams(left, toState);
+                var rightParams = extractSegmentParams(right, fromState);
+    
+                if (leftParams.length !== rightParams.length) return {
+                        v: i
+                    };
+                if (leftParams.length === 0) return 'continue';
+    
+                var different = Object.keys(leftParams).some(function (p) {
+                    return rightParams[p] !== leftParams[p];
+                });
+                if (different) {
+                    return {
+                        v: i
+                    };
+                }
+            };
+    
             for (i = 0; i < maxI; i += 1) {
-                if (fromStateIds[i] !== toStateIds[i]) break;
+                var _ret = _loop();
+    
+                switch (_ret) {
+                    case 'continue':
+                        continue;
+    
+                    default:
+                        if (typeof _ret === 'object') return _ret.v;
+                }
             }
+    
+            return i;
+        }
+    
+        var i = undefined;
+        if (!fromState) {
+            i = 0;
+        } else if (!fromState || toState.name === fromState.name && (!toState._meta || !fromState._meta)) {
+            console.log('[router5.transition-path] Some states are missing metadata, reloading all segments');
+            i = 0;
+        } else {
+            i = pointOfDifference();
         }
     
         var toDeactivate = fromStateIds.slice(i).reverse();
         var toActivate = toStateIds.slice(i);
+    
         var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
     
         return {
@@ -611,6 +666,27 @@ define('router5', [], function () {
                 }).join('') + (searchPart ? '?' + searchPart : '');
             }
         }, {
+            key: 'getMetaFromSegments',
+            value: function getMetaFromSegments(segments) {
+                var accName = '';
+    
+                return segments.reduce(function (meta, segment, i) {
+                    var urlParams = segment.parser.urlParams.reduce(function (params, p) {
+                        params[p] = 'url';
+                        return params;
+                    }, {});
+    
+                    var allParams = segment.parser.queryParams.reduce(function (params, p) {
+                        params[p] = 'query';
+                        return params;
+                    }, urlParams);
+    
+                    accName = accName ? accName + '.' + segment.name : segment.name;
+                    meta[accName] = allParams;
+                    return meta;
+                }, {});
+            }
+        }, {
             key: 'buildPath',
             value: function buildPath(routeName) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
@@ -618,8 +694,8 @@ define('router5', [], function () {
                 return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
             }
         }, {
-            key: 'getMatchPathFromSegments',
-            value: function getMatchPathFromSegments(segments) {
+            key: 'buildStateFromSegments',
+            value: function buildStateFromSegments(segments) {
                 if (!segments || !segments.length) return null;
     
                 var name = segments.map(function (segment) {
@@ -627,14 +703,32 @@ define('router5', [], function () {
                 }).join('.');
                 var params = segments.params;
     
-                return { name: name, params: params };
+                return {
+                    name: name,
+                    params: params,
+                    _meta: this.getMetaFromSegments(segments)
+                };
+            }
+        }, {
+            key: 'buildState',
+            value: function buildState(name) {
+                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    
+                var segments = this.getSegmentsByName(name);
+                if (!segments || !segments.length) return null;
+    
+                return {
+                    name: name,
+                    params: params,
+                    _meta: this.getMetaFromSegments(segments)
+                };
             }
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
                 var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
     
-                return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
+                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
             }
         }]);
     
@@ -831,7 +925,7 @@ define('router5', [], function () {
     }
     
     
-    var makeState = function makeState(name, params, path) {
+    var makeState = function makeState(name, params, path, _meta) {
         var state = {};
         var setProp = function setProp(key, value) {
             return Object.defineProperty(state, key, { value: value, enumerable: true });
@@ -839,6 +933,7 @@ define('router5', [], function () {
         setProp('name', name);
         setProp('params', params);
         setProp('path', path);
+        if (_meta) setProp('_meta', _meta);
         return state;
     };
     
@@ -1287,6 +1382,18 @@ define('router5', [], function () {
             }
     
             /**
+             * Build a state object from a route name and route params
+             * @param  {String} route  The route name
+             * @param  {Object} params The route params (key-value pairs)
+             * @return {String}        The built Path
+             */
+        }, {
+            key: 'buildState',
+            value: function buildState(route, params) {
+                return this.rootNode.buildState(route, params);
+            }
+    
+            /**
              * Match a path against the route tree.
              * @param  {String} path   The path to match
              * @return {Object}        The matched state object (null if no match)
@@ -1295,7 +1402,7 @@ define('router5', [], function () {
             key: 'matchPath',
             value: function matchPath(path) {
                 var match = this.rootNode.matchPath(path, this.options.trailingSlash);
-                return match ? makeState(match.name, match.params, path) : null;
+                return match ? makeState(match.name, match.params, path, match._meta) : null;
             }
     
             /**
@@ -1399,16 +1506,16 @@ define('router5', [], function () {
                     return;
                 }
     
-                var path = this.buildPath(name, params);
+                var toState = this.buildState(name, params);
     
-                if (!path) {
+                if (!toState) {
                     var err = { code: constants.ROUTE_NOT_FOUND };
                     if (done) done(err);
                     this._invokeListeners('$$error', null, this.lastKnownState, err);
                     return;
                 }
     
-                var toState = makeState(name, params, path);
+                toState.path = this.buildPath(name, params);
                 this.lastStateAttempt = toState;
                 var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false;
     

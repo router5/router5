@@ -35,7 +35,7 @@ var _logger = require('./logger');
 
 var _logger2 = _interopRequireDefault(_logger);
 
-var makeState = function makeState(name, params, path) {
+var makeState = function makeState(name, params, path, _meta) {
     var state = {};
     var setProp = function setProp(key, value) {
         return Object.defineProperty(state, key, { value: value, enumerable: true });
@@ -43,6 +43,7 @@ var makeState = function makeState(name, params, path) {
     setProp('name', name);
     setProp('params', params);
     setProp('path', path);
+    if (_meta) setProp('_meta', _meta);
     return state;
 };
 
@@ -499,6 +500,18 @@ var Router5 = (function () {
         }
 
         /**
+         * Build a state object from a route name and route params
+         * @param  {String} route  The route name
+         * @param  {Object} params The route params (key-value pairs)
+         * @return {String}        The built Path
+         */
+    }, {
+        key: 'buildState',
+        value: function buildState(route, params) {
+            return this.rootNode.buildState(route, params);
+        }
+
+        /**
          * Match a path against the route tree.
          * @param  {String} path   The path to match
          * @return {Object}        The matched state object (null if no match)
@@ -507,7 +520,7 @@ var Router5 = (function () {
         key: 'matchPath',
         value: function matchPath(path) {
             var match = this.rootNode.matchPath(path, this.options.trailingSlash);
-            return match ? makeState(match.name, match.params, path) : null;
+            return match ? makeState(match.name, match.params, path, match._meta) : null;
         }
 
         /**
@@ -614,16 +627,16 @@ var Router5 = (function () {
                 return;
             }
 
-            var path = this.buildPath(name, params);
+            var toState = this.buildState(name, params);
 
-            if (!path) {
+            if (!toState) {
                 var err = { code: _constants2['default'].ROUTE_NOT_FOUND };
                 if (done) done(err);
                 this._invokeListeners('$$error', null, this.lastKnownState, err);
                 return;
             }
 
-            var toState = makeState(name, params, path);
+            toState.path = this.buildPath(name, params);
             this.lastStateAttempt = toState;
             var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false;
 
