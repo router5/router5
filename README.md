@@ -1,8 +1,17 @@
 # react-router5
 
-> High-order components and components for React when using [router5](https://github.com/router5/router5).
+> Higherh-order components and components for React when using [router5](https://github.com/router5/router5).
 
 This package replaces `router5-react` which is deprecated.
+
+### Installation
+
+```sh
+npm install --save react-router5
+bower install --save react-router5
+```
+
+With bower, the package registers a `reactRouter5` global variable containing `RouterProvider`, `routeNode` and `Link`. AMD and UMD bundles are also available in `dist` folder.
 
 ### Examples
 
@@ -34,7 +43,7 @@ ReactDOM.render(
 
 ### RouteNode HOC
 
-__routeNode(nodeName, registerComponent = false)__: high-order component to wrap a route node component.
+__routeNode(nodeName, registerComponent = false)__: higher-order component to wrap a route node component.
 
 - Specify your component node name (`''` if root node)
 - If you set `registerComponent` to true, you cannot use functional stateless components as `routeNode` make uses of _refs_.
