@@ -251,7 +251,7 @@ var Router5 = (function () {
                     // Navigate to default function
                     var navigateToDefault = function navigateToDefault() {
                         return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
-                            return cb(err, state, false);
+                            return done(err, state);
                         });
                     };
                     // If matched start path

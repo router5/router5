@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 1.1.1
+ * @version 1.2.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -1135,7 +1135,7 @@ define('router5', [], function () {
                         // Navigate to default function
                         var navigateToDefault = function navigateToDefault() {
                             return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
-                                return cb(err, state, false);
+                                return done(err, state);
                             });
                         };
                         // If matched start path

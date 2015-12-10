@@ -1,3 +1,13 @@
+<a name="1.2.1"></a>
+## 1.2.1 (2015-12-10)
+
+
+### Bug Fixes
+
+* callbacks invoked twice when navigating to default route ([6c48fff](https://github.com/router5/router5/commit/6c48fff))
+
+
+
 <a name="1.2.0"></a>
 # 1.2.0 (2015-12-01)
 
