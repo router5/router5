@@ -15,7 +15,7 @@ This package replaces `router5-react` which is deprecated.
 - router5 >= __1.0.0__
 
 
-### RouterProvider HOC
+### RouterProvider
 
 It will add your router instance in context.
 
