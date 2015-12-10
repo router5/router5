@@ -1,6 +1,6 @@
 # react-router5
 
-> Higherh-order components and components for React when using [router5](https://github.com/router5/router5).
+> Higher-order components and components for React when using [router5](https://github.com/router5/router5).
 
 This package replaces `router5-react` which is deprecated.
 
