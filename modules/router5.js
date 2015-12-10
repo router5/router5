@@ -170,7 +170,7 @@ class Router5 {
             // If no supplied start state, get start state
             startState = startPath === undefined ? null : this.matchPath(startPath);
             // Navigate to default function
-            const navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => cb(err, state, false));
+            const navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => done(err, state));
             // If matched start path
             if (startState) {
                 this.lastStateAttempt = startState;
