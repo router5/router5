@@ -1,6 +1,6 @@
 {
   "name": "redux-router5",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Router5 integration with redux",
   "main": "dist/commonjs",
   "scripts": {

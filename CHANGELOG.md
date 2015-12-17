@@ -1,3 +1,13 @@
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/router5/redux-router5/compare/v1.1.0...v1.1.1) (2015-12-17)
+
+
+### Bug Fixes
+
+* release latest build ([b2b3ff8](https://github.com/router5/redux-router5/commit/b2b3ff8))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/router5/redux-router5/compare/v1.0.0...v1.1.0) (2015-11-19)
 
