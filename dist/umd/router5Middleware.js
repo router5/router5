@@ -37,9 +37,10 @@
     }
 
     function replaceRoutesMiddleware(router) {
-        return function (_ref) {
-            var dispatch = _ref.dispatch;
+        return function (store) {
+            var dispatch = store.dispatch;
 
+            router.setAdditionalArgs(store);
             router.usePlugin(routerPlugin(dispatch));
 
             return function (next) {
