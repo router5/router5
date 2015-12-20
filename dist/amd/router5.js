@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 1.2.0
+ * @version 1.2.2
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -925,6 +925,8 @@ define('router5', [], function () {
     }
     
     
+    var noop = function noop() {};
+    
     var makeState = function makeState(name, params, path, _meta) {
         var state = {};
         var setProp = function setProp(key, value) {
@@ -1096,12 +1098,12 @@ define('router5', [], function () {
     
                 var args = Array.prototype.slice.call(arguments);
                 var lastArg = args.slice(-1)[0];
-                var done = lastArg instanceof Function ? lastArg : null;
+                var done = lastArg instanceof Function ? lastArg : noop;
                 var startPath = undefined,
                     startState = undefined;
     
                 if (this.started) {
-                    if (done) done({ code: constants.ROUTER_ALREADY_STARTED });
+                    done({ code: constants.ROUTER_ALREADY_STARTED });
                     return this;
                 }
     
@@ -1118,7 +1120,7 @@ define('router5', [], function () {
                 var cb = function cb(err, state) {
                     var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
     
-                    if (done) done(err, state);
+                    done(err, state);
                     if (!err) _this3._invokeListeners('$$success', state, null, { replace: true });
                     if (err && invokeErrCb) _this3._invokeListeners('$$error', state, null, err);
                 };
@@ -1444,8 +1446,10 @@ define('router5', [], function () {
              */
         }, {
             key: '_transition',
-            value: function _transition(toState, fromState, done) {
+            value: function _transition(toState, fromState) {
                 var _this5 = this;
+    
+                var done = arguments.length <= 2 || arguments[2] === undefined ? noop : arguments[2];
     
                 // Cancel current transition
                 this.cancel();
@@ -1458,13 +1462,13 @@ define('router5', [], function () {
                     if (err) {
                         if (err.code === constants.TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
     
-                        if (done) done(err);
+                        done(err);
                         return;
                     }
     
                     _this5.lastKnownState = state; // toState or modified state?
     
-                    if (done) done(null, state);
+                    done(null, state);
                 });
     
                 this._tr = tr;
@@ -1494,15 +1498,16 @@ define('router5', [], function () {
              */
         }, {
             key: 'navigate',
-            value: function navigate(name, params, opts, done) {
-                if (params === undefined) params = {};
+            value: function navigate(name) {
+                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
     
                 var _this6 = this;
     
-                if (opts === undefined) opts = {};
+                var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
     
                 if (!this.started) {
-                    if (done) done({ code: constants.ROUTER_NOT_STARTED });
+                    done({ code: constants.ROUTER_NOT_STARTED });
                     return;
                 }
     
@@ -1510,7 +1515,7 @@ define('router5', [], function () {
     
                 if (!toState) {
                     var err = { code: constants.ROUTE_NOT_FOUND };
-                    if (done) done(err);
+                    done(err);
                     this._invokeListeners('$$error', null, this.lastKnownState, err);
                     return;
                 }
@@ -1523,7 +1528,7 @@ define('router5', [], function () {
                 // (no desactivation and no callbacks)
                 if (sameStates && !opts.reload) {
                     var err = { code: constants.SAME_STATES };
-                    if (done) done(err);
+                    done(err);
                     this._invokeListeners('$$error', toState, this.lastKnownState, err);
                     return;
                 }
@@ -1533,12 +1538,12 @@ define('router5', [], function () {
                 // Transition and amend history
                 return this._transition(toState, sameStates ? null : this.lastKnownState, function (err, state) {
                     if (err) {
-                        if (done) done(err);
+                        done(err);
                         return;
                     }
     
                     _this6._invokeListeners('$$success', toState, fromState, opts);
-                    if (done) done(null, state);
+                    done(null, state);
                 });
             }
         }]);

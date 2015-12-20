@@ -1,3 +1,13 @@
+<a name="1.2.2"></a>
+## 1.2.2 (2015-12-20)
+
+
+### Bug Fixes
+
+* default start callback to a noop function to avoid errors to be thrown ([56a116d](https://github.com/router5/router5/commit/56a116d)), closes [#39](https://github.com/router5/router5/issues/39)
+
+
+
 <a name="1.2.1"></a>
 ## 1.2.1 (2015-12-10)
 
