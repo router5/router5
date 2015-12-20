@@ -125,6 +125,13 @@ function testRouter(useHash) {
             });
         });
 
+        it('should not throw an error when starting with no callback', function() {
+            router.stop();
+            expect(function() {
+                router.start();
+            }).not.toThrow();
+        });
+
         it('should give an error if trying to start when already started', function (done) {
             router.start('', function (err) {
                 expect(err.code).toBe(Router5.ERR.ROUTER_ALREADY_STARTED);

@@ -4,7 +4,9 @@ import transition from './transition';
 import constants  from './constants';
 import loggerPlugin from './logger';
 
-let makeState = (name, params, path, _meta) => {
+const noop = () => {};
+
+const makeState = (name, params, path, _meta) => {
     const state = {};
     const setProp = (key, value) => Object.defineProperty(state, key, { value, enumerable: true });
     setProp('name', name);
@@ -137,11 +139,11 @@ class Router5 {
     start() {
         const args = Array.prototype.slice.call(arguments);
         const lastArg = args.slice(-1)[0];
-        const done = (lastArg instanceof Function) ? lastArg : null;
+        const done = (lastArg instanceof Function) ? lastArg : noop;
         let startPath, startState;
 
         if (this.started) {
-            if (done) done({ code: constants.ROUTER_ALREADY_STARTED });
+            done({ code: constants.ROUTER_ALREADY_STARTED });
             return this;
         }
 
@@ -156,7 +158,7 @@ class Router5 {
 
         // callback
         const cb = (err, state, invokeErrCb = true) => {
-            if (done) done(err, state);
+            done(err, state);
             if (!err) this._invokeListeners('$$success', state, null, {replace: true});
             if (err && invokeErrCb) this._invokeListeners('$$error', state, null, err);
         };
@@ -422,7 +424,7 @@ class Router5 {
     /**
      * @private
      */
-    _transition(toState, fromState, done) {
+    _transition(toState, fromState, done = noop) {
         // Cancel current transition
         this.cancel();
         this._invokeListeners('$$start', toState, fromState);
@@ -435,13 +437,13 @@ class Router5 {
                 if (err.code === constants.TRANSITION_CANCELLED) this._invokeListeners('$$cancel', toState, fromState);
                 else this._invokeListeners('$$error', toState, fromState, err);
 
-                if (done) done(err);
+                done(err);
                 return;
             }
 
             this.lastKnownState = state; // toState or modified state?
 
-            if (done) done(null, state);
+            done(null, state);
         });
 
         this._tr = tr;
@@ -465,9 +467,9 @@ class Router5 {
      *                                either successfully or unsuccessfully.
      * @return {Function}             A cancellation function
      */
-    navigate(name, params = {}, opts = {}, done) {
+    navigate(name, params = {}, opts = {}, done = noop) {
         if (!this.started) {
-            if (done) done({ code: constants.ROUTER_NOT_STARTED });
+            done({ code: constants.ROUTER_NOT_STARTED });
             return;
         }
 
@@ -475,7 +477,7 @@ class Router5 {
 
         if (!toState) {
             const err = { code: constants.ROUTE_NOT_FOUND };
-            if (done) done(err);
+            done(err);
             this._invokeListeners('$$error', null, this.lastKnownState, err);
             return;
         }
@@ -488,7 +490,7 @@ class Router5 {
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
             const err = { code: constants.SAME_STATES };
-            if (done) done(err);
+            done(err);
             this._invokeListeners('$$error', toState, this.lastKnownState, err);
             return;
         }
@@ -498,12 +500,12 @@ class Router5 {
         // Transition and amend history
         return this._transition(toState, sameStates ? null : this.lastKnownState, (err, state) => {
             if (err) {
-                if (done) done(err);
+                done(err);
                 return;
             }
 
             this._invokeListeners('$$success', toState, fromState, opts);
-            if (done) done(null, state);
+            done(null, state);
         });
     }
 }
