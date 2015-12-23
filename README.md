@@ -18,6 +18,10 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 - Use provided actions to perform routing
 - Since __router5@1.1.0__, `canActivate` and `canDeactivate` functions take `store` as their first argument
 
+### How it works
+
+![With redux](https://github.com/router5/router5.github.io/blob/master/img/router-redux.png)
+
 ### With React
 
 ```javascript
