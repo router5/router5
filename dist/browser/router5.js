@@ -1,6 +1,6 @@
 /**
  * @license
- * @version 1.2.2
+ * @version 1.3.0
  * The MIT License (MIT)
  * 
  * Copyright (c) 2015 Thomas Roch
@@ -409,6 +409,8 @@
     
         return Path;
     })();
+    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+    
     
     
     var isSerialisable = function isSerialisable(val) {
@@ -564,8 +566,9 @@
             }
         }, {
             key: 'getSegmentsMatchingPath',
-            value: function getSegmentsMatchingPath(path) {
-                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+            value: function getSegmentsMatchingPath(path, options) {
+                var trailingSlash = options.trailingSlash;
+                var strictQueryParams = options.strictQueryParams;
     
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                     var _loop = function (i) {
@@ -594,12 +597,14 @@
                             Object.keys(match).forEach(function (param) {
                                 return segments.params[param] = match[param];
                             });
-                            // If fully matched
-                            if (!remainingPath.length) {
-                                return {
-                                    v: segments
-                                };
-                            }
+    
+                            if (!remainingPath.length || // fully matched
+                            !strictQueryParams && remainingPath.indexOf('?') === 0 // unmatched queryParams in non strict mode
+                            ) {
+                                    return {
+                                        v: segments
+                                    };
+                                }
                             // If no children to match against but unmatched path left
                             if (!child.children.length) {
                                 return {
@@ -725,10 +730,10 @@
             }
         }, {
             key: 'matchPath',
-            value: function matchPath(path) {
-                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-    
-                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
+            value: function matchPath(path, options) {
+                var defaultOptions = { trailingSlash: false, strictQueryParams: true };
+                options = _extends({}, defaultOptions, options);
+                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, options));
             }
         }]);
     
@@ -781,7 +786,6 @@
         TRANSITION_ERR: 'TRANSITION_ERR',
         TRANSITION_CANCELLED: 'CANCELLED'
     };
-    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
     
     function asyncProcess(functions, _ref, callback) {
         var isCancelled = _ref.isCancelled;
@@ -968,7 +972,8 @@
                 hashPrefix: '',
                 base: false,
                 trailingSlash: 0,
-                autoCleanUp: true
+                autoCleanUp: true,
+                strictQueryParams: true
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
@@ -1403,7 +1408,11 @@
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
-                var match = this.rootNode.matchPath(path, this.options.trailingSlash);
+                var _options = this.options;
+                var trailingSlash = _options.trailingSlash;
+                var strictQueryParams = _options.strictQueryParams;
+    
+                var match = this.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
                 return match ? makeState(match.name, match.params, path, match._meta) : null;
             }
     

@@ -80,7 +80,8 @@
                 hashPrefix: '',
                 base: false,
                 trailingSlash: 0,
-                autoCleanUp: true
+                autoCleanUp: true,
+                strictQueryParams: true
             };
             Object.keys(opts).forEach(function (opt) {
                 return _this.options[opt] = opts[opt];
@@ -521,7 +522,11 @@
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
-                var match = this.rootNode.matchPath(path, this.options.trailingSlash);
+                var _options = this.options;
+                var trailingSlash = _options.trailingSlash;
+                var strictQueryParams = _options.strictQueryParams;
+
+                var match = this.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
                 return match ? makeState(match.name, match.params, path, match._meta) : null;
             }
 

@@ -1,3 +1,13 @@
+<a name="1.3.0"></a>
+# 1.3.0 (2016-01-01)
+
+
+### Features
+
+* add support for non strict query parameters matching ([420f0d9](https://github.com/router5/router5/commit/420f0d9))
+
+
+
 <a name="1.2.2"></a>
 ## 1.2.2 (2015-12-20)
 
