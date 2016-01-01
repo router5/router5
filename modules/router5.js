@@ -38,7 +38,8 @@ class Router5 {
             hashPrefix: '',
             base: false,
             trailingSlash: 0,
-            autoCleanUp: true
+            autoCleanUp: true,
+            strictQueryParams: true
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
         this.registeredPlugins = {};
@@ -383,7 +384,8 @@ class Router5 {
      * @return {Object}        The matched state object (null if no match)
      */
     matchPath(path) {
-        const match = this.rootNode.matchPath(path, this.options.trailingSlash);
+        const { trailingSlash, strictQueryParams } = this.options;
+        const match = this.rootNode.matchPath(path, { trailingSlash, strictQueryParams });
         return match ? makeState(match.name, match.params, path, match._meta) : null;
     }
 
