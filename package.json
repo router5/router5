@@ -34,7 +34,14 @@
   },
   "devDependencies": {
     "babel": "^5.8.19",
+    "babel-core": "^6.3.26",
     "babel-eslint": "^3.1.26",
+    "babel-loader": "^6.2.0",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-plugin-transform-class-properties": "^6.3.13",
+    "babel-plugin-transform-export-extensions": "^6.3.13",
+    "babel-plugin-transform-object-rest-spread": "^6.3.13",
+    "babel-preset-es2015-loose": "^6.1.4",
     "conventional-changelog": "^0.2.0",
     "coveralls": "^2.11.2",
     "del": "^2.0.2",
@@ -60,6 +67,7 @@
     "vinyl": "^1.0.0",
     "vinyl-fs": "^1.0.0",
     "vinyl-source-stream2": "^0.1.1",
+    "webpack": "^1.12.9",
     "yargs": "^3.15.0"
   }
 }
