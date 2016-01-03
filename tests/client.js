@@ -7,8 +7,8 @@ const noop = () => {};
 
 let router;
 const listeners = {
-    transition: function (toState, fromState, done) {
-        var newState = {
+    transition: (toState, fromState, done) => {
+        const newState = {
             name: toState.name,
             params: toState.params,
             path: toState.path,
@@ -16,8 +16,8 @@ const listeners = {
         };
         done(null, newState);
     },
-    transitionMutate: function (toState, fromState, done) {
-        var newState = {
+    transitionMutate: (toState, fromState, done) => {
+        const newState = {
             name: toState.name + 'modified',
             params: toState.params,
             path: toState.path,
@@ -25,7 +25,7 @@ const listeners = {
         }
         done(null, newState);
     },
-    transitionErr: function (toState, fromState, done) {
+    transitionErr: (toState, fromState, done) => {
         done({ reason: 'because' });
     },
     noop: function () {}
@@ -383,7 +383,6 @@ function testRouter(useHash) {
         it('should register plugins', function (done) {
             expect(() => router.usePlugin(myPlugin)).not.to.throw();
             expect(router.myCustomMethod).not.to.equal(undefined);
-            console.log(router.registeredPlugins);
             expect(router.registeredPlugins.PLUGIN_NAME).to.exist;
 
             router.navigate('orders', {}, {}, function (err, state) {

@@ -5,7 +5,13 @@
     "plugins": [
         "transform-object-rest-spread",
         "transform-class-properties",
-        "transform-export-extensions",
-        "external-helpers-2"
-    ]
+        "transform-export-extensions"
+    ],
+    "env": {
+        "production": {
+            "plugins": [
+                "external-helpers-2"
+            ]
+        }
+    }
 }

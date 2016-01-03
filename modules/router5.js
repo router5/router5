@@ -4,8 +4,9 @@ import transition from './transition';
 import constants  from './constants';
 import loggerPlugin from './logger';
 
+const noop = () => {};
 const ifNot = (condition, error) => {
-    if (condition) throw new Error(error);
+    if (!condition) throw new Error(error);
 };
 
 const makeState = (name, params, path, _meta) => {
