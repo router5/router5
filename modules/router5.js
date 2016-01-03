@@ -3,6 +3,7 @@ import transitionPath from 'router5.transition-path';
 import transition from './transition';
 import constants  from './constants';
 import loggerPlugin from './logger';
+import invariant from 'invariant';
 
 const noop = () => {};
 
@@ -99,16 +100,17 @@ class Router5 {
         return this;
     }
 
-    usePlugin(plugin) {
-        if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
+    usePlugin(pluginFactory) {
+        invariant(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
+        const plugin = pluginFactory(this);
+        const name = plugin.name || pluginFactory.name;
+        invariant(name, '[router5.usePlugin] Tried to register an unamed plugin.');
 
         const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
-        const defined = pluginMethods.concat('init').some(method => plugin[method] !== undefined);
+        const defined = pluginMethods.some(method => plugin[method] !== undefined);
 
-        if (!defined) throw new Error(`[router5] plugin ${plugin.name} has none of the expected methods implemented`);
-        this.registeredPlugins[plugin.name] = plugin;
-
-        if (plugin.init) plugin.init(this);
+        invariant(defined, `[router5.usePlugin] plugin ${plugin.name} has none of the expected methods implemented`);
+        this.registeredPlugins[name] = plugin;
 
         pluginMethods.forEach(method => {
             if (plugin[method]) {
@@ -125,7 +127,11 @@ class Router5 {
      * @param {Function} fn The middleware function
      */
     useMiddleware() {
-        this.mware = Array.prototype.slice.call(arguments).map(m => m(this));
+        this.mware = Array.prototype.slice.call(arguments).map(m => {
+            const middlewareFn = m(this);
+            invariant(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
+            return middlewareFn;
+        });
         return this;
     }
 

@@ -28,6 +28,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
+    "invariant": "^2.2.0",
     "route-node": "~0.6.0",
     "router5.transition-path": "^2.0.1"
   },

@@ -8,17 +8,24 @@ function makeConfig(target) {
         'var': 'browser'
     };
 
-    function makeBase(uglify) {
+    function makeBase(prod) {
         return {
             context: path.join(__dirname + '/modules'),
             entry: './index.js',
             output: {
                 path: __dirname + '/dist',
-                filename: path.join(directories[target], uglify ? 'router5.min.js' : 'router5.js'),
+                filename: path.join(directories[target], prod ? 'router5.min.js' : 'router5.js'),
                 library: 'router5',
                 libraryTarget: target
             },
-            plugins: uglify ? [ new webpack.optimize.UglifyJsPlugin() ] : [],
+            plugins: prod ? [
+                    new webpack.DefinePlugin({
+                        'process.env': {
+                            'NODE_ENV': JSON.stringify('production')
+                        }
+                    }),
+                    new webpack.optimize.UglifyJsPlugin()
+                ] : [],
             module: {
                 loaders: [
                     {

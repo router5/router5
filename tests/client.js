@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import sinon from 'sinon';
+import sinon, { spy } from 'sinon';
 import { Router5 } from '../modules';
 import createRouter from './_create-router';
 
@@ -31,18 +31,15 @@ const listeners = {
     noop: function () {}
 };
 
-const myPlugin = {
-    name: 'PLUGIN_NAME',
-    init: function (router) {
-        router.myCustomMethod = function () {};
-    },
-    onTransitionStart: function onTransitionStart() {},
-    onTransitionSuccess: function onTransitionSuccess() {},
-    onTransitionError: function onTransitionError() {}
-};
+const myPlugin = router => {
+    router.myCustomMethod = function () {};
 
-const myUnamedPlugin = {
-    onTransitionStart: function onTransitionStart() {}
+    return {
+        name: 'PLUGIN_NAME',
+        onTransitionStart: function onTransitionStart() {},
+        onTransitionSuccess: function onTransitionSuccess() {},
+        onTransitionError: function onTransitionError() {}
+    };
 };
 
 const base = window.location.pathname;
@@ -384,9 +381,10 @@ function testRouter(useHash) {
         });
 
         it('should register plugins', function (done) {
-            router.usePlugin(myPlugin);
+            expect(() => router.usePlugin(myPlugin)).not.to.throw();
             expect(router.myCustomMethod).not.to.equal(undefined);
-            expect(router.registeredPlugins[myPlugin.name]).to.eql(myPlugin);
+            console.log(router.registeredPlugins);
+            expect(router.registeredPlugins.PLUGIN_NAME).to.exist;
 
             router.navigate('orders', {}, {}, function (err, state) {
                 // expect(myPlugin.onTransitionStart).to.have.been.called;
@@ -402,10 +400,10 @@ function testRouter(useHash) {
             }).to.throw();
         });
 
-        it('should warn when registering unamed plugins', function() {
-            sandbox.stub(console, 'warn', noop);
-            router.usePlugin(myUnamedPlugin);
-            expect(console.warn).to.have.been.called;
+        it('should throw when registering unamed plugins', function() {
+            expect(() => router.usePlugin(() => ({
+                onTransitionStart: () => {}
+            }))).to.throw();
         });
 
         it('should support a transition middleware', function (done) {
