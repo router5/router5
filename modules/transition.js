@@ -55,7 +55,7 @@ function transition(router, toState, fromState, callback) {
         let mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         asyncProcess(
-            mwareFunction, { ...asyncBase, context: { cancel, router } },
+            mwareFunction, { ...asyncBase, additionalArgs },
             (err, state) => {
                 const errObj = err ? (typeof err === 'object' ? err : { error: err }) : null;
                 cb(err ? { code: constants.TRANSITION_ERR, ...errObj } : null, state || toState);

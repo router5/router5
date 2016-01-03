@@ -14,10 +14,9 @@ const listeners = {
             path: toState.path,
             hitMware: true
         };
-        expect(Object.keys(this)).to.eql(['cancel', 'router']);
         done(null, newState);
     },
-    transitionMutate:  function (toState, fromState, done) {
+    transitionMutate: function (toState, fromState, done) {
         var newState = {
             name: toState.name + 'modified',
             params: toState.params,
@@ -411,7 +410,7 @@ function testRouter(useHash) {
 
         it('should support a transition middleware', function (done) {
             sandbox.spy(listeners, 'transition');
-            router.useMiddleware(listeners.transition);
+            router.useMiddleware(router => listeners.transition);
             router.navigate('users', {}, {}, function (err, state) {
                 expect(listeners.transition).to.have.been.called;
                 expect(state.hitMware).to.equal(true);
@@ -422,7 +421,7 @@ function testRouter(useHash) {
 
         it('should refuse to mutate its state during a transition', function (done) {
             sandbox.stub(console, 'error');
-            router.useMiddleware(listeners.transitionMutate);
+            router.useMiddleware(router => listeners.transitionMutate);
             router.navigate('orders', {}, {}, function (err, state) {
                 expect(console.error).to.have.been.called;
                 expect(err).to.equal(null);
@@ -432,7 +431,7 @@ function testRouter(useHash) {
 
         it('should fail transition if middleware returns an error', function (done) {
             sandbox.spy(listeners, 'transitionErr');
-            router.useMiddleware(listeners.transitionErr);
+            router.useMiddleware(router => listeners.transitionErr);
             router.navigate('home', {}, {}, function (err, state) {
                 expect(listeners.transitionErr).to.have.been.called;
                 expect(err.code).to.equal(Router5.ERR.TRANSITION_ERR);
@@ -444,7 +443,7 @@ function testRouter(useHash) {
         it('should be able to take more than one middleware', function (done) {
             sandbox.spy(listeners, 'transition');
             sandbox.spy(listeners, 'transitionErr');
-            router.useMiddleware(listeners.transition, listeners.transitionErr);
+            router.useMiddleware(router => listeners.transition, router => listeners.transitionErr);
             router.navigate('home', {}, {}, function (err, state) {
                 expect(listeners.transition).to.have.been.called;
                 expect(listeners.transitionErr).to.have.been.called;

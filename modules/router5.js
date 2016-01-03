@@ -125,7 +125,7 @@ class Router5 {
      * @param {Function} fn The middleware function
      */
     useMiddleware() {
-        this.mware = Array.prototype.slice.call(arguments);
+        this.mware = Array.prototype.slice.call(arguments).map(m => m(this));
         return this;
     }
 

@@ -1,4 +1,4 @@
-export default function asyncProcess(functions, { isCancelled, toState, fromState, context, additionalArgs }, callback, allowBool = true) {
+export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs }, callback, allowBool = true) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     const initialFromState = { ...fromState };
@@ -13,7 +13,7 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
-        const res = stepFn.apply(context || null, additionalArgs.concat([toState, fromState, done]));
+        const res = stepFn.apply(null, additionalArgs.concat([toState, fromState, done]));
 
         if (allowBool && typeof res === 'boolean') {
             done(res ? null : errVal);
