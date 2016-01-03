@@ -15,7 +15,9 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         // const len = stepFn.length;
         const res = stepFn.apply(null, additionalArgs.concat([toState, fromState, done]));
 
-        if (allowBool && typeof res === 'boolean') {
+        if (isCancelled()) {
+            done(null);
+        } else if (allowBool && typeof res === 'boolean') {
             done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
             res.then(resVal => done(null, resVal), () => done(errVal));
