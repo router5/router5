@@ -1,6 +1,12 @@
-var router = null;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { Router5 } from '../modules';
+import createRouter from './_create-router';
 
-var listeners = {
+const noop = () => {};
+
+let router;
+const listeners = {
     transition: function (toState, fromState, done) {
         var newState = {
             name: toState.name,
@@ -8,7 +14,7 @@ var listeners = {
             path: toState.path,
             hitMware: true
         };
-        expect(Object.keys(this)).toEqual(['cancel', 'router']);
+        expect(Object.keys(this)).to.eql(['cancel', 'router']);
         done(null, newState);
     },
     transitionMutate:  function (toState, fromState, done) {
@@ -26,7 +32,7 @@ var listeners = {
     noop: function () {}
 };
 
-var myPlugin = {
+const myPlugin = {
     name: 'PLUGIN_NAME',
     init: function (router) {
         router.myCustomMethod = function () {};
@@ -36,13 +42,13 @@ var myPlugin = {
     onTransitionError: function onTransitionError() {}
 };
 
-var myUnamedPlugin = {
+const myUnamedPlugin = {
     onTransitionStart: function onTransitionStart() {}
 };
 
-var base = window.location.pathname;
+const base = window.location.pathname;
 
-var hashPrefix = '!';
+const hashPrefix = '!';
 
 function getExpectedPath(useHash, path) {
     return useHash ? '#' + hashPrefix + path : path;
@@ -68,73 +74,63 @@ describe('router5', function () {
 });
 
 function testRouter(useHash) {
-    var router;
+    describe(useHash ? 'with using URL hash part' : 'without using URL hash part', () => {
+        let router, sandbox;
 
-    beforeAll(function () {
-        router = createRouter(base, useHash, hashPrefix);
-    });
+        before(() => router = createRouter(base, useHash, hashPrefix));
+        after(() => router.stop());
 
-    afterAll(function () {
-        router.stop();
-    });
-
-    describe(useHash ? 'with using URL hash part' : 'without using URL hash part', function () {
-        function flushListeners() {
+        afterEach(() => sandbox.restore());
+        beforeEach(() => {
+            sandbox = sinon.sandbox.create();
             router._cbs = {};
-        }
-
-        beforeEach(flushListeners);
+        });
 
         function makeUrl(path) {
             return 'https://www.mysite.com:8080' + base + (useHash ? '#' + hashPrefix : '' ) + path;
         }
 
         it('should throw an error if Router5 is not used as a constructor', function () {
-            expect(function () { Router5([]); }).toThrow();
+            expect(() => Router5([])).to.throw();
         });
 
         it('should expose RouteNode path building function', function () {
-            expect(router.buildPath('users.list')).toBe('/users/list');
+            expect(router.buildPath('users.list')).to.equal('/users/list');
         });
 
         it('should buildUrl', function () {
-            expect(router.buildUrl('users.list')).toBe(base + getExpectedPath(useHash, '/users/list'));
-            expect(router.buildUrl('users.view', {id: 1})).toBe(base + getExpectedPath(useHash, '/users/view/1'));
+            expect(router.buildUrl('users.list')).to.equal(base + getExpectedPath(useHash, '/users/list'));
+            expect(router.buildUrl('users.view', {id: 1})).to.equal(base + getExpectedPath(useHash, '/users/view/1'));
         });
 
         it('should be able to extract the path of an URL', function () {
-            expect(router.urlToPath(makeUrl('/home'))).toBe('/home');
-            expect(function () {
-                router.urlToPath('');
-            }).toThrow();
+            expect(router.urlToPath(makeUrl('/home'))).to.equal('/home');
+            expect(() => router.urlToPath('')).to.throw();
         });
 
         it('should match an URL', function () {
-            expect(omitMeta(router.matchUrl(makeUrl('/home')))).toEqual({name: 'home', params: {}, path: '/home'});
-            expect(omitMeta(router.matchUrl(makeUrl('/users/view/1')))).toEqual({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
+            expect(omitMeta(router.matchUrl(makeUrl('/home')))).to.eql({name: 'home', params: {}, path: '/home'});
+            expect(omitMeta(router.matchUrl(makeUrl('/users/view/1')))).to.eql({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
         });
 
         it('should start with the default route', function (done) {
-            expect(router.getState()).toBe(null)
-            expect(router.isActive('home')).toBe(false)
+            expect(router.getState()).to.equal(null)
+            expect(router.isActive('home')).to.equal(false)
 
             router.start('', function () {
-                expect(router.started).toBe(true);
-                expect(omitMeta(router.getState())).toEqual({name: 'home', params: {}, path: '/home'});
+                expect(router.started).to.equal(true);
+                expect(omitMeta(router.getState())).to.eql({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
-
         it('should not throw an error when starting with no callback', function() {
             router.stop();
-            expect(function() {
-                router.start();
-            }).not.toThrow();
+            expect(() => router.start()).not.to.throw();
         });
 
         it('should give an error if trying to start when already started', function (done) {
             router.start('', function (err) {
-                expect(err.code).toBe(Router5.ERR.ROUTER_ALREADY_STARTED);
+                expect(err.code).to.equal(Router5.ERR.ROUTER_ALREADY_STARTED);
                 done();
             });
         });
@@ -142,7 +138,7 @@ function testRouter(useHash) {
         it('should start with the start route if matched', function (done) {
             router.stop();
             router.start('/users/view/123', function (err, state) {
-                expect(omitMeta(state)).toEqual({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
+                expect(omitMeta(state)).to.eql({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
                 done();
             });
         });
@@ -152,7 +148,7 @@ function testRouter(useHash) {
             router.lastKnownState = null;
             router.lastStateAttempt = null;
             router.start('/about', function (err, state) {
-                expect(omitMeta(router.getState())).toEqual({name: 'home', params: {}, path: '/home'});
+                expect(omitMeta(router.getState())).to.eql({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -160,7 +156,7 @@ function testRouter(useHash) {
         it('should start with the default route if navigation to start route is not allowed', function (done) {
             router.stop();
             router.start('/admin', function (err) {
-                expect(omitMeta(router.getState())).toEqual({name: 'home', params: {}, path: '/home'});
+                expect(omitMeta(router.getState())).to.eql({name: 'home', params: {}, path: '/home'});
                 done();
             });
         });
@@ -169,8 +165,8 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', null);
             router.start('/admin', function (err) {
-                expect(err.code).toBe(Router5.ERR.CANNOT_ACTIVATE);
-                expect(err.segment).toBe('admin');
+                expect(err.code).to.equal(Router5.ERR.CANNOT_ACTIVATE);
+                expect(err.segment).to.equal('admin');
                 done();
             });
         });
@@ -179,7 +175,7 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', null);
             router.start('', function (err) {
-                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -187,8 +183,8 @@ function testRouter(useHash) {
         it('should not match an URL with extra trailing slashes', function (done) {
             router.stop();
             router.start('/users/list/', function (err, state) {
-                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
-                expect(state).toBe(null);
+                expect(err.code).to.equal(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(state).to.equal(null);
                 done();
             });
         });
@@ -197,7 +193,7 @@ function testRouter(useHash) {
             router.setOption('trailingSlash', 1);
             router.stop();
             router.start('/users/list/', function (err, state) {
-                expect(omitMeta(state)).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
+                expect(omitMeta(state)).to.eql({name: 'users.list', params: {}, path: '/users/list/'});
                 router.setOption('trailingSlash', 0);
                 done();
             });
@@ -207,7 +203,7 @@ function testRouter(useHash) {
             router.setOption('trailingSlash', 1);
             router.stop();
             router.start('/users/list/', function (err, state) {
-                expect(omitMeta(state)).toEqual({name: 'users.list', params: {}, path: '/users/list/'});
+                expect(omitMeta(state)).to.eql({name: 'users.list', params: {}, path: '/users/list/'});
                 router.setOption('trailingSlash', 0);
                 done();
             });
@@ -217,8 +213,8 @@ function testRouter(useHash) {
             router.stop();
             var homeState = {name: 'home', params: {}, path: '/home', _meta: {'home': {}}};
             router.start(homeState, function (err, state) {
-                expect(state).toEqual(homeState);
-                expect(router.lastKnownState).toEqual(homeState);
+                expect(state).to.eql(homeState);
+                expect(router.lastKnownState).to.eql(homeState);
                 done();
             });
         });
@@ -228,21 +224,21 @@ function testRouter(useHash) {
             router.setOption('defaultRoute', 'fake.route');
 
             router.start('', function(err, state) {
-                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
 
         it('should be able to navigate to routes', function (done) {
             router.navigate('users.view', {id: 123}, {}, function (err, state) {
-                expect(omitMeta(state)).toEqual({name: 'users.view', params: {id: 123}, path: '/users/view/123'});
+                expect(omitMeta(state)).to.eql({name: 'users.view', params: {id: 123}, path: '/users/view/123'});
                 done();
             });
         });
 
         it('should return an error if trying to navigate to an unknown route', function (done) {
             router.navigate('fake.route', {}, {}, function (err, state) {
-                expect(err.code).toBe(Router5.ERR.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(Router5.ERR.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -250,10 +246,10 @@ function testRouter(useHash) {
         it('should navigate to same state if reload is set to true', function (done) {
             router.navigate('orders.pending', {}, {}, function (err, state) {
                 router.navigate('orders.pending', {}, {}, function (err, state) {
-                    expect(err.code).toBe(Router5.ERR.SAME_STATES);
+                    expect(err.code).to.equal(Router5.ERR.SAME_STATES);
 
                     router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
-                        expect(err).toBe(null);
+                        expect(err).to.equal(null);
                         done();
                     });
                 });
@@ -263,35 +259,35 @@ function testRouter(useHash) {
         it('should be able to stop routing', function (done) {
             router.navigate('users', {}, {}, function () {
                 router.stop();
-                expect(router.started).toBe(false);
+                expect(router.started).to.equal(false);
                 router.navigate('users.list', {}, {}, function (err) {
-                    expect(err.code).toBe(Router5.ERR.ROUTER_NOT_STARTED);
+                    expect(err.code).to.equal(Router5.ERR.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
-                    router.start('', done);
+                    router.start('', () => done());
                 });
             });
         });
 
         // it('should not start with default route if current path matches an existing route', function (done) {
         //     router.start(function (err, state) {
-        //         expect(router.getState()).toEqual({name: 'orders.pending', params: {}, path: '/orders/pending'});
+        //         expect(router.getState()).to.eql({name: 'orders.pending', params: {}, path: '/orders/pending'});
         //         done();
         //     });
         // });
 
         it('should be able to register components', function () {
             router.registerComponent('users.view', {});
-            expect(router._cmps['users.view']).not.toBe(undefined);
+            expect(router._cmps['users.view']).not.to.equal(undefined);
 
             router.registerComponent('users.list', {});
-            expect(router._cmps['users.list']).not.toBe(undefined);
+            expect(router._cmps['users.list']).not.to.equal(undefined);
 
             router.deregisterComponent('users.list');
-            expect(router._cmps['users.list']).toBe(undefined);
+            expect(router._cmps['users.list']).to.equal(undefined);
 
             router.deregisterComponent('users.view');
-            expect(router._cmps['users.view']).toBe(undefined);
+            expect(router._cmps['users.view']).to.equal(undefined);
         });
 
         it('should block navigation if a component refuses deactivation', function (done) {
@@ -303,9 +299,9 @@ function testRouter(useHash) {
                     }
                 });
                 router.navigate('users', {}, {}, function (err) {
-                    expect(err.code).toBe(Router5.ERR.CANNOT_DEACTIVATE);
-                    expect(err.segment).toBe('users.list');
-                    expect(omitMeta(router.getState())).toEqual({name: 'users.list', params: {}, path: '/users/list'});
+                    expect(err.code).to.equal(Router5.ERR.CANNOT_DEACTIVATE);
+                    expect(err.segment).to.equal('users.list');
+                    expect(omitMeta(router.getState())).to.eql({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
                     router.deregisterComponent('users.list');
@@ -315,9 +311,9 @@ function testRouter(useHash) {
                         }
                     });
                     router.navigate('users', {}, {}, function () {
-                        expect(omitMeta(router.getState())).toEqual({name: 'users', params: {}, path: '/users'});
+                        expect(omitMeta(router.getState())).to.eql({name: 'users', params: {}, path: '/users'});
                         // Auto clean up
-                        expect(router._cmps['users.list']).toBe(undefined);
+                        expect(router._cmps['users.list']).to.equal(undefined);
                         done();
                     });
                 });
@@ -328,11 +324,11 @@ function testRouter(useHash) {
             router.navigate('users.list', {}, {}, function (err) {
                 router.canDeactivate('users.list', false);
                 router.navigate('users', {}, {}, function (err) {
-                    expect(err.code).toBe(Router5.ERR.CANNOT_DEACTIVATE);
-                    expect(err.segment).toBe('users.list');
+                    expect(err.code).to.equal(Router5.ERR.CANNOT_DEACTIVATE);
+                    expect(err.segment).to.equal('users.list');
                     router.canDeactivate('users.list', true);
                     router.navigate('users', {}, {}, function (err) {
-                        expect(err).toBe(null);
+                        expect(err).to.equal(null);
                         done();
                     });
                 });
@@ -341,41 +337,39 @@ function testRouter(useHash) {
 
         it('should throw if trying to use canDeactivate with autoCleanUp to false', function () {
             router.setOption('autoCleanUp', false);
-            expect(function () {
-                router.canDeactivate('users.list', true);
-            }).toThrow();
+            expect(() => router.canDeactivate('users.list', true)).to.throw();
             router.setOption('autoCleanUp', true);
         });
 
         it('should warn when trying to register a component twice', function () {
-            spyOn(console, 'warn');
+            sandbox.stub(console, 'warn', noop);
             router.registerComponent('users.view', {});
             router.registerComponent('users.view', {});
-            expect(console.warn).toHaveBeenCalled();
+            expect(console.warn).to.have.been.called;
         });
 
         it('should tell if a route is active or not', function () {
             router.navigate('users.view', {id: 1});
-            expect(router.isActive('users.view', {id: 1})).toBe(true);
-            expect(router.isActive('users.view', {id: 2})).toBe(false);
-            expect(router.isActive('users.view')).toBe(false);
-            expect(router.isActive('users')).toBe(true);
-            expect(router.isActive('users', {}, true)).toBe(false);
+            expect(router.isActive('users.view', {id: 1})).to.equal(true);
+            expect(router.isActive('users.view', {id: 2})).to.equal(false);
+            expect(router.isActive('users.view')).to.equal(false);
+            expect(router.isActive('users')).to.equal(true);
+            expect(router.isActive('users', {}, true)).to.equal(false);
 
             router.navigate('section.query', {section: 'section1'});
-            expect(router.isActive('section', {section: 'section1'})).toBe(true);
-            expect(router.isActive('section.query', {section: 'section1', param1: '123'})).toBe(true);
-            expect(router.isActive('section.query', {section: 'section2'})).toBe(false);
-            expect(router.isActive('section.query', {section: 'section1', param2: '123'}, false, false)).toBe(false);
-            expect(router.isActive('users.view', {id: 123})).toBe(false);
+            expect(router.isActive('section', {section: 'section1'})).to.equal(true);
+            expect(router.isActive('section.query', {section: 'section1', param1: '123'})).to.equal(true);
+            expect(router.isActive('section.query', {section: 'section2'})).to.equal(false);
+            expect(router.isActive('section.query', {section: 'section1', param2: '123'}, false, false)).to.equal(false);
+            expect(router.isActive('users.view', {id: 123})).to.equal(false);
         });
 
         it('should block navigation if a route cannot be activated', function (done) {
             router.navigate('home', {}, {}, function () {
                 router.navigate('admin', {}, {}, function (err) {
-                    expect(err.code).toBe(Router5.ERR.CANNOT_ACTIVATE);
-                    expect(err.segment).toBe('admin');
-                    expect(router.isActive('home')).toBe(true);
+                    expect(err.code).to.equal(Router5.ERR.CANNOT_ACTIVATE);
+                    expect(err.segment).to.equal('admin');
+                    expect(router.isActive('home')).to.equal(true);
                     done();
                 });
             });
@@ -384,75 +378,76 @@ function testRouter(useHash) {
         it('should be able to cancel a transition', function (done) {
             router.canActivate('admin', function canActivate(done) { return Promise.resolve(); });
             var cancel = router.navigate('admin', {}, {}, function (err) {
-                expect(err.code).toBe(Router5.ERR.TRANSITION_CANCELLED);
+                expect(err.code).to.equal(Router5.ERR.TRANSITION_CANCELLED);
                 done();
             });
             cancel();
         });
 
-        it('should register plugins', function () {
+        it('should register plugins', function (done) {
             router.usePlugin(myPlugin);
-            expect(router.myCustomMethod).not.toBe(undefined);
-            expect(router.registeredPlugins[myPlugin.name]).toEqual(myPlugin);
+            expect(router.myCustomMethod).not.to.equal(undefined);
+            expect(router.registeredPlugins[myPlugin.name]).to.eql(myPlugin);
 
             router.navigate('orders', {}, {}, function (err, state) {
-                // expect(myPlugin.onTransitionStart).toHaveBeenCalled();
-                // expect(myPlugin.onTransitionSuccess).toHaveBeenCalled();
+                // expect(myPlugin.onTransitionStart).to.have.been.called;
+                // expect(myPlugin.onTransitionSuccess).to.have.been.called;
+                done();
             });
         });
 
         it('should throw if a plugin has none of the expected methods', function () {
-            expect(function () {
-                spyOn(console, 'warn');
+            expect(() => {
+                sandbox.stub(console, 'warn', noop);
                 router.usePlugin({});
-            }).toThrow();
+            }).to.throw();
         });
 
         it('should warn when registering unamed plugins', function() {
-            spyOn(console, 'warn');
+            sandbox.stub(console, 'warn', noop);
             router.usePlugin(myUnamedPlugin);
-            expect(console.warn).toHaveBeenCalled();
+            expect(console.warn).to.have.been.called;
         });
 
         it('should support a transition middleware', function (done) {
-            spyOn(listeners, 'transition').and.callThrough();
+            sandbox.spy(listeners, 'transition');
             router.useMiddleware(listeners.transition);
             router.navigate('users', {}, {}, function (err, state) {
-                expect(listeners.transition).toHaveBeenCalled();
-                expect(state.hitMware).toBe(true);
-                expect(err).toBe(null);
+                expect(listeners.transition).to.have.been.called;
+                expect(state.hitMware).to.equal(true);
+                expect(err).to.equal(null);
                 done();
             });
         });
 
         it('should refuse to mutate its state during a transition', function (done) {
-            spyOn(console, 'error');
+            sandbox.stub(console, 'error');
             router.useMiddleware(listeners.transitionMutate);
             router.navigate('orders', {}, {}, function (err, state) {
-                expect(console.error).toHaveBeenCalled();
-                expect(err).toBe(null);
+                expect(console.error).to.have.been.called;
+                expect(err).to.equal(null);
                 done();
             });
         });
 
         it('should fail transition if middleware returns an error', function (done) {
-            spyOn(listeners, 'transitionErr').and.callThrough();
+            sandbox.spy(listeners, 'transitionErr');
             router.useMiddleware(listeners.transitionErr);
             router.navigate('home', {}, {}, function (err, state) {
-                expect(listeners.transitionErr).toHaveBeenCalled();
-                expect(err.code).toBe(Router5.ERR.TRANSITION_ERR);
-                expect(err.reason).toBe('because');
+                expect(listeners.transitionErr).to.have.been.called;
+                expect(err.code).to.equal(Router5.ERR.TRANSITION_ERR);
+                expect(err.reason).to.equal('because');
                 done();
             });
         });
 
         it('should be able to take more than one middleware', function (done) {
-            spyOn(listeners, 'transition').and.callThrough();
-            spyOn(listeners, 'transitionErr').and.callThrough();
+            sandbox.spy(listeners, 'transition');
+            sandbox.spy(listeners, 'transitionErr');
             router.useMiddleware(listeners.transition, listeners.transitionErr);
             router.navigate('home', {}, {}, function (err, state) {
-                expect(listeners.transition).toHaveBeenCalled();
-                expect(listeners.transitionErr).toHaveBeenCalled();
+                expect(listeners.transition).to.have.been.called;
+                expect(listeners.transitionErr).to.have.been.called;
                 done();
             });
         });

@@ -1,8 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
+exports.__esModule = true;
 function loggerPlugin() {
     var startGroup = function startGroup() {
         return console.group('Router transition');
@@ -41,5 +39,5 @@ function loggerPlugin() {
     };
 }
 
-exports['default'] = loggerPlugin;
+exports.default = loggerPlugin;
 module.exports = exports['default'];

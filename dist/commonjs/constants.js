@@ -1,8 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
+exports.__esModule = true;
 var constants = {
     ROUTER_NOT_STARTED: 'NOT_STARTED',
     ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
@@ -14,5 +12,5 @@ var constants = {
     TRANSITION_CANCELLED: 'CANCELLED'
 };
 
-exports['default'] = constants;
+exports.default = constants;
 module.exports = exports['default'];

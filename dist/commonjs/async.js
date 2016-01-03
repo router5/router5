@@ -1,13 +1,11 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-// istanbul ignore next
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-exports['default'] = asyncProcess;
+exports.__esModule = true;
+exports.default = asyncProcess;
+
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 function asyncProcess(functions, _ref, callback) {
     var isCancelled = _ref.isCancelled;
@@ -21,7 +19,7 @@ function asyncProcess(functions, _ref, callback) {
 
     var initialFromState = _extends({}, fromState);
     var isState = function isState(obj) {
-        return typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+        return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     };
     var hasStateChanged = function hasStateChanged(state) {
         return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
@@ -72,5 +70,4 @@ function asyncProcess(functions, _ref, callback) {
 
     next();
 }
-
 module.exports = exports['default'];
