@@ -1,11 +1,11 @@
 {
     "presets": [
-        "es2015-loose"
+        "es2015"
     ],
     "plugins": [
         "transform-object-rest-spread",
         "transform-class-properties",
         "transform-export-extensions",
-        "add-module-exports"
+        "external-helpers-2"
     ]
 }

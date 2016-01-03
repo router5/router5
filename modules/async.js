@@ -1,7 +1,6 @@
 export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs }, callback, allowBool = true) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
-    const initialFromState = { ...fromState };
     const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     const hasStateChanged = state => state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
 

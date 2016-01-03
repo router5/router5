@@ -28,7 +28,6 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "invariant": "^2.2.0",
     "route-node": "~0.6.0",
     "router5.transition-path": "^2.0.1"
   },
@@ -36,11 +35,11 @@
     "babel-core": "^6.3.26",
     "babel-eslint": "^3.1.26",
     "babel-loader": "^6.2.0",
-    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-plugin-external-helpers-2": "^6.3.13",
     "babel-plugin-transform-class-properties": "^6.3.13",
     "babel-plugin-transform-export-extensions": "^6.3.13",
     "babel-plugin-transform-object-rest-spread": "^6.3.13",
-    "babel-preset-es2015-loose": "^6.1.4",
+    "babel-preset-es2015": "^6.3.13",
     "chai": "^3.4.1",
     "conventional-changelog": "^0.5.3",
     "del": "^2.0.2",

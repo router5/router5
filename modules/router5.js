@@ -1,11 +1,12 @@
 import RouteNode  from 'route-node';
-import transitionPath from 'router5.transition-path';
+import * as transitionPath from 'router5.transition-path';
 import transition from './transition';
 import constants  from './constants';
 import loggerPlugin from './logger';
-import invariant from 'invariant';
 
-const noop = () => {};
+const ifNot = (condition, error) => {
+    if (condition) throw new Error(error);
+};
 
 const makeState = (name, params, path, _meta) => {
     const state = {};
@@ -101,15 +102,15 @@ class Router5 {
     }
 
     usePlugin(pluginFactory) {
-        invariant(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
+        ifNot(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
         const plugin = pluginFactory(this);
         const name = plugin.name || pluginFactory.name;
-        invariant(name, '[router5.usePlugin] Tried to register an unamed plugin.');
+        ifNot(name, '[router5.usePlugin] Tried to register an unamed plugin.');
 
         const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
         const defined = pluginMethods.some(method => plugin[method] !== undefined);
 
-        invariant(defined, `[router5.usePlugin] plugin ${plugin.name} has none of the expected methods implemented`);
+        ifNot(defined, `[router5.usePlugin] plugin ${plugin.name} has none of the expected methods implemented`);
         this.registeredPlugins[name] = plugin;
 
         pluginMethods.forEach(method => {
@@ -129,7 +130,7 @@ class Router5 {
     useMiddleware() {
         this.mware = Array.prototype.slice.call(arguments).map(m => {
             const middlewareFn = m(this);
-            invariant(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
+            ifNot(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
             return middlewareFn;
         });
         return this;
