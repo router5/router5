@@ -1,4 +1,4 @@
-export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs }, callback, allowBool = true) {
+export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs }, callback) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
@@ -16,7 +16,7 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
 
         if (isCancelled()) {
             done(null);
-        } else if (allowBool && typeof res === 'boolean') {
+        } else if (typeof res === 'boolean') {
             done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
             res.then(resVal => done(null, resVal), () => done(errVal));

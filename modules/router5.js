@@ -31,8 +31,8 @@ class Router5 {
         this.started = false;
         this.mware = null;
         this._cbs = {};
-        this._cmps = {};
         this._canAct = {};
+        this._canDeact = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
         this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
@@ -62,7 +62,7 @@ class Router5 {
 
     /**
      * Set additional arguments used in lifecycle functions.
-     * Additional arguments are used in canActivate and canDeactivate in first positions (before `toState`).
+     * Additional arguments are used in canActivate, canDeactivate and middleware functions in first positions (before `toState`).
      * @param  {Array} args The additional arguments
      */
     setAdditionalArgs(args) {
@@ -301,15 +301,8 @@ class Router5 {
         return this;
     }
 
-    /**
-     * Register an active component for a specific route segment
-     * @param  {String} name      The route segment full name
-     * @param  {Object} component The component instance
-     */
-    registerComponent(name, component, warn = true) {
-        if (this._cmps[name] && warn) console.warn(`A component was alread registered for route node ${name}.`);
-        this._cmps[name] = component;
-        return this;
+    _toFunction(val) {
+        return typeof val === 'function' ? val : () => val;
     }
 
     /**
@@ -319,18 +312,8 @@ class Router5 {
      * @return {[type]}
      */
     canDeactivate(name, canDeactivate) {
-        if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
-        this.registerComponent(name, { canDeactivate: (toState, fromState) => canDeactivate }, false);
+        this._canDeact[name] = this._toFunction(canDeactivate);
         return this;
-    }
-
-    /**
-     * Deregister an active component
-     * @param  {String} name The route segment full name
-     * @return {Router5} The router instance
-     */
-    deregisterComponent(name) {
-        this._cmps[name] = undefined;
     }
 
     /**
@@ -341,7 +324,7 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     canActivate(name, canActivate) {
-        this._canAct[name] = canActivate;
+        this._canAct[name] = this._toFunction(canActivate);
         return this;
     }
 

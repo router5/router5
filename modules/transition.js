@@ -18,8 +18,8 @@ function transition(router, toState, fromState, callback) {
     const done = (err, state) => {
         if (!err && !isCancelled() && router.options.autoCleanUp) {
             const activeSegments = nameToIDs(toState.name);
-            Object.keys(router._cmps).filter(name => {
-                if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
+            Object.keys(router._canDeact).forEach(name => {
+                if (activeSegments.indexOf(name) === -1) router._canDeact[name] = undefined;
             });
         }
         callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
@@ -30,8 +30,8 @@ function transition(router, toState, fromState, callback) {
 
     const canDeactivate = (toState, fromState, cb) => {
         let canDeactivateFunctionMap = toDeactivate
-            .filter(name => router._cmps[name] && router._cmps[name].canDeactivate)
-            .reduce((fnMap, name) => ({ ...fnMap, [name]: router._cmps[name].canDeactivate }), {});
+            .filter(name => router._canDeact[name])
+            .reduce((fnMap, name) => ({ ...fnMap, [name]: router._canDeact[name] }), {});
 
         asyncProcess(
             canDeactivateFunctionMap, { ...asyncBase, additionalArgs },

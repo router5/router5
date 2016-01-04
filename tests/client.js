@@ -272,44 +272,29 @@ function testRouter(useHash) {
         //     });
         // });
 
-        it('should be able to register components', function () {
-            router.registerComponent('users.view', {});
-            expect(router._cmps['users.view']).not.to.equal(undefined);
+        it('should be able to register canDeactivate functions', function () {
+            router.canDeactivate('users.view', true);
+            expect(router._canDeact['users.view']).not.to.equal(undefined);
 
-            router.registerComponent('users.list', {});
-            expect(router._cmps['users.list']).not.to.equal(undefined);
-
-            router.deregisterComponent('users.list');
-            expect(router._cmps['users.list']).to.equal(undefined);
-
-            router.deregisterComponent('users.view');
-            expect(router._cmps['users.view']).to.equal(undefined);
+            router.canDeactivate('users.list', () => true);
+            expect(router._canDeact['users.list']).not.to.equal(undefined);
         });
 
         it('should block navigation if a component refuses deactivation', function (done) {
             router.navigate('users.list', {}, {}, function () {
                 // Cannot deactivate
-                router.registerComponent('users.list', {
-                    canDeactivate: function () {
-                        return Promise.reject();
-                    }
-                });
+                router.canDeactivate('users.list', () => Promise.reject());
                 router.navigate('users', {}, {}, function (err) {
                     expect(err.code).to.equal(Router5.ERR.CANNOT_DEACTIVATE);
                     expect(err.segment).to.equal('users.list');
                     expect(omitMeta(router.getState())).to.eql({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
-                    router.deregisterComponent('users.list');
-                    router.registerComponent('users.list', {
-                        canDeactivate: function () {
-                            return true;
-                        }
-                    });
+                    router.canDeactivate('users.list', true);
                     router.navigate('users', {}, {}, function () {
                         expect(omitMeta(router.getState())).to.eql({name: 'users', params: {}, path: '/users'});
                         // Auto clean up
-                        expect(router._cmps['users.list']).to.equal(undefined);
+                        expect(router._canDeact['users.list']).to.equal(undefined);
                         done();
                     });
                 });
@@ -329,19 +314,6 @@ function testRouter(useHash) {
                     });
                 });
             });
-        });
-
-        it('should throw if trying to use canDeactivate with autoCleanUp to false', function () {
-            router.setOption('autoCleanUp', false);
-            expect(() => router.canDeactivate('users.list', true)).to.throw();
-            router.setOption('autoCleanUp', true);
-        });
-
-        it('should warn when trying to register a component twice', function () {
-            sandbox.stub(console, 'warn', noop);
-            router.registerComponent('users.view', {});
-            router.registerComponent('users.view', {});
-            expect(console.warn).to.have.been.called;
         });
 
         it('should tell if a route is active or not', function () {
@@ -372,7 +344,7 @@ function testRouter(useHash) {
         });
 
         it('should be able to cancel a transition', function (done) {
-            router.canActivate('admin', function canActivate(done) { return Promise.resolve(); });
+            router.canActivate('admin', (toState, fromState) => Promise.resolve());
             var cancel = router.navigate('admin', {}, {}, function (err) {
                 expect(err.code).to.equal(Router5.ERR.TRANSITION_CANCELLED);
                 done();
