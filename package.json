@@ -35,8 +35,8 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "~1.0.0",
-    "router5.transition-path": "~2.0.3"
+    "route-node": "~1.0.2",
+    "router5.transition-path": "~2.0.4"
   },
   "devDependencies": {
     "babel-core": "^6.3.26",

@@ -3,6 +3,9 @@ import uglify from 'rollup-plugin-uglify';
 import npm from 'rollup-plugin-npm';
 import { argv } from 'yargs';
 
+const format = argv.format || argv.f || 'iife';
+const compress = argv.uglify;
+
 const babelOptions = {
     presets: [ 'es2015-rollup' ],
     plugins: [
@@ -13,11 +16,10 @@ const babelOptions = {
     babelrc: false
 };
 
-const format = argv.format || 'iife';
 const dest = {
-    amd:  'dist/amd/router5.js',
-    umd:  'dist/umd/router5.js',
-    iife: 'dist/browser/router5.js'
+    amd:  `dist/amd/router5${ compress ? '.min' : '' }.js`,
+    umd:  `dist/umd/router5${ compress ? '.min' : '' }.js`,
+    iife: `dist/browser/router5${ compress ? '.min' : '' }.js`
 }[format];
 
 export default {
