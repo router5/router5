@@ -27,7 +27,7 @@ export default function replaceRoutesMiddleware(router) {
 
         return next => action => {
             if (action.type === actionTypes.NAVIGATE_TO) {
-                router.navigate(action.name, action.params, action.options);
+                router.navigate(action.name, action.params, action.opts);
             } else if (action.type === actionTypes.CANCEL_TRANSITION) {
                 router.cancel();
             }
