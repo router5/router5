@@ -90,6 +90,20 @@ function testRouter(useHash) {
             expect(() => Router5([])).to.throw();
         });
 
+        it('should add canActivate function when adding POJOs', function () {
+            const canActivateA = () => {};
+            const canActivateB = () => {};
+            const router = new Router5([{
+                name: 'a', path: '/a', canActivate: canActivateA
+            }]);
+            expect(router._canAct.a).to.equal(canActivateA);
+            router.add([{
+                name: 'b', path: '/b', canActivate: canActivateB
+            }]);
+            console.log(router._canAct);
+            expect(router._canAct.b).to.equal(canActivateB);
+        });
+
         it('should expose RouteNode path building function', function () {
             expect(router.buildPath('users.list')).to.equal('/users/list');
         });

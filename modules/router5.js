@@ -19,6 +19,10 @@ const makeState = (name, params, path, _meta) => {
     return state;
 };
 
+const addCanActivate = router => route => {
+    if (route.canActivate) router.canActivate(route.name, route.canActivate);
+};
+
 /**
  * Create a new Router5 instance
  * @class
@@ -35,7 +39,9 @@ class Router5 {
         this._canDeact = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
-        this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
+        this.rootNode  = routes instanceof RouteNode
+            ? routes
+            : new RouteNode('', '', routes, addCanActivate(this));
         this.options = {
             useHash: false,
             hashPrefix: '',
@@ -83,7 +89,7 @@ class Router5 {
      * @return {Router5}  The Router5 instance
      */
     add(routes) {
-        this.rootNode.add(routes);
+        this.rootNode.add(routes, addCanActivate(this));
         return this;
     }
 
