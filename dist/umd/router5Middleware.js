@@ -46,7 +46,7 @@
             return function (next) {
                 return function (action) {
                     if (action.type === _actionTypes2['default'].NAVIGATE_TO) {
-                        router.navigate(action.name, action.params, action.options);
+                        router.navigate(action.name, action.params, action.opts);
                     } else if (action.type === _actionTypes2['default'].CANCEL_TRANSITION) {
                         router.cancel();
                     }
