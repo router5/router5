@@ -100,7 +100,6 @@ function testRouter(useHash) {
             router.add([{
                 name: 'b', path: '/b', canActivate: canActivateB
             }]);
-            console.log(router._canAct);
             expect(router._canAct.b).to.equal(canActivateB);
         });
 
@@ -431,6 +430,17 @@ function testRouter(useHash) {
                 expect(listeners.transition).to.have.been.called;
                 expect(listeners.transitionErr).to.have.been.called;
                 done();
+            });
+        });
+
+        it('should be able to set additional arguments for lifecycle methods', function () {
+            const a = 1;
+            const b = 2;
+            const mware = spy(() => true);
+            router.useMiddleware(router => mware);
+            router.setAdditionalArgs([a, b]);
+            router.navigate('users', {}, {}, (err, state) => {
+                expect(mware).to.have.been.calledWith(a, b);
             });
         });
     });
