@@ -1,3 +1,13 @@
+<a name="1.4.0"></a>
+# 1.4.0 (2016-01-06)
+
+
+### Features
+
+* upgrade to route-node 1.0.0 before router5 2.0.0 release ([e73d3c5](https://github.com/router5/router5/commit/e73d3c5))
+
+
+
 <a name="1.3.0"></a>
 # 1.3.0 (2016-01-01)
 
