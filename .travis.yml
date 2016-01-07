@@ -6,6 +6,6 @@ before_install:
 script:
   - npm run lint
   - npm run build
-  - npm run test
+  - npm run test:cover
   # - npm run test-sauce
-# after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

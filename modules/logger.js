@@ -1,3 +1,4 @@
+/* istanbul ignore next */
 function loggerPlugin(router) {
     const startGroup = () => console.group('Router transition');
     const endGroup = () => console.groupEnd('Router transition');
