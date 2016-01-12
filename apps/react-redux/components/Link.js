@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react';
 function Link(props) {
     const { name, params, options, router, navigateTo } = props;
 
-    const href = router.buildUrl(name);
+    const href = router.buildUrl(name, params);
     const onClick = () => navigateTo(name, params, options);
     const className = router.isActive(name, params) ? 'active' : '';
 
