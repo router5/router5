@@ -1,7 +1,9 @@
 'use strict';
 
-exports.__esModule = true;
-exports.RouteNode = exports.Router5 = undefined;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RouteNode = undefined;
 
 var _router = require('./router5');
 
@@ -13,5 +15,5 @@ var _routeNode2 = _interopRequireDefault(_routeNode);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.Router5 = _router2.default;
+exports.default = _router2.default;
 exports.RouteNode = _routeNode2.default;

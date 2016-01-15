@@ -1,7 +1,10 @@
 'use strict';
 
-exports.__esModule = true;
-function loggerPlugin() {
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/* istanbul ignore next */
+function loggerPlugin(router) {
     var startGroup = function startGroup() {
         return console.group('Router transition');
     };

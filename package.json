@@ -5,8 +5,8 @@
   "main": "dist/commonjs/index.js",
   "jsnext:main": "modules/index.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build:cjs": "babel modules --out-dir dist/commonjs",
+    "clean": "rimraf dist && mkdirp dist",
+    "build:cjs": "./node_modules/.bin/babel modules --out-dir dist/commonjs",
     "build:umd": "rollup -c rollup.config.js --format umd",
     "build:amd": "rollup -c rollup.config.js --format amd",
     "build:iife": "rollup -c rollup.config.js --format iife",
@@ -40,7 +40,7 @@
     "router5.transition-path": "~2.0.4"
   },
   "devDependencies": {
-    "babel-core": "^6.3.26",
+    "babel-core": "^6.4.0",
     "babel-eslint": "^3.1.26",
     "babel-loader": "^6.2.0",
     "babel-plugin-add-module-exports": "^0.1.2",
@@ -56,6 +56,7 @@
     "eslint": "^0.24.1",
     "isparta": "^4.0.0",
     "jsdom": "^7.2.2",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.2.5",
     "mocha-lcov-reporter": "^1.0.0",
     "rimraf": "^2.5.0",

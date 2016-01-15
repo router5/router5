@@ -2,7 +2,9 @@
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _router = require('router5.transition-path');
 
@@ -19,6 +21,8 @@ var _constants2 = _interopRequireDefault(_constants);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 exports.default = transition;
 
@@ -41,8 +45,8 @@ function transition(router, toState, fromState, callback) {
         if (!err && !isCancelled() && router.options.autoCleanUp) {
             (function () {
                 var activeSegments = nameToIDs(toState.name);
-                Object.keys(router._cmps).filter(function (name) {
-                    if (activeSegments.indexOf(name) === -1) router.deregisterComponent(name);
+                Object.keys(router._canDeact).forEach(function (name) {
+                    if (activeSegments.indexOf(name) === -1) router._canDeact[name] = undefined;
                 });
             })();
         }
@@ -58,11 +62,9 @@ function transition(router, toState, fromState, callback) {
 
     var canDeactivate = function canDeactivate(toState, fromState, cb) {
         var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
-            return router._cmps[name] && router._cmps[name].canDeactivate;
+            return router._canDeact[name];
         }).reduce(function (fnMap, name) {
-            var _extends2;
-
-            return _extends({}, fnMap, (_extends2 = {}, _extends2[name] = router._cmps[name].canDeactivate, _extends2));
+            return _extends({}, fnMap, _defineProperty({}, name, router._canDeact[name]));
         }, {});
 
         (0, _async2.default)(canDeactivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
@@ -74,9 +76,7 @@ function transition(router, toState, fromState, callback) {
         var canActivateFunctionMap = toActivate.filter(function (name) {
             return router._canAct[name];
         }).reduce(function (fnMap, name) {
-            var _extends3;
-
-            return _extends({}, fnMap, (_extends3 = {}, _extends3[name] = router._canAct[name], _extends3));
+            return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
         }, {});
 
         (0, _async2.default)(canActivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
@@ -88,7 +88,7 @@ function transition(router, toState, fromState, callback) {
     var middleware = function middleware(toState, fromState, cb) {
         var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
-        (0, _async2.default)(mwareFunction, _extends({}, asyncBase, { context: { cancel: cancel, router: router } }), function (err, state) {
+        (0, _async2.default)(mwareFunction, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err, state) {
             var errObj = err ? (typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object' ? err : { error: err } : null;
             cb(err ? _extends({ code: _constants2.default.TRANSITION_ERR }, errObj) : null, state || toState);
         });
