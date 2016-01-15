@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon, { spy } from 'sinon';
-import { Router5 } from '../modules';
+import Router5 from '../modules';
 import createRouter from './_create-router';
 
 const noop = () => {};

@@ -1,4 +1,4 @@
-import { Router5, RouteNode } from '../modules';
+import Router5, { RouteNode } from '../modules';
 
 const usersRoute = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id'),
