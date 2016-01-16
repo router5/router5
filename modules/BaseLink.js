@@ -1,9 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
-class Link extends Component {
+class BaseLink extends Component {
     constructor(props, context) {
         super(props, context);
-        this.router = context.router;
 
         this.isActive = this.isActive.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
@@ -13,7 +12,7 @@ class Link extends Component {
     }
 
     isActive() {
-        return this.router.isActive(this.props.routeName, this.props.routeParams);
+        return this.props.router.isActive(this.props.routeName, this.props.routeParams);
     }
 
     clickHandler(evt) {
@@ -29,27 +28,15 @@ class Link extends Component {
 
         if (evt.button === 0 && !comboKey) {
             evt.preventDefault();
-            this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+            this.props.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
         }
     }
 
-    routeChangeHandler(toState, fromState) {
-        this.setState({active: this.isActive()});
-    }
-
-    componentDidMount() {
-        this.router.addListener(this.routeChangeHandler);
-    }
-
-    componentWillUnmount() {
-        this.router.removeListener(this.routeChangeHandler);
-    }
-
     render() {
-        const { routeName, routeParams, className, activeClassName, children } = this.props;
-        const { active } = this.state;
+        const { router, routeName, routeParams, className, activeClassName, children } = this.props;
 
-        const href =  this.router.buildUrl(routeName, routeParams);
+        const active = this.isActive();
+        const href =  router.buildUrl(routeName, routeParams);
         const linkclassName = (className ? className.split(' ') : [])
             .concat(active ? [activeClassName] : []).join(' ');
 
@@ -59,11 +46,9 @@ class Link extends Component {
     }
 }
 
-Link.contextTypes = {
-    router: PropTypes.object.isRequired
-};
-
 Link.propTypes = {
+    // route:           PropTypes.object.isRequired,
+    router:          PropTypes.object.isRequired,
     routeName:       PropTypes.string.isRequired,
     routeParams:     PropTypes.object,
     routeOptions:    PropTypes.object,
@@ -79,4 +64,4 @@ Link.defaultProps = {
     routeOptions:    {}
 };
 
-export default Link;
+export default BaseLink;

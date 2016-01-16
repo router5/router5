@@ -1,9 +1,14 @@
-import Link from './Link';
+import BaseLink from './BaseLink';
 import routeNode from './routeNode';
 import RouterProvider from './RouterProvider';
+import withRoute from './withRoute';
 
-export default {
-    Link,
+const Link = withRoute(BaseLink);
+
+export {
+    BaseLink,
     routeNode,
-    RouterProvider
+    RouterProvider,
+    withRoute,
+    Link
 };
