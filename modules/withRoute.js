@@ -1,5 +1,8 @@
 import { Component, createElement } from 'react';
-import * as invariant from 'invariant';
+
+const ifNot = (condition, errorMessage) => {
+    if (!ifNot) throw new Error(errorMessage);
+}
 
 function withRoute(BaseComponent) {
     class ComponentWithRoute extends Component {
@@ -13,7 +16,7 @@ function withRoute(BaseComponent) {
         }
 
         componentDidMount() {
-            invariant(
+            ifNot(
                 this.router.registeredPlugins.LISTENERS,
                 '[react-router5] missing plugin router5-listeners.'
             );
@@ -27,7 +30,7 @@ function withRoute(BaseComponent) {
         }
 
         render() {
-            invariant(
+            ifNot(
                 !props.router && !props.route && !props.previousRoute,
                 '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.'
             );

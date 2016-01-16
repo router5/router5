@@ -52,7 +52,6 @@
     "router5": ">=1.0.0"
   },
   "dependencies": {
-    "invariant": "^2.2.0",
     "react": ">=0.14.0"
   }
 }
