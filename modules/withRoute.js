@@ -2,7 +2,7 @@ import { Component, createElement } from 'react';
 
 const ifNot = (condition, errorMessage) => {
     if (!ifNot) throw new Error(errorMessage);
-}
+};
 
 function withRoute(BaseComponent) {
     class ComponentWithRoute extends Component {
