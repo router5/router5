@@ -23,6 +23,10 @@ With bower, the package registers a `reactRouter5` global variable containing `R
 - react >= __0.14.0__
 - router5 >= __1.0.0__
 
+### How it works
+
+![With React](https://github.com/router5/router5.github.io/blob/master/img/router-view.png)
+
 
 ### RouterProvider
 
