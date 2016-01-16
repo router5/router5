@@ -302,11 +302,14 @@ class Router5 {
     /**
      * @private
      */
-    _addListener(name, cb, replace) {
+    _addListener(name, cb) {
         this._cbs[name] = (this._cbs[name] || []).concat(cb);
         return this;
     }
 
+    /**
+     * @private
+     */
     _toFunction(val) {
         return typeof val === 'function' ? val : () => val;
     }

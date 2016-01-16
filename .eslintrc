@@ -31,7 +31,7 @@
         "strict": 0,
         // Variables
         "no-shadow": 0,
-        "no-unused-vars": 0,
+        "no-unused-vars": 2,
         "no-use-before-define": 0,
         // Style
         "brace-style": [2, "1tbs"],

@@ -1,5 +1,5 @@
 /* istanbul ignore next */
-function loggerPlugin(router) {
+function loggerPlugin() {
     const startGroup = () => console.group('Router transition');
     const endGroup = () => console.groupEnd('Router transition');
 
@@ -19,14 +19,14 @@ function loggerPlugin(router) {
             console.log('To state');
             console.log(toState);
         },
-        onTransitionCancel(toState, fromState) {
+        onTransitionCancel() {
             console.warn('Transition cancelled');
         },
         onTransitionError(toState, fromState, err) {
             console.warn('Transition error with code ' + err.code);
             endGroup();
         },
-        onTransitionSuccess(toState, fromState) {
+        onTransitionSuccess() {
             console.log('Transition success');
             endGroup();
         }
