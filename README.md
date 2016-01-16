@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/react-router5.svg)](https://badge.fury.io/js/react-router5)
+[![Build Status](https://travis-ci.org/router5/react-router5.svg?branch=master)](https://travis-ci.org/router5/react-router5)
+
 # react-router5
 
 > Higher-order components and components for React when using [router5](https://github.com/router5/router5).
