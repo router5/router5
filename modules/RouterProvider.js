@@ -1,4 +1,4 @@
-import React, { Component, PropTypes, Children } from 'react';
+import { Component, PropTypes, Children } from 'react';
 
 class RouterProvider extends Component {
     constructor(props, context) {
