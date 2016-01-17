@@ -23,6 +23,8 @@ const addCanActivate = router => route => {
     if (route.canActivate) router.canActivate(route.name, route.canActivate);
 };
 
+const toFunction = val => typeof val === 'function' ? val : () => val;
+
 /**
  * Create a new Router5 instance
  * @class
@@ -308,20 +310,13 @@ class Router5 {
     }
 
     /**
-     * @private
-     */
-    _toFunction(val) {
-        return typeof val === 'function' ? val : () => val;
-    }
-
-    /**
      * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
      * @param  {String}  name          The route segment full name
      * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
      * @return {[type]}
      */
     canDeactivate(name, canDeactivate) {
-        this._canDeact[name] = this._toFunction(canDeactivate);
+        this._canDeact[name] = toFunction(canDeactivate);
         return this;
     }
 
@@ -333,7 +328,7 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     canActivate(name, canActivate) {
-        this._canAct[name] = this._toFunction(canActivate);
+        this._canAct[name] = toFunction(canActivate);
         return this;
     }
 
