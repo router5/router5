@@ -1,8 +1,5 @@
 import { Component, createElement, PropTypes } from 'react';
-
-const ifNot = (condition, errorMessage) => {
-    if (!condition) throw new Error(errorMessage);
-};
+import { ifNot, getDisplayName } from './utils';
 
 function withRoute(BaseComponent) {
     class ComponentWithRoute extends Component {
@@ -18,7 +15,7 @@ function withRoute(BaseComponent) {
         componentDidMount() {
             ifNot(
                 this.router.registeredPlugins.LISTENERS,
-                '[react-router5] missing plugin router5-listeners'
+                '[react-router5][withRoute] missing plugin router5-listeners'
             );
 
             this.listener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
@@ -42,6 +39,8 @@ function withRoute(BaseComponent) {
     ComponentWithRoute.contextTypes = {
         router: PropTypes.object.isRequired
     };
+
+    ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';
 
     return ComponentWithRoute;
 }

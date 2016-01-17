@@ -1,8 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-
-function getDisplayName(component) {
-    return component.displayName || component.name || 'Component';
-}
+import React, { Component, PropTypes, createElement } from 'react';
+import { getDisplayName, ifNot } from './utils';
 
 function routeNode(nodeName, register = false) {
     return function routeNodeWrapper(RouteSegment) {
@@ -17,11 +14,14 @@ function routeNode(nodeName, register = false) {
             }
 
             componentDidMount() {
-                if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
-
-                if (!this.router.registeredPlugins.LISTENERS) {
-                    throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
+                if (register && this.refs.wrappedInstance && this.refs.wrappedInstance.canDeactivate) {
+                    this.router.canDeactivate(nodeName, this.refs.wrappedInstance.canDeactivate);
                 }
+
+                ifNot(
+                    this.router.registeredPlugins.LISTENERS,
+                    '[react-router5][routeNode] missing plugin router5-listeners'
+                );
 
                 this.nodeListener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
                 this.router.addNodeListener(nodeName, this.nodeListener);
@@ -32,9 +32,12 @@ function routeNode(nodeName, register = false) {
             }
 
             render() {
-                const props = this.props;
+                const { props, router } = this;
                 const { previousRoute, route } = this.state;
-                const component = React.createElement(RouteSegment, {...props, previousRoute, route, ref: register ? 'wrappedInstance' : undefined});
+                const component = createElement(
+                    RouteSegment,
+                    {...props, router, previousRoute, route, ref: register ? 'wrappedInstance' : undefined }
+                );
 
                 return component;
             }
