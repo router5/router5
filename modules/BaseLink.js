@@ -46,7 +46,7 @@ class BaseLink extends Component {
     }
 }
 
-Link.propTypes = {
+BaseLink.propTypes = {
     // route:           PropTypes.object.isRequired,
     router:          PropTypes.object.isRequired,
     routeName:       PropTypes.string.isRequired,
@@ -57,7 +57,7 @@ Link.propTypes = {
     onClick:         PropTypes.func
 };
 
-Link.defaultProps = {
+BaseLink.defaultProps = {
     activeClassName: 'active',
     activeStrict:    false,
     routeParams:     {},

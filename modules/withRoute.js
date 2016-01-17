@@ -1,7 +1,7 @@
-import { Component, createElement } from 'react';
+import { Component, createElement, PropTypes } from 'react';
 
 const ifNot = (condition, errorMessage) => {
-    if (!ifNot) throw new Error(errorMessage);
+    if (!condition) throw new Error(errorMessage);
 };
 
 function withRoute(BaseComponent) {
@@ -18,7 +18,7 @@ function withRoute(BaseComponent) {
         componentDidMount() {
             ifNot(
                 this.router.registeredPlugins.LISTENERS,
-                '[react-router5] missing plugin router5-listeners.'
+                '[react-router5] missing plugin router5-listeners'
             );
 
             this.listener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
@@ -31,13 +31,17 @@ function withRoute(BaseComponent) {
 
         render() {
             ifNot(
-                !props.router && !props.route && !props.previousRoute,
+                !this.props.router && !this.props.route && !this.props.previousRoute,
                 '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.'
             );
 
-            return createElement(BaseComponent, { ...props, ...this.state, router: this.router });
+            return createElement(BaseComponent, { ...this.props, ...this.state, router: this.router });
         }
     }
+
+    ComponentWithRoute.contextTypes = {
+        router: PropTypes.object.isRequired
+    };
 
     return ComponentWithRoute;
 }
