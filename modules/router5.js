@@ -1,8 +1,6 @@
 import RouteNode  from 'route-node';
-import transitionPath from 'router5.transition-path';
 import transition from './transition';
 import constants  from './constants';
-import loggerPlugin from './logger';
 
 const noop = () => {};
 const ifNot = (condition, error) => {
