@@ -1,4 +1,4 @@
-import React, { Component, PropTypes, createElement } from 'react';
+import { Component, PropTypes, createElement } from 'react';
 import { getDisplayName, ifNot } from './utils';
 
 function routeNode(nodeName, register = false) {

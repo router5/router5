@@ -6,7 +6,6 @@ class BaseLink extends Component {
 
         this.isActive = this.isActive.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
-        this.routeChangeHandler = this.routeChangeHandler.bind(this);
 
         this.state = { active: this.isActive() };
     }

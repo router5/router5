@@ -1,8 +1,10 @@
 import jsdom from 'jsdom';
-import sinonChai from 'sinon-chai';
 import chai from 'chai';
+import sinonChai from 'sinon-chai';
+import chaiEnzyme from 'chai-enzyme';
 
 chai.use(sinonChai);
+chai.use(chaiEnzyme());
 
 const doc = jsdom.jsdom('<!doctype html><html><body></body></html>');
 const win = doc.defaultView;
