@@ -1,4 +1,4 @@
-import actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes';
 
 const initialState = {
     route: null,

@@ -1,8 +1,8 @@
-import actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
-function routerPlugin(dispatch) {
-    const plugin = {
+const routerPlugin = dispatch =>
+    router => ({
         name: 'REDUX_PLUGIN',
         onTransitionStart(toState, fromState) {
             dispatch(actions.transitionStart(toState, fromState));
@@ -13,13 +13,10 @@ function routerPlugin(dispatch) {
         onTransitionError(toState, fromState, err) {
             dispatch(actions.transitionError(toState, fromState, err));
         }
-    };
+    });
 
-    return plugin;
-}
-
-export default function replaceRoutesMiddleware(router) {
-    return store => {
+const router5ReduxMiddleware = router =>
+    store => {
         const { dispatch } = store;
         router.setAdditionalArgs(store);
         router.usePlugin(routerPlugin(dispatch));
@@ -34,5 +31,6 @@ export default function replaceRoutesMiddleware(router) {
 
             return next(action);
         };
-    };
-}
+    }
+
+export default router5ReduxMiddleware;
