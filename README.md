@@ -7,7 +7,7 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 
 ## Requirements
 
-- __router5 >= 1.1.0__
+- __router5 >= 2.0.0__
 - __redux >= 3.0.0__
 
 ## How to use
