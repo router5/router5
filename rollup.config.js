@@ -25,7 +25,7 @@ const dest = {
 export default {
     entry: 'modules/index.js',
     format,
-    plugins: [ babel(babelOptions), npm({ jsnext: true }) ],
+    plugins: [ babel(babelOptions), npm({ jsnext: true }) ].concat(compress ? uglify() : []),
     moduleName: 'router5',
     moduleId: 'router5',
     dest

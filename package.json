@@ -7,9 +7,9 @@
   "scripts": {
     "clean": "rimraf dist && mkdirp dist",
     "build:cjs": "./node_modules/.bin/babel modules --out-dir dist/commonjs",
-    "build:umd": "rollup -c rollup.config.js --format umd",
-    "build:amd": "rollup -c rollup.config.js --format amd",
-    "build:iife": "rollup -c rollup.config.js --format iife",
+    "build:umd": "rollup -c rollup.config.js --format umd && rollup -c rollup.config.js --format umd --uglify",
+    "build:amd": "rollup -c rollup.config.js --format amd && rollup -c rollup.config.js --format umd --uglify",
+    "build:iife": "rollup -c rollup.config.js --format iife && rollup -c rollup.config.js --format iife --uglify",
     "build": "npm run clean && npm run build:cjs && npm run build:amd && npm run build:umd && npm run build:iife",
     "test:client": "mocha --compilers js:babel-core/register --recursive --require ./tests/_helpers.js 'tests/client.js'",
     "test:server": "mocha --compilers js:babel-core/register --recursive 'tests/server.js'",
