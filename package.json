@@ -15,7 +15,7 @@
     "test:server": "mocha --compilers js:babel-core/register --recursive 'tests/server.js'",
     "test": "npm run test:client && npm run test:server",
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./tests/_helpers.js 'tests/client.js'",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w -a",
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w",
     "lint": "eslint modules",
     "release": "./scripts/release.js"
   },
@@ -36,7 +36,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "~1.1.0",
+    "route-node": "~1.2.0",
     "router5.transition-path": "~3.0.0"
   },
   "devDependencies": {
