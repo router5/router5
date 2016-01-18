@@ -443,5 +443,37 @@ function testRouter(useHash) {
                 expect(mware).to.have.been.calledWith(a, b);
             });
         });
+
+        it('should pass along handled errors in promises', function (done) {
+            router.canActivate('admin', (toState, fromState) => Promise.resolve(new Error('error message')));
+            router.navigate('admin', {}, {}, function (err) {
+                expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                expect(err.error.message).to.equal('error message');
+                done();
+            });
+        });
+
+        it('should pass along handled errors in promises', function (done) {
+            sandbox.stub(console, 'error', noop);
+            router.canActivate('admin', (toState, fromState) => new Promise((resolve, reject) => {
+                throw new Error('unhandled error');
+            }));
+            router.navigate('admin', {}, {}, function (err) {
+                expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                expect(console.error).to.have.been.called;
+                done();
+            });
+        });
+
+        it('should prioritise cancellation errors', function (done) {
+            router.canActivate('admin', (toState, fromState) => new Promise((resolve, reject) => {
+                setTimeout(() => reject(), 20);
+            }));
+            var cancel = router.navigate('admin', {}, {}, function (err) {
+                expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
+                done();
+            });
+            setTimeout(cancel, 10);
+        });
     });
 }
