@@ -1,24 +1,24 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function getDisplayName(component) {
     return component.displayName || component.name || 'Component';
@@ -34,18 +34,20 @@ function routeNode(nodeName) {
             function RouteNode(props, context) {
                 _classCallCheck(this, RouteNode);
 
-                _get(Object.getPrototypeOf(RouteNode.prototype), 'constructor', this).call(this, props, context);
-                this.router = context.router;
-                this.state = {
+                var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RouteNode).call(this, props, context));
+
+                _this.router = context.router;
+                _this.state = {
                     previousRoute: null,
-                    route: this.router.getState()
+                    route: _this.router.getState()
                 };
+                return _this;
             }
 
             _createClass(RouteNode, [{
                 key: 'componentDidMount',
                 value: function componentDidMount() {
-                    var _this = this;
+                    var _this2 = this;
 
                     if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
 
@@ -54,7 +56,7 @@ function routeNode(nodeName) {
                     }
 
                     this.nodeListener = function (toState, fromState) {
-                        return _this.setState({ previousRoute: fromState, route: toState });
+                        return _this2.setState({ previousRoute: fromState, route: toState });
                     };
                     this.router.addNodeListener(nodeName, this.nodeListener);
                 }
@@ -71,7 +73,7 @@ function routeNode(nodeName) {
                     var previousRoute = _state.previousRoute;
                     var route = _state.route;
 
-                    var component = _react2['default'].createElement(RouteSegment, _extends({}, props, { previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
+                    var component = _react2.default.createElement(RouteSegment, _extends({}, props, { previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
 
                     return component;
                 }
@@ -90,5 +92,4 @@ function routeNode(nodeName) {
     };
 }
 
-exports['default'] = routeNode;
-module.exports = exports['default'];
+exports.default = routeNode;

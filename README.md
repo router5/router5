@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/react-router5.svg)](https://badge.fury.io/js/react-router5)
+[![Build Status](https://travis-ci.org/router5/react-router5.svg?branch=master)](https://travis-ci.org/router5/react-router5)
+
 # react-router5
 
 > Higher-order components and components for React when using [router5](https://github.com/router5/router5).
@@ -8,10 +11,7 @@ This package replaces `router5-react` which is deprecated.
 
 ```sh
 npm install --save react-router5
-bower install --save react-router5
 ```
-
-With bower, the package registers a `reactRouter5` global variable containing `RouterProvider`, `routeNode` and `Link`. AMD and UMD bundles are also available in `dist` folder.
 
 ### Examples
 
@@ -22,6 +22,19 @@ With bower, the package registers a `reactRouter5` global variable containing `R
 
 - react >= __0.14.0__
 - router5 >= __1.0.0__
+
+### What does this package export?
+
+- `RouterProvider`: component
+- `Link`: component
+- `routeNode`: higher-order component
+- `BaseLink`: component
+- `withRoute`: higher-order component
+
+
+### How it works
+
+![With React](https://github.com/router5/router5.github.io/blob/master/img/router-view.png)
 
 
 ### RouterProvider
@@ -41,7 +54,7 @@ ReactDOM.render(
 );
 ```
 
-### RouteNode HOC
+### routeNode HOC
 
 __routeNode(nodeName, registerComponent = false)__: higher-order component to wrap a route node component.
 
@@ -91,6 +104,15 @@ function Menu(props) {
 export default Menu;
 ```
 
+__The Link component is the combination of `BaseLink` and `withRoute`__
+
+### BaseLink component
+
+Same as `Link`, except it won't mark it-self dirty (and re-render) on a route change. `BaseLink` needs to be passed your router instance.
+
+### withRoute HOC
+
+Will create a new component, injecting your router instance (from context) and the current route to the wrapped component. Any route change will trigger a re-render.
 
 ### Contributing
 

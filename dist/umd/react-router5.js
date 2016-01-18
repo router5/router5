@@ -1,4 +1,8 @@
-define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use strict';
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
+    typeof define === 'function' && define.amd ? define('reactRouter5', ['exports', 'react'], factory) :
+    (factory((global.reactRouter5 = {}),global.React));
+}(this, function (exports,React) { 'use strict';
 
     var React__default = 'default' in React ? React['default'] : React;
 
@@ -323,4 +327,4 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
     exports.withRoute = withRoute;
     exports.Link = Link$1;
 
-});
+}));
