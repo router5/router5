@@ -1,3 +1,13 @@
+<a name="2.0.0-rc.1"></a>
+# [2.0.0-rc.1](https://github.com/router5/react-router5/compare/v1.0.1...v2.0.0-rc.1) (2016-01-18)
+
+
+### Features
+
+* split Link into LinkBase component and withRoute higher-order component ([81e22ad](https://github.com/router5/react-router5/commit/81e22ad))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/router5/react-router5/compare/v1.0.0...v1.0.1) (2015-11-26)
 

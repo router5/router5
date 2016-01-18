@@ -10,19 +10,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _react = require('react');
 
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _utils = require('./utils');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function getDisplayName(component) {
-    return component.displayName || component.name || 'Component';
-}
 
 function routeNode(nodeName) {
     var register = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
@@ -49,11 +43,11 @@ function routeNode(nodeName) {
                 value: function componentDidMount() {
                     var _this2 = this;
 
-                    if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
-
-                    if (!this.router.registeredPlugins.LISTENERS) {
-                        throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
+                    if (register && this.refs.wrappedInstance && this.refs.wrappedInstance.canDeactivate) {
+                        this.router.canDeactivate(nodeName, this.refs.wrappedInstance.canDeactivate);
                     }
+
+                    (0, _utils.ifNot)(this.router.registeredPlugins.LISTENERS, '[react-router5][routeNode] missing plugin router5-listeners');
 
                     this.nodeListener = function (toState, fromState) {
                         return _this2.setState({ previousRoute: fromState, route: toState });
@@ -69,11 +63,12 @@ function routeNode(nodeName) {
                 key: 'render',
                 value: function render() {
                     var props = this.props;
+                    var router = this.router;
                     var _state = this.state;
                     var previousRoute = _state.previousRoute;
                     var route = _state.route;
 
-                    var component = _react2.default.createElement(RouteSegment, _extends({}, props, { previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
+                    var component = (0, _react.createElement)(RouteSegment, _extends({}, props, { router: router, previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
 
                     return component;
                 }
@@ -86,7 +81,7 @@ function routeNode(nodeName) {
             router: _react.PropTypes.object.isRequired
         };
 
-        RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';
+        RouteNode.displayName = 'RouteNode[' + (0, _utils.getDisplayName)(RouteSegment) + ']';
 
         return RouteNode;
     };

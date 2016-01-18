@@ -68,57 +68,13 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
 
     babelHelpers;
 
-    var ifNot = function ifNot(condition, errorMessage) {
-        if (!ifNot) throw new Error(errorMessage);
+    var getDisplayName = function getDisplayName(component) {
+        return component.displayName || component.name || 'Component';
     };
 
-    function withRoute(BaseComponent) {
-        var ComponentWithRoute = function (_Component) {
-            babelHelpers.inherits(ComponentWithRoute, _Component);
-
-            function ComponentWithRoute(props, context) {
-                babelHelpers.classCallCheck(this, ComponentWithRoute);
-
-                var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(ComponentWithRoute).call(this, props, context));
-
-                _this.router = context.router;
-                _this.state = {
-                    previousRoute: null,
-                    route: _this.router.getState()
-                };
-                return _this;
-            }
-
-            babelHelpers.createClass(ComponentWithRoute, [{
-                key: 'componentDidMount',
-                value: function componentDidMount() {
-                    var _this2 = this;
-
-                    ifNot(this.router.registeredPlugins.LISTENERS, '[react-router5] missing plugin router5-listeners.');
-
-                    this.listener = function (toState, fromState) {
-                        return _this2.setState({ previousRoute: fromState, route: toState });
-                    };
-                    this.router.addListener(this.nodeListener);
-                }
-            }, {
-                key: 'componentWillUnmout',
-                value: function componentWillUnmout() {
-                    this.router.removeListener(this.listener);
-                }
-            }, {
-                key: 'render',
-                value: function render() {
-                    ifNot(!props.router && !props.route && !props.previousRoute, '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.');
-
-                    return React.createElement(BaseComponent, babelHelpers.extends({}, props, this.state, { router: this.router }));
-                }
-            }]);
-            return ComponentWithRoute;
-        }(React.Component);
-
-        return ComponentWithRoute;
-    }
+    var ifNot = function ifNot(condition, errorMessage) {
+        if (!condition) throw new Error(errorMessage);
+    };
 
     var BaseLink = function (_Component) {
         babelHelpers.inherits(BaseLink, _Component);
@@ -130,7 +86,6 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
 
             _this.isActive = _this.isActive.bind(_this);
             _this.clickHandler = _this.clickHandler.bind(_this);
-            _this.routeChangeHandler = _this.routeChangeHandler.bind(_this);
 
             _this.state = { active: _this.isActive() };
             return _this;
@@ -182,7 +137,7 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         return BaseLink;
     }(React.Component);
 
-    Link.propTypes = {
+    BaseLink.propTypes = {
         // route:           PropTypes.object.isRequired,
         router: React.PropTypes.object.isRequired,
         routeName: React.PropTypes.string.isRequired,
@@ -193,12 +148,66 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         onClick: React.PropTypes.func
     };
 
-    Link.defaultProps = {
+    BaseLink.defaultProps = {
         activeClassName: 'active',
         activeStrict: false,
         routeParams: {},
         routeOptions: {}
     };
+
+    function withRoute(BaseComponent) {
+        var ComponentWithRoute = function (_Component) {
+            babelHelpers.inherits(ComponentWithRoute, _Component);
+
+            function ComponentWithRoute(props, context) {
+                babelHelpers.classCallCheck(this, ComponentWithRoute);
+
+                var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(ComponentWithRoute).call(this, props, context));
+
+                _this.router = context.router;
+                _this.state = {
+                    previousRoute: null,
+                    route: _this.router.getState()
+                };
+                return _this;
+            }
+
+            babelHelpers.createClass(ComponentWithRoute, [{
+                key: 'componentDidMount',
+                value: function componentDidMount() {
+                    var _this2 = this;
+
+                    ifNot(this.router.registeredPlugins.LISTENERS, '[react-router5][withRoute] missing plugin router5-listeners');
+
+                    this.listener = function (toState, fromState) {
+                        return _this2.setState({ previousRoute: fromState, route: toState });
+                    };
+                    this.router.addListener(this.nodeListener);
+                }
+            }, {
+                key: 'componentWillUnmout',
+                value: function componentWillUnmout() {
+                    this.router.removeListener(this.listener);
+                }
+            }, {
+                key: 'render',
+                value: function render() {
+                    ifNot(!this.props.router && !this.props.route && !this.props.previousRoute, '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.');
+
+                    return React.createElement(BaseComponent, babelHelpers.extends({}, this.props, this.state, { router: this.router }));
+                }
+            }]);
+            return ComponentWithRoute;
+        }(React.Component);
+
+        ComponentWithRoute.contextTypes = {
+            router: React.PropTypes.object.isRequired
+        };
+
+        ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';
+
+        return ComponentWithRoute;
+    }
 
     var RouterProvider = function (_Component) {
         babelHelpers.inherits(RouterProvider, _Component);
@@ -244,10 +253,6 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         router: React.PropTypes.object.isRequired
     };
 
-    function getDisplayName(component) {
-        return component.displayName || component.name || 'Component';
-    }
-
     function routeNode(nodeName) {
         var register = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
@@ -273,11 +278,11 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
                     value: function componentDidMount() {
                         var _this2 = this;
 
-                        if (register) this.router.registerComponent(nodeName, this.refs.wrappedInstance);
-
-                        if (!this.router.registeredPlugins.LISTENERS) {
-                            throw new Error('[react-router5][RouteNode] missing plugin router5-listeners.');
+                        if (register && this.refs.wrappedInstance && this.refs.wrappedInstance.canDeactivate) {
+                            this.router.canDeactivate(nodeName, this.refs.wrappedInstance.canDeactivate);
                         }
+
+                        ifNot(this.router.registeredPlugins.LISTENERS, '[react-router5][routeNode] missing plugin router5-listeners');
 
                         this.nodeListener = function (toState, fromState) {
                             return _this2.setState({ previousRoute: fromState, route: toState });
@@ -293,11 +298,12 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
                     key: 'render',
                     value: function render() {
                         var props = this.props;
+                        var router = this.router;
                         var _state = this.state;
                         var previousRoute = _state.previousRoute;
                         var route = _state.route;
 
-                        var component = React__default.createElement(RouteSegment, babelHelpers.extends({}, props, { previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
+                        var component = React.createElement(RouteSegment, babelHelpers.extends({}, props, { router: router, previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
 
                         return component;
                     }
@@ -315,12 +321,12 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         };
     }
 
-    var Link$1 = withRoute(BaseLink);
+    var Link = withRoute(BaseLink);
 
     exports.BaseLink = BaseLink;
     exports.routeNode = routeNode;
     exports.RouterProvider = RouterProvider;
     exports.withRoute = withRoute;
-    exports.Link = Link$1;
+    exports.Link = Link;
 
 });

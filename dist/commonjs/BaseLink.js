@@ -28,7 +28,6 @@ var BaseLink = (function (_Component) {
 
         _this.isActive = _this.isActive.bind(_this);
         _this.clickHandler = _this.clickHandler.bind(_this);
-        _this.routeChangeHandler = _this.routeChangeHandler.bind(_this);
 
         _this.state = { active: _this.isActive() };
         return _this;
@@ -81,7 +80,7 @@ var BaseLink = (function (_Component) {
     return BaseLink;
 })(_react.Component);
 
-Link.propTypes = {
+BaseLink.propTypes = {
     // route:           PropTypes.object.isRequired,
     router: _react.PropTypes.object.isRequired,
     routeName: _react.PropTypes.string.isRequired,
@@ -92,7 +91,7 @@ Link.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-Link.defaultProps = {
+BaseLink.defaultProps = {
     activeClassName: 'active',
     activeStrict: false,
     routeParams: {},
