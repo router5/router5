@@ -9,7 +9,7 @@ const initialState = {
 
 function router5Reducer(state = initialState, action) {
     switch(action.type) {
-        case actionTypes.TRANSTION_START:
+        case actionTypes.TRANSITION_START:
             return {
                 ...state,
                 transitionRoute: action.payload.route,
