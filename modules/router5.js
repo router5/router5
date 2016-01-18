@@ -1,5 +1,5 @@
 import RouteNode  from 'route-node';
-import * as transitionPath from 'router5.transition-path';
+import transitionPath from 'router5.transition-path';
 import transition from './transition';
 import constants  from './constants';
 import loggerPlugin from './logger';
@@ -310,7 +310,7 @@ class Router5 {
     }
 
     /**
-     * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
+     * A function to determine whether or not a segment can be deactivated.
      * @param  {String}  name          The route segment full name
      * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
      * @return {[type]}
@@ -506,24 +506,5 @@ class Router5 {
         });
     }
 }
-
-/**
- * Error codes
- * @static
- * @type {Object}
- */
-Router5.ERR = constants;
-
-/**
- * An helper function to return instructions for a transition:
- * intersection route name, route names to deactivate, route names to activate
- * @static
- * @param  {Object} toState   The state to go to
- * @param  {Object} fromState The state to go from
- * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
- */
-Router5.transitionPath = transitionPath;
-
-Router5.loggerPlugin = loggerPlugin;
 
 export default Router5;
