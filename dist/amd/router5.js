@@ -670,6 +670,14 @@ define('router5', ['exports'], function (exports) { 'use strict';
         }
 
         babelHelpers_createClass(RouteNode, [{
+            key: 'setPath',
+            value: function setPath() {
+                var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+
+                this.path = path;
+                this.parser = path ? new Path(path) : null;
+            }
+        }, {
             key: 'add',
             value: function add(route) {
                 var _this = this;
@@ -768,8 +776,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
                     return filteredRoutes.length ? filteredRoutes[0] : undefined;
                 };
                 var segments = [];
-                var names = routeName.split('.');
-                var routes = this.children;
+                var routes = this.parser ? [this] : this.children;
+                var names = (this.parser ? [''] : []).concat(routeName.split('.'));
 
                 var matched = names.every(function (name) {
                     var segment = findSegmentByName(name, routes);
@@ -893,7 +901,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
             value: function getMetaFromSegments(segments) {
                 var accName = '';
 
-                return segments.reduce(function (meta, segment, i) {
+                return segments.reduce(function (meta, segment) {
                     var urlParams = segment.parser.urlParams.reduce(function (params, p) {
                         params[p] = 'url';
                         return params;
