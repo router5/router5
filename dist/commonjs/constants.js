@@ -1,6 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var constants = {
@@ -14,5 +14,5 @@ var constants = {
     TRANSITION_CANCELLED: 'CANCELLED'
 };
 
-exports['default'] = constants;
+exports.default = constants;
 module.exports = exports['default'];

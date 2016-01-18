@@ -1,27 +1,22 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
-// istanbul ignore next
+exports.default = asyncProcess;
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-exports['default'] = asyncProcess;
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 function asyncProcess(functions, _ref, callback) {
     var isCancelled = _ref.isCancelled;
     var toState = _ref.toState;
     var fromState = _ref.fromState;
-    var context = _ref.context;
     var additionalArgs = _ref.additionalArgs;
-    var allowBool = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
 
     var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
-    var initialFromState = _extends({}, fromState);
     var isState = function isState(obj) {
-        return typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+        return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     };
     var hasStateChanged = function hasStateChanged(state) {
         return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
@@ -35,15 +30,18 @@ function asyncProcess(functions, _ref, callback) {
         var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
-        var res = stepFn.apply(context || null, additionalArgs.concat([toState, fromState, done]));
+        var res = stepFn.apply(null, additionalArgs.concat([toState, fromState, done]));
 
-        if (allowBool && typeof res === 'boolean') {
+        if (isCancelled()) {
+            done(null);
+        } else if (typeof res === 'boolean') {
             done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
             res.then(function (resVal) {
-                return done(null, resVal);
-            }, function () {
-                return done(errVal);
+                if (resVal instanceof Error) done(resVal, null);else done(null, resVal);
+            }, function (err) {
+                if (err instanceof Error) console.error(err.stack || err);
+                done(errVal);
             });
         }
         // else: wait for done to be called
@@ -72,5 +70,4 @@ function asyncProcess(functions, _ref, callback) {
 
     next();
 }
-
 module.exports = exports['default'];

@@ -1,10 +1,11 @@
 import RouteNode  from 'route-node';
-import transitionPath from 'router5.transition-path';
 import transition from './transition';
 import constants  from './constants';
-import loggerPlugin from './logger';
 
 const noop = () => {};
+const ifNot = (condition, error) => {
+    if (!condition) throw new Error(error);
+};
 
 const makeState = (name, params, path, _meta) => {
     const state = {};
@@ -15,6 +16,12 @@ const makeState = (name, params, path, _meta) => {
     if (_meta) setProp('_meta', _meta);
     return state;
 };
+
+const addCanActivate = router => route => {
+    if (route.canActivate) router.canActivate(route.name, route.canActivate);
+};
+
+const toFunction = val => typeof val === 'function' ? val : () => val;
 
 /**
  * Create a new Router5 instance
@@ -28,11 +35,13 @@ class Router5 {
         this.started = false;
         this.mware = null;
         this._cbs = {};
-        this._cmps = {};
         this._canAct = {};
+        this._canDeact = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
-        this.rootNode  = routes instanceof RouteNode ? routes : new RouteNode('', '', routes);
+        this.rootNode  = routes instanceof RouteNode
+            ? routes
+            : new RouteNode('', '', routes, addCanActivate(this));
         this.options = {
             useHash: false,
             hashPrefix: '',
@@ -59,7 +68,7 @@ class Router5 {
 
     /**
      * Set additional arguments used in lifecycle functions.
-     * Additional arguments are used in canActivate and canDeactivate in first positions (before `toState`).
+     * Additional arguments are used in canActivate, canDeactivate and middleware functions in first positions (before `toState`).
      * @param  {Array} args The additional arguments
      */
     setAdditionalArgs(args) {
@@ -80,7 +89,7 @@ class Router5 {
      * @return {Router5}  The Router5 instance
      */
     add(routes) {
-        this.rootNode.add(routes);
+        this.rootNode.add(routes, addCanActivate(this));
         return this;
     }
 
@@ -99,16 +108,17 @@ class Router5 {
         return this;
     }
 
-    usePlugin(plugin) {
-        if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
+    usePlugin(pluginFactory) {
+        ifNot(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
+        const plugin = pluginFactory(this);
+        const name = plugin.name || pluginFactory.name;
+        ifNot(name, '[router5.usePlugin] Tried to register an unamed plugin.');
 
         const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
-        const defined = pluginMethods.concat('init').some(method => plugin[method] !== undefined);
+        const defined = pluginMethods.some(method => plugin[method] !== undefined);
 
-        if (!defined) throw new Error(`[router5] plugin ${plugin.name} has none of the expected methods implemented`);
-        this.registeredPlugins[plugin.name] = plugin;
-
-        if (plugin.init) plugin.init(this);
+        ifNot(defined, `[router5.usePlugin] plugin ${plugin.name} has none of the expected methods implemented`);
+        this.registeredPlugins[name] = plugin;
 
         pluginMethods.forEach(method => {
             if (plugin[method]) {
@@ -125,7 +135,11 @@ class Router5 {
      * @param {Function} fn The middleware function
      */
     useMiddleware() {
-        this.mware = Array.prototype.slice.call(arguments);
+        this.mware = Array.prototype.slice.call(arguments).map(m => {
+            const middlewareFn = m(this);
+            ifNot(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
+            return middlewareFn;
+        });
         return this;
     }
 
@@ -288,41 +302,20 @@ class Router5 {
     /**
      * @private
      */
-    _addListener(name, cb, replace) {
+    _addListener(name, cb) {
         this._cbs[name] = (this._cbs[name] || []).concat(cb);
         return this;
     }
 
     /**
-     * Register an active component for a specific route segment
-     * @param  {String} name      The route segment full name
-     * @param  {Object} component The component instance
-     */
-    registerComponent(name, component, warn = true) {
-        if (this._cmps[name] && warn) console.warn(`A component was alread registered for route node ${name}.`);
-        this._cmps[name] = component;
-        return this;
-    }
-
-    /**
-     * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
+     * A function to determine whether or not a segment can be deactivated.
      * @param  {String}  name          The route segment full name
      * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
      * @return {[type]}
      */
     canDeactivate(name, canDeactivate) {
-        if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
-        this.registerComponent(name, { canDeactivate: (toState, fromState) => canDeactivate }, false);
+        this._canDeact[name] = toFunction(canDeactivate);
         return this;
-    }
-
-    /**
-     * Deregister an active component
-     * @param  {String} name The route segment full name
-     * @return {Router5} The router instance
-     */
-    deregisterComponent(name) {
-        this._cmps[name] = undefined;
     }
 
     /**
@@ -333,7 +326,7 @@ class Router5 {
      * @return {Router5}  The router instance
      */
     canActivate(name, canActivate) {
-        this._canAct[name] = canActivate;
+        this._canAct[name] = toFunction(canActivate);
         return this;
     }
 
@@ -511,24 +504,5 @@ class Router5 {
         });
     }
 }
-
-/**
- * Error codes
- * @static
- * @type {Object}
- */
-Router5.ERR = constants;
-
-/**
- * An helper function to return instructions for a transition:
- * intersection route name, route names to deactivate, route names to activate
- * @static
- * @param  {Object} toState   The state to go to
- * @param  {Object} fromState The state to go from
- * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
- */
-Router5.transitionPath = transitionPath;
-
-Router5.loggerPlugin = loggerPlugin;
 
 export default Router5;

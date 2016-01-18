@@ -1,27 +1,14 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
-// istanbul ignore next
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-// istanbul ignore next
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-// istanbul ignore next
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var _routeNode = require('route-node');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
-
-var _router5TransitionPath = require('router5.transition-path');
-
-var _router5TransitionPath2 = _interopRequireDefault(_router5TransitionPath);
 
 var _transition2 = require('./transition');
 
@@ -31,11 +18,16 @@ var _constants = require('./constants');
 
 var _constants2 = _interopRequireDefault(_constants);
 
-var _logger = require('./logger');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _logger2 = _interopRequireDefault(_logger);
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var noop = function noop() {};
+var ifNot = function ifNot(condition, error) {
+    if (!condition) throw new Error(error);
+};
 
 var makeState = function makeState(name, params, path, _meta) {
     var state = {};
@@ -49,6 +41,18 @@ var makeState = function makeState(name, params, path, _meta) {
     return state;
 };
 
+var addCanActivate = function addCanActivate(router) {
+    return function (route) {
+        if (route.canActivate) router.canActivate(route.name, route.canActivate);
+    };
+};
+
+var toFunction = function toFunction(val) {
+    return typeof val === 'function' ? val : function () {
+        return val;
+    };
+};
+
 /**
  * Create a new Router5 instance
  * @class
@@ -59,8 +63,6 @@ var makeState = function makeState(name, params, path, _meta) {
 
 var Router5 = (function () {
     function Router5(routes) {
-        // istanbul ignore next
-
         var _this = this;
 
         var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
@@ -70,11 +72,11 @@ var Router5 = (function () {
         this.started = false;
         this.mware = null;
         this._cbs = {};
-        this._cmps = {};
         this._canAct = {};
+        this._canDeact = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
-        this.rootNode = routes instanceof _routeNode2['default'] ? routes : new _routeNode2['default']('', '', routes);
+        this.rootNode = routes instanceof _routeNode2.default ? routes : new _routeNode2.default('', '', routes, addCanActivate(this));
         this.options = {
             useHash: false,
             hashPrefix: '',
@@ -89,12 +91,6 @@ var Router5 = (function () {
         this.registeredPlugins = {};
         this._extraArgs = [];
     }
-
-    /**
-     * Error codes
-     * @static
-     * @type {Object}
-     */
 
     /**
      * Set an option value
@@ -112,9 +108,10 @@ var Router5 = (function () {
 
         /**
          * Set additional arguments used in lifecycle functions.
-         * Additional arguments are used in canActivate and canDeactivate in first positions (before `toState`).
+         * Additional arguments are used in canActivate, canDeactivate and middleware functions in first positions (before `toState`).
          * @param  {Array} args The additional arguments
          */
+
     }, {
         key: 'setAdditionalArgs',
         value: function setAdditionalArgs(args) {
@@ -125,6 +122,7 @@ var Router5 = (function () {
         /**
          * Return additional arguments used in lifecycle functions
          */
+
     }, {
         key: 'getAdditionalArgs',
         value: function getAdditionalArgs() {
@@ -136,10 +134,11 @@ var Router5 = (function () {
          * @param  {RouteNode[]|Object[]|RouteNode|Object} routes Route(s) to add
          * @return {Router5}  The Router5 instance
          */
+
     }, {
         key: 'add',
         value: function add(routes) {
-            this.rootNode.add(routes);
+            this.rootNode.add(routes, addCanActivate(this));
             return this;
         }
 
@@ -152,6 +151,7 @@ var Router5 = (function () {
          *                                 and `fromState` parameters.
          * @return {Router5}             The Router5 instance
          */
+
     }, {
         key: 'addNode',
         value: function addNode(name, path, canActivate) {
@@ -161,22 +161,21 @@ var Router5 = (function () {
         }
     }, {
         key: 'usePlugin',
-        value: function usePlugin(plugin) {
-            // istanbul ignore next
-
+        value: function usePlugin(pluginFactory) {
             var _this2 = this;
 
-            if (!plugin.name) console.warn('[router5.registerPlugin(plugin)] Missing property pluginName');
+            ifNot(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
+            var plugin = pluginFactory(this);
+            var name = plugin.name || pluginFactory.name;
+            ifNot(name, '[router5.usePlugin] Tried to register an unamed plugin.');
 
             var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
-            var defined = pluginMethods.concat('init').some(function (method) {
+            var defined = pluginMethods.some(function (method) {
                 return plugin[method] !== undefined;
             });
 
-            if (!defined) throw new Error('[router5] plugin ' + plugin.name + ' has none of the expected methods implemented');
-            this.registeredPlugins[plugin.name] = plugin;
-
-            if (plugin.init) plugin.init(this);
+            ifNot(defined, '[router5.usePlugin] plugin ' + plugin.name + ' has none of the expected methods implemented');
+            this.registeredPlugins[name] = plugin;
 
             pluginMethods.forEach(function (method) {
                 if (plugin[method]) {
@@ -191,10 +190,17 @@ var Router5 = (function () {
          * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
          * @param {Function} fn The middleware function
          */
+
     }, {
         key: 'useMiddleware',
         value: function useMiddleware() {
-            this.mware = Array.prototype.slice.call(arguments);
+            var _this3 = this;
+
+            this.mware = Array.prototype.slice.call(arguments).map(function (m) {
+                var middlewareFn = m(_this3);
+                ifNot(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
+                return middlewareFn;
+            });
             return this;
         }
 
@@ -206,12 +212,11 @@ var Router5 = (function () {
          *                                            when starting is done
          * @return {Router5}  The router instance
          */
+
     }, {
         key: 'start',
         value: function start() {
-            // istanbul ignore next
-
-            var _this3 = this;
+            var _this4 = this;
 
             var args = Array.prototype.slice.call(arguments);
             var lastArg = args.slice(-1)[0];
@@ -220,7 +225,7 @@ var Router5 = (function () {
                 startState = undefined;
 
             if (this.started) {
-                done({ code: _constants2['default'].ROUTER_ALREADY_STARTED });
+                done({ code: _constants2.default.ROUTER_ALREADY_STARTED });
                 return this;
             }
 
@@ -230,7 +235,7 @@ var Router5 = (function () {
 
             if (args.length > 0) {
                 if (typeof args[0] === 'string') startPath = args[0];
-                if (typeof args[0] === 'object') startState = args[0];
+                if (_typeof(args[0]) === 'object') startState = args[0];
             }
 
             // callback
@@ -238,8 +243,8 @@ var Router5 = (function () {
                 var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
                 done(err, state);
-                if (!err) _this3._invokeListeners('$$success', state, null, { replace: true });
-                if (err && invokeErrCb) _this3._invokeListeners('$$error', state, null, err);
+                if (!err) _this4._invokeListeners('$$success', state, null, { replace: true });
+                if (err && invokeErrCb) _this4._invokeListeners('$$error', state, null, err);
             };
 
             // Get start path
@@ -250,17 +255,17 @@ var Router5 = (function () {
             if (!startState) {
                 (function () {
                     // If no supplied start state, get start state
-                    startState = startPath === undefined ? null : _this3.matchPath(startPath);
+                    startState = startPath === undefined ? null : _this4.matchPath(startPath);
                     // Navigate to default function
                     var navigateToDefault = function navigateToDefault() {
-                        return _this3.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
+                        return _this4.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
                             return done(err, state);
                         });
                     };
                     // If matched start path
                     if (startState) {
-                        _this3.lastStateAttempt = startState;
-                        _this3._transition(_this3.lastStateAttempt, _this3.lastKnownState, function (err, state) {
+                        _this4.lastStateAttempt = startState;
+                        _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, function (err, state) {
                             if (!err) {
                                 cb(null, state);
                             } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
@@ -270,7 +275,7 @@ var Router5 = (function () {
                         navigateToDefault();
                     } else {
                         // No start match, no default => do nothing
-                        cb({ code: _constants2['default'].ROUTE_NOT_FOUND, path: startPath }, null);
+                        cb({ code: _constants2.default.ROUTE_NOT_FOUND, path: startPath }, null);
                     }
                 })();
             } else {
@@ -286,6 +291,7 @@ var Router5 = (function () {
          * Stop the router
          * @return {Router5} The router instance
          */
+
     }, {
         key: 'stop',
         value: function stop() {
@@ -302,6 +308,7 @@ var Router5 = (function () {
          * Return the current state object
          * @return {Object} The current state
          */
+
     }, {
         key: 'getState',
         value: function getState() {
@@ -320,6 +327,7 @@ var Router5 = (function () {
          *                                              query parameters when comparing two states together.
          * @return {Boolean}                    Whether nor not the route is active
          */
+
     }, {
         key: 'isActive',
         value: function isActive(name) {
@@ -341,19 +349,18 @@ var Router5 = (function () {
         /**
          * @private
          */
+
     }, {
         key: 'areStatesEqual',
         value: function areStatesEqual(state1, state2) {
-            // istanbul ignore next
-
-            var _this4 = this;
+            var _this5 = this;
 
             var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
             if (state1.name !== state2.name) return false;
 
             var getUrlParams = function getUrlParams(name) {
-                return _this4.rootNode.getSegmentsByName(name).map(function (segment) {
+                return _this5.rootNode.getSegmentsByName(name).map(function (segment) {
                     return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
                 }).reduce(function (params, p) {
                     return params.concat(p);
@@ -374,6 +381,7 @@ var Router5 = (function () {
          * @param  {Object} childState  The child state
          * @return {Boolean}            Whether the two provided states are related
          */
+
     }, {
         key: 'areStatesDescendants',
         value: function areStatesDescendants(parentState, childState) {
@@ -389,6 +397,7 @@ var Router5 = (function () {
         /**
          * @private
          */
+
     }, {
         key: '_invokeListeners',
         value: function _invokeListeners(name) {
@@ -404,53 +413,26 @@ var Router5 = (function () {
         /**
          * @private
          */
+
     }, {
         key: '_addListener',
-        value: function _addListener(name, cb, replace) {
+        value: function _addListener(name, cb) {
             this._cbs[name] = (this._cbs[name] || []).concat(cb);
             return this;
         }
 
         /**
-         * Register an active component for a specific route segment
-         * @param  {String} name      The route segment full name
-         * @param  {Object} component The component instance
-         */
-    }, {
-        key: 'registerComponent',
-        value: function registerComponent(name, component) {
-            var warn = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
-
-            if (this._cmps[name] && warn) console.warn('A component was alread registered for route node ' + name + '.');
-            this._cmps[name] = component;
-            return this;
-        }
-
-        /**
-         * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
+         * A function to determine whether or not a segment can be deactivated.
          * @param  {String}  name          The route segment full name
          * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
          * @return {[type]}
          */
+
     }, {
         key: 'canDeactivate',
         value: function canDeactivate(name, _canDeactivate) {
-            if (!this.options.autoCleanUp) throw new Error('[router.canDeactivate()] Cannot be used if "autoCleanUp" is set to false');
-            this.registerComponent(name, { canDeactivate: function canDeactivate(toState, fromState) {
-                    return _canDeactivate;
-                } }, false);
+            this._canDeact[name] = toFunction(_canDeactivate);
             return this;
-        }
-
-        /**
-         * Deregister an active component
-         * @param  {String} name The route segment full name
-         * @return {Router5} The router instance
-         */
-    }, {
-        key: 'deregisterComponent',
-        value: function deregisterComponent(name) {
-            this._cmps[name] = undefined;
         }
 
         /**
@@ -460,10 +442,11 @@ var Router5 = (function () {
          *                                or a promise
          * @return {Router5}  The router instance
          */
+
     }, {
         key: 'canActivate',
         value: function canActivate(name, _canActivate) {
-            this._canAct[name] = _canActivate;
+            this._canAct[name] = toFunction(_canActivate);
             return this;
         }
 
@@ -474,6 +457,7 @@ var Router5 = (function () {
          * @param  {Object} params The route params (key-value pairs)
          * @return {String}        The built URL
          */
+
     }, {
         key: 'buildUrl',
         value: function buildUrl(route, params) {
@@ -483,6 +467,7 @@ var Router5 = (function () {
         /**
          * @private
          */
+
     }, {
         key: '_buildUrl',
         value: function _buildUrl(path) {
@@ -496,6 +481,7 @@ var Router5 = (function () {
          * @param  {Object} params The route params (key-value pairs)
          * @return {String}        The built Path
          */
+
     }, {
         key: 'buildPath',
         value: function buildPath(route, params) {
@@ -508,6 +494,7 @@ var Router5 = (function () {
          * @param  {Object} params The route params (key-value pairs)
          * @return {String}        The built Path
          */
+
     }, {
         key: 'buildState',
         value: function buildState(route, params) {
@@ -519,6 +506,7 @@ var Router5 = (function () {
          * @param  {String} path   The path to match
          * @return {Object}        The matched state object (null if no match)
          */
+
     }, {
         key: 'matchPath',
         value: function matchPath(path) {
@@ -535,6 +523,7 @@ var Router5 = (function () {
          * @param  {String} url The URL
          * @return {String}     The extracted path
          */
+
     }, {
         key: 'urlToPath',
         value: function urlToPath(url) {
@@ -558,6 +547,7 @@ var Router5 = (function () {
          * @param  {String} url    The URL to match
          * @return {Object}        The matched state object (null if no match)
          */
+
     }, {
         key: 'matchUrl',
         value: function matchUrl(url) {
@@ -567,12 +557,11 @@ var Router5 = (function () {
         /**
          * @private
          */
+
     }, {
         key: '_transition',
         value: function _transition(toState, fromState) {
-            // istanbul ignore next
-
-            var _this5 = this;
+            var _this6 = this;
 
             var done = arguments.length <= 2 || arguments[2] === undefined ? noop : arguments[2];
 
@@ -580,18 +569,18 @@ var Router5 = (function () {
             this.cancel();
             this._invokeListeners('$$start', toState, fromState);
 
-            var tr = (0, _transition3['default'])(this, toState, fromState, function (err, state) {
+            var tr = (0, _transition3.default)(this, toState, fromState, function (err, state) {
                 state = state || toState;
-                _this5._tr = null;
+                _this6._tr = null;
 
                 if (err) {
-                    if (err.code === _constants2['default'].TRANSITION_CANCELLED) _this5._invokeListeners('$$cancel', toState, fromState);else _this5._invokeListeners('$$error', toState, fromState, err);
+                    if (err.code === _constants2.default.TRANSITION_CANCELLED) _this6._invokeListeners('$$cancel', toState, fromState);else _this6._invokeListeners('$$error', toState, fromState, err);
 
                     done(err);
                     return;
                 }
 
-                _this5.lastKnownState = state; // toState or modified state?
+                _this6.lastKnownState = state; // toState or modified state?
 
                 done(null, state);
             });
@@ -606,6 +595,7 @@ var Router5 = (function () {
          * Undocumented for now
          * @private
          */
+
     }, {
         key: 'cancel',
         value: function cancel() {
@@ -621,26 +611,26 @@ var Router5 = (function () {
          *                                either successfully or unsuccessfully.
          * @return {Function}             A cancellation function
          */
+
     }, {
         key: 'navigate',
         value: function navigate(name) {
             var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-            // istanbul ignore next
 
-            var _this6 = this;
+            var _this7 = this;
 
             var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
             var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
 
             if (!this.started) {
-                done({ code: _constants2['default'].ROUTER_NOT_STARTED });
+                done({ code: _constants2.default.ROUTER_NOT_STARTED });
                 return;
             }
 
             var toState = this.buildState(name, params);
 
             if (!toState) {
-                var err = { code: _constants2['default'].ROUTE_NOT_FOUND };
+                var err = { code: _constants2.default.ROUTE_NOT_FOUND };
                 done(err);
                 this._invokeListeners('$$error', null, this.lastKnownState, err);
                 return;
@@ -653,7 +643,7 @@ var Router5 = (function () {
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) {
-                var err = { code: _constants2['default'].SAME_STATES };
+                var err = { code: _constants2.default.SAME_STATES };
                 done(err);
                 this._invokeListeners('$$error', toState, this.lastKnownState, err);
                 return;
@@ -668,7 +658,7 @@ var Router5 = (function () {
                     return;
                 }
 
-                _this6._invokeListeners('$$success', toState, fromState, opts);
+                _this7._invokeListeners('$$success', toState, fromState, opts);
                 done(null, state);
             });
         }
@@ -677,19 +667,5 @@ var Router5 = (function () {
     return Router5;
 })();
 
-Router5.ERR = _constants2['default'];
-
-/**
- * An helper function to return instructions for a transition:
- * intersection route name, route names to deactivate, route names to activate
- * @static
- * @param  {Object} toState   The state to go to
- * @param  {Object} fromState The state to go from
- * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
- */
-Router5.transitionPath = _router5TransitionPath2['default'];
-
-Router5.loggerPlugin = _logger2['default'];
-
-exports['default'] = Router5;
+exports.default = Router5;
 module.exports = exports['default'];

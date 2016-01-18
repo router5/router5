@@ -1,7 +1,6 @@
-export default function asyncProcess(functions, { isCancelled, toState, fromState, context, additionalArgs }, callback, allowBool = true) {
+export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs }, callback) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
-    const initialFromState = { ...fromState };
     const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     const hasStateChanged = state => state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
 
@@ -13,12 +12,23 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
-        const res = stepFn.apply(context || null, additionalArgs.concat([toState, fromState, done]));
+        const res = stepFn.apply(null, additionalArgs.concat([toState, fromState, done]));
 
-        if (allowBool && typeof res === 'boolean') {
+        if (isCancelled()) {
+            done(null);
+        } else if (typeof res === 'boolean') {
             done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
-            res.then(resVal => done(null, resVal), () => done(errVal));
+            res.then(
+                resVal => {
+                    if (resVal instanceof Error) done(resVal, null);
+                    else done(null, resVal);
+                },
+                err => {
+                    if (err instanceof Error) console.error(err.stack || err);
+                    done(errVal);
+                }
+            );
         }
         // else: wait for done to be called
 
