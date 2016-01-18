@@ -1,16 +1,11 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-var actionTypes = {
-    NAVIGATE_TO: 'R5_NAVIGATE',
-    CANCEL_TRANSITION: 'R5_CANCEL',
-    TRANSITION_ERROR: 'R5_TRANSITION_ERROR',
-    TRANSITION_SUCCESS: 'R5_TRANSITION_SUCCESS',
-    TRANSITION_START: 'R5_TRANSITION_START',
-    CLEAR_ERRORS: 'R5_CLEAR_ERRORS'
-};
-
-exports['default'] = actionTypes;
-module.exports = exports['default'];
+var NAVIGATE_TO = exports.NAVIGATE_TO = 'R5_NAVIGATE';
+var CANCEL_TRANSITION = exports.CANCEL_TRANSITION = 'R5_CANCEL';
+var TRANSITION_ERROR = exports.TRANSITION_ERROR = 'R5_TRANSITION_ERROR';
+var TRANSITION_SUCCESS = exports.TRANSITION_SUCCESS = 'R5_TRANSITION_SUCCESS';
+var TRANSITION_START = exports.TRANSITION_START = 'R5_TRANSITION_START';
+var CLEAR_ERRORS = exports.CLEAR_ERRORS = 'R5_CLEAR_ERRORS';

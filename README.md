@@ -1,3 +1,6 @@
+[![npm version](https://badge.fury.io/js/redux-router5.svg)](https://badge.fury.io/js/redux-router5)
+[![Build Status](https://travis-ci.org/router5/redux-router5.svg?branch=master)](https://travis-ci.org/router5/redux-router5)
+
 # redux-router5
 
 > Router5 integration with redux. If you develop with React, use this package with __[react-redux](https://github.com/rackt/react-redux)__

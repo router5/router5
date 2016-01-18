@@ -1,40 +1,37 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports['default'] = replaceRoutesMiddleware;
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 var _actionTypes = require('./actionTypes');
 
-var _actionTypes2 = _interopRequireDefault(_actionTypes);
+var actionTypes = _interopRequireWildcard(_actionTypes);
 
 var _actions = require('./actions');
 
 var actions = _interopRequireWildcard(_actions);
 
-function routerPlugin(dispatch) {
-    var plugin = {
-        name: 'REDUX_PLUGIN',
-        onTransitionStart: function onTransitionStart(toState, fromState) {
-            dispatch(actions.transitionStart(toState, fromState));
-        },
-        onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
-            dispatch(actions.transitionSuccess(toState, fromState));
-        },
-        onTransitionError: function onTransitionError(toState, fromState, err) {
-            dispatch(actions.transitionError(toState, fromState, err));
-        }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var routerPlugin = function routerPlugin(dispatch) {
+    return function (router) {
+        return {
+            name: 'REDUX_PLUGIN',
+            onTransitionStart: function onTransitionStart(toState, fromState) {
+                dispatch(actions.transitionStart(toState, fromState));
+            },
+            onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
+                dispatch(actions.transitionSuccess(toState, fromState));
+            },
+            onTransitionError: function onTransitionError(toState, fromState, err) {
+                dispatch(actions.transitionError(toState, fromState, err));
+            }
+        };
     };
+};
 
-    return plugin;
-}
-
-function replaceRoutesMiddleware(router) {
+var router5ReduxMiddleware = function router5ReduxMiddleware(router) {
     return function (store) {
         var dispatch = store.dispatch;
 
@@ -43,9 +40,14 @@ function replaceRoutesMiddleware(router) {
 
         return function (next) {
             return function (action) {
-                if (action.type === _actionTypes2['default'].NAVIGATE_TO) {
-                    router.navigate(action.name, action.params, action.opts);
-                } else if (action.type === _actionTypes2['default'].CANCEL_TRANSITION) {
+                if (action.type === actionTypes.NAVIGATE_TO) {
+                    var _action$payload = action.payload;
+                    var name = _action$payload.name;
+                    var params = _action$payload.params;
+                    var opts = _action$payload.opts;
+
+                    router.navigate(name, params, opts);
+                } else if (action.type === actionTypes.CANCEL_TRANSITION) {
                     router.cancel();
                 }
 
@@ -53,6 +55,6 @@ function replaceRoutesMiddleware(router) {
             };
         };
     };
-}
+};
 
-module.exports = exports['default'];
+exports.default = router5ReduxMiddleware;

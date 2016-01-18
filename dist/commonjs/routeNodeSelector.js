@@ -1,16 +1,16 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
 var _reselect = require('reselect');
 
-var _router5TransitionPath = require('router5.transition-path');
+var _router = require('router5.transition-path');
 
-var _router5TransitionPath2 = _interopRequireDefault(_router5TransitionPath);
+var _router2 = _interopRequireDefault(_router);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function routeNodeSelector(routeNode) {
     var reducerKey = arguments.length <= 1 || arguments[1] === undefined ? 'router' : arguments[1];
@@ -23,7 +23,7 @@ function routeNodeSelector(routeNode) {
         var route = _ref.route;
         var previousRoute = _ref.previousRoute;
 
-        var intersection = route ? (0, _router5TransitionPath2['default'])(route, previousRoute).intersection : '';
+        var intersection = route ? (0, _router2.default)(route, previousRoute).intersection : '';
         return { route: route, intersection: intersection };
     });
 
@@ -41,5 +41,4 @@ function routeNodeSelector(routeNode) {
     });
 }
 
-exports['default'] = routeNodeSelector;
-module.exports = exports['default'];
+exports.default = routeNodeSelector;
