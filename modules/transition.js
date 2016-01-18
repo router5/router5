@@ -1,14 +1,8 @@
-import transitionPath from 'router5.transition-path';
+import transitionPath, { nameToIDs } from 'router5.transition-path';
 import asyncProcess from './async';
 import constants from './constants';
 
 export default transition;
-
-const nameToIDs = name => {
-    return name.split('.').reduce((ids, name) => {
-        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-    }, []);
-};
 
 function transition(router, toState, fromState, callback) {
     let cancelled = false;
