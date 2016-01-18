@@ -1,3 +1,27 @@
+<a name="2.0.0-rc.1"></a>
+# 2.0.0-rc.1 (2016-01-18)
+
+
+### Features
+
+* feat: automatically register canActivate handlers of POJO routes passed to a router instance ([22d107e](https://github.com/router5/router5/commit/22d107e))
+
+
+### Bug Fixes
+
+* fix: log to console unhandled promise errors ([2442d64](https://github.com/router5/router5/commit/2442d64))
+
+
+### BREAKING CHANGES
+
+* additional arguments now apply to middleware functions, and context has been removed (router object, cancel function). Registered middleware are now a function taking a router instance and returning a middleware function. See docs for examples.
+* browser distribution now exports only one global variable called  which is an object containing  and
+* now accepts functions taking your router instance and returning an object with hooks.  won't be called anymore
+* registerComponent and deregisterComponent are now deprecated, use canDeactivate instead (a canDeactivate function is by default removed when segment is deactivated)
+* router5 package now exports Router5 as default and RouteNode, transitionPath, errCodes and loggerPlugin as named exports
+
+
+
 <a name="1.4.0"></a>
 # 1.4.0 (2016-01-06)
 
