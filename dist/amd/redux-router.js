@@ -355,7 +355,7 @@ var actions = Object.freeze({
     }
 
     var routerPlugin = function routerPlugin(dispatch) {
-        return function (router) {
+        return function () {
             return {
                 name: 'REDUX_PLUGIN',
                 onTransitionStart: function onTransitionStart(toState, fromState) {

@@ -2,7 +2,7 @@ import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
 const routerPlugin = dispatch =>
-    router => ({
+    () => ({
         name: 'REDUX_PLUGIN',
         onTransitionStart(toState, fromState) {
             dispatch(actions.transitionStart(toState, fromState));
@@ -31,6 +31,6 @@ const router5ReduxMiddleware = router =>
 
             return next(action);
         };
-    }
+    };
 
 export default router5ReduxMiddleware;

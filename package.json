@@ -1,6 +1,6 @@
 {
   "name": "redux-router5",
-  "version": "2.0.0",
+  "version": "2.0.0-rc.1",
   "description": "Router5 integration with redux",
   "main": "dist/commonjs/index.js",
   "jnext:main": "modules/index.js",
@@ -11,7 +11,7 @@
     "build:umd": "rollup -c rollup.config.js -f umd",
     "build": "npm run clean && npm run build:cjs && npm run build:amd && npm run build:umd",
     "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w",
+    "clog": "conventional-changelog -i CHANGELOG.md -w",
     "lint": "eslint modules",
     "release": "./scripts/release.js"
   },
@@ -51,7 +51,7 @@
     "yargs": "^3.27.0"
   },
   "peerDependencies": {
-    "router5": "^2.0.0",
+    "router5": "2.0.0-rc.1",
     "redux": "^3.0.0"
   },
   "dependencies": {

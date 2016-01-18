@@ -1,10 +1,15 @@
-<a name="2.0.0"></a>
-# [2.0.0](https://github.com/router5/redux-router5/compare/v1.1.2...v2.0.0) (2016-01-18)
+<a name="2.0.0-rc.1"></a>
+## [2.0.0-rc.1](https://github.com/router5/redux-router5/compare/v1.1.2...v2.0.0-rc.1) (2016-01-18)
 
 
 ### Bug Fixes
 
-* fix handling of transition start actions ([312f9b9](https://github.com/router5/redux-router5/commit/312f9b9))
+* fix: fix handling of transition start actions ([312f9b9](https://github.com/router5/redux-router5/commit/312f9b9))
+
+
+### BREAKING CHANGES
+
+* store actions are now FSA compliant (Flux Standard Action)
 
 
 
