@@ -19,12 +19,16 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         } else if (typeof res === 'boolean') {
             done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
-            res.then(resVal => done(null, resVal), (err) => {
-                if (err instanceof Error) {
-                    console.error(err.stack || err);
+            res.then(
+                resVal => {
+                    if (resVal instanceof Error) done(resVal, null);
+                    else done(null, resVal);
+                },
+                err => {
+                    if (err instanceof Error) console.error(err.stack || err);
+                    done(errVal);
                 }
-                done(errVal);
-            });
+            );
         }
         // else: wait for done to be called
 

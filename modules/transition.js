@@ -29,7 +29,10 @@ function transition(router, toState, fromState, callback) {
 
         asyncProcess(
             canDeactivateFunctionMap, { ...asyncBase, additionalArgs },
-            err => cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null)
+            err => {
+                const errObj = err ? (err instanceof Error ? { error: err } : { segment: err }) : null;
+                cb(err ? { code: constants.CANNOT_DEACTIVATE, ...errObj } : null);
+            }
         );
     };
 
@@ -40,7 +43,10 @@ function transition(router, toState, fromState, callback) {
 
         asyncProcess(
             canActivateFunctionMap, { ...asyncBase, additionalArgs },
-            err => cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null)
+            err => {
+                const errObj = err ? (err instanceof Error ? { error: err } : { segment: err }) : null;
+                cb(err ? { code: constants.CANNOT_ACTIVATE, ...errObj } : null);
+            }
         );
     };
 
