@@ -3,9 +3,11 @@ import * as actionTypes from './actionTypes';
 export function navigateTo(name, params = {}, opts = {}) {
     return {
         type: actionTypes.NAVIGATE_TO,
-        name,
-        params,
-        opts
+        payload: {
+            name,
+            params,
+            opts
+        }
     };
 }
 
@@ -24,24 +26,30 @@ export function clearErrors() {
 export function transitionStart(route, previousRoute) {
     return {
         type: actionTypes.TRANSITION_START,
-        route,
-        previousRoute
+        payload: {
+            route,
+            previousRoute
+        }
     };
 }
 
 export function transitionSuccess(route, previousRoute) {
     return {
         type: actionTypes.TRANSITION_SUCCESS,
-        route,
-        previousRoute
+        payload: {
+            route,
+            previousRoute
+        }
     };
 }
 
 export function transitionError(route, previousRoute, transitionError) {
     return {
         type: actionTypes.TRANSITION_ERROR,
-        route,
-        previousRoute,
-        transitionError
+        payload: {
+            route,
+            previousRoute,
+            transitionError
+        }
     };
 }

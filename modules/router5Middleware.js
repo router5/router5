@@ -21,10 +21,10 @@ const router5ReduxMiddleware = router =>
         router.setAdditionalArgs(store);
         router.usePlugin(routerPlugin(dispatch));
 
-
         return next => action => {
             if (action.type === actionTypes.NAVIGATE_TO) {
-                router.navigate(action.name, action.params, action.opts);
+                const { name, params, opts } = action.payload;
+                router.navigate(name, params, opts);
             } else if (action.type === actionTypes.CANCEL_TRANSITION) {
                 router.cancel();
             }

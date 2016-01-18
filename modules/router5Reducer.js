@@ -12,7 +12,7 @@ function router5Reducer(state = initialState, action) {
         case actionTypes.TRANSTION_START:
             return {
                 ...state,
-                transitionRoute: action.route,
+                transitionRoute: action.payload.route,
                 transitionError: null
             };
 
@@ -21,15 +21,15 @@ function router5Reducer(state = initialState, action) {
                 ...state,
                 transitionRoute: null,
                 transitionError: null,
-                previousRoute: action.previousRoute,
-                route: action.route
+                previousRoute: action.payload.previousRoute,
+                route: action.payload.route
             };
 
         case actionTypes.TRANSITION_ERROR:
             return {
                 ...state,
-                transitionRoute: action.route,
-                transitionError: action.transitionError
+                transitionRoute: action.payload.route,
+                transitionError: action.payload.transitionError
             };
 
         case actionTypes.CLEAR_ERRORS:
