@@ -26,12 +26,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 exports.default = transition;
 
-var nameToIDs = function nameToIDs(name) {
-    return name.split('.').reduce(function (ids, name) {
-        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-    }, []);
-};
-
 function transition(router, toState, fromState, callback) {
     var cancelled = false;
     var additionalArgs = router.getAdditionalArgs();
@@ -44,7 +38,7 @@ function transition(router, toState, fromState, callback) {
     var done = function done(err, state) {
         if (!err && !isCancelled() && router.options.autoCleanUp) {
             (function () {
-                var activeSegments = nameToIDs(toState.name);
+                var activeSegments = (0, _router.nameToIDs)(toState.name);
                 Object.keys(router._canDeact).forEach(function (name) {
                     if (activeSegments.indexOf(name) === -1) router._canDeact[name] = undefined;
                 });
@@ -68,7 +62,8 @@ function transition(router, toState, fromState, callback) {
         }, {});
 
         (0, _async2.default)(canDeactivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-            return cb(err ? { code: _constants2.default.CANNOT_DEACTIVATE, segment: err } : null);
+            var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
+            cb(err ? _extends({ code: _constants2.default.CANNOT_DEACTIVATE }, errObj) : null);
         });
     };
 
@@ -80,7 +75,8 @@ function transition(router, toState, fromState, callback) {
         }, {});
 
         (0, _async2.default)(canActivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-            return cb(err ? { code: _constants2.default.CANNOT_ACTIVATE, segment: err } : null);
+            var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
+            cb(err ? _extends({ code: _constants2.default.CANNOT_ACTIVATE }, errObj) : null);
         });
     };
 

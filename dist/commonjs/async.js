@@ -38,9 +38,10 @@ function asyncProcess(functions, _ref, callback) {
             done(res ? null : errVal);
         } else if (res && typeof res.then === 'function') {
             res.then(function (resVal) {
-                return done(null, resVal);
-            }, function () {
-                return done(errVal);
+                if (resVal instanceof Error) done(resVal, null);else done(null, resVal);
+            }, function (err) {
+                if (err instanceof Error) console.error(err.stack || err);
+                done(errVal);
             });
         }
         // else: wait for done to be called

@@ -10,10 +10,6 @@ var _routeNode = require('route-node');
 
 var _routeNode2 = _interopRequireDefault(_routeNode);
 
-var _router = require('router5.transition-path');
-
-var transitionPath = _interopRequireWildcard(_router);
-
 var _transition2 = require('./transition');
 
 var _transition3 = _interopRequireDefault(_transition2);
@@ -21,12 +17,6 @@ var _transition3 = _interopRequireDefault(_transition2);
 var _constants = require('./constants');
 
 var _constants2 = _interopRequireDefault(_constants);
-
-var _logger = require('./logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -54,6 +44,12 @@ var makeState = function makeState(name, params, path, _meta) {
 var addCanActivate = function addCanActivate(router) {
     return function (route) {
         if (route.canActivate) router.canActivate(route.name, route.canActivate);
+    };
+};
+
+var toFunction = function toFunction(val) {
+    return typeof val === 'function' ? val : function () {
+        return val;
     };
 };
 
@@ -420,20 +416,13 @@ var Router5 = (function () {
 
     }, {
         key: '_addListener',
-        value: function _addListener(name, cb, replace) {
+        value: function _addListener(name, cb) {
             this._cbs[name] = (this._cbs[name] || []).concat(cb);
             return this;
         }
-    }, {
-        key: '_toFunction',
-        value: function _toFunction(val) {
-            return typeof val === 'function' ? val : function () {
-                return val;
-            };
-        }
 
         /**
-         * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
+         * A function to determine whether or not a segment can be deactivated.
          * @param  {String}  name          The route segment full name
          * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
          * @return {[type]}
@@ -442,7 +431,7 @@ var Router5 = (function () {
     }, {
         key: 'canDeactivate',
         value: function canDeactivate(name, _canDeactivate) {
-            this._canDeact[name] = this._toFunction(_canDeactivate);
+            this._canDeact[name] = toFunction(_canDeactivate);
             return this;
         }
 
@@ -457,7 +446,7 @@ var Router5 = (function () {
     }, {
         key: 'canActivate',
         value: function canActivate(name, _canActivate) {
-            this._canAct[name] = this._toFunction(_canActivate);
+            this._canAct[name] = toFunction(_canActivate);
             return this;
         }
 
@@ -677,26 +666,6 @@ var Router5 = (function () {
 
     return Router5;
 })();
-
-/**
- * Error codes
- * @static
- * @type {Object}
- */
-
-Router5.ERR = _constants2.default;
-
-/**
- * An helper function to return instructions for a transition:
- * intersection route name, route names to deactivate, route names to activate
- * @static
- * @param  {Object} toState   The state to go to
- * @param  {Object} fromState The state to go from
- * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
- */
-Router5.transitionPath = transitionPath;
-
-Router5.loggerPlugin = _logger2.default;
 
 exports.default = Router5;
 module.exports = exports['default'];

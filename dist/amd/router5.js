@@ -101,9 +101,10 @@ define('router5', ['exports'], function (exports) { 'use strict';
                 done(res ? null : errVal);
             } else if (res && typeof res.then === 'function') {
                 res.then(function (resVal) {
-                    return done(null, resVal);
-                }, function () {
-                    return done(errVal);
+                    if (resVal instanceof Error) done(resVal, null);else done(null, resVal);
+                }, function (err) {
+                    if (err instanceof Error) console.error(err.stack || err);
+                    done(errVal);
                 });
             }
             // else: wait for done to be called
@@ -133,7 +134,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
         next();
     }
 
-    function nameToIDs$1(name) {
+    function nameToIDs(name) {
         return name.split('.').reduce(function (ids, name) {
             return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
         }, []);
@@ -149,8 +150,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
     }
 
     function transitionPath(toState, fromState) {
-        var fromStateIds = fromState ? nameToIDs$1(fromState.name) : [];
-        var toStateIds = nameToIDs$1(toState.name);
+        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+        var toStateIds = nameToIDs(toState.name);
         var maxI = Math.min(fromStateIds.length, toStateIds.length);
 
         function pointOfDifference() {
@@ -219,18 +220,6 @@ define('router5', ['exports'], function (exports) { 'use strict';
         };
     }
 
-
-
-    var transitionPath$1 = Object.freeze({
-        default: transitionPath
-    });
-
-    var nameToIDs = function nameToIDs(name) {
-        return name.split('.').reduce(function (ids, name) {
-            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-        }, []);
-    };
-
     function transition(router, toState, fromState, callback) {
         var cancelled = false;
         var additionalArgs = router.getAdditionalArgs();
@@ -267,7 +256,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
             }, {});
 
             asyncProcess(canDeactivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-                return cb(err ? { code: constants.CANNOT_DEACTIVATE, segment: err } : null);
+                var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
+                cb(err ? babelHelpers_extends({ code: constants.CANNOT_DEACTIVATE }, errObj) : null);
             });
         };
 
@@ -279,7 +269,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
             }, {});
 
             asyncProcess(canActivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-                return cb(err ? { code: constants.CANNOT_ACTIVATE, segment: err } : null);
+                var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
+                cb(err ? babelHelpers_extends({ code: constants.CANNOT_ACTIVATE }, errObj) : null);
             });
         };
 
@@ -932,6 +923,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
 
                 var name = segments.map(function (segment) {
                     return segment.name;
+                }).filter(function (name) {
+                    return name;
                 }).join('.');
                 var params = segments.params;
 
@@ -966,45 +959,6 @@ define('router5', ['exports'], function (exports) { 'use strict';
         return RouteNode;
     }();
 
-    /* istanbul ignore next */
-    function loggerPlugin(router) {
-        var startGroup = function startGroup() {
-            return console.group('Router transition');
-        };
-        var endGroup = function endGroup() {
-            return console.groupEnd('Router transition');
-        };
-
-        return {
-            name: 'LOGGER',
-            onStart: function onStart() {
-                console.info('Router started');
-            },
-            onStop: function onStop() {
-                console.info('Router stopped');
-            },
-            onTransitionStart: function onTransitionStart(toState, fromState) {
-                endGroup();
-                startGroup();
-                console.log('Transition started from state');
-                console.log(fromState);
-                console.log('To state');
-                console.log(toState);
-            },
-            onTransitionCancel: function onTransitionCancel(toState, fromState) {
-                console.warn('Transition cancelled');
-            },
-            onTransitionError: function onTransitionError(toState, fromState, err) {
-                console.warn('Transition error with code ' + err.code);
-                endGroup();
-            },
-            onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
-                console.log('Transition success');
-                endGroup();
-            }
-        };
-    }
-
     var noop = function noop() {};
     var ifNot = function ifNot(condition, error) {
         if (!condition) throw new Error(error);
@@ -1025,6 +979,12 @@ define('router5', ['exports'], function (exports) { 'use strict';
     var addCanActivate = function addCanActivate(router) {
         return function (route) {
             if (route.canActivate) router.canActivate(route.name, route.canActivate);
+        };
+    };
+
+    var toFunction = function toFunction(val) {
+        return typeof val === 'function' ? val : function () {
+            return val;
         };
     };
 
@@ -1390,20 +1350,13 @@ define('router5', ['exports'], function (exports) { 'use strict';
 
         }, {
             key: '_addListener',
-            value: function _addListener(name, cb, replace) {
+            value: function _addListener(name, cb) {
                 this._cbs[name] = (this._cbs[name] || []).concat(cb);
                 return this;
             }
-        }, {
-            key: '_toFunction',
-            value: function _toFunction(val) {
-                return typeof val === 'function' ? val : function () {
-                    return val;
-                };
-            }
 
             /**
-             * Shortcut to "registerComponent". It updates the "canDeactivate" status of a route segment.
+             * A function to determine whether or not a segment can be deactivated.
              * @param  {String}  name          The route segment full name
              * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
              * @return {[type]}
@@ -1412,7 +1365,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
         }, {
             key: 'canDeactivate',
             value: function canDeactivate(name, _canDeactivate) {
-                this._canDeact[name] = this._toFunction(_canDeactivate);
+                this._canDeact[name] = toFunction(_canDeactivate);
                 return this;
             }
 
@@ -1427,7 +1380,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
         }, {
             key: 'canActivate',
             value: function canActivate(name, _canActivate) {
-                this._canAct[name] = this._toFunction(_canActivate);
+                this._canAct[name] = toFunction(_canActivate);
                 return this;
             }
 
@@ -1647,27 +1600,50 @@ define('router5', ['exports'], function (exports) { 'use strict';
         return Router5;
     }();
 
-    /**
-     * Error codes
-     * @static
-     * @type {Object}
-     */
+    /* istanbul ignore next */
+    function loggerPlugin() {
+        var startGroup = function startGroup() {
+            return console.group('Router transition');
+        };
+        var endGroup = function endGroup() {
+            return console.groupEnd('Router transition');
+        };
 
-    Router5.ERR = constants;
-
-    /**
-     * An helper function to return instructions for a transition:
-     * intersection route name, route names to deactivate, route names to activate
-     * @static
-     * @param  {Object} toState   The state to go to
-     * @param  {Object} fromState The state to go from
-     * @return {Object}           An object containing 'intersection', 'toActivate' and 'toDeactivate' keys
-     */
-    Router5.transitionPath = transitionPath$1;
-
-    Router5.loggerPlugin = loggerPlugin;
+        return {
+            name: 'LOGGER',
+            onStart: function onStart() {
+                console.info('Router started');
+            },
+            onStop: function onStop() {
+                console.info('Router stopped');
+            },
+            onTransitionStart: function onTransitionStart(toState, fromState) {
+                endGroup();
+                startGroup();
+                console.log('Transition started from state');
+                console.log(fromState);
+                console.log('To state');
+                console.log(toState);
+            },
+            onTransitionCancel: function onTransitionCancel() {
+                console.warn('Transition cancelled');
+            },
+            onTransitionError: function onTransitionError(toState, fromState, err) {
+                console.warn('Transition error with code ' + err.code);
+                endGroup();
+            },
+            onTransitionSuccess: function onTransitionSuccess() {
+                console.log('Transition success');
+                endGroup();
+            }
+        };
+    }
 
     exports['default'] = Router5;
+    exports.Router5 = Router5;
     exports.RouteNode = RouteNode;
+    exports.loggerPlugin = loggerPlugin;
+    exports.errCodes = constants;
+    exports.transitionPath = transitionPath;
 
 });

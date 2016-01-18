@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 /* istanbul ignore next */
-function loggerPlugin(router) {
+function loggerPlugin() {
     var startGroup = function startGroup() {
         return console.group('Router transition');
     };
@@ -28,14 +28,14 @@ function loggerPlugin(router) {
             console.log('To state');
             console.log(toState);
         },
-        onTransitionCancel: function onTransitionCancel(toState, fromState) {
+        onTransitionCancel: function onTransitionCancel() {
             console.warn('Transition cancelled');
         },
         onTransitionError: function onTransitionError(toState, fromState, err) {
             console.warn('Transition error with code ' + err.code);
             endGroup();
         },
-        onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
+        onTransitionSuccess: function onTransitionSuccess() {
             console.log('Transition success');
             endGroup();
         }
