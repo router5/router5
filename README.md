@@ -21,7 +21,7 @@ npm install --save react-router5
 ### Requirements
 
 - react >= __0.14.0__
-- router5 >= __1.0.0__
+- router5 >= __2.0.0__
 
 ### What does this package export?
 
@@ -104,7 +104,7 @@ function Menu(props) {
 export default Menu;
 ```
 
-__The Link component is the combination of `BaseLink` and `withRoute`__
+__The `Link `component is `BaseLink` and `withRoute` composed together__
 
 ### BaseLink component
 
