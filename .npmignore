@@ -1,6 +1,7 @@
 **/.*
+coverage
 scripts
-test
+tests
 node_modules
 npm-debug.log
 *.md
