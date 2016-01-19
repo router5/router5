@@ -1,4 +1,4 @@
-import { Router5 } from 'router5'
+import Router5 from 'router5'
 import historyPlugin from 'router5-history';
 
 export default function createRouter(routes) {
@@ -12,7 +12,6 @@ export default function createRouter(routes) {
         .addNode('compose',       '/compose')
         .addNode('contacts',      '/contacts')
         // Plugins
-        .usePlugin(Router5.loggerPlugin())
         .usePlugin(historyPlugin());
 
     return router;

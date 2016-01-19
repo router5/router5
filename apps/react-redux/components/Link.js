@@ -4,7 +4,10 @@ function Link(props) {
     const { name, params, options, router, navigateTo } = props;
 
     const href = router.buildUrl(name, params);
-    const onClick = () => navigateTo(name, params, options);
+    const onClick = (evt) => {
+        evt.preventDefault();
+        navigateTo(name, params, options);
+    };
     const className = router.isActive(name, params) ? 'active' : '';
 
     return <a { ...{ href, onClick, className } }>{ props.children }</a>

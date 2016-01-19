@@ -1,4 +1,4 @@
-import { Router5 } from 'router5';
+import Router5, { loggerPlugin } from 'router5';
 import listenersPlugin from 'router5-listeners';
 import historyPlugin from 'router5-history';
 
@@ -12,7 +12,7 @@ const router = new Router5()
     .addNode('compose',       '/compose')
     .addNode('contacts',      '/contacts')
     // Plugins
-    .usePlugin(Router5.loggerPlugin())
+    .usePlugin(loggerPlugin)
     .usePlugin(listenersPlugin())
     .usePlugin(historyPlugin());
 

@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "build:prod": "NODE_ENV=production webpack"
+    "build:prod": "NODE_ENV=production webpack",
+    "build:all": "webpack --app=deku && webpack --app=deku-redux && webpack --app=react && webpack --app=react-redux",
+    "build:prod:all": "NODE_ENV=production npm run build:all"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "babel-core": "^5.8.25",
     "babel-loader": "^5.3.2",
+    "redux-logger": "^2.3.2",
     "webpack": "^1.12.2",
     "yargs": "^3.29.0"
   },
@@ -28,19 +31,19 @@
     "chance": "^0.7.6",
     "deku": "^0.5.6",
     "deku-redux": "^1.0.0",
-    "deku-router5": "^1.0.0",
+    "deku-router5": "router5/deku-router5",
     "lodash.find": "^3.2.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-redux": "^4.0.0",
-    "react-router5": "^1.0.0",
+    "react-router5": "^2.0.0",
     "redux": "^3.0.3",
-    "redux-router5": "^1.0.0",
+    "redux-router5": "^2.0.0",
     "redux-thunk": "^1.0.0",
     "reselect": "^2.0.0",
-    "router5": "^1.2.0",
-    "router5-history": "^1.0.1",
-    "router5-listeners": "^1.0.0",
+    "router5": "^2.0.0",
+    "router5-history": "^2.0.0",
+    "router5-listeners": "^2.0.0",
     "virtual-element": "^1.2.0"
   }
 }

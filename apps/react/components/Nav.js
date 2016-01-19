@@ -1,12 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router5';
+import { BaseLink, withRoute } from 'react-router5';
 
-export default function Nav(props) {
+function Nav(props) {
+    const { router } = props;
+
     return (
         <nav>
-            <Link routeName='inbox' routeOptions={{ reload: true }}>Inbox</Link>
-            <Link routeName='compose'>Compose</Link>
-            <Link routeName='contacts'>Contacts</Link>
+            <BaseLink router={ router } routeName='inbox' routeOptions={{ reload: true }}>Inbox</BaseLink>
+            <BaseLink router={ router } routeName='compose'>Compose</BaseLink>
+            <BaseLink router={ router } routeName='contacts'>Contacts</BaseLink>
         </nav>
     );
 }
+
+export default withRoute(Nav);
