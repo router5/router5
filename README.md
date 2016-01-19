@@ -18,14 +18,14 @@ and to react to them. Afterall, why treat route changes any different than data 
     <a href="http://slides.com/thomasroch/deck"><img alt="Router5 slides" src="https://raw.githubusercontent.com/router5/router5.github.io/master/img/slices_preview.png" /></a>
 </p>
 
-To get started, look here: [Get started](http://router5.github.io/docs/get-started.html)
+To get started, look here: __[Understanding router5](http://router5.github.io/docs/understanding-router5.html)__ and __[Get started](http://router5.github.io/docs/get-started.html)__.
 
 ### Features
 
 - __Use of hash (#)__
 - __Default start route__: a default route to navigate to on load if the current URL doesn't match any route. Similar to `$routeProvider.otherwise()` in _Angular ngRoute_ module.
 - __Start__ and __stop__
-- __Nested named routes__: routes are identified by names and parameters so you don't have to manipulate URLs
+- __Nested named routes__: routes are identified by names and path (containing parameters) so you don't have to manipulate URLs, even query parameters don't need to be specified on leaves only.
 directly. Routes can be nested, introducing the notion of _route segments_.
 - __Segments activation__: you can control whether or not a route can be accessed by specifying a `canActivate`
 function per node. Supports asynchronous results.
@@ -40,6 +40,7 @@ function per node. Supports asynchronous results.
 
 - __[router5-listeners](https://github.com/router5/router5-listeners)__: allows you to add route change and node listenerns. Node listeners are triggered if that named route node is the node a component tree needs to be re-rendered from.
 - __[router5-history](https://github.com/router5/router5-history)__: updates your browser URL and state using HTML5 history API and listens to popstate events. Supports use of hash in URL, but session history is still required: deciding to use a hash or not is therefore not a decision based on browser support, but rather a decision based on server capabilities!
+- __[router5-persistent-params](https://github.com/router5/router5-persistent-params)__: allows some query parameters to persist and survive navigation, without having to manually specify them for each transition.
 
 
 ### Guides
@@ -53,6 +54,7 @@ function per node. Supports asynchronous results.
 - [Transition](http://router5.github.io/docs/transition.html)
 - [Using plugins](http://router5.github.io/docs/plugins.html)
 - [Universal applications](http://router5.github.io/docs/universal-applications.html)
+- [Async data](http://router5.github.io/docs/async-data.html)
 
 
 ### API
