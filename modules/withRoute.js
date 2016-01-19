@@ -10,6 +10,7 @@ function withRoute(BaseComponent) {
                 previousRoute: null,
                 route: this.router.getState()
             };
+            this.listener = this.listener.bind(this);
         }
 
         componentDidMount() {
@@ -19,11 +20,18 @@ function withRoute(BaseComponent) {
             );
 
             this.listener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
-            this.router.addListener(this.nodeListener);
+            this.router.addListener(this.listener);
         }
 
         componentWillUnmout() {
             this.router.removeListener(this.listener);
+        }
+
+        listener(toState, fromState) {
+            this.setState({
+                previousRoute: fromState,
+                route: toState
+            });
         }
 
         render() {

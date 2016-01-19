@@ -32,6 +32,7 @@ function withRoute(BaseComponent) {
                 previousRoute: null,
                 route: _this.router.getState()
             };
+            _this.listener = _this.listener.bind(_this);
             return _this;
         }
 
@@ -45,12 +46,20 @@ function withRoute(BaseComponent) {
                 this.listener = function (toState, fromState) {
                     return _this2.setState({ previousRoute: fromState, route: toState });
                 };
-                this.router.addListener(this.nodeListener);
+                this.router.addListener(this.listener);
             }
         }, {
             key: 'componentWillUnmout',
             value: function componentWillUnmout() {
                 this.router.removeListener(this.listener);
+            }
+        }, {
+            key: 'listener',
+            value: function listener(toState, fromState) {
+                this.setState({
+                    previousRoute: fromState,
+                    route: toState
+                });
             }
         }, {
             key: 'render',
