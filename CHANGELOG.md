@@ -1,3 +1,9 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/router5/router5/compare/v2.0.0...v2.0.1) (2016-01-19)
+
+
+
+
 <a name="2.0.0-rc.1"></a>
 # 2.0.0-rc.1 (2016-01-18)
 

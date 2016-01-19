@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "modules/index.js",
