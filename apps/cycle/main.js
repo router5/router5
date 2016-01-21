@@ -30,7 +30,7 @@ function main(sources) {
                 div([
                     label('Name:'),
                     input('.field', {attributes: {type: 'text'}}),
-                    h1('Hello ' + name + ', you are on route ' + route.name),
+                    h1('Hello ' + name + ', you are on route ' + (route ? route.name : '')),
                     a({ href: sources.router.buildUrl('inbox') }, 'Inbox'),
                     a({ href: sources.router.buildUrl('compose') }, 'Compose')
                 ])

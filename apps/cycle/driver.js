@@ -2,7 +2,7 @@ import Rx from 'rx';
 import transitionPath from 'router5.transition-path';
 
 const sourceMethods = [ 'buildUrl', 'buildPath', 'matchUrl', 'matchPath', 'areStatesDescendants', 'isActive' ];
-const sinkMethods = [ 'start', 'stop', 'navigate', 'canActivate', 'canDeactivate' ];
+const sinkMethods = [ 'cancel', 'start', 'stop', 'navigate', 'canActivate', 'canDeactivate' ];
 
 const normaliseRequest = (req) => {
     const normReq = Array.isArray(req) || typeof req === 'string'
@@ -53,13 +53,18 @@ const makeRouterDriver = (router, autostart = true) => {
         transitionError$: sliceSlate('transitionError')
     };
 
-    const route$ = observables.transitionSuccess$
-        .map(({ toState, fromState }) => toState)
-        .startWith(router.getState() || {})
+    const routeState$ = observables.transitionSuccess$
+        .map(({ toState, fromState }) => {
+            const { intersection } =  transitionPath(toState, fromState);
+            return { intersection, route: toState };
+        })
+        .startWith({ route: router.getState(), intersection: '' })
 
-    const node$ = observables.transitionSuccess$
-        .map(({ toState, fromState }) => transitionPath(toState, fromState).intersection)
-        .startWith('')
+    const node$ = routeState$.map(({ intersection }) => intersection);
+    const route$ = routeState$.map(({ route }) => route);
+    const routeNode$ = node => routeState$
+        .filter(({ intersection }) => intersection === node)
+        .map(({ route }) => route);
 
     const sourceApi = sourceMethods.reduce(
         (methods, method) => ({ ...methods, [method]: (...args) => router[method].apply(router, args) }),
@@ -78,7 +83,8 @@ const makeRouterDriver = (router, autostart = true) => {
             ...sourceApi,
             ...observables,
             route$,
-            node$
+            node$,
+            routeNode$
         };
     };
 };
