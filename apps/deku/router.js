@@ -12,7 +12,7 @@ const router = new Router5()
     .addNode('compose',       '/compose')
     .addNode('contacts',      '/contacts')
     // Plugins
-    .usePlugin(loggerPlugin)
+    .usePlugin(loggerPlugin())
     .usePlugin(listenersPlugin())
     .usePlugin(historyPlugin());
 
