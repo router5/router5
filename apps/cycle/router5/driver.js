@@ -72,12 +72,12 @@ const makeRouterDriver = (router, autostart = true) => {
         transitionError$: sliceSlate('transitionError')
     };
 
-    // Error
+    // Transition Route
     const transitionRoute$ = transition$
-        .map(_ => _.type === 'transitionStart' ? _.error : null)
+        .map(_ => _.type === 'transitionStart' ? _.toState : null)
         .startWith(null);
 
-    // transitionRoute
+    // Error
     const error$ = transition$
         .map(_ => _.type === 'transitionError' ? _.error : null)
         .startWith(null);
