@@ -16,7 +16,8 @@ function main(sources) {
     const mainSinks = Main(sources);
     const main$ = mainSinks.DOM;
 
-    const vtree$ = nav$.withLatestFrom(
+    const vtree$ = Rx.Observable.combineLatest(
+        nav$,
         main$,
         (nav, main) => div('.mail-client', [
             h('aside', nav),

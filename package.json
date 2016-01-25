@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "build:prod": "NODE_ENV=production webpack",
-    "build:all": "webpack --app=deku && webpack --app=deku-redux && webpack --app=react && webpack --app=react-redux",
+    "build:all": "webpack --app=deku && webpack --app=deku-redux && webpack --app=react && webpack --app=react-redux && webpack --app=cycle",
     "build:prod:all": "NODE_ENV=production npm run build:all"
   },
   "repository": {
