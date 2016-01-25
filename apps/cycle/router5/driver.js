@@ -1,7 +1,7 @@
 import Rx from 'rx';
 import transitionPath from 'router5.transition-path';
 
-const sourceMethods = [ 'buildUrl', 'buildPath', 'matchUrl', 'matchPath', 'areStatesDescendants', 'isActive' ];
+const sourceMethods = [ 'getState', 'buildUrl', 'buildPath', 'matchUrl', 'matchPath', 'areStatesDescendants', 'isActive' ];
 const sinkMethods = [ 'cancel', 'start', 'stop', 'navigate', 'canActivate', 'canDeactivate' ];
 
 /**
@@ -68,22 +68,23 @@ const makeRouterDriver = (router, autostart = true) => {
         transitionError$: sliceSlate('transitionError')
     };
 
-
     const routeState$ = observables.transitionSuccess$
         .map(({ toState, fromState }) => {
             const { intersection } =  transitionPath(toState, fromState);
             return { intersection, route: toState };
         })
-        .startWith({ route: router.getState(), intersection: '' })
+        .startWith({ route: router.getState(), intersection: '' });
 
     // Create a route observable
-    const route$ = routeState$.map(({ route }) => route);
+    const route$ = routeState$.map(({ route }) => route)
+        .startWith(router.getState());
 
     // Create a route node observable
     const routeNode$ = node =>
         routeState$
             .filter(({ intersection }) => intersection === node)
-            .map(({ route }) => route);
+            .map(({ route }) => route)
+            .startWith(router.getState());
 
     // Source API methods ready to be consumed
     const sourceApi = sourceMethods.reduce(

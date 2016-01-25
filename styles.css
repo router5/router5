@@ -6,6 +6,7 @@ html {
 }
 
 a {
+    color: inherit;
     text-decoration: none;
 }
 
@@ -83,13 +84,13 @@ ul.mail-list > li:hover {
     background-color: #eee;
 }
 
-ul.mail-list > li > h4,
+ul.mail-list > li h4,
 section.mail > h4 {
     padding: .5rem 1rem 0;
     margin: 0;
 }
 
-ul.mail-list > li > p,
+ul.mail-list > li p,
 section.mail > p {
     margin: 0;
     padding: 0 1rem .5rem;
@@ -97,8 +98,8 @@ section.mail > p {
     font-size: 0.85rem;
 }
 
-ul.mail-list > li > h4,
-ul.mail-list > li > p {
+ul.mail-list > li h4,
+ul.mail-list > li p {
     overflow: hidden;
     width: calc(100% - 2rem);
     white-space: nowrap;
