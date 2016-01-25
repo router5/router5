@@ -10,6 +10,7 @@ const sinkMethods = [ 'cancel', 'start', 'stop', 'navigate', 'canActivate', 'can
  * @return {Array}            An array containing a method name and its arguments
  */
 const normaliseRequest = (req) => {
+    console.log(req);
     const normReq = Array.isArray(req) || typeof req === 'string'
         ? [].concat(req)
         : [];
@@ -72,9 +73,13 @@ const makeRouterDriver = (router, autostart = true) => {
     };
 
     // Error
+    const transitionRoute$ = transition$
+        .map(_ => _.type === 'transitionStart' ? _.error : null)
+        .startWith(null);
+
+    // transitionRoute
     const error$ = transition$
-        .filter(_ => _.type === 'transitionStart' || _.type === 'transitionError')
-        .map(_ => _.type === 'transitionStart' ? null : _.error)
+        .map(_ => _.type === 'transitionError' ? _.error : null)
         .startWith(null);
 
     const routeState$ = observables.transitionSuccess$
@@ -114,6 +119,7 @@ const makeRouterDriver = (router, autostart = true) => {
             ...observables,
             route$,
             routeNode$,
+            transitionRoute$,
             error$
         };
     };

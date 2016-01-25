@@ -7,7 +7,7 @@ const createRouter = (routes) => {
         .add(routes)
         .setOption('useHash', true)
         .setOption('defaultRoute', 'inbox')
-        // .usePlugin(loggerPlugin())
+        .usePlugin(loggerPlugin())
         .usePlugin(historyPlugin())
         .usePlugin(linkInterceptorPlugin());
 };
