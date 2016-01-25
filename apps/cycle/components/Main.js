@@ -7,34 +7,35 @@ import Compose from './Compose';
 function Main(sources) {
     const routerSource = sources.router;
 
-    const main$ = routerSource
+    const routeComponent$ = routerSource
         .routeNode$('')
-        .flatMapLatest(route => {
-            // Temp fix
+        .map(route => {
+            const defaultComponent = {
+                DOM: Rx.Observable.of(div('Route component not implemented'))
+            };
+
             if (!route) {
-                return Rx.Observable.of(div('Missing route'));
+                return defaultComponent;
             }
-            // End temp fix
 
             const startsWith = startsWithSegment(route);
 
             if (startsWith('inbox')) {
-                const inboxSinks = Inbox(sources);
-                const inbox$ = inboxSinks.DOM;
-                return inbox$;
+                return Inbox(sources);
             }
 
             if (startsWith('compose')) {
-                const composeSinks = Compose(sources);
-                const compose$ = composeSinks.DOM;
-                return compose$;
+                return Compose(sources);
             }
 
-            return Rx.Observable.of(div('Route component not implemented'));
+            return defaultComponent;
         });
 
     return {
-        DOM: main$
+        DOM: routeComponent$
+            .flatMapLatest(component => component.DOM),
+        router: routeComponent$
+            .flatMapLatest(component => component.router || Rx.Observable.empty())
     };
 };
 

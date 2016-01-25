@@ -33,7 +33,10 @@ const normaliseRequest = (req) => {
 const makeRouterDriver = (router, autostart = true) => {
     // Observe router transitions
     const transition$ = Rx.Observable.create(observer => {
-        const pushState = type => (toState, fromState) => observer.onNext({ type, toState, fromState });
+        const pushState = (type, isError) => (toState, fromState, ...args) => {
+            const routerEvt = { type, toState, fromState };
+            observer.onNext(isError ? { ...routerEvt, error: args[0] } : routerEvt);
+        };
         const push = type => () => observer.onNext({ type });
 
         // A Router5 plugin to push any router event to the observer
@@ -42,7 +45,7 @@ const makeRouterDriver = (router, autostart = true) => {
             onStart: push('start'),
             onStop: push('stop'),
             onTransitionSuccess: pushState('transitionSuccess'),
-            onTransitionError:  pushState('transitionError'),
+            onTransitionError:  pushState('transitionError', true),
             onTransitionStart:  pushState('transitionStart'),
             onTransitionCancel: pushState('transitionCancel')
         });
@@ -67,6 +70,12 @@ const makeRouterDriver = (router, autostart = true) => {
         transitionSuccess$: sliceSlate('transitionSuccess'),
         transitionError$: sliceSlate('transitionError')
     };
+
+    // Error
+    const error$ = transition$
+        .filter(_ => _.type === 'transitionStart' || _.type === 'transitionError')
+        .map(_ => _.type === 'transitionStart' ? null : _.error)
+        .startWith(null);
 
     const routeState$ = observables.transitionSuccess$
         .map(({ toState, fromState }) => {
@@ -104,7 +113,8 @@ const makeRouterDriver = (router, autostart = true) => {
             ...sourceApi,
             ...observables,
             route$,
-            routeNode$
+            routeNode$,
+            error$
         };
     };
 };

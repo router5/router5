@@ -25,11 +25,10 @@ function main(sources) {
         ])
     );
 
-    const sinks = {
-        DOM: vtree$
+    return {
+        DOM: vtree$,
+        router: mainSinks.router
     };
-
-    return sinks;
 }
 
 function makeDataDriver() {
