@@ -708,22 +708,24 @@
                     originalRoute = route;
                     route = new RouteNode(route.name, route.path, route.children);
                 }
-                // Check duplicated routes
-                if (this.children.map(function (child) {
-                    return child.name;
-                }).indexOf(route.name) !== -1) {
-                    throw new Error('Alias "' + route.name + '" is already defined in route node');
-                }
-                // Check duplicated paths
-                if (this.children.map(function (child) {
-                    return child.path;
-                }).indexOf(route.path) !== -1) {
-                    throw new Error('Path "' + route.path + '" is already defined in route node');
-                }
 
                 var names = route.name.split('.');
 
                 if (names.length === 1) {
+                    // Check duplicated routes
+                    if (this.children.map(function (child) {
+                        return child.name;
+                    }).indexOf(route.name) !== -1) {
+                        throw new Error('Alias "' + route.name + '" is already defined in route node');
+                    }
+
+                    // Check duplicated paths
+                    if (this.children.map(function (child) {
+                        return child.path;
+                    }).indexOf(route.path) !== -1) {
+                        throw new Error('Path "' + route.path + '" is already defined in route node');
+                    }
+
                     this.children.push(route);
                     // Push greedy spats to the bottom of the pile
                     this.children.sort(function (left, right) {
