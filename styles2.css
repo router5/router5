@@ -1,0 +1,57 @@
+
+/**
+ * Example 2
+ */
+
+.box {
+    position: absolute:
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.box > aside {
+    background-color: #ddd;
+    position: absolute;
+    top: 0;
+    width: 40%;
+    bottom: 0;
+    left: 0;
+}
+
+.box > main {
+    position: absolute;
+    display: flex;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 40%;
+}
+
+.box > aside a {
+    padding: 10px 40px 10px 20px;
+    display: block;
+    text-align: right;
+}
+
+.box > aside a.active {
+    color: white;
+    background-color: black;
+}
+
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.item {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 30px;
+    color: white;
+}

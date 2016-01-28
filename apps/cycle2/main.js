@@ -25,7 +25,9 @@ function main(sources) {
 
             const Route = segment => div({ className: 'column' }, [
                 routeElm,
-                segment ? div({ className: 'item', style: randomBgColor() }, segment) : div({ className: 'item' }, '')
+                segment
+                    ? div({ className: 'item', style: randomBgColor() }, segment)
+                    : div({ className: 'item' }, '_')
             ]);
 
             return sources.router
