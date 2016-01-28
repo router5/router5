@@ -83,11 +83,11 @@ const makeRouterDriver = (router, autostart = true) => {
         .startWith(null);
 
     const routeState$ = observables.transitionSuccess$
+        .filter(({ toState }) => toState !== null)
         .map(({ toState, fromState }) => {
             const { intersection } =  transitionPath(toState, fromState);
             return { intersection, route: toState };
-        })
-        .startWith({ route: router.getState(), intersection: '' });
+        });
 
     // Create a route observable
     const route$ = routeState$.map(({ route }) => route)
@@ -98,7 +98,8 @@ const makeRouterDriver = (router, autostart = true) => {
         routeState$
             .filter(({ intersection }) => intersection === node)
             .map(({ route }) => route)
-            .startWith(router.getState());
+            .startWith(router.getState())
+            .filter(route => route !== null);
 
     // Source API methods ready to be consumed
     const sourceApi = sourceMethods.reduce(

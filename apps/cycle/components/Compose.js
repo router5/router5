@@ -4,11 +4,11 @@ import Rx from 'rx';
 function Compose(sources) {
     const initialState = { title: '', message: '' };
 
-    const title$ = sources.DOM.select('input')
+    const title$ = sources.DOM.select('.mail-title')
         .events('input')
         .map(evt => evt.target.value);
 
-    const message$ = sources.DOM.select('textarea')
+    const message$ = sources.DOM.select('.mail-message')
         .events('input')
         .map(evt => evt.target.value);
 
@@ -17,15 +17,15 @@ function Compose(sources) {
             title$.startWith(''),
             message$.startWith(''),
             (title, message) => ({ title, message })
-        );
+        ).map(_ => { console.log(_); return _; });
 
     const compose$ = Rx.Observable.combineLatest(
             messageAndTitle$,
-            sources.router.error$,
+            sources.router.error$.startWith(''),
             ({ title, message }, routerError) => div({ className: 'compose' }, [
                 h4('Compose a new message'),
-                input({ name: 'title', value: title }),
-                textarea({ name: 'message', value: message }),
+                input({ className: 'mail-title', name: 'title', value: title }),
+                textarea({ className: 'mail-message', name: 'message', value: message }),
                 routerError ? p('Clear inputs before continuing') : null
             ])
         );
