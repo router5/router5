@@ -17,11 +17,11 @@ function Compose(sources) {
             title$.startWith(''),
             message$.startWith(''),
             (title, message) => ({ title, message })
-        ).map(_ => { console.log(_); return _; });
+        );
 
     const compose$ = Rx.Observable.combineLatest(
             messageAndTitle$,
-            sources.router.error$.startWith(''),
+            sources.router.error$,
             ({ title, message }, routerError) => div({ className: 'compose' }, [
                 h4('Compose a new message'),
                 input({ className: 'mail-title', name: 'title', value: title }),
