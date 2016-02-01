@@ -499,7 +499,7 @@ class Router5 {
                 return;
             }
 
-            this._invokeListeners('$$success', toState, fromState, opts);
+            this._invokeListeners('$$success', state, fromState, opts);
             done(null, state);
         });
     }
