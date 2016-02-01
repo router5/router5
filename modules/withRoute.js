@@ -23,7 +23,7 @@ function withRoute(BaseComponent) {
             this.router.addListener(this.listener);
         }
 
-        componentWillUnmout() {
+        componentWillUnmount() {
             this.router.removeListener(this.listener);
         }
 
