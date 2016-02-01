@@ -1605,7 +1605,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
                         return;
                     }
 
-                    _this7._invokeListeners('$$success', toState, fromState, opts);
+                    _this7._invokeListeners('$$success', state, fromState, opts);
                     done(null, state);
                 });
             }

@@ -1,3 +1,13 @@
+<a name="2.0.4"></a>
+## [2.0.4](https://github.com/router5/router5/compare/v2.0.3...v2.0.4) (2016-02-01)
+
+
+### Bug Fixes
+
+* pass up-to-date transition state object to success callbacks ([2499410](https://github.com/router5/router5/commit/2499410)), closes [#45](https://github.com/router5/router5/issues/45)
+
+
+
 <a name="2.0.3"></a>
 ## [2.0.3](https://github.com/router5/router5/compare/v2.0.2...v2.0.3) (2016-01-27)
 

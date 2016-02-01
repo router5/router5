@@ -658,7 +658,7 @@ var Router5 = (function () {
                     return;
                 }
 
-                _this7._invokeListeners('$$success', toState, fromState, opts);
+                _this7._invokeListeners('$$success', state, fromState, opts);
                 done(null, state);
             });
         }
