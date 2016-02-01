@@ -190,8 +190,8 @@
                     this.router.addListener(this.listener);
                 }
             }, {
-                key: 'componentWillUnmout',
-                value: function componentWillUnmout() {
+                key: 'componentWillUnmount',
+                value: function componentWillUnmount() {
                     this.router.removeListener(this.listener);
                 }
             }, {

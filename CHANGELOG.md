@@ -1,3 +1,13 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/router5/react-router5/compare/v2.0.0...v2.0.1) (2016-02-01)
+
+
+### Bug Fixes
+
+* fix withRoute lifecyle method name ([4f8aee8](https://github.com/router5/react-router5/commit/4f8aee8))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/router5/react-router5/compare/v2.0.0-rc.2...v2.0.0) (2016-01-19)
 
