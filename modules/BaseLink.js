@@ -23,7 +23,7 @@ class BaseLink extends Component {
             }
         }
 
-        let comboKey = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
+        let comboKey = evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
 
         if (evt.button === 0 && !comboKey) {
             evt.preventDefault();
