@@ -49,7 +49,7 @@ var BaseLink = (function (_Component) {
                 }
             }
 
-            var comboKey = event.metaKey || event.altKey || event.ctrlKey || event.shiftKey;
+            var comboKey = evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
 
             if (evt.button === 0 && !comboKey) {
                 evt.preventDefault();
