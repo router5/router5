@@ -192,9 +192,7 @@ class Router5 {
             if (startState) {
                 this.lastStateAttempt = startState;
                 this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
-                    if (!err) {
-                        cb(null, state);
-                    }
+                    if (!err) cb(null, state);
                     else if (opts.defaultRoute) navigateToDefault();
                     else cb(err, null, false);
                 });
