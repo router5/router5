@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "modules/index.js",
@@ -36,7 +36,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "~1.3.2",
+    "route-node": "~1.3.3",
     "router5.transition-path": "~3.0.0"
   },
   "devDependencies": {

@@ -633,17 +633,24 @@ define('router5', ['exports'], function (exports) { 'use strict';
 
         var remainingSearchParams = searchPart.split('&').reduce(function (obj, p) {
             var splitParam = p.split('=');
-            var hasBrackets = bracketTest.test(splitParam[0]);
             var key = splitParam[0];
+            var hasBrackets = bracketTest.test(key);
             var val = decodeURIComponent(splitParam[1]);
             val = hasBrackets ? [val] : val;
 
-            if (params.indexOf(withoutBrackets(key)) === -1) obj[key] = val || '';
+            if (params.indexOf(withoutBrackets(key)) === -1) {
+                if (obj[key] === undefined) obj[key] = val || '';else obj[key] = [].concat(obj[key], val);
+            }
+
             return obj;
         }, {});
 
-        var remainingSearchPart = Object.keys(remainingSearchParams).map(function (p) {
-            return [p].concat(isSerialisable(remainingSearchParams[p]) ? encodeURIComponent(remainingSearchParams[p]) : []);
+        var remainingSearchPart = Object.keys(remainingSearchParams).reduce(function (acc, param) {
+            return acc.concat([].concat(remainingSearchParams[param]).map(function (p) {
+                return { key: param, val: p };
+            }));
+        }, []).map(function (p) {
+            return [p.key].concat(isSerialisable(p.val) ? encodeURIComponent(p.val) : []);
         }).map(function (p) {
             return p.join('=');
         }).join('&');
