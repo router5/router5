@@ -13,7 +13,7 @@ const ordersRoute = new RouteNode('orders', '/orders', [
 
 const sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
     new RouteNode('view', '/view/:id'),
-    new RouteNode('query', '/query?param2&param3')
+    new RouteNode('query', '/query?param1[]&param2&param3')
 ]);
 
 export default function createRouter(base, useHash, hashPrefix) {

@@ -146,8 +146,12 @@ function testRouter(useHash) {
 
         it('should start with the start route if matched', function (done) {
             router.stop();
-            router.start('/users/view/123', function (err, state) {
-                expect(omitMeta(state)).to.eql({name: 'users.view', params: {id: '123'}, path: '/users/view/123'});
+            router.start('/section123/query?param1[]=1__1&param1[]=2__2', function (err, state) {
+                expect(omitMeta(state)).to.eql({
+                    name: 'section.query',
+                    params: {section: 'section123', param1: [ '1__1', '2__2']},
+                    path: '/section123/query?param1[]=1__1&param1[]=2__2'
+                });
                 done();
             });
         });
