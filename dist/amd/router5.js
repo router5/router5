@@ -1220,9 +1220,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
                         if (startState) {
                             _this4.lastStateAttempt = startState;
                             _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, function (err, state) {
-                                if (!err) {
-                                    cb(null, state);
-                                } else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
+                                if (!err) cb(null, state);else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
                         } else if (opts.defaultRoute) {
                             // If default, navigate to default

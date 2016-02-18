@@ -1,3 +1,13 @@
+<a name="2.0.6"></a>
+## [2.0.6](https://github.com/router5/router5/compare/v2.0.5...v2.0.6) (2016-02-18)
+
+
+### Bug Fixes
+
+* rebuild with latest route-node version (1.3.4) ([1b78e8e](https://github.com/router5/router5/commit/1b78e8e))
+
+
+
 <a name="2.0.5"></a>
 ## [2.0.5](https://github.com/router5/router5/compare/v2.0.4...v2.0.5) (2016-02-17)
 
