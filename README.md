@@ -57,7 +57,7 @@ router.start(() => {
 });
 ```
 
-__Note:__ `RouterProvider` comes from `react-router5`. It simply adds your router instance in your application context, which is required. Alternatively`, you can use `withContext()` from [recompose](https://github.com/acdlite/recompose). __You also may not need it__: having your router in context gives you access router methods like `buildUrl`, `isActive`, etc...
+__Note:__ `RouterProvider` comes from `react-router5`. It simply adds your router instance in your application context, which is required. Alternatively, you can use `withContext()` from [recompose](https://github.com/acdlite/recompose). __You also may not need it__: having your router in context gives you access router methods like `buildUrl`, `isActive`, etc...
 
 
 ## router5Middleware
