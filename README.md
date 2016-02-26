@@ -25,6 +25,10 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 
 ![With redux](https://github.com/router5/router5.github.io/blob/master/img/router-redux.png)
 
+### Middleware is optional
+
+The sole purpose of the redux middleware `router5Middleware` is to translate `NAVIGATE_TO` actions to a `router.navigate()` instruction. __You may not need it__: for instance, if you use React and have your router instance in context, you can call `router.navigate()` directly.
+
 ### With React
 
 ```javascript
@@ -53,7 +57,7 @@ router.start(() => {
 });
 ```
 
-Note: `RouterProvider` comes from `react-router5`. It simply adds your router instance in your application context, which is required. Alternatively`, you can use `withContext()` from [recompose](https://github.com/acdlite/recompose).
+__Note:__ `RouterProvider` comes from `react-router5`. It simply adds your router instance in your application context, which is required. Alternatively`, you can use `withContext()` from [recompose](https://github.com/acdlite/recompose). __You also may not need it__: having your router in context gives you access router methods like `buildUrl`, `isActive`, etc...
 
 
 ## router5Middleware
