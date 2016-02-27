@@ -500,5 +500,18 @@ function testRouter(useHash) {
                 });
             });
         });
+
+        it('should for deactivation if specified as a transition option', (done) => {
+            router.navigate('orders.view', {id: '1'}, {}, (err, state) => {
+                router.canDeactivate('orders.view', false);
+                router.navigate('home', {}, {}, (err, state) => {
+                    expect(err.code).to.equal(errCodes.CANNOT_DEACTIVATE);
+                    router.navigate('home', {}, {forceDeactivate: true}, (err, state) => {
+                        expect(state.name).to.equal('home');
+                        done();
+                    });
+                });
+            });
+        });
     });
 }

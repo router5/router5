@@ -4,7 +4,7 @@ import constants from './constants';
 
 export default transition;
 
-function transition(router, toState, fromState, callback) {
+function transition(router, toState, fromState, options, callback) {
     let cancelled = false;
     const additionalArgs = router.getAdditionalArgs();
     const isCancelled = () => cancelled;
@@ -58,7 +58,7 @@ function transition(router, toState, fromState, callback) {
         );
     };
 
-    let pipeline = (fromState ? [canDeactivate] : [])
+    let pipeline = (fromState && !options.forceDeactivate ? [canDeactivate] : [])
         .concat(canActivate)
         .concat(middlewareFn ? middleware : []);
 

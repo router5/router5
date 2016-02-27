@@ -192,7 +192,7 @@ class Router5 {
             // If matched start path
             if (startState) {
                 this.lastStateAttempt = startState;
-                this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
+                this._transition(this.lastStateAttempt, this.lastKnownState, {}, (err, state) => {
                     if (!err) cb(null, state);
                     else if (err.redirect) redirect(err.redirect);
                     else if (opts.defaultRoute) navigateToDefault();
@@ -419,12 +419,12 @@ class Router5 {
     /**
      * @private
      */
-    _transition(toState, fromState, done = noop) {
+    _transition(toState, fromState, options = {}, done = noop) {
         // Cancel current transition
         this.cancel();
         this._invokeListeners('$$start', toState, fromState);
 
-        const tr = transition(this, toState, fromState, (err, state) => {
+        const tr = transition(this, toState, fromState, options, (err, state) => {
             state = state || toState;
             this._tr = null;
 
@@ -493,7 +493,7 @@ class Router5 {
         const fromState = sameStates ? null : this.lastKnownState;
 
         // Transition and amend history
-        return this._transition(toState, sameStates ? null : this.lastKnownState, (err, state) => {
+        return this._transition(toState, sameStates ? null : this.lastKnownState, opts, (err, state) => {
             if (err) {
                 if (err.redirect) this.navigate(err.redirect.name, err.redirect.params, { reload: true }, done);
                 else done(err);
