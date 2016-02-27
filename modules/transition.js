@@ -21,7 +21,7 @@ function transition(router, toState, fromState, callback) {
     const makeError = (base, err) => ({
         ...base,
         ...(err instanceof Object ? err : { error: err })
-    })
+    });
 
     const {toDeactivate, toActivate} = transitionPath(toState, fromState);
     const asyncBase = { isCancelled, toState, fromState, additionalArgs: [] };
