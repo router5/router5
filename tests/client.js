@@ -132,6 +132,7 @@ function testRouter(useHash) {
                 done();
             });
         });
+
         it('should not throw an error when starting with no callback', function() {
             router.stop();
             expect(() => router.start()).not.to.throw();
@@ -178,6 +179,7 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', null);
             router.start('/admin', function (err) {
+                console.log(err);
                 expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
                 expect(err.segment).to.equal('admin');
                 done();
@@ -478,6 +480,25 @@ function testRouter(useHash) {
                 done();
             });
             setTimeout(cancel, 10);
+        });
+
+        it('should redirect if specified by transition error, and call back', function (done) {
+            router.stop();
+            router.start('/auth-protected', (err, state) => {
+                expect(omitMeta(state)).to.eql({
+                    name: 'sign-in',
+                    params: {},
+                    path: '/sign-in'
+                });
+                router.navigate('auth-protected', {}, {}, (err, state) => {
+                    expect(omitMeta(state)).to.eql({
+                        name: 'sign-in',
+                        params: {},
+                        path: '/sign-in'
+                    });
+                    done();
+                });
+            });
         });
     });
 }

@@ -1,4 +1,4 @@
-export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs }, callback) {
+export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs, errorKey }, callback) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
@@ -8,7 +8,7 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         if (!remainingFunctions.length) return true;
 
         const isMapped = typeof remainingFunctions[0] === 'string';
-        const errVal = isMapped ? remainingFunctions[0] : {};
+        const errBase = errorKey && isMapped ? { [errorKey]: remainingFunctions[0] } : {};
         let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
@@ -17,16 +17,20 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         if (isCancelled()) {
             done(null);
         } else if (typeof res === 'boolean') {
-            done(res ? null : errVal);
+            done(res ? null : errBase);
         } else if (res && typeof res.then === 'function') {
             res.then(
                 resVal => {
-                    if (resVal instanceof Error) done(resVal, null);
+                    if (resVal instanceof Error) done({ error: resVal }, null);
                     else done(null, resVal);
                 },
                 err => {
-                    if (err instanceof Error) console.error(err.stack || err);
-                    done(errVal);
+                    if (err instanceof Error) {
+                        console.error(err.stack || err);
+                        done({ ...errBase, promiseError: err }, null);
+                    } else {
+                        done(typeof err === 'object' ? { ...errBase, ...err } : errBase, null);
+                    }
                 }
             );
         }

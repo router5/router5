@@ -18,6 +18,10 @@ function transition(router, toState, fromState, callback) {
         }
         callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
     };
+    const makeError = (base, err) => ({
+        ...base,
+        ...(err instanceof Object ? err : { error: err })
+    })
 
     const {toDeactivate, toActivate} = transitionPath(toState, fromState);
     const asyncBase = { isCancelled, toState, fromState, additionalArgs: [] };
@@ -28,11 +32,8 @@ function transition(router, toState, fromState, callback) {
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router._canDeact[name] }), {});
 
         asyncProcess(
-            canDeactivateFunctionMap, { ...asyncBase, additionalArgs },
-            err => {
-                const errObj = err ? (err instanceof Error ? { error: err } : { segment: err }) : null;
-                cb(err ? { code: constants.CANNOT_DEACTIVATE, ...errObj } : null);
-            }
+            canDeactivateFunctionMap, { ...asyncBase, additionalArgs, errorKey: 'segment' },
+            err => cb(err ? makeError({ code: constants.CANNOT_DEACTIVATE }, err) : null)
         );
     };
 
@@ -42,11 +43,8 @@ function transition(router, toState, fromState, callback) {
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router._canAct[name] }), {});
 
         asyncProcess(
-            canActivateFunctionMap, { ...asyncBase, additionalArgs },
-            err => {
-                const errObj = err ? (err instanceof Error ? { error: err } : { segment: err }) : null;
-                cb(err ? { code: constants.CANNOT_ACTIVATE, ...errObj } : null);
-            }
+            canActivateFunctionMap, { ...asyncBase, additionalArgs, errorKey: 'segment' },
+            err => cb(err ? makeError({ code: constants.CANNOT_ACTIVATE }, err) : null)
         );
     };
 
@@ -56,10 +54,7 @@ function transition(router, toState, fromState, callback) {
 
         asyncProcess(
             mwareFunction, { ...asyncBase, additionalArgs },
-            (err, state) => {
-                const errObj = err ? (typeof err === 'object' ? err : { error: err }) : null;
-                cb(err ? { code: constants.TRANSITION_ERR, ...errObj } : null, state || toState);
-            }
+            (err, state) => cb(err ? makeError({ code: constants.TRANSITION_ERR }, err) :  null, state || toState)
         );
     };
 

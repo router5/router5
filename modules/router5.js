@@ -187,12 +187,14 @@ class Router5 {
             // If no supplied start state, get start state
             startState = startPath === undefined ? null : this.matchPath(startPath);
             // Navigate to default function
-            const navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, (err, state) => done(err, state));
+            const navigateToDefault = () => this.navigate(opts.defaultRoute, opts.defaultParams, {replace: true}, done);
+            const redirect = (route) => this.navigate(route.name, route.params, {replace: true, reload: true}, done);
             // If matched start path
             if (startState) {
                 this.lastStateAttempt = startState;
                 this._transition(this.lastStateAttempt, this.lastKnownState, (err, state) => {
                     if (!err) cb(null, state);
+                    else if (err.redirect) redirect(err.redirect);
                     else if (opts.defaultRoute) navigateToDefault();
                     else cb(err, null, false);
                 });
@@ -493,7 +495,8 @@ class Router5 {
         // Transition and amend history
         return this._transition(toState, sameStates ? null : this.lastKnownState, (err, state) => {
             if (err) {
-                done(err);
+                if (err.redirect) this.navigate(err.redirect.name, err.redirect.params, { reload: true }, done);
+                else done(err);
                 return;
             }
 
