@@ -68,7 +68,7 @@ describe('BaseLink component', () => {
 
     it('should render an hyperlink element', () => {
         router.addNode('home', '/home');
-        const output = mount(<BaseLink router={ router } routeName={ 'home' } />);
+        const output = mount(<RouterProvider router={ router }><BaseLink routeName={ 'home' } /></RouterProvider>);
         expect(output.find('a')).to.have.attr('href', '/home')
         expect(output.find('a')).not.to.have.className('active');
     });
@@ -76,7 +76,7 @@ describe('BaseLink component', () => {
     it('should have an active class if associated route is active', () => {
         router.setOption('defaultRoute', 'home');
         router.start();
-        const output = mount(<BaseLink router={ router } routeName={ 'home' } />);
+        const output = mount(<RouterProvider router={ router }><BaseLink routeName={ 'home' } /></RouterProvider>);
         expect(output.find('a')).to.have.className('active');
     });
 });

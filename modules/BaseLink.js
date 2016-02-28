@@ -4,6 +4,7 @@ class BaseLink extends Component {
     constructor(props, context) {
         super(props, context);
 
+        this.router = context.router;
         this.isActive = this.isActive.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
 
@@ -11,7 +12,7 @@ class BaseLink extends Component {
     }
 
     isActive() {
-        return this.props.router.isActive(this.props.routeName, this.props.routeParams);
+        return this.router.isActive(this.props.routeName, this.props.routeParams);
     }
 
     clickHandler(evt) {
@@ -23,19 +24,19 @@ class BaseLink extends Component {
             }
         }
 
-        let comboKey = evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
+        const comboKey = evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
 
         if (evt.button === 0 && !comboKey) {
             evt.preventDefault();
-            this.props.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+            this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
         }
     }
 
     render() {
-        const { router, routeName, routeParams, className, activeClassName, children } = this.props;
+        const { routeName, routeParams, className, activeClassName, children } = this.props;
 
         const active = this.isActive();
-        const href =  router.buildUrl(routeName, routeParams);
+        const href =  this.router.buildUrl(routeName, routeParams);
         const linkclassName = (className ? className.split(' ') : [])
             .concat(active ? [activeClassName] : []).join(' ');
 
@@ -45,9 +46,11 @@ class BaseLink extends Component {
     }
 }
 
+BaseLink.contextTypes = {
+    router: PropTypes.object.isRequired
+};
+
 BaseLink.propTypes = {
-    // route:           PropTypes.object.isRequired,
-    router:          PropTypes.object.isRequired,
     routeName:       PropTypes.string.isRequired,
     routeParams:     PropTypes.object,
     routeOptions:    PropTypes.object,
