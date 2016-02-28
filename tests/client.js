@@ -179,7 +179,6 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', null);
             router.start('/admin', function (err) {
-                console.log(err);
                 expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
                 expect(err.segment).to.equal('admin');
                 done();

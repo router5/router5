@@ -14,10 +14,6 @@ _Router5_ is library and framework agnostic, and makes no asumption on your impl
 It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
-<p align="center">
-    <a href="http://slides.com/thomasroch/deck"><img alt="Router5 slides" src="https://raw.githubusercontent.com/router5/router5.github.io/master/img/slices_preview.png" /></a>
-</p>
-
 To get started, look here: __[Understanding router5](http://router5.github.io/docs/understanding-router5.html)__ and __[Get started](http://router5.github.io/docs/get-started.html)__.
 
 ### Features
@@ -33,6 +29,7 @@ function per node. Supports asynchronous results.
 - __Custom plugins__: extend your router behaviour with custom plugins
 - __Middleware functions__: handle any data updates or other asynchronous actions with multiplebefore updating your view.
 - __Universal applications__: use on client and server side
+- __Redirections__: redirect to another route on error
 - __You are in control!__ You decide what to do on a route change and how to do it.
 
 
@@ -50,6 +47,7 @@ function per node. Supports asynchronous results.
 - [Path syntax](http://router5.github.io/docs/path-syntax.html)
 - [Navigation](http://router5.github.io/docs/navigation.html)
 - [Preventing navigation](http://router5.github.io/docs/preventing-navigation.html)
+- [Custom errors and redirections](http://router5.github.io/docs/custom-errors.html)
 - [Middleware functions](http://router5.github.io/docs/middleware.html)
 - [Transition](http://router5.github.io/docs/transition.html)
 - [Using plugins](http://router5.github.io/docs/plugins.html)
@@ -66,7 +64,10 @@ function per node. Supports asynchronous results.
 
 - [With React](http://router5.github.io/docs/with-react.html)
 - [With React and Redux](http://router5.github.io/docs/with-react-redux.html)
-- [With Deku](http://router5.github.io/docs/with-deku.html)
+- [With Deku 1.0](http://router5.github.io/docs/with-deku.html)
+- [With Deku 1.0 and Redux](http://router5.github.io/docs/with-deku-redux.html)
+- [With Cycle](http://router5.github.io/docs/with-cycle.html)
+- [With Cycle (2)](http://router5.github.io/example-cycle.html#/a)
 
 
 ### Integration
@@ -75,7 +76,7 @@ function per node. Supports asynchronous results.
 - [redux-router5](https://github.com/router5/redux-router5)
 - [deku-router5](https://github.com/router5/deku-router5)
 - [router5-link-interceptor](https://github.com/jas-chen/router5-link-interceptor)
-- [cycle-router5](https://github.com/axefrog/cycle-router5) (out of date)
+- [cycle-router5](https://github.com/router5/cycle-router5) (work in progress, not released)
 
 
 ### Contributing
