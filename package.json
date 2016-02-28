@@ -1,15 +1,16 @@
 {
   "name": "redux-router5",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Router5 integration with redux",
   "main": "dist/commonjs/index.js",
-  "jnext:main": "modules/index.js",
+  "jnext:main": "dist/es/index.js",
   "scripts": {
     "clean": "rimraf dist",
+    "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
     "build:cjs": "babel modules --out-dir dist/commonjs",
     "build:amd": "rollup -c rollup.config.js -f amd",
     "build:umd": "rollup -c rollup.config.js -f umd",
-    "build": "npm run clean && npm run build:cjs && npm run build:amd && npm run build:umd",
+    "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:amd && npm run build:umd",
     "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'",
     "clog": "conventional-changelog -i CHANGELOG.md -w",
     "lint": "eslint modules",
@@ -51,11 +52,11 @@
     "yargs": "^3.27.0"
   },
   "peerDependencies": {
-    "router5": "^2.0.0",
+    "router5": "^3.0.0",
     "redux": "^3.0.0"
   },
   "dependencies": {
-    "reselect": "^2.0.0",
-    "router5.transition-path": "^3.0.0"
+    "reselect": "~2.0.0",
+    "router5.transition-path": "~3.0.0"
   }
 }
