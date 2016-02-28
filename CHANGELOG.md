@@ -1,3 +1,13 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/router5/react-router5/compare/v2.0.2...v3.0.0) (2016-02-28)
+
+
+### Features
+
+* make BaseLink grab the router instance from context ([76662e7](https://github.com/router5/react-router5/commit/76662e7))
+
+
+
 <a name="2.0.2"></a>
 ## [2.0.2](https://github.com/router5/react-router5/compare/v2.0.1...v2.0.2) (2016-02-05)
 

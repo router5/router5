@@ -84,6 +84,7 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
 
             var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(BaseLink).call(this, props, context));
 
+            _this.router = context.router;
             _this.isActive = _this.isActive.bind(_this);
             _this.clickHandler = _this.clickHandler.bind(_this);
 
@@ -94,7 +95,7 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         babelHelpers.createClass(BaseLink, [{
             key: 'isActive',
             value: function isActive() {
-                return this.props.router.isActive(this.props.routeName, this.props.routeParams);
+                return this.router.isActive(this.props.routeName, this.props.routeParams);
             }
         }, {
             key: 'clickHandler',
@@ -111,14 +112,13 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
 
                 if (evt.button === 0 && !comboKey) {
                     evt.preventDefault();
-                    this.props.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+                    this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
                 }
             }
         }, {
             key: 'render',
             value: function render() {
                 var _props = this.props;
-                var router = _props.router;
                 var routeName = _props.routeName;
                 var routeParams = _props.routeParams;
                 var className = _props.className;
@@ -126,7 +126,7 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
                 var children = _props.children;
 
                 var active = this.isActive();
-                var href = router.buildUrl(routeName, routeParams);
+                var href = this.router.buildUrl(routeName, routeParams);
                 var linkclassName = (className ? className.split(' ') : []).concat(active ? [activeClassName] : []).join(' ');
 
                 var onClick = this.clickHandler;
@@ -137,9 +137,11 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         return BaseLink;
     }(React.Component);
 
+    BaseLink.contextTypes = {
+        router: React.PropTypes.object.isRequired
+    };
+
     BaseLink.propTypes = {
-        // route:           PropTypes.object.isRequired,
-        router: React.PropTypes.object.isRequired,
         routeName: React.PropTypes.string.isRequired,
         routeParams: React.PropTypes.object,
         routeOptions: React.PropTypes.object,

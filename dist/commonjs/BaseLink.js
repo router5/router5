@@ -26,6 +26,7 @@ var BaseLink = (function (_Component) {
 
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BaseLink).call(this, props, context));
 
+        _this.router = context.router;
         _this.isActive = _this.isActive.bind(_this);
         _this.clickHandler = _this.clickHandler.bind(_this);
 
@@ -36,7 +37,7 @@ var BaseLink = (function (_Component) {
     _createClass(BaseLink, [{
         key: 'isActive',
         value: function isActive() {
-            return this.props.router.isActive(this.props.routeName, this.props.routeParams);
+            return this.router.isActive(this.props.routeName, this.props.routeParams);
         }
     }, {
         key: 'clickHandler',
@@ -53,14 +54,13 @@ var BaseLink = (function (_Component) {
 
             if (evt.button === 0 && !comboKey) {
                 evt.preventDefault();
-                this.props.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+                this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
             }
         }
     }, {
         key: 'render',
         value: function render() {
             var _props = this.props;
-            var router = _props.router;
             var routeName = _props.routeName;
             var routeParams = _props.routeParams;
             var className = _props.className;
@@ -68,7 +68,7 @@ var BaseLink = (function (_Component) {
             var children = _props.children;
 
             var active = this.isActive();
-            var href = router.buildUrl(routeName, routeParams);
+            var href = this.router.buildUrl(routeName, routeParams);
             var linkclassName = (className ? className.split(' ') : []).concat(active ? [activeClassName] : []).join(' ');
 
             var onClick = this.clickHandler;
@@ -80,9 +80,11 @@ var BaseLink = (function (_Component) {
     return BaseLink;
 })(_react.Component);
 
+BaseLink.contextTypes = {
+    router: _react.PropTypes.object.isRequired
+};
+
 BaseLink.propTypes = {
-    // route:           PropTypes.object.isRequired,
-    router: _react.PropTypes.object.isRequired,
     routeName: _react.PropTypes.string.isRequired,
     routeParams: _react.PropTypes.object,
     routeOptions: _react.PropTypes.object,
