@@ -1,17 +1,4 @@
-'use strict';
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = asyncProcess;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
-function asyncProcess(functions, _ref, callback) {
+export default function asyncProcess(functions, _ref, callback) {
     var isCancelled = _ref.isCancelled;
     var toState = _ref.toState;
     var fromState = _ref.fromState;
@@ -21,7 +8,7 @@ function asyncProcess(functions, _ref, callback) {
     var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     var isState = function isState(obj) {
-        return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+        return (typeof obj === 'undefined' ? 'undefined' : babelHelpers.typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     };
     var hasStateChanged = function hasStateChanged(state) {
         return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
@@ -31,7 +18,7 @@ function asyncProcess(functions, _ref, callback) {
         if (!remainingFunctions.length) return true;
 
         var isMapped = typeof remainingFunctions[0] === 'string';
-        var errBase = errorKey && isMapped ? _defineProperty({}, errorKey, remainingFunctions[0]) : {};
+        var errBase = errorKey && isMapped ? babelHelpers.defineProperty({}, errorKey, remainingFunctions[0]) : {};
         var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
@@ -47,9 +34,9 @@ function asyncProcess(functions, _ref, callback) {
             }, function (err) {
                 if (err instanceof Error) {
                     console.error(err.stack || err);
-                    done(_extends({}, errBase, { promiseError: err }), null);
+                    done(babelHelpers.extends({}, errBase, { promiseError: err }), null);
                 } else {
-                    done((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object' ? _extends({}, errBase, err) : errBase, null);
+                    done((typeof err === 'undefined' ? 'undefined' : babelHelpers.typeof(err)) === 'object' ? babelHelpers.extends({}, errBase, err) : errBase, null);
                 }
             });
         }

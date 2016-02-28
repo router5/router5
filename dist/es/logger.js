@@ -1,8 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 /* istanbul ignore next */
 var loggerPlugin = function loggerPlugin() {
     return function () {
@@ -44,4 +39,4 @@ var loggerPlugin = function loggerPlugin() {
     };
 };
 
-exports.default = loggerPlugin;
+export default loggerPlugin;

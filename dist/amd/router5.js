@@ -75,6 +75,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
         var toState = _ref.toState;
         var fromState = _ref.fromState;
         var additionalArgs = _ref.additionalArgs;
+        var errorKey = _ref.errorKey;
 
         var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
@@ -89,7 +90,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
             if (!remainingFunctions.length) return true;
 
             var isMapped = typeof remainingFunctions[0] === 'string';
-            var errVal = isMapped ? remainingFunctions[0] : {};
+            var errBase = errorKey && isMapped ? babelHelpers_defineProperty({}, errorKey, remainingFunctions[0]) : {};
             var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
             // const len = stepFn.length;
@@ -98,13 +99,17 @@ define('router5', ['exports'], function (exports) { 'use strict';
             if (isCancelled()) {
                 done(null);
             } else if (typeof res === 'boolean') {
-                done(res ? null : errVal);
+                done(res ? null : errBase);
             } else if (res && typeof res.then === 'function') {
                 res.then(function (resVal) {
-                    if (resVal instanceof Error) done(resVal, null);else done(null, resVal);
+                    if (resVal instanceof Error) done({ error: resVal }, null);else done(null, resVal);
                 }, function (err) {
-                    if (err instanceof Error) console.error(err.stack || err);
-                    done(errVal);
+                    if (err instanceof Error) {
+                        console.error(err.stack || err);
+                        done(babelHelpers_extends({}, errBase, { promiseError: err }), null);
+                    } else {
+                        done((typeof err === 'undefined' ? 'undefined' : babelHelpers_typeof(err)) === 'object' ? babelHelpers_extends({}, errBase, err) : errBase, null);
+                    }
                 });
             }
             // else: wait for done to be called
@@ -220,7 +225,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
         };
     }
 
-    function transition(router, toState, fromState, callback) {
+    function transition(router, toState, fromState, options, callback) {
         var cancelled = false;
         var additionalArgs = router.getAdditionalArgs();
         var isCancelled = function isCancelled() {
@@ -240,6 +245,9 @@ define('router5', ['exports'], function (exports) { 'use strict';
             }
             callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
         };
+        var makeError = function makeError(base, err) {
+            return babelHelpers_extends({}, base, err instanceof Object ? err : { error: err });
+        };
 
         var _transitionPath = transitionPath(toState, fromState);
 
@@ -255,9 +263,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
                 return babelHelpers_extends({}, fnMap, babelHelpers_defineProperty({}, name, router._canDeact[name]));
             }, {});
 
-            asyncProcess(canDeactivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-                var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
-                cb(err ? babelHelpers_extends({ code: constants.CANNOT_DEACTIVATE }, errObj) : null);
+            asyncProcess(canDeactivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs, errorKey: 'segment' }), function (err) {
+                return cb(err ? makeError({ code: constants.CANNOT_DEACTIVATE }, err) : null);
             });
         };
 
@@ -268,9 +275,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
                 return babelHelpers_extends({}, fnMap, babelHelpers_defineProperty({}, name, router._canAct[name]));
             }, {});
 
-            asyncProcess(canActivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-                var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
-                cb(err ? babelHelpers_extends({ code: constants.CANNOT_ACTIVATE }, errObj) : null);
+            asyncProcess(canActivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs, errorKey: 'segment' }), function (err) {
+                return cb(err ? makeError({ code: constants.CANNOT_ACTIVATE }, err) : null);
             });
         };
 
@@ -279,12 +285,11 @@ define('router5', ['exports'], function (exports) { 'use strict';
             var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
             asyncProcess(mwareFunction, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err, state) {
-                var errObj = err ? (typeof err === 'undefined' ? 'undefined' : babelHelpers_typeof(err)) === 'object' ? err : { error: err } : null;
-                cb(err ? babelHelpers_extends({ code: constants.TRANSITION_ERR }, errObj) : null, state || toState);
+                return cb(err ? makeError({ code: constants.TRANSITION_ERR }, err) : null, state || toState);
             });
         };
 
-        var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
+        var pipeline = (fromState && !options.forceDeactivate ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
 
         asyncProcess(pipeline, asyncBase, done);
 
@@ -1212,15 +1217,16 @@ define('router5', ['exports'], function (exports) { 'use strict';
                         startState = startPath === undefined ? null : _this4.matchPath(startPath);
                         // Navigate to default function
                         var navigateToDefault = function navigateToDefault() {
-                            return _this4.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, function (err, state) {
-                                return done(err, state);
-                            });
+                            return _this4.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, done);
+                        };
+                        var redirect = function redirect(route) {
+                            return _this4.navigate(route.name, route.params, { replace: true, reload: true }, done);
                         };
                         // If matched start path
                         if (startState) {
                             _this4.lastStateAttempt = startState;
-                            _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, function (err, state) {
-                                if (!err) cb(null, state);else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
+                            _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, {}, function (err, state) {
+                                if (!err) cb(null, state);else if (err.redirect) redirect(err.redirect);else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
                             });
                         } else if (opts.defaultRoute) {
                             // If default, navigate to default
@@ -1515,13 +1521,14 @@ define('router5', ['exports'], function (exports) { 'use strict';
             value: function _transition(toState, fromState) {
                 var _this6 = this;
 
-                var done = arguments.length <= 2 || arguments[2] === undefined ? noop : arguments[2];
+                var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
 
                 // Cancel current transition
                 this.cancel();
                 this._invokeListeners('$$start', toState, fromState);
 
-                var tr = transition(this, toState, fromState, function (err, state) {
+                var tr = transition(this, toState, fromState, options, function (err, state) {
                     state = state || toState;
                     _this6._tr = null;
 
@@ -1604,9 +1611,9 @@ define('router5', ['exports'], function (exports) { 'use strict';
                 var fromState = sameStates ? null : this.lastKnownState;
 
                 // Transition and amend history
-                return this._transition(toState, sameStates ? null : this.lastKnownState, function (err, state) {
+                return this._transition(toState, sameStates ? null : this.lastKnownState, opts, function (err, state) {
                     if (err) {
-                        done(err);
+                        if (err.redirect) _this7.navigate(err.redirect.name, err.redirect.params, { reload: true }, done);else done(err);
                         return;
                     }
 

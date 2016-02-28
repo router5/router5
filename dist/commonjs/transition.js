@@ -20,13 +20,11 @@ var _constants2 = _interopRequireDefault(_constants);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 exports.default = transition;
 
-function transition(router, toState, fromState, callback) {
+function transition(router, toState, fromState, options, callback) {
     var cancelled = false;
     var additionalArgs = router.getAdditionalArgs();
     var isCancelled = function isCancelled() {
@@ -46,6 +44,9 @@ function transition(router, toState, fromState, callback) {
         }
         callback(isCancelled() ? { code: _constants2.default.TRANSITION_CANCELLED } : err, state || toState);
     };
+    var makeError = function makeError(base, err) {
+        return _extends({}, base, err instanceof Object ? err : { error: err });
+    };
 
     var _transitionPath = (0, _router2.default)(toState, fromState);
 
@@ -61,9 +62,8 @@ function transition(router, toState, fromState, callback) {
             return _extends({}, fnMap, _defineProperty({}, name, router._canDeact[name]));
         }, {});
 
-        (0, _async2.default)(canDeactivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-            var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
-            cb(err ? _extends({ code: _constants2.default.CANNOT_DEACTIVATE }, errObj) : null);
+        (0, _async2.default)(canDeactivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs, errorKey: 'segment' }), function (err) {
+            return cb(err ? makeError({ code: _constants2.default.CANNOT_DEACTIVATE }, err) : null);
         });
     };
 
@@ -74,9 +74,8 @@ function transition(router, toState, fromState, callback) {
             return _extends({}, fnMap, _defineProperty({}, name, router._canAct[name]));
         }, {});
 
-        (0, _async2.default)(canActivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err) {
-            var errObj = err ? err instanceof Error ? { error: err } : { segment: err } : null;
-            cb(err ? _extends({ code: _constants2.default.CANNOT_ACTIVATE }, errObj) : null);
+        (0, _async2.default)(canActivateFunctionMap, _extends({}, asyncBase, { additionalArgs: additionalArgs, errorKey: 'segment' }), function (err) {
+            return cb(err ? makeError({ code: _constants2.default.CANNOT_ACTIVATE }, err) : null);
         });
     };
 
@@ -85,15 +84,13 @@ function transition(router, toState, fromState, callback) {
         var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
 
         (0, _async2.default)(mwareFunction, _extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err, state) {
-            var errObj = err ? (typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object' ? err : { error: err } : null;
-            cb(err ? _extends({ code: _constants2.default.TRANSITION_ERR }, errObj) : null, state || toState);
+            return cb(err ? makeError({ code: _constants2.default.TRANSITION_ERR }, err) : null, state || toState);
         });
     };
 
-    var pipeline = (fromState ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
+    var pipeline = (fromState && !options.forceDeactivate ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
 
     (0, _async2.default)(pipeline, asyncBase, done);
 
     return cancel;
 }
-module.exports = exports['default'];

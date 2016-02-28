@@ -1,3 +1,14 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/router5/router5/compare/v2.0.6...v3.0.0) (2016-02-28)
+
+
+### Features
+
+* add support for new 'forceDeactivate' navigation option ([10876e9](https://github.com/router5/router5/commit/10876e9))
+* support redirection when an error occurs during transition ([9019204](https://github.com/router5/router5/commit/9019204))
+
+
+
 <a name="2.0.6"></a>
 ## [2.0.6](https://github.com/router5/router5/compare/v2.0.5...v2.0.6) (2016-02-18)
 

@@ -1,28 +1,6 @@
-'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _routeNode = require('route-node');
-
-var _routeNode2 = _interopRequireDefault(_routeNode);
-
-var _transition2 = require('./transition');
-
-var _transition3 = _interopRequireDefault(_transition2);
-
-var _constants = require('./constants');
-
-var _constants2 = _interopRequireDefault(_constants);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+import RouteNode from 'route-node';
+import transition from './transition';
+import constants from './constants';
 
 var noop = function noop() {};
 var ifNot = function ifNot(condition, error) {
@@ -66,8 +44,7 @@ var Router5 = (function () {
         var _this = this;
 
         var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-        _classCallCheck(this, Router5);
+        babelHelpers.classCallCheck(this, Router5);
 
         this.started = false;
         this.mware = null;
@@ -76,7 +53,7 @@ var Router5 = (function () {
         this._canDeact = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
-        this.rootNode = routes instanceof _routeNode2.default ? routes : new _routeNode2.default('', '', routes, addCanActivate(this));
+        this.rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes, addCanActivate(this));
         this.options = {
             useHash: false,
             hashPrefix: '',
@@ -99,7 +76,7 @@ var Router5 = (function () {
      * @return {Router5}    The Router5 instance
      */
 
-    _createClass(Router5, [{
+    babelHelpers.createClass(Router5, [{
         key: 'setOption',
         value: function setOption(opt, val) {
             this.options[opt] = val;
@@ -225,7 +202,7 @@ var Router5 = (function () {
                 startState = undefined;
 
             if (this.started) {
-                done({ code: _constants2.default.ROUTER_ALREADY_STARTED });
+                done({ code: constants.ROUTER_ALREADY_STARTED });
                 return this;
             }
 
@@ -235,7 +212,7 @@ var Router5 = (function () {
 
             if (args.length > 0) {
                 if (typeof args[0] === 'string') startPath = args[0];
-                if (_typeof(args[0]) === 'object') startState = args[0];
+                if (babelHelpers.typeof(args[0]) === 'object') startState = args[0];
             }
 
             // callback
@@ -274,7 +251,7 @@ var Router5 = (function () {
                         navigateToDefault();
                     } else {
                         // No start match, no default => do nothing
-                        cb({ code: _constants2.default.ROUTE_NOT_FOUND, path: startPath }, null);
+                        cb({ code: constants.ROUTE_NOT_FOUND, path: startPath }, null);
                     }
                 })();
             } else {
@@ -569,12 +546,12 @@ var Router5 = (function () {
             this.cancel();
             this._invokeListeners('$$start', toState, fromState);
 
-            var tr = (0, _transition3.default)(this, toState, fromState, options, function (err, state) {
+            var tr = transition(this, toState, fromState, options, function (err, state) {
                 state = state || toState;
                 _this6._tr = null;
 
                 if (err) {
-                    if (err.code === _constants2.default.TRANSITION_CANCELLED) _this6._invokeListeners('$$cancel', toState, fromState);else _this6._invokeListeners('$$error', toState, fromState, err);
+                    if (err.code === constants.TRANSITION_CANCELLED) _this6._invokeListeners('$$cancel', toState, fromState);else _this6._invokeListeners('$$error', toState, fromState, err);
 
                     done(err);
                     return;
@@ -623,14 +600,14 @@ var Router5 = (function () {
             var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
 
             if (!this.started) {
-                done({ code: _constants2.default.ROUTER_NOT_STARTED });
+                done({ code: constants.ROUTER_NOT_STARTED });
                 return;
             }
 
             var toState = this.buildState(name, params);
 
             if (!toState) {
-                var err = { code: _constants2.default.ROUTE_NOT_FOUND };
+                var err = { code: constants.ROUTE_NOT_FOUND };
                 done(err);
                 this._invokeListeners('$$error', null, this.lastKnownState, err);
                 return;
@@ -643,7 +620,7 @@ var Router5 = (function () {
             // Do not proceed further if states are the same and no reload
             // (no desactivation and no callbacks)
             if (sameStates && !opts.reload) {
-                var err = { code: _constants2.default.SAME_STATES };
+                var err = { code: constants.SAME_STATES };
                 done(err);
                 this._invokeListeners('$$error', toState, this.lastKnownState, err);
                 return;
@@ -663,8 +640,7 @@ var Router5 = (function () {
             });
         }
     }]);
-
     return Router5;
 })();
 
-exports.default = Router5;
+export default Router5;
