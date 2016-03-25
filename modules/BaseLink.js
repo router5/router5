@@ -12,7 +12,7 @@ class BaseLink extends Component {
     }
 
     isActive() {
-        return this.router.isActive(this.props.routeName, this.props.routeParams);
+        return this.router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict);
     }
 
     clickHandler(evt) {
