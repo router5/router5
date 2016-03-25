@@ -95,7 +95,7 @@ define('reactRouter5', ['exports', 'react'], function (exports, React) { 'use st
         babelHelpers.createClass(BaseLink, [{
             key: 'isActive',
             value: function isActive() {
-                return this.router.isActive(this.props.routeName, this.props.routeParams);
+                return this.router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict);
             }
         }, {
             key: 'clickHandler',

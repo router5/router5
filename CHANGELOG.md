@@ -1,3 +1,13 @@
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/router5/react-router5/compare/v3.0.0...v3.0.1) (2016-03-25)
+
+
+### Bug Fixes
+
+* use activeStrict property ([75a58e8](https://github.com/router5/react-router5/commit/75a58e8))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/router5/react-router5/compare/v2.0.2...v3.0.0) (2016-02-28)
 
