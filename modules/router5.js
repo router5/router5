@@ -151,8 +151,7 @@ class Router5 {
      *                                            when starting is done
      * @return {Router5}  The router instance
      */
-    start() {
-        const args = Array.prototype.slice.call(arguments);
+    start(...args) {
         const lastArg = args.slice(-1)[0];
         const done = (lastArg instanceof Function) ? lastArg : noop;
         let startPath, startState;
@@ -173,9 +172,9 @@ class Router5 {
 
         // callback
         const cb = (err, state, invokeErrCb = true) => {
-            done(err, state);
             if (!err) this._invokeListeners('$$success', state, null, {replace: true});
             if (err && invokeErrCb) this._invokeListeners('$$error', state, null, err);
+            done(err, state);
         };
 
         // Get start path
