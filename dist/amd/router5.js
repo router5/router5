@@ -1177,7 +1177,10 @@ define('router5', ['exports'], function (exports) { 'use strict';
             value: function start() {
                 var _this4 = this;
 
-                var args = Array.prototype.slice.call(arguments);
+                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                    args[_key] = arguments[_key];
+                }
+
                 var lastArg = args.slice(-1)[0];
                 var done = lastArg instanceof Function ? lastArg : noop;
                 var startPath = undefined,
@@ -1201,9 +1204,9 @@ define('router5', ['exports'], function (exports) { 'use strict';
                 var cb = function cb(err, state) {
                     var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
-                    done(err, state);
                     if (!err) _this4._invokeListeners('$$success', state, null, { replace: true });
                     if (err && invokeErrCb) _this4._invokeListeners('$$error', state, null, err);
+                    done(err, state);
                 };
 
                 // Get start path
@@ -1359,8 +1362,8 @@ define('router5', ['exports'], function (exports) { 'use strict';
         }, {
             key: '_invokeListeners',
             value: function _invokeListeners(name) {
-                for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                    args[_key - 1] = arguments[_key];
+                for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                    args[_key2 - 1] = arguments[_key2];
                 }
 
                 (this._cbs[name] || []).forEach(function (cb) {

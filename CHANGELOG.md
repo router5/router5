@@ -1,3 +1,13 @@
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/router5/router5/compare/v3.0.0...v3.0.1) (2016-03-28)
+
+
+### Bug Fixes
+
+* call success and error callbacks before done in start method (consistent with na ([ff944ef](https://github.com/router5/router5/commit/ff944ef))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/router5/router5/compare/v2.0.6...v3.0.0) (2016-02-28)
 
