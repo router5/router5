@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.4.0",
-    "babel-eslint": "^5.0.0",
+    "babel-eslint": "^6.0.0",
     "babel-plugin-transform-class-properties": "^6.3.13",
     "babel-plugin-transform-export-extensions": "^6.3.13",
     "babel-plugin-transform-object-rest-spread": "^6.3.13",
@@ -52,7 +52,7 @@
     "conventional-changelog": "^0.5.3",
     "coveralls": "^2.11.6",
     "del": "^2.0.2",
-    "eslint": "^2.1.0",
+    "eslint": "^2.5.3",
     "isparta": "^4.0.0",
     "jsdom": "^7.2.2",
     "mkdirp": "^0.5.1",
