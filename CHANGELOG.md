@@ -1,3 +1,13 @@
+<a name="3.0.2"></a>
+## [3.0.2](https://github.com/router5/router5/compare/v3.0.1...v3.0.2) (2016-03-29)
+
+
+### Bug Fixes
+
+* update route-node to improve path matching ([d528412](https://github.com/router5/router5/commit/d528412))
+
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/router5/router5/compare/v3.0.0...v3.0.1) (2016-03-28)
 

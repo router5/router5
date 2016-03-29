@@ -297,6 +297,72 @@
         return cancel;
     }
 
+    // Split path
+    var getPath = function getPath(path) {
+        return path.split('?')[0];
+    };
+    var getSearch = function getSearch(path) {
+        return path.split('?')[1];
+    };
+
+    // Search param value
+    var isSerialisable = function isSerialisable(val) {
+        return val !== undefined && val !== null && val !== '';
+    };
+
+    // Search param name
+    var bracketTest = /\[\]$/;
+    var withoutBrackets$1 = function withoutBrackets(paramName) {
+        return paramName.replace(bracketTest, '');
+    };
+
+    /**
+     * Parse a querystring and return a list of params (Objects with name and value properties)
+     * @param  {String} querystring The querystring to parse
+     * @return {Array[Object]}      The list of params
+     */
+    var parse = function parse(querystring) {
+        return querystring.split('&').reduce(function (params, param) {
+            var split = param.split('=');
+            var name = split[0];
+            var value = split[1];
+            return params.concat({ name: name, value: decodeURIComponent(value) });
+        }, []);
+    };
+
+    /**
+     * Build a querystring from a list of parameters
+     * @param  {Array} paramList The list of parameters (see `.parse()`)
+     * @return {String}          The querystring
+     */
+    var build = function build(paramList) {
+        return paramList.map(function (_ref2) {
+            var name = _ref2.name;
+            var value = _ref2.value;
+            return [name].concat(isSerialisable(value) ? encodeURIComponent(value) : []);
+        }).map(function (param) {
+            return param.join('=');
+        }).join('&');
+    };
+
+    /**
+     * Remove a list of parameters from a querystring
+     * @param  {String} querystring  The original querystring
+     * @param  {Array}  paramsToOmit The parameters to omit
+     * @return {String}              The querystring
+     */
+    var omit = function omit(querystring, paramsToOmit) {
+        if (!querystring) return '';
+
+        var remainingQueryParams = parse(querystring).filter(function (_ref3) {
+            var name = _ref3.name;
+            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
+        });
+        var remainingQueryString = build(remainingQueryParams);
+
+        return remainingQueryString || '';
+    };
+
     var defaultOrConstrained = function defaultOrConstrained(match) {
         return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~]+') + ')';
     };
@@ -388,7 +454,7 @@
         return source.replace(/\\\/$/, '') + '(?:\\/)?';
     };
 
-    var withoutBrackets$1 = function withoutBrackets(param) {
+    var withoutBrackets = function withoutBrackets(param) {
         return param.replace(/\[\]$/, '');
     };
 
@@ -396,7 +462,7 @@
         var val = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
 
         if (/\[\]$/.test(param)) {
-            param = withoutBrackets$1(param);
+            param = withoutBrackets(param);
             val = [val];
         }
         var existingVal = params[param];
@@ -610,9 +676,9 @@
                 }));
 
                 var searchPart = queryParams.filter(function (p) {
-                    return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
+                    return Object.keys(params).indexOf(withoutBrackets(p)) !== -1;
                 }).map(function (p) {
-                    return _serialise(p, params[withoutBrackets$1(p)]);
+                    return _serialise(p, params[withoutBrackets(p)]);
                 }).join('&');
 
                 return base + (searchPart ? '?' + searchPart : '');
@@ -622,47 +688,6 @@
     }();
 
     var noop$1 = function noop() {};
-    var isSerialisable = function isSerialisable(val) {
-        return val !== undefined && val !== null && val !== '';
-    };
-
-    var bracketTest = /\[\]$/;
-    var withoutBrackets = function withoutBrackets(param) {
-        return param.replace(bracketTest, '');
-    };
-
-    var removeQueryParamsFromPath = function removeQueryParamsFromPath(path, params) {
-        if (path.indexOf('?') === -1) return path;
-        var splitPath = path.split('?');
-        var pathPart = splitPath[0];
-        var searchPart = splitPath[1];
-
-        var remainingSearchParams = searchPart.split('&').reduce(function (obj, p) {
-            var splitParam = p.split('=');
-            var key = splitParam[0];
-            var hasBrackets = bracketTest.test(key);
-            var val = decodeURIComponent(splitParam[1]);
-            val = hasBrackets ? [val] : val;
-
-            if (params.indexOf(withoutBrackets(key)) === -1) {
-                if (obj[key] === undefined) obj[key] = val || '';else obj[key] = [].concat(obj[key], val);
-            }
-
-            return obj;
-        }, {});
-
-        var remainingSearchPart = Object.keys(remainingSearchParams).reduce(function (acc, param) {
-            return acc.concat([].concat(remainingSearchParams[param]).map(function (p) {
-                return { key: param, val: p };
-            }));
-        }, []).map(function (p) {
-            return [p.key].concat(isSerialisable(p.val) ? encodeURIComponent(p.val) : []);
-        }).map(function (p) {
-            return p.join('=');
-        }).join('&');
-
-        return pathPart + (remainingSearchPart ? '?' + remainingSearchPart : '');
-    };
 
     var RouteNode = function () {
         function RouteNode() {
@@ -738,27 +763,30 @@
                     this.children.push(route);
                     // Push greedy spats to the bottom of the pile
                     this.children.sort(function (left, right) {
-                        var leftPath = left.path.split('?')[0];
-                        var rightPath = right.path.split('?')[0];
+                        var leftPath = left.path.split('?')[0].replace(/(.+)\/$/, '$1');
+                        var rightPath = right.path.split('?')[0].replace(/(.+)\/$/, '$1');
                         // '/' last
                         if (leftPath === '/') return 1;
                         if (rightPath === '/') return -1;
-                        var leftHasParams = left.parser.hasUrlParams || left.parser.hasSpatParam;
-                        var rightHasParams = right.parser.hasUrlParams || right.parser.hasSpatParam;
-                        // No params first, sort by length descending
-                        if (!leftHasParams && !rightHasParams) {
-                            return leftPath && rightPath ? leftPath.length < rightPath.length ? 1 : -1 : 0;
-                        }
-                        // Params last
-                        if (leftHasParams && !rightHasParams) return 1;
-                        if (!leftHasParams && rightHasParams) return -1;
                         // Spat params last
-                        if (!left.parser.hasSpatParam && right.parser.hasSpatParam) return -1;
-                        if (!right.parser.hasSpatParam && left.parser.hasSpatParam) return 1;
-                        // Sort by number of segments descending
+                        if (left.parser.hasSpatParam) return 1;
+                        if (right.parser.hasSpatParam) return -1;
+                        // No spat, number of segments (less segments last)
                         var leftSegments = (leftPath.match(/\//g) || []).length;
                         var rightSegments = (rightPath.match(/\//g) || []).length;
                         if (leftSegments < rightSegments) return 1;
+                        if (leftSegments > rightSegments) return -1;
+                        // Same number of segments, number of URL params ascending
+                        var leftParamsCount = left.parser.urlParams.length;
+                        var rightParamsCount = right.parser.urlParams.length;
+                        if (leftParamsCount < rightParamsCount) return -1;
+                        if (leftParamsCount > rightParamsCount) return 1;
+                        // Same number of segments and params, last segment length descending
+                        var leftParamLength = (leftPath.split('/').slice(-1)[0] || '').length;
+                        var rightParamLength = (rightPath.split('/').slice(-1)[0] || '').length;
+                        if (leftParamLength < rightParamLength) return 1;
+                        if (leftParamLength > rightParamLength) return -1;
+                        // Same last segment length, preserve definition order
                         return 0;
                     });
                 } else {
@@ -826,7 +854,9 @@
                         } else if (match) {
                             // Remove consumed segment from path
                             var consumedPath = child.parser.build(match, { ignoreSearch: true });
-                            remainingPath = removeQueryParamsFromPath(pathSegment.replace(consumedPath, ''), child.parser.queryParams.concat(child.parser.queryParamsBr));
+                            remainingPath = pathSegment.replace(consumedPath, '');
+                            var search = omit(getSearch(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
+                            remainingPath = getPath(remainingPath) + (search ? '?' + search : '');
 
                             if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                                 remainingPath = '';
@@ -874,7 +904,6 @@
 
                 var matched = matchChildren(startingNodes, path, segments);
                 if (matched && matched.length === 1 && matched[0].name === '') return null;
-
                 return matched;
             }
         }, {
@@ -905,9 +934,9 @@
                 }, []);
 
                 var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
-                    return Object.keys(params).indexOf(withoutBrackets(p)) !== -1;
+                    return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
                 }).map(function (p) {
-                    return Path.serialise(p, params[withoutBrackets(p)]);
+                    return Path.serialise(p, params[withoutBrackets$1(p)]);
                 }).join('&');
 
                 return segments.map(function (segment) {
@@ -930,8 +959,10 @@
                         return params;
                     }, urlParams);
 
-                    accName = accName ? accName + '.' + segment.name : segment.name;
-                    meta[accName] = allParams;
+                    if (segment.name !== undefined) {
+                        accName = accName ? accName + '.' + segment.name : segment.name;
+                        meta[accName] = allParams;
+                    }
                     return meta;
                 }, {});
             }
