@@ -1273,7 +1273,7 @@ define('router5', ['exports'], function (exports) { 'use strict';
                 } else {
                     // Initialise router with provided start state
                     this.lastKnownState = startState;
-                    cb(null, startState);
+                    done(null, startState);
                 }
 
                 return this;

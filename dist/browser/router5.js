@@ -312,7 +312,7 @@
 
     // Search param name
     var bracketTest = /\[\]$/;
-    var withoutBrackets$1 = function withoutBrackets(paramName) {
+    var withoutBrackets = function withoutBrackets(paramName) {
         return paramName.replace(bracketTest, '');
     };
 
@@ -356,7 +356,7 @@
 
         var remainingQueryParams = parse(querystring).filter(function (_ref3) {
             var name = _ref3.name;
-            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
+            return paramsToOmit.indexOf(withoutBrackets(name)) === -1;
         });
         var remainingQueryString = build(remainingQueryParams);
 
@@ -454,7 +454,7 @@
         return source.replace(/\\\/$/, '') + '(?:\\/)?';
     };
 
-    var withoutBrackets = function withoutBrackets(param) {
+    var withoutBrackets$1 = function withoutBrackets(param) {
         return param.replace(/\[\]$/, '');
     };
 
@@ -462,7 +462,7 @@
         var val = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
 
         if (/\[\]$/.test(param)) {
-            param = withoutBrackets(param);
+            param = withoutBrackets$1(param);
             val = [val];
         }
         var existingVal = params[param];
@@ -676,9 +676,9 @@
                 }));
 
                 var searchPart = queryParams.filter(function (p) {
-                    return Object.keys(params).indexOf(withoutBrackets(p)) !== -1;
+                    return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
                 }).map(function (p) {
-                    return _serialise(p, params[withoutBrackets(p)]);
+                    return _serialise(p, params[withoutBrackets$1(p)]);
                 }).join('&');
 
                 return base + (searchPart ? '?' + searchPart : '');
@@ -934,9 +934,9 @@
                 }, []);
 
                 var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
-                    return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
+                    return Object.keys(params).indexOf(withoutBrackets(p)) !== -1;
                 }).map(function (p) {
-                    return Path.serialise(p, params[withoutBrackets$1(p)]);
+                    return Path.serialise(p, params[withoutBrackets(p)]);
                 }).join('&');
 
                 return segments.map(function (segment) {
@@ -1274,7 +1274,7 @@
                 } else {
                     // Initialise router with provided start state
                     this.lastKnownState = startState;
-                    cb(null, startState);
+                    done(null, startState);
                 }
 
                 return this;

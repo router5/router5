@@ -260,7 +260,7 @@ var Router5 = (function () {
             } else {
                 // Initialise router with provided start state
                 this.lastKnownState = startState;
-                cb(null, startState);
+                done(null, startState);
             }
 
             return this;

@@ -1,3 +1,13 @@
+<a name="3.0.3"></a>
+## [3.0.3](https://github.com/router5/router5/compare/v3.0.2...v3.0.3) (2016-04-24)
+
+
+### Bug Fixes
+
+* don't trigger transition callbacks when starting with existing state ([512d696](https://github.com/router5/router5/commit/512d696))
+
+
+
 <a name="3.0.2"></a>
 ## [3.0.2](https://github.com/router5/router5/compare/v3.0.1...v3.0.2) (2016-03-29)
 
