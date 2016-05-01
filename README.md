@@ -34,7 +34,7 @@ npm install --save react-router5
 
 ### How it works
 
-![With React](https://github.com/router5/router5.github.io/blob/master/img/router-view.png)
+![With React](https://cdn.rawgit.com/router5/router5.github.io/master/img/router-view.png)
 
 
 ### RouterProvider
