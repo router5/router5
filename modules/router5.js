@@ -54,7 +54,7 @@ class Router5 {
             strictQueryParams: true
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
-        this.registeredPlugins = {};
+        this._plugins = [];
         this._diArgs = [];
     }
 
@@ -118,25 +118,8 @@ class Router5 {
         return this;
     }
 
-    usePlugin(pluginFactory) {
-        ifNot(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
-        const plugin = pluginFactory(this);
-        const name = plugin.name || pluginFactory.name;
-        ifNot(name, '[router5.usePlugin] Tried to register an unamed plugin.');
-
-        const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
-        const defined = pluginMethods.some(method => plugin[method] !== undefined);
-
-        ifNot(defined, `[router5.usePlugin] plugin ${plugin.name} has none of the expected methods implemented`);
-        this.registeredPlugins[name] = plugin;
-
-        pluginMethods.forEach(method => {
-            if (plugin[method]) {
-                this._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
-            }
-
-        });
-
+    usePlugin(plugin) {
+        this._plugins.push(plugin);
         return this;
     }
 
@@ -159,10 +142,23 @@ class Router5 {
             },
             {}
         );
+        const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
 
         this.__mware = this._mware.map(applyFn);
         this.__canAct = reduceAndApply(this._canAct);
         this.__canDeact = reduceAndApply(this._canDeact);
+        this._plugins.forEach((plugin) => {
+            const appliedPlugin = applyFn(plugin);
+
+            pluginMethods.forEach((methodName) => {
+                if (appliedPlugin[methodName]) {
+                    this._addListener(
+                        methodName.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'),
+                        appliedPlugin[methodName]
+                    );
+                }
+            });
+        });
     }
 
     /**

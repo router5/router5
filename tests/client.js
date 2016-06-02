@@ -371,28 +371,17 @@ function testRouter(useHash) {
         });
 
         it('should register plugins', function (done) {
+            router.stop();
             expect(() => router.usePlugin(myPlugin)).not.to.throw();
-            expect(router.myCustomMethod).not.to.equal(undefined);
-            expect(router.registeredPlugins.PLUGIN_NAME).to.exist;
+            router.start(() => {
+                expect(router.myCustomMethod).not.to.equal(undefined);
 
-            router.navigate('orders', {}, {}, function (err, state) {
-                // expect(myPlugin.onTransitionStart).to.have.been.called;
-                // expect(myPlugin.onTransitionSuccess).to.have.been.called;
-                done();
+                router.navigate('orders', {}, {}, function (err, state) {
+                    // expect(myPlugin.onTransitionStart).to.have.been.called;
+                    // expect(myPlugin.onTransitionSuccess).to.have.been.called;
+                    done();
+                });
             });
-        });
-
-        it('should throw if a plugin has none of the expected methods', function () {
-            expect(() => {
-                sandbox.stub(console, 'warn', noop);
-                router.usePlugin({});
-            }).to.throw();
-        });
-
-        it('should throw when registering unamed plugins', function() {
-            expect(() => router.usePlugin(() => ({
-                onTransitionStart: () => {}
-            }))).to.throw();
         });
 
         it('should support a transition middleware', function (done) {
