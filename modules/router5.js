@@ -3,9 +3,9 @@ import transition from './transition';
 import constants  from './constants';
 
 const noop = () => {};
-const ifNot = (condition, error) => {
-    if (!condition) throw new Error(error);
-};
+// const ifNot = (condition, error) => {
+//     if (!condition) throw new Error(error);
+// };
 
 const makeState = (name, params, path, _meta) => {
     const state = {};
