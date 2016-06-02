@@ -29,7 +29,7 @@ export default function createRouter(base, useHash, hashPrefix) {
         .add(ordersRoute)
         .addNode('index', '/')
         .addNode('home', '/home')
-        .addNode('admin', '/admin',   function canActivate() { return false; })
+        .addNode('admin', '/admin', () => () => false)
         .addNode('sign-in', '/sign-in')
-        .addNode('auth-protected', '/auth-protected', () => new Promise((resolve, reject) => reject({ redirect: { name: 'sign-in' }})));
+        .addNode('auth-protected', '/auth-protected', () => () => new Promise((resolve, reject) => reject({ redirect: { name: 'sign-in' }})));
 }

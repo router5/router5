@@ -22,13 +22,13 @@ const listeners = {
             params: toState.params,
             path: toState.path,
             hitMware: true
-        }
+        };
         done(null, newState);
     },
     transitionErr: (toState, fromState, done) => {
         done({ reason: 'because' });
     },
-    noop: function () {}
+    noop() {}
 };
 
 const myPlugin = router => {
@@ -91,8 +91,8 @@ function testRouter(useHash) {
         });
 
         it('should add canActivate function when adding POJOs', function () {
-            const canActivateA = () => {};
-            const canActivateB = () => {};
+            const canActivateA = () => () => {};
+            const canActivateB = () => () => {};
             const router = new Router5([{
                 name: 'a', path: '/a', canActivate: canActivateA
             }]);
@@ -294,14 +294,14 @@ function testRouter(useHash) {
             router.canDeactivate('users.view', true);
             expect(router._canDeact['users.view']).not.to.equal(undefined);
 
-            router.canDeactivate('users.list', () => true);
+            router.canDeactivate('users.list', () => () => true);
             expect(router._canDeact['users.list']).not.to.equal(undefined);
         });
 
         it('should block navigation if a component refuses deactivation', function (done) {
             router.navigate('users.list', {}, {}, function () {
                 // Cannot deactivate
-                router.canDeactivate('users.list', () => Promise.reject());
+                router.canDeactivate('users.list', () => () => Promise.reject());
                 router.navigate('users', {}, {}, function (err) {
                     expect(err.code).to.equal(errCodes.CANNOT_DEACTIVATE);
                     expect(err.segment).to.equal('users.list');
@@ -312,7 +312,7 @@ function testRouter(useHash) {
                     router.navigate('users', {}, {}, function () {
                         expect(omitMeta(router.getState())).to.eql({name: 'users', params: {}, path: '/users'});
                         // Auto clean up
-                        expect(router._canDeact['users.list']).to.equal(undefined);
+                        expect(router.__canDeact['users.list']).to.equal(undefined);
                         done();
                     });
                 });
@@ -362,7 +362,7 @@ function testRouter(useHash) {
         });
 
         it('should be able to cancel a transition', function (done) {
-            router.canActivate('admin', (toState, fromState) => Promise.resolve());
+            router.canActivate('admin', () => () => Promise.resolve());
             var cancel = router.navigate('admin', {}, {}, function (err) {
                 expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
                 done();
@@ -397,88 +397,112 @@ function testRouter(useHash) {
 
         it('should support a transition middleware', function (done) {
             sandbox.spy(listeners, 'transition');
-            router.useMiddleware(router => listeners.transition);
-            router.navigate('users', {}, {}, function (err, state) {
-                expect(listeners.transition).to.have.been.called;
-                expect(state.hitMware).to.equal(true);
-                expect(err).to.equal(null);
-                done();
+            router.stop();
+            router.useMiddleware(() => listeners.transition);
+            router.start(() => {
+                router.navigate('users', {}, {}, function (err, state) {
+                    expect(listeners.transition).to.have.been.called;
+                    expect(state.hitMware).to.equal(true);
+                    expect(err).to.equal(null);
+                    done();
+                });
             });
         });
 
         it('should refuse to mutate its state during a transition', function (done) {
             sandbox.stub(console, 'error');
-            router.useMiddleware(router => listeners.transitionMutate);
-            router.navigate('orders', {}, {}, function (err, state) {
-                expect(console.error).to.have.been.called;
-                expect(err).to.equal(null);
-                done();
+            router.stop();
+            router.useMiddleware(() => listeners.transitionMutate);
+            router.start(() => {
+                router.navigate('users', {}, {}, function (err, state) {
+                    expect(console.error).to.have.been.called;
+                    expect(err).to.equal(null);
+                    done();
+                });
             });
         });
 
         it('should fail transition if middleware returns an error', function (done) {
             sandbox.spy(listeners, 'transitionErr');
-            router.useMiddleware(router => listeners.transitionErr);
-            router.navigate('home', {}, {}, function (err, state) {
-                expect(listeners.transitionErr).to.have.been.called;
-                expect(err.code).to.equal(errCodes.TRANSITION_ERR);
-                expect(err.reason).to.equal('because');
-                done();
+            router.stop();
+            router.useMiddleware(() => listeners.transitionErr);
+            router.start((err) => {
+                router.navigate('users', {}, {}, function (err, state) {
+                    expect(listeners.transitionErr).to.have.been.called;
+                    expect(err.code).to.equal(errCodes.TRANSITION_ERR);
+                    expect(err.reason).to.equal('because');
+                    done();
+                });
             });
         });
 
         it('should be able to take more than one middleware', function (done) {
             sandbox.spy(listeners, 'transition');
             sandbox.spy(listeners, 'transitionErr');
-            router.useMiddleware(router => listeners.transition, router => listeners.transitionErr);
-            router.navigate('home', {}, {}, function (err, state) {
-                expect(listeners.transition).to.have.been.called;
-                expect(listeners.transitionErr).to.have.been.called;
-                done();
+            router.stop();
+            router.useMiddleware(() => listeners.transition, () => listeners.transitionErr);
+            router.start((err, state) => {
+                router.navigate('users', {}, {}, function (err, state) {
+                    expect(listeners.transition).to.have.been.called;
+                    expect(listeners.transitionErr).to.have.been.called;
+                    done();
+                });
             });
         });
 
         it('should be able to set additional arguments for lifecycle methods', function () {
             const a = 1;
             const b = 2;
-            const mware = spy(() => true);
-            router.useMiddleware(router => mware);
-            router.setAdditionalArgs([a, b]);
-            router.navigate('users', {}, {}, (err, state) => {
-                expect(mware).to.have.been.calledWith(a, b);
+            const mware = spy(() => () => true);
+            router.stop();
+            router.useMiddleware(mware);
+            router.inject(a, b);
+            router.start(() => {
+                router.navigate('users', {}, {}, () => {
+                    expect(mware).to.have.been.calledWith(router, a, b);
+                });
             });
         });
 
         it('should pass along handled errors in promises', function (done) {
-            router.canActivate('admin', (toState, fromState) => Promise.resolve(new Error('error message')));
-            router.navigate('admin', {}, {}, function (err) {
-                expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
-                expect(err.error.message).to.equal('error message');
-                done();
+            router.stop();
+            router.canActivate('admin', () => () => Promise.resolve(new Error('error message')));
+            router.start(() => {
+                router.navigate('admin', {}, {}, function (err) {
+                    expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                    expect(err.error.message).to.equal('error message');
+                    done();
+                });
             });
         });
 
         it('should pass along handled errors in promises', function (done) {
             sandbox.stub(console, 'error', noop);
-            router.canActivate('admin', (toState, fromState) => new Promise((resolve, reject) => {
+            router.stop();
+            router.canActivate('admin', () => () => new Promise((resolve, reject) => {
                 throw new Error('unhandled error');
             }));
-            router.navigate('admin', {}, {}, function (err) {
-                expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
-                expect(console.error).to.have.been.called;
-                done();
+            router.start(() => {
+                router.navigate('admin', {}, {}, function (err) {
+                    expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                    expect(console.error).to.have.been.called;
+                    done();
+                });
             });
         });
 
         it('should prioritise cancellation errors', function (done) {
-            router.canActivate('admin', (toState, fromState) => new Promise((resolve, reject) => {
+            router.stop();
+            router.canActivate('admin', () => () => new Promise((resolve, reject) => {
                 setTimeout(() => reject(), 20);
             }));
-            var cancel = router.navigate('admin', {}, {}, function (err) {
-                expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
-                done();
+            router.start(() => {
+                const cancel = router.navigate('admin', {}, {}, function (err) {
+                    expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
+                    done();
+                });
+                setTimeout(cancel, 10);
             });
-            setTimeout(cancel, 10);
         });
 
         it('should redirect if specified by transition error, and call back', function (done) {

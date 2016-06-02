@@ -1,4 +1,4 @@
-export default function asyncProcess(functions, { isCancelled, toState, fromState, additionalArgs, errorKey }, callback) {
+export default function asyncProcess(functions, { isCancelled, toState, fromState, errorKey }, callback) {
     let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
@@ -12,8 +12,7 @@ export default function asyncProcess(functions, { isCancelled, toState, fromStat
         let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
-        const res = stepFn.apply(null, additionalArgs.concat([toState, fromState, done]));
-
+        const res = stepFn.call(null, toState, fromState, done);
         if (isCancelled()) {
             done(null);
         } else if (typeof res === 'boolean') {

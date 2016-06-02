@@ -21,7 +21,7 @@ const addCanActivate = router => route => {
     if (route.canActivate) router.canActivate(route.name, route.canActivate);
 };
 
-const toFunction = val => typeof val === 'function' ? val : () => val;
+const toFunction = (val) => typeof val === 'function' ? val : () => () => val;
 
 /**
  * Create a new Router5 instance
@@ -33,10 +33,13 @@ const toFunction = val => typeof val === 'function' ? val : () => val;
 class Router5 {
     constructor(routes, opts = {}) {
         this.started = false;
-        this.mware = null;
         this._cbs = {};
+        this._mware = [];
+        this.__mware = [];
         this._canAct = {};
+        this.__canAct = {};
         this._canDeact = {};
+        this.__canDeact = {};
         this.lastStateAttempt = null;
         this.lastKnownState = null;
         this.rootNode  = routes instanceof RouteNode
@@ -52,7 +55,7 @@ class Router5 {
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
         this.registeredPlugins = {};
-        this._extraArgs = [];
+        this._diArgs = [];
     }
 
     /**
@@ -67,20 +70,27 @@ class Router5 {
     }
 
     /**
-     * Set additional arguments used in lifecycle functions.
-     * Additional arguments are used in canActivate, canDeactivate and middleware functions in first positions (before `toState`).
+     * Inject additional arguments in lifecycle and middleware functions.
+     * Additional arguments are used in canActivate, canDeactivate and middleware functions after your router instance.
      * @param  {Array} args The additional arguments
      */
-    setAdditionalArgs(args) {
-        this._extraArgs = Array.isArray(args) ? args : [args];
+    inject(...args) {
+        this._DIArgs = args;
         return this;
     }
 
     /**
      * Return additional arguments used in lifecycle functions
      */
-    getAdditionalArgs() {
-        return this._extraArgs;
+    getInjectables() {
+        return this._DIArgs;
+    }
+
+    /**
+     * @private
+     */
+    _getDI() {
+        return [ this ].concat(this.getInjectables());
     }
 
     /**
@@ -104,7 +114,7 @@ class Router5 {
      */
     addNode(name, path, canActivate) {
         this.rootNode.addNode(name, path);
-        if (canActivate) this._canAct[name] = canActivate;
+        if (canActivate) this.canActivate(name, canActivate);
         return this;
     }
 
@@ -134,13 +144,25 @@ class Router5 {
      * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
      * @param {Function} fn The middleware function
      */
-    useMiddleware() {
-        this.mware = Array.prototype.slice.call(arguments).map(m => {
-            const middlewareFn = m(this);
-            ifNot(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
-            return middlewareFn;
-        });
+    useMiddleware(...args) {
+        this._mware = args;
         return this;
+    }
+
+    _applyFunctions() {
+        const injectables = this._getDI();
+        const applyFn = (fn) => fn(...injectables);
+        const reduceAndApply = (map) => Object.keys(map).reduce(
+            (appliedMap, key) => {
+                appliedMap[key] = applyFn(map[key]);
+                return appliedMap;
+            },
+            {}
+        );
+
+        this.__mware = this._mware.map(applyFn);
+        this.__canAct = reduceAndApply(this._canAct);
+        this.__canDeact = reduceAndApply(this._canDeact);
     }
 
     /**
@@ -161,6 +183,7 @@ class Router5 {
             return this;
         }
 
+        this._applyFunctions();
         this.started = true;
         this._invokeListeners('$start');
         const opts = this.options;
@@ -314,6 +337,10 @@ class Router5 {
      */
     canDeactivate(name, canDeactivate) {
         this._canDeact[name] = toFunction(canDeactivate);
+        // Allow dynamic setting of canDeactivate
+        if (this.started) {
+            this.__canDeact[name] = this._canDeact[name](...this._getDI());
+        }
         return this;
     }
 
@@ -326,6 +353,10 @@ class Router5 {
      */
     canActivate(name, canActivate) {
         this._canAct[name] = toFunction(canActivate);
+        // Allow dynamic setting of canActivate
+        if (this.started) {
+            this.__canAct[name] = this._canAct[name](...this._getDI());
+        }
         return this;
     }
 
