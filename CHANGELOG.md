@@ -1,3 +1,13 @@
+<a name="3.1.0"></a>
+# 3.1.0 (2016-06-03)
+
+
+### feat
+
+* feat: add canActivate and canDeactivate actions ([670efa5](https://github.com/router5/redux-router5/commit/670efa5))
+
+
+
 <a name="3.0.0"></a>
 # 3.0.0 (2016-02-28)
 

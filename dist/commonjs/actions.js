@@ -9,6 +9,8 @@ exports.clearErrors = clearErrors;
 exports.transitionStart = transitionStart;
 exports.transitionSuccess = transitionSuccess;
 exports.transitionError = transitionError;
+exports.canActivate = canActivate;
+exports.canDeactivate = canDeactivate;
 
 var _actionTypes = require('./actionTypes');
 
@@ -69,6 +71,26 @@ function transitionError(route, previousRoute, transitionError) {
             route: route,
             previousRoute: previousRoute,
             transitionError: transitionError
+        }
+    };
+}
+
+function canActivate(name, canActivate) {
+    return {
+        type: actionTypes.CAN_ACTIVATE,
+        payload: {
+            name: name,
+            canActivate: canActivate
+        }
+    };
+}
+
+function canDeactivate(name, canDeactivate) {
+    return {
+        type: actionTypes.CAN_DEACTIVATE,
+        payload: {
+            name: name,
+            canDeactivate: canDeactivate
         }
     };
 }

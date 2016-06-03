@@ -103,11 +103,13 @@ A simple reducer which is added by `router5Middleware`. __Note:__  use `router` 
 
 ## Actions
 
-Available actions
+Available actions (you can use your router instance directly instead)
 
 - __navigateTo(routeName, routeParams = {}, routeOptions = {})__
 - __cancelTransition()__
 - __clearErrors()__
+- __canActivate(routeName, true | false)__
+- __canDeactivate(routeName, true | false)__
 
 ```javascript
 import { actions } from 'redux-router5';
