@@ -1,5 +1,5 @@
 import transitionPath, { nameToIDs } from 'router5.transition-path';
-import asyncProcess from './async';
+import resolve from './resolve';
 import constants from './constants';
 
 export default transition;
@@ -30,7 +30,7 @@ function transition(router, toState, fromState, options, callback) {
             .filter(name => router.__canDeact[name])
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router.__canDeact[name] }), {});
 
-        asyncProcess(
+        resolve(
             canDeactivateFunctionMap, { ...asyncBase, errorKey: 'segment' },
             err => cb(err ? makeError({ code: constants.CANNOT_DEACTIVATE }, err) : null)
         );
@@ -41,7 +41,7 @@ function transition(router, toState, fromState, options, callback) {
             .filter(name => router.__canAct[name])
             .reduce((fnMap, name) => ({ ...fnMap, [name]: router.__canAct[name] }), {});
 
-        asyncProcess(
+        resolve(
             canActivateFunctionMap, { ...asyncBase, errorKey: 'segment' },
             err => cb(err ? makeError({ code: constants.CANNOT_ACTIVATE }, err) : null)
         );
@@ -49,7 +49,7 @@ function transition(router, toState, fromState, options, callback) {
 
     const middleware = !router.__mware.length ? [] :
         (toState, fromState, cb) =>
-            asyncProcess(
+            resolve(
                 router.__mware, { ...asyncBase },
                 (err, state) => cb(
                     err ? makeError({ code: constants.TRANSITION_ERR }, err) : null,
@@ -61,7 +61,7 @@ function transition(router, toState, fromState, options, callback) {
         .concat(canActivate)
         .concat(middleware);
 
-    asyncProcess(pipeline, asyncBase, done);
+    resolve(pipeline, asyncBase, done);
 
     return cancel;
 }
