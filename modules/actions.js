@@ -53,3 +53,23 @@ export function transitionError(route, previousRoute, transitionError) {
         }
     };
 }
+
+export function canActivate(name, canActivate) {
+    return {
+        type: actionTypes.CAN_ACTIVATE,
+        payload: {
+            name,
+            canActivate
+        }
+    };
+}
+
+export function canDeactivate(name, canDeactivate) {
+    return {
+        type: actionTypes.CAN_DEACTIVATE,
+        payload: {
+            name,
+            canDeactivate
+        }
+    };
+}

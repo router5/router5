@@ -22,14 +22,27 @@ const router5ReduxMiddleware = router =>
         router.usePlugin(routerPlugin(dispatch));
 
         return next => action => {
-            if (action.type === actionTypes.NAVIGATE_TO) {
-                const { name, params, opts } = action.payload;
-                router.navigate(name, params, opts);
-            } else if (action.type === actionTypes.CANCEL_TRANSITION) {
-                router.cancel();
-            }
+            switch(action.type) {
+                case actionTypes.NAVIGATE_TO:
+                    const { name, params, opts } = action.payload;
+                    router.navigate(name, params, opts);
+                    break;
 
-            return next(action);
+                case actionTypes.CANCEL_TRANSITION:
+                    router.cancel();
+                    break;
+
+                case actionTypes.CAN_DEACTIVATE:
+                    router.canDeactivate(action.payload.name, action.payload.canDeactivate);
+                    break;
+
+                case actionTypes.CAN_ACTIVATE:
+                    router.canActivate(action.payload.name, action.payload.canDeactivate);
+                    break;
+
+                default:
+                    return next(action);
+            }
         };
     };
 
