@@ -1,5 +1,6 @@
 import Rx from 'rx';
 import transitionPath from 'router5.transition-path';
+import routerToObservable from './router-to-observable';
 
 const sourceMethods = [ 'getState', 'buildUrl', 'buildPath', 'matchUrl', 'matchPath', 'areStatesDescendants', 'isActive' ];
 const sinkMethods = [ 'cancel', 'start', 'stop', 'navigate', 'canActivate', 'canDeactivate' ];
@@ -10,7 +11,6 @@ const sinkMethods = [ 'cancel', 'start', 'stop', 'navigate', 'canActivate', 'can
  * @return {Array}            An array containing a method name and its arguments
  */
 const normaliseRequest = (req) => {
-    console.log(req);
     const normReq = Array.isArray(req) || typeof req === 'string'
         ? [].concat(req)
         : [];
@@ -32,32 +32,12 @@ const normaliseRequest = (req) => {
  * @return {Function}          A cycle sink function
  */
 const makeRouterDriver = (router, autostart = true) => {
+    const startRouter = () => !router.started && autostart && router.start();
+
     // Observe router transitions
-    const transition$ = Rx.Observable.create(observer => {
-        const pushState = (type, isError) => (toState, fromState, ...args) => {
-            const routerEvt = { type, toState, fromState };
-            observer.onNext(isError ? { ...routerEvt, error: args[0] } : routerEvt);
-        };
-        const push = type => () => observer.onNext({ type });
+    const transition$ = routerToObservable(router, startRouter);
 
-        // A Router5 plugin to push any router event to the observer
-        const cyclePlugin = () => ({
-            name: 'CYCLE_DRIVER',
-            onStart: push('start'),
-            onStop: push('stop'),
-            onTransitionSuccess: pushState('transitionSuccess'),
-            onTransitionError:  pushState('transitionError', true),
-            onTransitionStart:  pushState('transitionStart'),
-            onTransitionCancel: pushState('transitionCancel')
-        });
-
-        // Register plugin and start
-        router.usePlugin(cyclePlugin);
-        if (!router.started && autostart) {
-            router.start();
-        }
-    });
-
+    // Helpers
     const filter = type => transition$.filter(_ => _.type === type);
     const slice = type => filter(type).map(_ => _.type);
     const sliceSlate = type => filter(type).map(({ toState, fromState }) => ({ toState, fromState }));

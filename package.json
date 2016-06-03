@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
     "build:prod": "NODE_ENV=production webpack",
-    "build:all": "webpack --app=deku && webpack --app=deku-redux && webpack --app=react && webpack --app=react-redux && webpack --app=cycle",
+    "build:all": "webpack --app=deku && webpack --app=deku-redux && webpack --app=react && webpack --app=react-redux && webpack --app=cycle && webpack --app=cycle2",
     "build:prod:all": "NODE_ENV=production npm run build:all"
   },
   "repository": {
@@ -35,22 +35,22 @@
   },
   "dependencies": {
     "chance": "^0.7.6",
-    "deku": "^0.5.6",
+    "deku": "^1.0.0",
     "deku-redux": "^1.0.0",
-    "deku-router5": "^2.0.0",
+    "deku-router5": "^3.0.0",
     "lodash.find": "^3.2.1",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "react-redux": "^4.0.0",
-    "react-router5": "^2.0.0",
+    "react-router5": "^3.0.0",
     "redux": "^3.0.3",
-    "redux-router5": "^2.0.0",
+    "redux-router5": "^3.0.0",
     "redux-thunk": "^1.0.0",
     "reselect": "^2.0.0",
-    "router5": "^2.0.1",
-    "router5-history": "^2.0.0",
+    "router5": "^3.0.1",
+    "router5-history": "^3.0.0",
     "router5-link-interceptor": "^2.0.2",
-    "router5-listeners": "^2.0.0",
+    "router5-listeners": "^3.0.0",
     "virtual-element": "^1.2.0"
   }
 }

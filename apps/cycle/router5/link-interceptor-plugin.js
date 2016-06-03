@@ -1,7 +1,11 @@
-import onClick from './link-on-click';
+import { shouldInterceptEvent, onClick } from './link-on-click';
 
 const linkInterceptorPlugin = () => (router) => {
-    const listener = onClick(router);
+    const listener = (evt) => {
+        if (shouldInterceptEvent(router)(evt)) {
+            onClick(router)(evt);
+        }
+    };
 
     return {
         name: 'LINK_INTERCEPTOR',

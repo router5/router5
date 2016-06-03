@@ -10,14 +10,6 @@ function Main(sources) {
     const routeComponent$ = routerSource
         .routeNode$('')
         .map(route => {
-            const defaultComponent = {
-                DOM: Rx.Observable.of(div('Route component not implemented'))
-            };
-
-            if (!route) {
-                return defaultComponent;
-            }
-
             const startsWith = startsWithSegment(route);
 
             if (startsWith('inbox')) {
@@ -28,7 +20,9 @@ function Main(sources) {
                 return Compose(sources);
             }
 
-            return defaultComponent;
+            return {
+                DOM: Rx.Observable.of(div('Route component not implemented'))
+            };
         });
 
     return {

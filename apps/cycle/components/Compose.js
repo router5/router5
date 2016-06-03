@@ -12,23 +12,24 @@ function Compose(sources) {
         .events('input')
         .map(evt => evt.target.value);
 
-
     const messageAndTitle$ = Rx.Observable.combineLatest(
-            title$.startWith(''),
-            message$.startWith(''),
-            (title, message) => ({ title, message })
-        );
+        title$.startWith(''),
+        message$.startWith(''),
+        (title, message) => ({ title, message })
+    );
 
     const compose$ = Rx.Observable.combineLatest(
-            messageAndTitle$,
-            sources.router.error$,
-            ({ title, message }, routerError) => div({ className: 'compose' }, [
-                h4('Compose a new message'),
-                input({ className: 'mail-title', name: 'title', value: title }),
-                textarea({ className: 'mail-message', name: 'message', value: message }),
-                routerError ? p('Clear inputs before continuing') : null
-            ])
-        );
+        messageAndTitle$,
+        sources.router.error$
+            .filter(err => err && err.code === 'CANNOT_DEACTIVATE')
+            .startWith(''),
+        ({ title, message }, routerError) => div({ className: 'compose' }, [
+            h4('Compose a new message'),
+            input({ className: 'mail-title', name: 'title', value: title }),
+            textarea({ className: 'mail-message', name: 'message', value: message }),
+            routerError ? p('Clear inputs before continuing') : null
+        ])
+    );
 
     return {
         DOM: compose$,

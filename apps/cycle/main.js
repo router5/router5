@@ -7,14 +7,21 @@ import routes from './routes';
 import emails from './data/emails';
 import Nav from './components/Nav';
 import Main from './components/Main';
+import { shouldInterceptEvent, onClick } from './router5/link-on-click';
 
 function main(sources) {
+    const navigationInstruction$ = Rx.Observable.fromEvent(document, 'click', 'a')
+        .filter(shouldInterceptEvent(sources.router))
+        // .map(_ => console.log(_) && _)
+        .map(onClick(sources.router));
+
     const navSinks = Nav(sources);
     const nav$ = navSinks.DOM.startWith();
     // const nav$ = Rx.Observable.of('Nav');
 
     const mainSinks = Main(sources);
     const main$ = mainSinks.DOM;
+    const routerInstructions$ = mainSinks.router;
 
     const vtree$ = Rx.Observable.combineLatest(
         nav$,
@@ -27,7 +34,7 @@ function main(sources) {
 
     return {
         DOM: vtree$,
-        router: mainSinks.router
+        router: Rx.Observable.merge(navigationInstruction$, routerInstructions$)
     };
 }
 
