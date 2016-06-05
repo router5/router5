@@ -10,7 +10,7 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 
 ## Requirements
 
-- __router5 >= 2.0.0__
+- __router5 >= 4.0.0__
 - __redux >= 3.0.0__
 
 ## How to use
@@ -25,9 +25,11 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 
 ![With redux](https://github.com/router5/router5.github.io/blob/master/img/router-redux.png)
 
+__Breaking change from 4.x__: the middleware doesn't pass the store to your router instance (using `.inject()`). If you want to use your store in `canActivate`, `canDeactivate`, middlewares and plugins, use `router.inject(store)`.
+
 ### Middleware is optional
 
-The sole purpose of the redux middleware `router5Middleware` is to translate `NAVIGATE_TO` actions to a `router.navigate()` instruction. __You may not need it__: for instance, if you use React and have your router instance in context, you can call `router.navigate()` directly.
+The sole purpose of the redux middleware `router5Middleware` is to translate actions to router instructions (`navigate`, `cancel`, `canActivate` and `canDeactivate`. __You may not need it__: for instance, if you use React and have your router instance in context, you can call `router.navigate()` directly.
 
 ### With React
 

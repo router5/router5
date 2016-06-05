@@ -18,7 +18,6 @@ const routerPlugin = dispatch =>
 const router5ReduxMiddleware = router =>
     store => {
         const { dispatch } = store;
-        router.setAdditionalArgs(store);
         router.usePlugin(routerPlugin(dispatch));
 
         return next => action => {
