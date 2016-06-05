@@ -1,24 +1,10 @@
 import * as actionTypes from './actionTypes';
-import * as actions from './actions';
-
-const routerPlugin = dispatch =>
-    () => ({
-        name: 'REDUX_PLUGIN',
-        onTransitionStart(toState, fromState) {
-            dispatch(actions.transitionStart(toState, fromState));
-        },
-        onTransitionSuccess(toState, fromState) {
-            dispatch(actions.transitionSuccess(toState, fromState));
-        },
-        onTransitionError(toState, fromState, err) {
-            dispatch(actions.transitionError(toState, fromState, err));
-        }
-    });
+import reduxPlugin from './reduxPlugin';
 
 const router5ReduxMiddleware = router =>
     store => {
         const { dispatch } = store;
-        router.usePlugin(routerPlugin(dispatch));
+        router.usePlugin(reduxPlugin(dispatch));
 
         return next => action => {
             switch(action.type) {

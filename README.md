@@ -17,19 +17,15 @@ __[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ 
 
 - Create and configure your router instance
 - Create and configure your store including `router5Middleware` and `router5Reducer`
+- If you don't use the middleware, add `reduxPlugin` to your router instance
 - Use `routeNodeSelector` on route nodes in your component tree
-- Use provided actions to perform routing
-- Since __router5@1.1.0__, `canActivate` and `canDeactivate` functions take `store` as their first argument
+- Use provided actions to perform routing or use your router instance directly
 
 ### How it works
 
 ![With redux](https://github.com/router5/router5.github.io/blob/master/img/router-redux.png)
 
 __Breaking change from 4.x__: the middleware doesn't pass the store to your router instance (using `.inject()`). If you want to use your store in `canActivate`, `canDeactivate`, middlewares and plugins, use `router.inject(store)`.
-
-### Middleware is optional
-
-The sole purpose of the redux middleware `router5Middleware` is to translate actions to router instructions (`navigate`, `cancel`, `canActivate` and `canDeactivate`. __You may not need it__: for instance, if you use React and have your router instance in context, you can call `router.navigate()` directly.
 
 ### With React
 
@@ -89,6 +85,22 @@ router.start();
 Under the hood, it simply adds a plugin to your router instance so your router
 dispatches actions on transition start, error, success and cancel (You can read more about router5 plugins [here](http://router5.github.io/docs/plugins.html)).
 It also relay `navigateTo` actions to the router.
+
+
+## Router5 reduxPlugin
+
+__`router5Middleware` redux middleware is optional__.
+
+The sole purpose of the redux middleware `router5Middleware` is to translate actions to router instructions (`navigate`, `cancel`, `canActivate` and `canDeactivate`. __You may not need it__: for instance, if you use React and have your router instance in context, you can call `router.navigate()` directly.
+
+In that case, register `reduxPlugin` with your router instance (when you use the middleware, that plugin is added for you).
+
+```js
+import { reduxPlugin } from 'redux-router5';
+
+// You need a router instance and a store instance
+router.usePlugin(reduxPlugin(store.dispatch));
+```
 
 
 ## router5Reducer
