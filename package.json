@@ -56,7 +56,6 @@
     "redux": "^3.0.0"
   },
   "dependencies": {
-    "reselect": "~2.5.1",
     "router5.transition-path": "~3.0.0"
   }
 }

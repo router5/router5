@@ -1,28 +1,21 @@
-import { createSelector, createSelectorCreator, defaultMemoize } from 'reselect';
 import transitionPath from 'router5.transition-path';
+
+const initialValue = { route: null };
 
 function routeNodeSelector(routeNode, reducerKey = 'router') {
     const routerStateSelector = state => state[reducerKey];
+    let lastReturnedValue = initialValue;
 
-    const routeIntersectionSelector = createSelector(
-        routerStateSelector,
-        ({ route, previousRoute }) => {
-            const intersection = route ? transitionPath(route, previousRoute).intersection : '';
-            return { route, intersection };
+    return function(state) {
+        const { route, previousRoute } = routerStateSelector(state);
+        const intersection = route ? transitionPath(route, previousRoute).intersection : '';
+
+        if (!previousRoute || previousRoute !== route && intersection === routeNode) {
+            lastReturnedValue = { route };
         }
-    );
 
-    // We trick the selector to think that no change happenned if the intersection of an update
-    // is not the defined routeNode.
-    const createIntersectionSelector = createSelectorCreator(
-        defaultMemoize,
-        ({ intersection, route }, previous) => previous.route === route || intersection !== routeNode
-    );
-
-    return createIntersectionSelector(
-        routeIntersectionSelector,
-        ({ route }) => ({ route })
-    );
+        return lastReturnedValue;
+    };
 }
 
 export default routeNodeSelector;

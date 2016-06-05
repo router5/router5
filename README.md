@@ -131,8 +131,7 @@ import { actions } from 'redux-router5';
 
 ## routeNodeSelector
 
-`routeNodeSelector` is a selector created with [reselect](https://github.com/rackt/reselect). It is designed to be used on a route node
-and works with `connect` higher-order component from `react-redux`.
+`routeNodeSelector` is a selector designed to be used on a route node and works with `connect` higher-order component from `react-redux`.
 
 If your routes are nested, you'll have a few route nodes in your application. On each route change, only _one_ route node needs to be re-rendered.
 That route node is the highest common node between your previous route and your current route. `routeNodeSelector` will only trigger a re-render
