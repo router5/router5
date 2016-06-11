@@ -5,7 +5,6 @@ import createRouter from './_create-router';
 
 const noop = () => {};
 
-let router;
 const listeners = {
     transition: (toState, fromState, done) => {
         const newState = {
@@ -35,12 +34,12 @@ const myPlugin = router => {
     router.myCustomMethod = function () {};
 
     return {
-        name: 'PLUGIN_NAME',
         onTransitionStart: function onTransitionStart() {},
         onTransitionSuccess: function onTransitionSuccess() {},
         onTransitionError: function onTransitionError() {}
     };
 };
+myPlugin.pluginName = 'PLUGIN_NAME';
 
 const base = window.location.pathname;
 
@@ -52,7 +51,7 @@ function getExpectedPath(useHash, path) {
 
 function omitMeta(obj) {
     if (!obj._meta) {
-        console.log('no meta')
+        console.log('no meta');
     }
     return {
         name: obj.name,
@@ -363,7 +362,7 @@ function testRouter(useHash) {
 
         it('should be able to cancel a transition', function (done) {
             router.canActivate('admin', () => () => Promise.resolve());
-            var cancel = router.navigate('admin', {}, {}, function (err) {
+            const cancel = router.navigate('admin', {}, {}, function (err) {
                 expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
                 done();
             });
@@ -372,7 +371,8 @@ function testRouter(useHash) {
 
         it('should register plugins', function (done) {
             router.stop();
-            expect(() => router.usePlugin(myPlugin)).not.to.throw();
+            router.usePlugin(myPlugin);
+            expect(router.hasPlugin('PLUGIN_NAME'));
             router.start(() => {
                 expect(router.myCustomMethod).not.to.equal(undefined);
 

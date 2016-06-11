@@ -118,9 +118,32 @@ class Router5 {
         return this;
     }
 
+    /**
+     * Use a plugin
+     * @param  {Function} plugin A plugin function
+     * @return {Router5}         The Router5 instance
+     */
     usePlugin(plugin) {
-        this._plugins.push(plugin);
+        if (!this.hasPlugin(plugin)) {
+            this._plugins.push(plugin);
+
+            if (this.started) {
+                this.__plugins.push(plugin(...this._getDI()));
+            }
+        }
+
         return this;
+    }
+
+    /**
+     * Check if a plugin has been registered
+     * @param  {Function} pluginName The plugin name
+     * @return {Router5}             Whether or not a plugin with the specified name is in use
+     */
+    hasPlugin(pluginName) {
+        const plugins = this._plugins.filter(p => p.pluginName === pluginName);
+
+        return plugins.length > 0;
     }
 
     /**
