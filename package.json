@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server",
     "build": "webpack",
     "build:prod": "NODE_ENV=production webpack",
     "build:all": "webpack --app=deku && webpack --app=deku-redux && webpack --app=react && webpack --app=react-redux && webpack --app=cycle && webpack --app=cycle2",
@@ -31,6 +32,7 @@
     "router5.transition-path": "^3.0.0",
     "rx": "^4.0.7",
     "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.14.1",
     "yargs": "^3.29.0"
   },
   "dependencies": {
