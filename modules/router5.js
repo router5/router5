@@ -396,7 +396,7 @@ class Router5 {
     _buildUrl(path) {
         return (this.options.base || '') +
             (this.options.useHash ? '#' + this.options.hashPrefix : '') +
-            path;
+            (path || '');
     }
 
     /**
