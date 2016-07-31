@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon, { spy } from 'sinon';
-import Router5, { errCodes } from '../modules';
+import Router5, { constants, errorCodes } from '../modules';
 import createRouter from './_create-router';
 
 const noop = () => {};
@@ -139,7 +139,7 @@ function testRouter(useHash) {
 
         it('should give an error if trying to start when already started', function (done) {
             router.start('', function (err) {
-                expect(err.code).to.equal(errCodes.ROUTER_ALREADY_STARTED);
+                expect(err.code).to.equal(errorCodes.ROUTER_ALREADY_STARTED);
                 done();
             });
         });
@@ -178,7 +178,7 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', null);
             router.start('/admin', function (err) {
-                expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                 expect(err.segment).to.equal('admin');
                 done();
             });
@@ -188,7 +188,7 @@ function testRouter(useHash) {
             router.stop();
             router.setOption('defaultRoute', null);
             router.start('', function (err) {
-                expect(err.code).to.equal(errCodes.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -196,7 +196,7 @@ function testRouter(useHash) {
         it('should not match an URL with extra trailing slashes', function (done) {
             router.stop();
             router.start('/users/list/', function (err, state) {
-                expect(err.code).to.equal(errCodes.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
                 expect(state).to.equal(null);
                 done();
             });
@@ -237,7 +237,7 @@ function testRouter(useHash) {
             router.setOption('defaultRoute', 'fake.route');
 
             router.start('', function(err, state) {
-                expect(err.code).to.equal(errCodes.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -251,7 +251,7 @@ function testRouter(useHash) {
 
         it('should return an error if trying to navigate to an unknown route', function (done) {
             router.navigate('fake.route', {}, {}, function (err, state) {
-                expect(err.code).to.equal(errCodes.ROUTE_NOT_FOUND);
+                expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
                 done();
             });
         });
@@ -259,7 +259,7 @@ function testRouter(useHash) {
         it('should navigate to same state if reload is set to true', function (done) {
             router.navigate('orders.pending', {}, {}, function (err, state) {
                 router.navigate('orders.pending', {}, {}, function (err, state) {
-                    expect(err.code).to.equal(errCodes.SAME_STATES);
+                    expect(err.code).to.equal(errorCodes.SAME_STATES);
 
                     router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
                         expect(err).to.equal(null);
@@ -274,7 +274,7 @@ function testRouter(useHash) {
                 router.stop();
                 expect(router.started).to.equal(false);
                 router.navigate('users.list', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.ROUTER_NOT_STARTED);
+                    expect(err.code).to.equal(errorCodes.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
                     router.start('', () => done());
@@ -302,7 +302,7 @@ function testRouter(useHash) {
                 // Cannot deactivate
                 router.canDeactivate('users.list', () => () => Promise.reject());
                 router.navigate('users', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.CANNOT_DEACTIVATE);
+                    expect(err.code).to.equal(errorCodes.CANNOT_DEACTIVATE);
                     expect(err.segment).to.equal('users.list');
                     expect(omitMeta(router.getState())).to.eql({name: 'users.list', params: {}, path: '/users/list'});
 
@@ -322,7 +322,7 @@ function testRouter(useHash) {
             router.navigate('users.list', {}, {}, function (err) {
                 router.canDeactivate('users.list', false);
                 router.navigate('users', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.CANNOT_DEACTIVATE);
+                    expect(err.code).to.equal(errorCodes.CANNOT_DEACTIVATE);
                     expect(err.segment).to.equal('users.list');
                     router.canDeactivate('users.list', true);
                     router.navigate('users', {}, {}, function (err) {
@@ -352,7 +352,7 @@ function testRouter(useHash) {
         it('should block navigation if a route cannot be activated', function (done) {
             router.navigate('home', {}, {}, function () {
                 router.navigate('admin', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                    expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                     expect(err.segment).to.equal('admin');
                     expect(router.isActive('home')).to.equal(true);
                     done();
@@ -363,7 +363,7 @@ function testRouter(useHash) {
         it('should be able to cancel a transition', function (done) {
             router.canActivate('admin', () => () => Promise.resolve());
             const cancel = router.navigate('admin', {}, {}, function (err) {
-                expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
+                expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
                 done();
             });
             cancel();
@@ -418,7 +418,7 @@ function testRouter(useHash) {
             router.start((err) => {
                 router.navigate('users', {}, {}, function (err, state) {
                     expect(listeners.transitionErr).to.have.been.called;
-                    expect(err.code).to.equal(errCodes.TRANSITION_ERR);
+                    expect(err.code).to.equal(errorCodes.TRANSITION_ERR);
                     expect(err.reason).to.equal('because');
                     done();
                 });
@@ -458,7 +458,7 @@ function testRouter(useHash) {
             router.canActivate('admin', () => () => Promise.resolve(new Error('error message')));
             router.start(() => {
                 router.navigate('admin', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                    expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                     expect(err.error.message).to.equal('error message');
                     done();
                 });
@@ -473,7 +473,7 @@ function testRouter(useHash) {
             }));
             router.start(() => {
                 router.navigate('admin', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.CANNOT_ACTIVATE);
+                    expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                     expect(console.error).to.have.been.called;
                     done();
                 });
@@ -487,7 +487,7 @@ function testRouter(useHash) {
             }));
             router.start(() => {
                 const cancel = router.navigate('admin', {}, {}, function (err) {
-                    expect(err.code).to.equal(errCodes.TRANSITION_CANCELLED);
+                    expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
                     done();
                 });
                 setTimeout(cancel, 10);
@@ -513,16 +513,26 @@ function testRouter(useHash) {
             });
         });
 
-        it('should for deactivation if specified as a transition option', (done) => {
+        it('should force deactivation if specified as a transition option', (done) => {
             router.navigate('orders.view', {id: '1'}, {}, (err, state) => {
                 router.canDeactivate('orders.view', false);
                 router.navigate('home', {}, {}, (err, state) => {
-                    expect(err.code).to.equal(errCodes.CANNOT_DEACTIVATE);
+                    expect(err.code).to.equal(errorCodes.CANNOT_DEACTIVATE);
                     router.navigate('home', {}, {forceDeactivate: true}, (err, state) => {
                         expect(state.name).to.equal('home');
                         done();
                     });
                 });
+            });
+        });
+
+        it('should let users navigate to unkown URLs if allowNotFound is set to true', (done) => {
+            router.setOption('allowNotFound', true);
+            router.setOption('defaultRoute', undefined);
+            router.stop();
+            router.start('/unkown-url', (err, state) => {
+                expect(state.name).to.equal(constants.UNKNOWN_ROUTE);
+                done();
             });
         });
     });

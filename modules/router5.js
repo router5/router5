@@ -1,6 +1,6 @@
 import RouteNode  from 'route-node';
 import transition from './transition';
-import constants  from './constants';
+import constants, { errorCodes }  from './constants';
 
 const noop = () => {};
 // const ifNot = (condition, error) => {
@@ -51,7 +51,8 @@ class Router5 {
             base: false,
             trailingSlash: 0,
             autoCleanUp: true,
-            strictQueryParams: true
+            strictQueryParams: true,
+            allowNotFound: false
         };
         Object.keys(opts).forEach(opt => this.options[opt] = opts[opt]);
         this._plugins = [];
@@ -198,7 +199,7 @@ class Router5 {
         let startPath, startState;
 
         if (this.started) {
-            done({ code: constants.ROUTER_ALREADY_STARTED });
+            done({ code: errorCodes.ROUTER_ALREADY_STARTED });
             return this;
         }
 
@@ -242,9 +243,11 @@ class Router5 {
             } else if (opts.defaultRoute) {
                 // If default, navigate to default
                 navigateToDefault();
+            } else if (opts.allowNotFound) {
+                cb(null, makeState(constants.UNKNOWN_ROUTE, { path: startPath }, startPath, {}));
             } else {
                 // No start match, no default => do nothing
-                cb({ code: constants.ROUTE_NOT_FOUND, path: startPath }, null);
+                cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
             }
         } else {
             // Initialise router with provided start state
@@ -478,7 +481,7 @@ class Router5 {
             this._tr = null;
 
             if (err) {
-                if (err.code === constants.TRANSITION_CANCELLED) this._invokeListeners('$$cancel', toState, fromState);
+                if (err.code === errorCodes.TRANSITION_CANCELLED) this._invokeListeners('$$cancel', toState, fromState);
                 else this._invokeListeners('$$error', toState, fromState, err);
 
                 done(err);
@@ -513,14 +516,14 @@ class Router5 {
      */
     navigate(name, params = {}, opts = {}, done = noop) {
         if (!this.started) {
-            done({ code: constants.ROUTER_NOT_STARTED });
+            done({ code: errorCodes.ROUTER_NOT_STARTED });
             return;
         }
 
         const toState = this.buildState(name, params);
 
         if (!toState) {
-            const err = { code: constants.ROUTE_NOT_FOUND };
+            const err = { code: errorCodes.ROUTE_NOT_FOUND };
             done(err);
             this._invokeListeners('$$error', null, this.lastKnownState, err);
             return;
@@ -533,7 +536,7 @@ class Router5 {
         // Do not proceed further if states are the same and no reload
         // (no desactivation and no callbacks)
         if (sameStates && !opts.reload) {
-            const err = { code: constants.SAME_STATES };
+            const err = { code: errorCodes.SAME_STATES };
             done(err);
             this._invokeListeners('$$error', toState, this.lastKnownState, err);
             return;

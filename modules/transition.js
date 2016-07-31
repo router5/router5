@@ -1,6 +1,6 @@
 import transitionPath, { nameToIDs } from 'router5.transition-path';
 import resolve from './resolve';
-import constants from './constants';
+import { errorCodes } from './constants';
 
 export default transition;
 
@@ -15,7 +15,7 @@ function transition(router, toState, fromState, options, callback) {
                 if (activeSegments.indexOf(name) === -1) router.__canDeact[name] = undefined;
             });
         }
-        callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
+        callback(isCancelled() ? { code: errorCodes.TRANSITION_CANCELLED } : err, state || toState);
     };
     const makeError = (base, err) => ({
         ...base,
@@ -32,7 +32,7 @@ function transition(router, toState, fromState, options, callback) {
 
         resolve(
             canDeactivateFunctionMap, { ...asyncBase, errorKey: 'segment' },
-            err => cb(err ? makeError({ code: constants.CANNOT_DEACTIVATE }, err) : null)
+            err => cb(err ? makeError({ code: errorCodes.CANNOT_DEACTIVATE }, err) : null)
         );
     };
 
@@ -43,7 +43,7 @@ function transition(router, toState, fromState, options, callback) {
 
         resolve(
             canActivateFunctionMap, { ...asyncBase, errorKey: 'segment' },
-            err => cb(err ? makeError({ code: constants.CANNOT_ACTIVATE }, err) : null)
+            err => cb(err ? makeError({ code: errorCodes.CANNOT_ACTIVATE }, err) : null)
         );
     };
 
@@ -52,7 +52,7 @@ function transition(router, toState, fromState, options, callback) {
             resolve(
                 router.__mware, { ...asyncBase },
                 (err, state) => cb(
-                    err ? makeError({ code: constants.TRANSITION_ERR }, err) : null,
+                    err ? makeError({ code: errorCodes.TRANSITION_ERR }, err) : null,
                     state || toState
                 )
             );
