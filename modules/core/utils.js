@@ -93,4 +93,8 @@ export default function withUtils(router) {
     function matchUrl(url) {
         return matchPath(urlToPath(url));
     }
+
+    function setRootPath(rootPath) {
+        router.rootNode.setPath(rootPath);
+    }
 }
