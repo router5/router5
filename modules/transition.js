@@ -4,15 +4,18 @@ import { errorCodes } from './constants';
 
 export default transition;
 
-function transition(router, toState, fromState, options, callback) {
+function transition(router, toState, fromState, opts, callback) {
     let cancelled = false;
+    const options = router.getOptions();
+    const [ canDeactivateFunctions, canActivateFunctions ] = router.getLifecycleFunctions();
+    const middlewareFunctions = router.getMiddlewareFunctions();
     const isCancelled = () => cancelled;
     const cancel = () => cancelled = true;
     const done = (err, state) => {
-        if (!err && !isCancelled() && router.options.autoCleanUp) {
+        if (!err && !isCancelled() && options.autoCleanUp) {
             const activeSegments = nameToIDs(toState.name);
-            Object.keys(router.__canDeact).forEach(name => {
-                if (activeSegments.indexOf(name) === -1) router.__canDeact[name] = undefined;
+            Object.keys(canDeactivateFunctions).forEach(name => {
+                if (activeSegments.indexOf(name) === -1) canDeactivateFunctions[name] = undefined;
             });
         }
         callback(isCancelled() ? { code: errorCodes.TRANSITION_CANCELLED } : err, state || toState);
@@ -27,8 +30,8 @@ function transition(router, toState, fromState, options, callback) {
 
     const canDeactivate = (toState, fromState, cb) => {
         let canDeactivateFunctionMap = toDeactivate
-            .filter(name => router.__canDeact[name])
-            .reduce((fnMap, name) => ({ ...fnMap, [name]: router.__canDeact[name] }), {});
+            .filter(name => canDeactivateFunctions[name])
+            .reduce((fnMap, name) => ({ ...fnMap, [name]: canDeactivateFunctions[name] }), {});
 
         resolve(
             canDeactivateFunctionMap, { ...asyncBase, errorKey: 'segment' },
@@ -38,8 +41,8 @@ function transition(router, toState, fromState, options, callback) {
 
     const canActivate = (toState, fromState, cb) => {
         const canActivateFunctionMap = toActivate
-            .filter(name => router.__canAct[name])
-            .reduce((fnMap, name) => ({ ...fnMap, [name]: router.__canAct[name] }), {});
+            .filter(name => canActivateFunctions[name])
+            .reduce((fnMap, name) => ({ ...fnMap, [name]: canActivateFunctions[name] }), {});
 
         resolve(
             canActivateFunctionMap, { ...asyncBase, errorKey: 'segment' },
@@ -47,17 +50,17 @@ function transition(router, toState, fromState, options, callback) {
         );
     };
 
-    const middleware = !router.__mware.length ? [] :
+    const middleware = !middlewareFunctions.length ? [] :
         (toState, fromState, cb) =>
             resolve(
-                router.__mware, { ...asyncBase },
+                middlewareFunctions, { ...asyncBase },
                 (err, state) => cb(
                     err ? makeError({ code: errorCodes.TRANSITION_ERR }, err) : null,
                     state || toState
                 )
             );
 
-    let pipeline = (fromState && !options.forceDeactivate ? [canDeactivate] : [])
+    let pipeline = (fromState && !opts.forceDeactivate ? [canDeactivate] : [])
         .concat(canActivate)
         .concat(middleware);
 

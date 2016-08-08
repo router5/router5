@@ -10,7 +10,13 @@ export const errorCodes = {
 };
 
 const constants = {
-    UNKNOWN_ROUTE: '@@router5/UNKNOWN_ROUTE'
+    UNKNOWN_ROUTE: '@@router5/UNKNOWN_ROUTE',
+    ROUTER_START: '$start',
+    ROUTER_STOP: '$stop',
+    TRANSITION_START: '$$start',
+    TRANSITION_CANCEL: '$$cancel',
+    TRANSITION_SUCCESS: '$$success',
+    TRANSITION_ERROR: '$$error'
 };
 
 export default constants;

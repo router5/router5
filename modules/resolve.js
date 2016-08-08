@@ -42,8 +42,8 @@ export default function resolve(functions, { isCancelled, toState, fromState, er
         if (err) callback(err);
         else {
             if (val && isState(val)) {
-                if (hasStateChanged(val)) console.error('[router5][transition] State values changed during transition process and ignored.');
-                else toState = val;
+                if (hasStateChanged(val)) console.error('[router5][transition] Warning: state values changed during transition process.');
+                toState = val;
             }
             remainingFunctions = remainingFunctions.slice(1);
             next();

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon, { spy } from 'sinon';
-import Router5, { constants, errorCodes } from '../modules';
-import createRouter from './_create-router';
+import createRouter, { constants, errorCodes } from '../modules';
+import createTestRouter from './_create-router';
 
 const noop = () => {};
 
@@ -72,7 +72,7 @@ function testRouter(useHash) {
     describe(useHash ? 'with using URL hash part' : 'without using URL hash part', () => {
         let router, sandbox;
 
-        before(() => router = createRouter(base, useHash, hashPrefix));
+        before(() => router = createTestRouter(base, useHash, hashPrefix));
         after(() => router.stop());
 
         afterEach(() => sandbox.restore());
@@ -84,23 +84,6 @@ function testRouter(useHash) {
         function makeUrl(path) {
             return 'https://www.mysite.com:8080' + base + (useHash ? '#' + hashPrefix : '' ) + path;
         }
-
-        it('should throw an error if Router5 is not used as a constructor', function () {
-            expect(() => Router5([])).to.throw();
-        });
-
-        it('should add canActivate function when adding POJOs', function () {
-            const canActivateA = () => () => {};
-            const canActivateB = () => () => {};
-            const router = new Router5([{
-                name: 'a', path: '/a', canActivate: canActivateA
-            }]);
-            expect(router._canAct.a).to.equal(canActivateA);
-            router.add([{
-                name: 'b', path: '/b', canActivate: canActivateB
-            }]);
-            expect(router._canAct.b).to.equal(canActivateB);
-        });
 
         it('should expose RouteNode path building function', function () {
             expect(router.buildPath('users.list')).to.equal('/users/list');
@@ -122,11 +105,11 @@ function testRouter(useHash) {
         });
 
         it('should start with the default route', function (done) {
-            expect(router.getState()).to.equal(null)
-            expect(router.isActive('home')).to.equal(false)
+            expect(router.getState()).to.equal(null);
+            expect(router.isActive('home')).to.equal(false);
 
             router.start('', function () {
-                expect(router.started).to.equal(true);
+                expect(router.isStarted()).to.equal(true);
                 expect(omitMeta(router.getState())).to.eql({name: 'home', params: {}, path: '/home'});
                 done();
             });
@@ -158,8 +141,6 @@ function testRouter(useHash) {
 
         it('should start with the default route if start route is not matched', function (done) {
             router.stop();
-            router.lastKnownState = null;
-            router.lastStateAttempt = null;
             router.start('/about', function (err, state) {
                 expect(omitMeta(router.getState())).to.eql({name: 'home', params: {}, path: '/home'});
                 done();
@@ -168,7 +149,7 @@ function testRouter(useHash) {
 
         it('should start with the default route if navigation to start route is not allowed', function (done) {
             router.stop();
-            router.start('/admin', function (err) {
+            router.start('/admin', function () {
                 expect(omitMeta(router.getState())).to.eql({name: 'home', params: {}, path: '/home'});
                 done();
             });
@@ -227,7 +208,7 @@ function testRouter(useHash) {
             var homeState = {name: 'home', params: {}, path: '/home', _meta: {'home': {}}};
             router.start(homeState, function (err, state) {
                 expect(state).to.eql(homeState);
-                expect(router.lastKnownState).to.eql(homeState);
+                expect(router.getState()).to.eql(homeState);
                 done();
             });
         });
@@ -272,7 +253,7 @@ function testRouter(useHash) {
         it('should be able to stop routing', function (done) {
             router.navigate('users', {}, {}, function () {
                 router.stop();
-                expect(router.started).to.equal(false);
+                expect(router.isStarted()).to.equal(false);
                 router.navigate('users.list', {}, {}, function (err) {
                     expect(err.code).to.equal(errorCodes.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
@@ -289,14 +270,6 @@ function testRouter(useHash) {
         //     });
         // });
 
-        it('should be able to register canDeactivate functions', function () {
-            router.canDeactivate('users.view', true);
-            expect(router._canDeact['users.view']).not.to.equal(undefined);
-
-            router.canDeactivate('users.list', () => () => true);
-            expect(router._canDeact['users.list']).not.to.equal(undefined);
-        });
-
         it('should block navigation if a component refuses deactivation', function (done) {
             router.navigate('users.list', {}, {}, function () {
                 // Cannot deactivate
@@ -311,7 +284,7 @@ function testRouter(useHash) {
                     router.navigate('users', {}, {}, function () {
                         expect(omitMeta(router.getState())).to.eql({name: 'users', params: {}, path: '/users'});
                         // Auto clean up
-                        expect(router.__canDeact['users.list']).to.equal(undefined);
+                        expect(router.getLifecycleFunctions()[0]['users.list']).to.equal(undefined);
                         done();
                     });
                 });
@@ -454,6 +427,7 @@ function testRouter(useHash) {
         });
 
         it('should pass along handled errors in promises', function (done) {
+            router.clearMiddleware();
             router.stop();
             router.canActivate('admin', () => () => Promise.resolve(new Error('error message')));
             router.start(() => {

@@ -1,4 +1,4 @@
-import Router5, { RouteNode } from '../modules';
+import createRouter, { RouteNode } from '../modules';
 
 const usersRoute = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id'),
@@ -16,8 +16,8 @@ const sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
     new RouteNode('query', '/query?param1[]&param2&param3')
 ]);
 
-export default function createRouter(base, useHash, hashPrefix) {
-    return new Router5([
+export default function createTestRouter(base, useHash, hashPrefix) {
+    return createRouter([
             usersRoute,
             sectionRoute
         ], {

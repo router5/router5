@@ -1,13 +1,13 @@
-import Router5 from './router5';
+import createRouter from './create-router';
 import RouteNode from 'route-node';
 import loggerPlugin from './logger';
 import transitionPath from 'router5.transition-path';
 import constants, { errorCodes } from './constants';
 
-export default Router5;
+export default createRouter;
 
 export {
-    Router5,
+    createRouter,
     RouteNode,
     loggerPlugin,
     errorCodes,
