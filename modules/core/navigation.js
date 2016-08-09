@@ -19,7 +19,13 @@ export default function withNavigation(router) {
         return router;
     }
 
-    function navigate(name, params = {}, opts = {}, done = noop) {
+    function navigate(...args) {
+        const name = args[0];
+        const lastArg = args[args.length - 1];
+        const done = typeof lastArg === 'function' ? lastArg : noop;
+        const params = typeof args[1] === 'object' ? args[1] : {};
+        const opts = typeof args[2] === 'object' ? args[2] : {};
+
         if (!router.isStarted()) {
             done({ code: errorCodes.ROUTER_NOT_STARTED });
             return;

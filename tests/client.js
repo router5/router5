@@ -231,15 +231,15 @@ function testRouter(useHash) {
         });
 
         it('should return an error if trying to navigate to an unknown route', function (done) {
-            router.navigate('fake.route', {}, {}, function (err, state) {
+            router.navigate('fake.route', function (err, state) {
                 expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
                 done();
             });
         });
 
         it('should navigate to same state if reload is set to true', function (done) {
-            router.navigate('orders.pending', {}, {}, function (err, state) {
-                router.navigate('orders.pending', {}, {}, function (err, state) {
+            router.navigate('orders.pending', function (err, state) {
+                router.navigate('orders.pending', function (err, state) {
                     expect(err.code).to.equal(errorCodes.SAME_STATES);
 
                     router.navigate('orders.pending', {}, {reload: true}, function (err, state) {
@@ -251,10 +251,10 @@ function testRouter(useHash) {
         });
 
         it('should be able to stop routing', function (done) {
-            router.navigate('users', {}, {}, function () {
+            router.navigate('users', function () {
                 router.stop();
                 expect(router.isStarted()).to.equal(false);
-                router.navigate('users.list', {}, {}, function (err) {
+                router.navigate('users.list', function (err) {
                     expect(err.code).to.equal(errorCodes.ROUTER_NOT_STARTED);
                     // Stopping again shouldn't throw an error
                     router.stop();
@@ -271,17 +271,17 @@ function testRouter(useHash) {
         // });
 
         it('should block navigation if a component refuses deactivation', function (done) {
-            router.navigate('users.list', {}, {}, function () {
+            router.navigate('users.list', function () {
                 // Cannot deactivate
                 router.canDeactivate('users.list', () => () => Promise.reject());
-                router.navigate('users', {}, {}, function (err) {
+                router.navigate('users', function (err) {
                     expect(err.code).to.equal(errorCodes.CANNOT_DEACTIVATE);
                     expect(err.segment).to.equal('users.list');
                     expect(omitMeta(router.getState())).to.eql({name: 'users.list', params: {}, path: '/users/list'});
 
                     // Can deactivate
                     router.canDeactivate('users.list', true);
-                    router.navigate('users', {}, {}, function () {
+                    router.navigate('users', function () {
                         expect(omitMeta(router.getState())).to.eql({name: 'users', params: {}, path: '/users'});
                         // Auto clean up
                         expect(router.getLifecycleFunctions()[0]['users.list']).to.equal(undefined);
@@ -292,13 +292,13 @@ function testRouter(useHash) {
         });
 
         it('should register can deactivate status', function (done) {
-            router.navigate('users.list', {}, {}, function (err) {
+            router.navigate('users.list', function (err) {
                 router.canDeactivate('users.list', false);
-                router.navigate('users', {}, {}, function (err) {
+                router.navigate('users', function (err) {
                     expect(err.code).to.equal(errorCodes.CANNOT_DEACTIVATE);
                     expect(err.segment).to.equal('users.list');
                     router.canDeactivate('users.list', true);
-                    router.navigate('users', {}, {}, function (err) {
+                    router.navigate('users', function (err) {
                         expect(err).to.equal(null);
                         done();
                     });
@@ -323,8 +323,8 @@ function testRouter(useHash) {
         });
 
         it('should block navigation if a route cannot be activated', function (done) {
-            router.navigate('home', {}, {}, function () {
-                router.navigate('admin', {}, {}, function (err) {
+            router.navigate('home', function () {
+                router.navigate('admin', function (err) {
                     expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                     expect(err.segment).to.equal('admin');
                     expect(router.isActive('home')).to.equal(true);
@@ -335,7 +335,7 @@ function testRouter(useHash) {
 
         it('should be able to cancel a transition', function (done) {
             router.canActivate('admin', () => () => Promise.resolve());
-            const cancel = router.navigate('admin', {}, {}, function (err) {
+            const cancel = router.navigate('admin', function (err) {
                 expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
                 done();
             });
@@ -346,19 +346,19 @@ function testRouter(useHash) {
             router.useMiddleware((router) => (toState, fromState, done) => {
                 setTimeout(done, 20);
             });
-            const cancel = router.navigate('users', {}, {}, (err, state) => {
+            const cancel = router.navigate('users', (err, state) => {
                 expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
             });
             spy(cancel);
-            const cancel2 = router.navigate('users', {}, {}, (err, state) => {
+            const cancel2 = router.navigate('users', (err, state) => {
                 expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
             });
             spy(cancel2);
-            const cancel3 = router.navigate('users', {}, {}, (err, state) => {
+            const cancel3 = router.navigate('users', (err, state) => {
                 expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
             });
             spy(cancel3);
-            const cancel4 = router.navigate('users', {}, {}, (err, state) => {
+            const cancel4 = router.navigate('users', (err, state) => {
                 router.clearMiddleware();
                 done();
             });
@@ -377,7 +377,7 @@ function testRouter(useHash) {
             router.start(() => {
                 expect(router.myCustomMethod).not.to.equal(undefined);
 
-                router.navigate('orders', {}, {}, function (err, state) {
+                router.navigate('orders', function (err, state) {
                     // expect(myPlugin.onTransitionStart).to.have.been.called;
                     // expect(myPlugin.onTransitionSuccess).to.have.been.called;
                     done();
@@ -390,7 +390,7 @@ function testRouter(useHash) {
             router.stop();
             router.useMiddleware(() => listeners.transition);
             router.start(() => {
-                router.navigate('users', {}, {}, function (err, state) {
+                router.navigate('users', function (err, state) {
                     expect(listeners.transition).to.have.been.called;
                     expect(state.hitMware).to.equal(true);
                     expect(err).to.equal(null);
@@ -404,7 +404,7 @@ function testRouter(useHash) {
             router.stop();
             router.useMiddleware(() => listeners.transitionMutate);
             router.start(() => {
-                router.navigate('users', {}, {}, function (err, state) {
+                router.navigate('users', function (err, state) {
                     expect(console.error).to.have.been.called;
                     expect(err).to.equal(null);
                     done();
@@ -417,7 +417,7 @@ function testRouter(useHash) {
             router.stop();
             router.useMiddleware(() => listeners.transitionErr);
             router.start((err) => {
-                router.navigate('users', {}, {}, function (err, state) {
+                router.navigate('users', function (err, state) {
                     expect(listeners.transitionErr).to.have.been.called;
                     expect(err.code).to.equal(errorCodes.TRANSITION_ERR);
                     expect(err.reason).to.equal('because');
@@ -432,7 +432,7 @@ function testRouter(useHash) {
             router.stop();
             router.useMiddleware(() => listeners.transition, () => listeners.transitionErr);
             router.start((err, state) => {
-                router.navigate('users', {}, {}, function (err, state) {
+                router.navigate('users', function (err, state) {
                     expect(listeners.transition).to.have.been.called;
                     expect(listeners.transitionErr).to.have.been.called;
                     done();
@@ -448,7 +448,7 @@ function testRouter(useHash) {
             router.useMiddleware(mware);
             router.inject(a, b);
             router.start(() => {
-                router.navigate('users', {}, {}, () => {
+                router.navigate('users', () => {
                     expect(mware).to.have.been.calledWith(router, a, b);
                 });
             });
@@ -459,7 +459,7 @@ function testRouter(useHash) {
             router.stop();
             router.canActivate('admin', () => () => Promise.resolve(new Error('error message')));
             router.start(() => {
-                router.navigate('admin', {}, {}, function (err) {
+                router.navigate('admin', function (err) {
                     expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                     expect(err.error.message).to.equal('error message');
                     done();
@@ -474,7 +474,7 @@ function testRouter(useHash) {
                 throw new Error('unhandled error');
             }));
             router.start(() => {
-                router.navigate('admin', {}, {}, function (err) {
+                router.navigate('admin', function (err) {
                     expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
                     expect(console.error).to.have.been.called;
                     done();
@@ -488,7 +488,7 @@ function testRouter(useHash) {
                 setTimeout(() => reject(), 20);
             }));
             router.start(() => {
-                const cancel = router.navigate('admin', {}, {}, function (err) {
+                const cancel = router.navigate('admin', function (err) {
                     expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
                     done();
                 });
@@ -504,7 +504,7 @@ function testRouter(useHash) {
                     params: {},
                     path: '/sign-in'
                 });
-                router.navigate('auth-protected', {}, {}, (err, state) => {
+                router.navigate('auth-protected', (err, state) => {
                     expect(omitMeta(state)).to.eql({
                         name: 'sign-in',
                         params: {},
@@ -518,7 +518,7 @@ function testRouter(useHash) {
         it('should force deactivation if specified as a transition option', (done) => {
             router.navigate('orders.view', {id: '1'}, {}, (err, state) => {
                 router.canDeactivate('orders.view', false);
-                router.navigate('home', {}, {}, (err, state) => {
+                router.navigate('home', (err, state) => {
                     expect(err.code).to.equal(errorCodes.CANNOT_DEACTIVATE);
                     router.navigate('home', {}, {forceDeactivate: true}, (err, state) => {
                         expect(state.name).to.equal('home');
