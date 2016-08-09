@@ -1,6 +1,6 @@
 import transitionPath, { nameToIDs } from 'router5.transition-path';
 import resolve from './resolve';
-import { errorCodes } from './constants';
+import { errorCodes } from '../constants';
 
 export default transition;
 

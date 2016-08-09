@@ -1,6 +1,6 @@
 import createRouter from './create-router';
 import RouteNode from 'route-node';
-import loggerPlugin from './logger';
+import loggerPlugin from './plugins/logger';
 import transitionPath from 'router5.transition-path';
 import constants, { errorCodes } from './constants';
 
