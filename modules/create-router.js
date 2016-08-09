@@ -5,6 +5,7 @@ import withNavigation from './core/navigation';
 import withMiddleware from './core/middleware';
 import withPlugins from './core/plugins';
 import withRouteLifecycle from './core/route-lifecycle';
+import constants, { errorCodes } from './constants';
 
 const defaultOptions = {
     useHash: false,
@@ -29,6 +30,7 @@ function createRouter(routes, opts) {
         getState,
         setState,
         makeState,
+        makeNotFoundState,
         inject,
         getDependencies,
         add,
@@ -80,6 +82,10 @@ function createRouter(routes, opts) {
         setProp('path', path);
         if (_meta) setProp('_meta', _meta);
         return state;
+    }
+
+    function makeNotFoundState(path) {
+        return makeState(constants.UNKNOWN_ROUTE, { path }, path, {});
     }
 
     function getState() {
