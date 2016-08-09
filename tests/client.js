@@ -342,6 +342,34 @@ function testRouter(useHash) {
             cancel();
         });
 
+        it('should be able to handle multiple cancellations', function (done) {
+            router.useMiddleware((router) => (toState, fromState, done) => {
+                setTimeout(done, 20);
+            });
+            const cancel = router.navigate('users', {}, {}, (err, state) => {
+                expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
+            });
+            spy(cancel);
+            const cancel2 = router.navigate('users', {}, {}, (err, state) => {
+                expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
+            });
+            spy(cancel2);
+            const cancel3 = router.navigate('users', {}, {}, (err, state) => {
+                expect(err.code).to.equal(errorCodes.TRANSITION_CANCELLED);
+            });
+            spy(cancel3);
+            const cancel4 = router.navigate('users', {}, {}, (err, state) => {
+                router.clearMiddleware();
+                done();
+            });
+            spy(cancel4);
+
+            expect(cancel).to.have.beenCalled;
+            expect(cancel2).to.have.beenCalled;
+            expect(cancel3).to.have.beenCalled;
+            expect(cancel4).to.not.have.beenCalled;
+        });
+
         it('should register plugins', function (done) {
             router.stop();
             router.usePlugin(myPlugin);

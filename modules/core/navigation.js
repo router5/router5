@@ -12,7 +12,7 @@ export default function withNavigation(router) {
 
     function cancel() {
         if (cancelCurrentTransition) {
-            cancelCurrentTransition();
+            cancelCurrentTransition('navigate');
             cancelCurrentTransition = null;
         }
 
@@ -72,22 +72,22 @@ export default function withNavigation(router) {
         router.invokeListeners(constants.TRANSITION_START, toState, fromState);
 
         cancelCurrentTransition = transition(router, toState, fromState, options, (err, state) => {
-            state = state || toState;
             cancelCurrentTransition = null;
+            state = state || toState;
 
             if (err) {
-                if (err.code === errorCodes.TRANSITION_CANCELLED) router.invokeListeners(constants.TRANSITION_CANCELLED, toState, fromState);
-                else router.invokeListeners(constants.TRANSITION_ERROR, toState, fromState, err);
-
+                if (err.code === errorCodes.TRANSITION_CANCELLED) {
+                    router.invokeListeners(constants.TRANSITION_CANCELLED, toState, fromState);
+                } else {
+                    router.invokeListeners(constants.TRANSITION_ERROR, toState, fromState, err);
+                }
                 done(err);
-                return;
+            } else {
+                router.setState(state);
+                done(null, state);
             }
-
-            router.setState(state);
-
-            done(null, state);
         });
 
-        return cancel;
+        return cancelCurrentTransition;
     }
 }

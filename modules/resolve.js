@@ -39,8 +39,11 @@ export default function resolve(functions, { isCancelled, toState, fromState, er
     };
 
     const iterate = (err, val) => {
-        if (err) callback(err);
-        else {
+        if (isCancelled()) {
+            callback();
+        } else if (err) {
+            callback(err);
+        } else {
             if (val && isState(val)) {
                 if (hasStateChanged(val)) console.error('[router5][transition] Warning: state values changed during transition process.');
                 toState = val;
@@ -52,7 +55,7 @@ export default function resolve(functions, { isCancelled, toState, fromState, er
 
     const next = () => {
         if (isCancelled()) {
-            callback(null);
+            callback();
         } else {
             const finished = processFn(iterate);
             if (finished) callback(null, toState);

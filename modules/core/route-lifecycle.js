@@ -11,6 +11,7 @@ export default function withRouteLifecycle(router) {
     router.canDeactivate = canDeactivate;
     router.canActivate = canActivate;
     router.getLifecycleFunctions = getLifecycleFunctions;
+    router.clearCanDeactivate = clearCanDeactivate;
 
     function getLifecycleFunctions() {
         return [ canDeactivateFunctions, canActivateFunctions ];
@@ -28,6 +29,11 @@ export default function withRouteLifecycle(router) {
         return router;
     }
 
+    function clearCanDeactivate(name) {
+        canDeactivateFactories[name] = undefined;
+        canDeactivateFunctions[name] = undefined;
+    }
+
     function canActivate(name, canActivateHandler) {
         const factory = toFunction(canActivateHandler);
         canActivateFactories[name] = factory;
@@ -42,7 +48,9 @@ export default function withRouteLifecycle(router) {
     function executeFactories() {
         const reduceFactories = (factories) => Object.keys(factories).reduce(
             (functionsMap, key) => {
-                functionsMap[key] = router.executeFactory(factories[key]);
+                if (factories[key]) {
+                    functionsMap[key] = router.executeFactory(factories[key]);
+                }
                 return functionsMap;
             },
             {}

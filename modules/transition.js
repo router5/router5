@@ -6,19 +6,32 @@ export default transition;
 
 function transition(router, toState, fromState, opts, callback) {
     let cancelled = false;
+    let completed = false;
     const options = router.getOptions();
     const [ canDeactivateFunctions, canActivateFunctions ] = router.getLifecycleFunctions();
     const middlewareFunctions = router.getMiddlewareFunctions();
     const isCancelled = () => cancelled;
-    const cancel = () => cancelled = true;
+    const cancel = (reason) => {
+        if (!cancelled && !completed) {
+            cancelled = true;
+            callback({ code: errorCodes.TRANSITION_CANCELLED }, null);
+        }
+    };
     const done = (err, state) => {
-        if (!err && !isCancelled() && options.autoCleanUp) {
+        completed = true;
+
+        if (isCancelled()) {
+            return;
+        }
+
+        if (!err && options.autoCleanUp) {
             const activeSegments = nameToIDs(toState.name);
             Object.keys(canDeactivateFunctions).forEach(name => {
-                if (activeSegments.indexOf(name) === -1) canDeactivateFunctions[name] = undefined;
+                if (activeSegments.indexOf(name) === -1) router.clearCanDeactivate(name);
             });
         }
-        callback(isCancelled() ? { code: errorCodes.TRANSITION_CANCELLED } : err, state || toState);
+
+        callback(err, state || toState);
     };
     const makeError = (base, err) => ({
         ...base,
