@@ -1,10 +1,12 @@
 import constants, { errorCodes }  from '../constants';
 import transition from '../transition';
+import { noop } from '../utils';
 
 export default function withNavigation(router) {
     let cancelCurrentTransition;
 
     router.navigate = navigate;
+    router.navigateToDefault = navigateToDefault;
     router.transitionToState = transitionToState;
     router.cancel = cancel;
 
@@ -17,7 +19,7 @@ export default function withNavigation(router) {
         return router;
     }
 
-    function navigate(name, params = {}, opts = {}, done = () => {}) {
+    function navigate(name, params = {}, opts = {}, done = noop) {
         if (!router.isStarted()) {
             done({ code: errorCodes.ROUTER_NOT_STARTED });
             return;
@@ -59,7 +61,13 @@ export default function withNavigation(router) {
         });
     }
 
-    function transitionToState(toState, fromState, options = {}, done = () => {}) {
+    function navigateToDefault(opts = {}, done = noop) {
+        const options = router.getOptions();
+
+        return navigate(options.defaultRoute, options.defaultParams, opts, done);
+    }
+
+    function transitionToState(toState, fromState, options = {}, done = noop) {
         cancel();
         router.invokeListeners(constants.TRANSITION_START, toState, fromState);
 
