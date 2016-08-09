@@ -51,13 +51,17 @@ export default function withNavigation(router) {
         // Transition and amend history
         return transitionToState(toState, fromState, opts, (err, state) => {
             if (err) {
-                if (err.redirect) navigate(err.redirect.name, err.redirect.params, { reload: true }, done);
-                else done(err);
-                return;
-            }
+                if (err.redirect) {
+                    const { name, params } = err.redirect;
 
-            router.invokeListeners(constants.TRANSITION_SUCCESS, state, fromState, opts);
-            done(null, state);
+                    navigate(name, params, { ...opts, reload: true }, done);
+                } else {
+                    done(err);
+                }
+            } else {
+                router.invokeListeners(constants.TRANSITION_SUCCESS, state, fromState, opts);
+                done(null, state);
+            }
         });
     }
 
