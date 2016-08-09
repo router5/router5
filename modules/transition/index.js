@@ -11,7 +11,7 @@ function transition(router, toState, fromState, opts, callback) {
     const [ canDeactivateFunctions, canActivateFunctions ] = router.getLifecycleFunctions();
     const middlewareFunctions = router.getMiddlewareFunctions();
     const isCancelled = () => cancelled;
-    const cancel = (reason) => {
+    const cancel = () => {
         if (!cancelled && !completed) {
             cancelled = true;
             callback({ code: errorCodes.TRANSITION_CANCELLED }, null);
