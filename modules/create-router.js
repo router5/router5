@@ -74,13 +74,19 @@ function createRouter(routes, opts) {
         if (route.canActivate) router.canActivate(route.name, route.canActivate);
     }
 
-    function makeState(name, params, path, _meta) {
+    function makeState(name, params, path, metaParams, source) {
         const state = {};
         const setProp = (key, value) => Object.defineProperty(state, key, { value, enumerable: true });
         setProp('name', name);
         setProp('params', params);
         setProp('path', path);
-        if (_meta) setProp('_meta', _meta);
+        if (metaParams || source) {
+            const meta = { params: metaParams };
+
+            if (source) meta.source = source;
+
+            setProp('meta', meta);
+        }
         return state;
     }
 

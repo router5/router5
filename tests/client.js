@@ -50,9 +50,6 @@ function getExpectedPath(useHash, path) {
 }
 
 function omitMeta(obj) {
-    if (!obj._meta) {
-        console.log('no meta');
-    }
     return {
         name: obj.name,
         params: obj.params,
@@ -205,7 +202,7 @@ function testRouter(useHash) {
 
         it('should start with the provided state', function (done) {
             router.stop();
-            var homeState = {name: 'home', params: {}, path: '/home', _meta: {'home': {}}};
+            var homeState = {name: 'home', params: {}, path: '/home', meta: { params: { 'home': {}}}};
             router.start(homeState, function (err, state) {
                 expect(state).to.eql(homeState);
                 expect(router.getState()).to.eql(homeState);
@@ -399,14 +396,15 @@ function testRouter(useHash) {
             });
         });
 
-        it('should refuse to mutate its state during a transition', function (done) {
+        it('should log a warning if state is changed during transition', function (done) {
             sandbox.stub(console, 'error');
             router.stop();
             router.useMiddleware(() => listeners.transitionMutate);
             router.start(() => {
-                router.navigate('users', function (err, state) {
+                router.navigate('orders', function (err, state) {
                     expect(console.error).to.have.been.called;
                     expect(err).to.equal(null);
+                    router.clearMiddleware();
                     done();
                 });
             });
@@ -430,6 +428,7 @@ function testRouter(useHash) {
             sandbox.spy(listeners, 'transition');
             sandbox.spy(listeners, 'transitionErr');
             router.stop();
+            router.clearMiddleware();
             router.useMiddleware(() => listeners.transition, () => listeners.transitionErr);
             router.start((err, state) => {
                 router.navigate('users', function (err, state) {

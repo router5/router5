@@ -65,10 +65,10 @@ export default function withUtils(router) {
         return router.rootNode.buildState(route, params);
     }
 
-    function matchPath(path) {
+    function matchPath(path, source) {
         const { trailingSlash, strictQueryParams } = options;
         const match = router.rootNode.matchPath(path, { trailingSlash, strictQueryParams });
-        return match ? router.makeState(match.name, match.params, path, match._meta) : null;
+        return match ? router.makeState(match.name, match.params, path, match._meta, source) : null;
     }
 
     function urlToPath(url) {
