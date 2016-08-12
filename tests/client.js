@@ -408,16 +408,17 @@ describe('router5', function () {
         });
     });
 
-    it('should be able to set additional arguments for lifecycle methods', function () {
+    it('should be able to set additional arguments for lifecycle methods', function (done) {
         const a = 1;
         const b = 2;
         const mware = spy(() => () => true);
         router.stop();
         router.useMiddleware(mware);
-        router.inject(a, b);
+        router.setDependencies({ a, b });
         router.start('', () => {
             router.navigate('users', () => {
-                expect(mware).to.have.been.calledWith(router, a, b);
+                expect(mware).to.have.been.calledWith(router, { a, b });
+                done();
             });
         });
     });

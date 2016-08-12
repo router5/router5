@@ -3,7 +3,7 @@ import constants from '../constants';
 const pluginMethods = ['onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
 
 export default function withPlugins(router) {
-    const pluginFactories = [];
+    const plugins = [];
     let removePluginListeners = [];
 
     router.usePlugin = usePlugin;
@@ -16,7 +16,7 @@ export default function withPlugins(router) {
 
     function addPlugin(plugin) {
         if (!hasPlugin(plugin)) {
-            pluginFactories.push(plugin);
+            plugins.push(plugin);
 
             if (router.isStarted()) {
                 startPlugin(plugin);
@@ -25,7 +25,7 @@ export default function withPlugins(router) {
     }
 
     function hasPlugin(pluginName) {
-        return pluginFactories.filter(p => p.name === pluginName).length > 0;
+        return plugins.filter(p => p.name === pluginName).length > 0;
     }
 
     function startPlugin(plugin) {
@@ -44,7 +44,7 @@ export default function withPlugins(router) {
     }
 
     function startPlugins() {
-        pluginFactories.forEach(startPlugin);
+        plugins.forEach(startPlugin);
     }
 
     function stopPlugins() {

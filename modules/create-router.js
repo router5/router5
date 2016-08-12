@@ -17,7 +17,7 @@ const defaultOptions = {
 function createRouter(routes, opts) {
     let routerState = null;
     const callbacks = {};
-    let dependencies = [];
+    const dependencies = {};
     const options = { ...defaultOptions, ...opts };
 
     const router = {
@@ -28,7 +28,8 @@ function createRouter(routes, opts) {
         setState,
         makeState,
         makeNotFoundState,
-        inject,
+        setDependency,
+        setDependencies,
         getDependencies,
         add,
         addNode,
@@ -108,9 +109,15 @@ function createRouter(routes, opts) {
         return router;
     }
 
-    function inject(...args) {
-        dependencies = args;
+    function setDependency(dependencyName, dependency) {
+        dependencies[dependencyName] = dependency;
         return router;
+    }
+
+    function setDependencies(deps) {
+        Object.keys(deps).forEach((depName) => {
+            dependencies[depName] = deps[depName];
+        });
     }
 
     function getDependencies() {
@@ -118,7 +125,7 @@ function createRouter(routes, opts) {
     }
 
     function getInjectables() {
-        return [ router ].concat(dependencies);
+        return [ router, dependencies ];
     }
 
     function executeFactory(factoryFunction) {
