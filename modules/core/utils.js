@@ -4,12 +4,9 @@ export default function withUtils(router) {
     router.isActive = isActive;
     router.areStatesEqual = areStatesEqual;
     router.areStatesDescendants = areStatesDescendants;
-    router.buildUrl = buildUrl;
     router.buildPath = buildPath;
     router.buildState = buildState;
     router.matchPath = matchPath;
-    router.urlToPath = urlToPath;
-    router.matchUrl = matchUrl;
     router.setRootPath = setRootPath;
 
     function isActive(name, params = {}, strictEquality = false, ignoreQueryParams = true) {
@@ -47,16 +44,6 @@ export default function withUtils(router) {
         return Object.keys(parentState.params).every(p => parentState.params[p] === childState.params[p]);
     }
 
-    function buildUrl(route, params) {
-        return _buildUrl(buildPath(route, params));
-    }
-
-    function _buildUrl(path) {
-        return (options.base || '') +
-            (options.useHash ? '#' + options.hashPrefix : '') +
-            path;
-    }
-
     function buildPath(route, params) {
         return router.rootNode.buildPath(route, params);
     }
@@ -69,29 +56,6 @@ export default function withUtils(router) {
         const { trailingSlash, strictQueryParams } = options;
         const match = router.rootNode.matchPath(path, { trailingSlash, strictQueryParams });
         return match ? router.makeState(match.name, match.params, path, match._meta, source) : null;
-    }
-
-    function urlToPath(url) {
-        const match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
-        const path = match ? match[1] : url;
-
-        const pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
-
-        if (!pathParts) throw new Error(`[router5] Could not parse url ${url}`);
-
-        const pathname = pathParts[1];
-        const hash     = pathParts[2] || '';
-        const search   = pathParts[3] || '';
-
-        return (
-            options.useHash
-            ? hash.replace(new RegExp('^#' + options.hashPrefix), '')
-            : (options.base ? pathname.replace(new RegExp('^' + options.base), '') : pathname)
-        ) + search;
-    }
-
-    function matchUrl(url) {
-        return matchPath(urlToPath(url));
     }
 
     function setRootPath(rootPath) {

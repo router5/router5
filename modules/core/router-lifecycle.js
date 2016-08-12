@@ -14,21 +14,26 @@ export default function withRouterLifecycle(router) {
     }
 
     function start(...args) {
-        const lastArg = args.slice(-1)[0];
-        const done = (lastArg instanceof Function) ? lastArg : noop;
-        let startPath, startState;
+        const lastArg = args[args.length - 1];
+        const done = typeof lastArg === 'function' ? lastArg : noop;
+        const startPathOrState = typeof args[0] !== 'function' ? args[0] : undefined;
 
         if (started) {
             done({ code: errorCodes.ROUTER_ALREADY_STARTED });
             return router;
         }
 
+        let startPath, startState;
+
         started = true;
         router.invokeListeners(constants.ROUTER_START);
 
-        if (args.length > 0) {
-            if (typeof args[0] === 'string') startPath = args[0];
-            if (typeof args[0] === 'object') startState = args[0];
+        if (startPathOrState === undefined && !options.defaultRoute) {
+            throw new Error('[router5][start] No default route defined and missing starting path or state (first argument).');
+        } if (typeof startPathOrState === 'string') {
+            startPath = startPathOrState;
+        } else if (typeof startPathOrState === 'object') {
+            startState = startPathOrState;
         }
 
         // callback
@@ -37,11 +42,6 @@ export default function withRouterLifecycle(router) {
             if (err && invokeErrCb) router.invokeListeners(constants.TRANSITION_ERROR, state, null, err);
             done(err, state);
         };
-
-        // Get start path
-        if (startPath === undefined && startState === undefined && router.getLocation) {
-            startPath = router.getLocation();
-        }
 
         if (!startState) {
             // If no supplied start state, get start state

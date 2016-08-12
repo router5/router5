@@ -8,9 +8,6 @@ import withRouteLifecycle from './core/route-lifecycle';
 import constants from './constants';
 
 const defaultOptions = {
-    useHash: false,
-    hashPrefix: '',
-    base: false,
     trailingSlash: 0,
     autoCleanUp: true,
     strictQueryParams: true,

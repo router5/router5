@@ -16,16 +16,13 @@ const sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
     new RouteNode('query', '/query?param1[]&param2&param3')
 ]);
 
-export default function createTestRouter(base, useHash, hashPrefix) {
+export default function createTestRouter() {
     return createRouter([
             usersRoute,
             sectionRoute
         ], {
             defaultRoute: 'home'
         })
-        .setOption('useHash', useHash)
-        .setOption('hashPrefix', hashPrefix)
-        .setOption('base', base)
         .add(ordersRoute)
         .addNode('index', '/')
         .addNode('home', '/home')
