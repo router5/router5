@@ -31,16 +31,16 @@ export default function withPlugins(router) {
     function startPlugin(plugin) {
         const appliedPlugin = router.executeFactory(plugin);
 
-        const removeListeners = pluginMethods.map((methodName) => {
+        const removeEventListeners = pluginMethods.map((methodName) => {
             if (appliedPlugin[methodName]) {
-                return router.addListener(
+                return router.addEventListener(
                     methodName.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'),
                     appliedPlugin[methodName]
                 );
             }
         }).filter(Boolean);
 
-        removePluginListeners.push(...removeListeners);
+        removePluginListeners.push(...removeEventListeners);
     }
 
     function startPlugins() {
@@ -48,10 +48,10 @@ export default function withPlugins(router) {
     }
 
     function stopPlugins() {
-        removePluginListeners.forEach((removeListener) => removeListener());
+        removePluginListeners.forEach((removeEventListener) => removeEventListener());
         removePluginListeners = [];
     }
 
-    router.addListener(constants.ROUTER_START, startPlugins);
-    router.addListener(constants.ROUTER_STOP, stopPlugins);
+    router.addEventListener(constants.ROUTER_START, startPlugins);
+    router.addEventListener(constants.ROUTER_STOP, stopPlugins);
 }

@@ -39,5 +39,5 @@ export default function withMiddleware(router) {
         middlewareFunctions = middlewareFactories.map(router.executeFactory);
     }
 
-    router.addListener(constants.ROUTER_START, startMiddlewares);
+    router.addEventListener(constants.ROUTER_START, startMiddlewares);
 }

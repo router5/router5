@@ -34,23 +34,23 @@ function createRouter(routes, opts) {
         add,
         addNode,
         executeFactory,
-        addListener,
-        removeListener,
-        invokeListeners
+        addEventListener,
+        removeEventListener,
+        invokeEventListeners
     };
 
-    function invokeListeners(eventName, ...args) {
+    function invokeEventListeners(eventName, ...args) {
         (callbacks[eventName] || []).forEach(cb => cb(...args));
     }
 
-    function removeListener(eventName, cb) {
+    function removeEventListener(eventName, cb) {
         callbacks[eventName] = callbacks[eventName].filter((_cb) => _cb !== cb);
     }
 
-    function addListener(eventName, cb) {
+    function addEventListener(eventName, cb) {
         callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
 
-        return () => removeListener(eventName, cb);
+        return () => removeEventListener(eventName, cb);
     }
 
     withUtils(router);

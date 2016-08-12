@@ -36,7 +36,7 @@ export default function withNavigation(router) {
         if (!toState) {
             const err = { code: errorCodes.ROUTE_NOT_FOUND };
             done(err);
-            router.invokeListeners(constants.TRANSITION_ERROR, null, router.getState(), err);
+            router.invokeEventListeners(constants.TRANSITION_ERROR, null, router.getState(), err);
             return;
         }
 
@@ -48,7 +48,7 @@ export default function withNavigation(router) {
         if (sameStates && !opts.reload) {
             const err = { code: errorCodes.SAME_STATES };
             done(err);
-            router.invokeListeners(constants.TRANSITION_ERROR, toState, router.getState(), err);
+            router.invokeEventListeners(constants.TRANSITION_ERROR, toState, router.getState(), err);
             return;
         }
 
@@ -65,7 +65,7 @@ export default function withNavigation(router) {
                     done(err);
                 }
             } else {
-                router.invokeListeners(constants.TRANSITION_SUCCESS, state, fromState, opts);
+                router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, fromState, opts);
                 done(null, state);
             }
         });
@@ -79,7 +79,7 @@ export default function withNavigation(router) {
 
     function transitionToState(toState, fromState, options = {}, done = noop) {
         cancel();
-        router.invokeListeners(constants.TRANSITION_START, toState, fromState);
+        router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
 
         cancelCurrentTransition = transition(router, toState, fromState, options, (err, state) => {
             cancelCurrentTransition = null;
@@ -87,9 +87,9 @@ export default function withNavigation(router) {
 
             if (err) {
                 if (err.code === errorCodes.TRANSITION_CANCELLED) {
-                    router.invokeListeners(constants.TRANSITION_CANCELLED, toState, fromState);
+                    router.invokeEventListeners(constants.TRANSITION_CANCELLED, toState, fromState);
                 } else {
-                    router.invokeListeners(constants.TRANSITION_ERROR, toState, fromState, err);
+                    router.invokeEventListeners(constants.TRANSITION_ERROR, toState, fromState, err);
                 }
                 done(err);
             } else {

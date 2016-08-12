@@ -60,5 +60,5 @@ export default function withRouteLifecycle(router) {
         canDeactivateFunctions = reduceFactories(canDeactivateFactories);
     }
 
-    router.addListener(constants.ROUTER_START, executeFactories);
+    router.addEventListener(constants.ROUTER_START, executeFactories);
 }
