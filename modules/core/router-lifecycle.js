@@ -28,20 +28,20 @@ export default function withRouterLifecycle(router) {
         started = true;
         router.invokeEventListeners(constants.ROUTER_START);
 
-        if (startPathOrState === undefined && !options.defaultRoute) {
-            throw new Error('[router5][start] No default route defined and missing starting path or state (first argument).');
-        } if (typeof startPathOrState === 'string') {
-            startPath = startPathOrState;
-        } else if (typeof startPathOrState === 'object') {
-            startState = startPathOrState;
-        }
-
         // callback
         const cb = (err, state, invokeErrCb = true) => {
             if (!err) router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, null, {replace: true});
             if (err && invokeErrCb) router.invokeEventListeners(constants.TRANSITION_ERROR, state, null, err);
             done(err, state);
         };
+
+        if (startPathOrState === undefined && !options.defaultRoute) {
+            return cb({ code: errorCodes.NO_START_PATH_OR_STATE });
+        } if (typeof startPathOrState === 'string') {
+            startPath = startPathOrState;
+        } else if (typeof startPathOrState === 'object') {
+            startState = startPathOrState;
+        }
 
         if (!startState) {
             // If no supplied start state, get start state

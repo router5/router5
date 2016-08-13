@@ -75,11 +75,14 @@ describe('router5', function () {
         });
     });
 
-    it('should throw an error when starting with no start path or state', function() {
+    it('should throw an error when starting with no start path or state', function(done) {
         router.stop();
         router.setOption('defaultRoute', null);
-        expect(() => router.start()).to.throw();
-        router.setOption('defaultRoute', 'home');
+        router.start((err) => {
+            expect(err.code).to.equal(errorCodes.NO_START_PATH_OR_STATE);
+            router.setOption('defaultRoute', 'home');
+            done();
+        });
     });
 
     it('should not throw an error when starting with no callback', function() {
