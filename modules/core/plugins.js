@@ -1,6 +1,4 @@
-import constants from '../constants';
-
-const pluginMethods = ['onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
 
 export default function withPlugins(router) {
     const plugins = [];
@@ -17,10 +15,7 @@ export default function withPlugins(router) {
     function addPlugin(plugin) {
         if (!hasPlugin(plugin)) {
             plugins.push(plugin);
-
-            if (router.isStarted()) {
-                startPlugin(plugin);
-            }
+            startPlugin(plugin);
         }
     }
 
@@ -42,16 +37,4 @@ export default function withPlugins(router) {
 
         removePluginListeners.push(...removeEventListeners);
     }
-
-    function startPlugins() {
-        plugins.forEach(startPlugin);
-    }
-
-    function stopPlugins() {
-        removePluginListeners.forEach((removeEventListener) => removeEventListener());
-        removePluginListeners = [];
-    }
-
-    router.addEventListener(constants.ROUTER_START, startPlugins);
-    router.addEventListener(constants.ROUTER_STOP, stopPlugins);
 }
