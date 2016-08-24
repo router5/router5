@@ -5,10 +5,23 @@ class BaseLink extends Component {
         super(props, context);
 
         this.router = context.router;
+
+        if (!this.router.hasPlugin('browserPlugin')) {
+            console.warning('[react-router5][BaseLink] missing plugin router5-plugin-browser, cannot build href');
+        };
+
         this.isActive = this.isActive.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
 
         this.state = { active: this.isActive() };
+    }
+
+    buildUrl(routeName, routeParams) {
+        if (this.router.buildUrl) {
+            return this.router.buildUrl(routeName, routeParams);
+        }
+
+        return '';
     }
 
     isActive() {
@@ -36,7 +49,7 @@ class BaseLink extends Component {
         const { routeName, routeParams, className, activeClassName, children } = this.props;
 
         const active = this.isActive();
-        const href =  this.router.buildUrl(routeName, routeParams);
+        const href =  this.buildUrl(routeName, routeParams);
         const linkclassName = (className ? className.split(' ') : [])
             .concat(active ? [activeClassName] : []).join(' ');
 

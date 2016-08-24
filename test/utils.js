@@ -1,7 +1,8 @@
-import Router5 from 'router5';
+import createRouter from 'router5';
 import React, { Component, PropTypes } from 'react';
 import { RouterProvider } from '../modules';
 import { renderIntoDocument } from 'react-addons-test-utils';
+import browserPlugin from 'router5-plugin-browser';
 
 export class Child extends Component {
     render() {
@@ -15,7 +16,7 @@ Child.contextTypes = {
 
 export const FnChild = (props) => <div />;
 
-export const createRouter = () => new Router5();
+export const createTestRouter = () => createRouter().usePlugin(browserPlugin());
 
 export const renderWithRouter = router => BaseComponent => renderIntoDocument(
     <RouterProvider router={ router }>

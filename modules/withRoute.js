@@ -15,8 +15,8 @@ function withRoute(BaseComponent) {
 
         componentDidMount() {
             ifNot(
-                this.router.registeredPlugins.LISTENERS,
-                '[react-router5][withRoute] missing plugin router5-listeners'
+                this.router.hasPlugin('listenersPlugin'),
+                '[react-router5][withRoute] missing plugin router5-plugin-listeners'
             );
 
             this.listener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });

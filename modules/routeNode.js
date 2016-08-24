@@ -19,8 +19,8 @@ function routeNode(nodeName, register = false) {
                 }
 
                 ifNot(
-                    this.router.registeredPlugins.LISTENERS,
-                    '[react-router5][routeNode] missing plugin router5-listeners'
+                    this.router.hasPlugin('listenersPlugin'),
+                    '[react-router5][routeNode] missing plugin router5-plugin-listeners'
                 );
 
                 this.nodeListener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });

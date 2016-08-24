@@ -6,7 +6,9 @@ import chaiEnzyme from 'chai-enzyme';
 chai.use(sinonChai);
 chai.use(chaiEnzyme());
 
-const doc = jsdom.jsdom('<!doctype html><html><body></body></html>');
+const doc = jsdom.jsdom('<!doctype html><html><body></body></html>', {
+  url: 'http://localhost'
+});
 const win = doc.defaultView;
 
 global.document = doc;
