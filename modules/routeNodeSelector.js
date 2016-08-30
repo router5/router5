@@ -1,6 +1,6 @@
 import transitionPath from 'router5.transition-path';
 
-const initialValue = { route: null };
+const initialValue = { route: null, previousRoute: null };
 
 function routeNodeSelector(routeNode, reducerKey = 'router') {
     const routerStateSelector = state => state[reducerKey];
@@ -11,7 +11,7 @@ function routeNodeSelector(routeNode, reducerKey = 'router') {
         const intersection = route ? transitionPath(route, previousRoute).intersection : '';
 
         if (!previousRoute || previousRoute !== route && intersection === routeNode) {
-            lastReturnedValue = { route };
+            lastReturnedValue = { route, previousRoute };
         }
 
         return lastReturnedValue;

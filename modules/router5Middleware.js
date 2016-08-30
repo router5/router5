@@ -4,6 +4,7 @@ import reduxPlugin from './reduxPlugin';
 const router5ReduxMiddleware = router =>
     store => {
         const { dispatch } = store;
+        router.setDependency('store', store);
         router.usePlugin(reduxPlugin(dispatch));
 
         return next => action => {
