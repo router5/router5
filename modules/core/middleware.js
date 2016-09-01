@@ -1,5 +1,3 @@
-import constants from '../constants';
-
 export default function withMiddleware(router) {
     let middlewareFactories = [];
     let middlewareFunctions = [];
@@ -25,19 +23,10 @@ export default function withMiddleware(router) {
 
     function addMiddleware(middleware) {
         middlewareFactories.push(middleware);
-
-        if (router.isStarted()) {
-            startMiddleware(middleware);
-        }
+        startMiddleware(middleware);
     }
 
     function startMiddleware(middleware) {
         middlewareFunctions.push(router.executeFactory(middleware));
     }
-
-    function startMiddlewares() {
-        middlewareFunctions = middlewareFactories.map(router.executeFactory);
-    }
-
-    router.addEventListener(constants.ROUTER_START, startMiddlewares);
 }
