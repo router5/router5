@@ -8,18 +8,41 @@
 # router5
 
 A simple, powerful, modular and extensible router, organising your __named routes__ in a __tree__ and handling route transitions.
-In its simplest form, Router5 processes routing __instructions__ and outputs __state__ updates.
+In its simplest form, router5 processes routing __instructions__ and outputs __state__ updates.
 
-_Router5_ is library and framework agnostic, and makes no asumption on your implementation.
-It favours __convention over configuration__, by giving you the means to observe route changes
+_router5_ is library and framework agnostic, works universaally, and makes no asumption on your implementation. It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
 To get started, look here: __[Understanding router5](http://router5.github.io/docs/understanding-router5.html)__ and __[Get started](http://router5.github.io/docs/get-started.html)__.
 
+```js
+import createRouter from 'router5';
+import browserPlugin from 'router5/plugins/browser';
+
+const routes = [
+    { name: 'home', '/home' },
+    { name: 'profile', '/profile' }
+];
+
+const router = createRouter(routes)
+    .usePlugin(browserPlugin());
+```
+
+### v4.0.0
+
+Version 4 is a refactor of router5, some of the API has slightly changed: [release notes are available](http://router5.github.io/docs/migration-4.html)
+
+### Flexible
+
+router5 offers two essential tools: __middlewares__ and __plugins__.
+
+-__Middlewares__ allow you to decide the fate of a transition: you can delay it while performing asynchronous operations (data loading), fail it or simply hook some custom business logic.
+- __Plugins__ are perfect for side-effects and 3rd party integration, by allowing you to react to router events: when it starts or stops, when a transition starts, is successful, has failed or has been cancelled. You can use them for updating the page title in the browser, sending page view analytic events, creating observables, sending your router state to a data store, etc...
+
 ### Features
 
-- __Use of hash (#)__
 - __Default start route__: a default route to navigate to on load if the current URL doesn't match any route. Similar to `$routeProvider.otherwise()` in _Angular ngRoute_ module.
+- __Unknown routes__: if redirects to a default route is not how you want to handle unknown routes, router5 can generate state objects for them instead.
 - __Start__ and __stop__
 - __Nested named routes__: routes are identified by names and path (containing parameters) so you don't have to manipulate URLs, even query parameters don't need to be specified on leaves only.
 directly. Routes can be nested, introducing the notion of _route segments_.
@@ -35,10 +58,17 @@ function per node. Supports asynchronous results.
 
 ### Plugins
 
-- __[router5-listeners](https://github.com/router5/router5-listeners)__: allows you to add route change and node listenerns. Node listeners are triggered if that named route node is the node a component tree needs to be re-rendered from.
-- __[router5-history](https://github.com/router5/router5-history)__: updates your browser URL and state using HTML5 history API and listens to popstate events. Supports use of hash in URL, but session history is still required: deciding to use a hash or not is therefore not a decision based on browser support, but rather a decision based on server capabilities!
-- __[router5-persistent-params](https://github.com/router5/router5-persistent-params)__: allows some query parameters to persist and survive navigation, without having to manually specify them for each transition.
+Several plugins are available in this repository:
 
+- __Listeners plugin__: allows you to add various types of route change listeners.
+- __Browsers plugin__: use of hash or not, URL building, HTML5 history integration.
+- __Persistent parameters plugin__: allows some query parameters to persist and survive navigation, without having to manually specify them for each transition.
+
+```js
+import browserPlugin from 'router/plugins/browser';
+import listenersPlugin from 'router/plugins/listeners';
+import persistentParamsPlugin from 'router/plugins/persistentParams';
+```
 
 ### Guides
 
