@@ -125,6 +125,14 @@ describe('router5', function () {
         });
     });
 
+    it('should start with the provided path', function (done) {
+        router.stop();
+        router.start('/users', function (err, state) {
+            expect(omitMeta(state)).to.eql({name: 'users', params: {}, path: '/users'});
+            done();
+        });
+    });
+
     it('should start with an error if navigation to start route is not allowed and no default route is specified', function (done) {
         router.stop();
         router.setOption('defaultRoute', null);

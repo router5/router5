@@ -54,7 +54,7 @@ export default function withNavigation(router) {
 
         const fromState = sameStates ? null : router.getState();
 
-        // Transition and amend history
+        // Transitio
         return transitionToState(toState, fromState, opts, (err, state) => {
             if (err) {
                 if (err.redirect) {
