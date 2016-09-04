@@ -1,4 +1,4 @@
-import { errorCodes, constants } from 'router5';
+import constants, { errorCodes } from '../../constants';
 import safeBrowser from './browser';
 import withUtils from './utils';
 
