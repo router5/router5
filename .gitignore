@@ -3,3 +3,11 @@
 /coverage
 saucelabs.js
 npm-debug.log
+
+/core
+/plugins
+/transition
+/utils
+constants.js
+create-router.js
+index.js

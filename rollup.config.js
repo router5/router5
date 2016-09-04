@@ -3,8 +3,8 @@ import uglify from 'rollup-plugin-uglify';
 import npm from 'rollup-plugin-npm';
 import { argv } from 'yargs';
 
-const format = argv.format || argv.f || 'iife';
 const compress = argv.uglify;
+const module = argv.module || argv.m || 'core';
 
 const babelOptions = {
     presets: [ 'es2015-rollup' ],
@@ -16,17 +16,34 @@ const babelOptions = {
     babelrc: false
 };
 
-const dest = {
-    amd:  `dist/amd/router5${ compress ? '.min' : '' }.js`,
-    umd:  `dist/umd/router5${ compress ? '.min' : '' }.js`,
-    iife: `dist/browser/router5${ compress ? '.min' : '' }.js`
-}[format];
-
-export default {
-    entry: 'modules/index.js',
-    format,
-    plugins: [ babel(babelOptions), npm({ jsnext: true }) ].concat(compress ? uglify() : []),
-    moduleName: 'router5',
-    moduleId: 'router5',
-    dest
+const modules = {
+    core: {
+        entry: 'modules/index.js',
+        moduleName: 'router5',
+        moduleId: 'router5',
+        dest: `dist/umd/router5${ compress ? '.min' : '' }.js`
+    },
+    browser: {
+        entry: 'modules/plugins/browser/index.js',
+        moduleName: 'router5BrowserPlugin',
+        moduleId: 'router5BrowserPlugin',
+        dest: `dist/umd/router5BrowserPlugin${ compress ? '.min' : '' }.js`
+    },
+    listeners: {
+        entry: 'modules/plugins/listeners/index.js',
+        moduleName: 'router5ListenersPlugin',
+        moduleId: 'router5ListenersPlugin',
+        dest: `dist/umd/router5ListenersPlugin${ compress ? '.min' : '' }.js`
+    },
+    persistentParams: {
+        entry: 'modules/plugins/persistentParams/index.js',
+        moduleName: 'router5PersistentParamsPlugin',
+        moduleId: 'router5PersistentParamsPlugin',
+        dest: `dist/umd/router5PersistentParamsPlugin${ compress ? '.min' : '' }.js`
+    }
 };
+
+export default Object.assign({}, modules[module], {
+    format: 'umd',
+    plugins: [ babel(babelOptions), npm({ jsnext: true }) ].concat(compress ? uglify() : [])
+});

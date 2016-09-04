@@ -6,9 +6,10 @@
     "Thomas Roch <thomas.c.roch@gmail.com>"
   ],
   "description": "A framework agnostic HTML5 router",
-  "main": "dist/browser/router5.min.js",
+  "main": "dist/umd/router5.min.js",
   "moduleType": [
     "amd",
+    "umd",
     "es6",
     "globals",
     "node"

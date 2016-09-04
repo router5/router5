@@ -2,7 +2,8 @@
     "plugins": [
         "transform-object-rest-spread",
         "transform-class-properties",
-        "transform-export-extensions"
+        "transform-export-extensions",
+        "transform-async-to-generator"
     ],
     "env": {
         "development": {
