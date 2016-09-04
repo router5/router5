@@ -1,5 +1,5 @@
 import Router5, { loggerPlugin } from 'router5';
-import historyPlugin from 'router5-history';
+import browserPlugin from 'router5/plugins/browser';
 
 const createRouter = (routes) => {
     return new Router5()
