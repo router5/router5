@@ -2,7 +2,7 @@
   "name": "router5",
   "version": "3.0.3",
   "description": "An HTML5 router, based on route-node and path-parser",
-  "main": "dist/commonjs/index.js",
+  "main": "index.js",
   "jsnext:main": "dist/es/index.js",
   "scripts": {
     "clean": "babel-node scripts/clean.js",
