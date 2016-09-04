@@ -9,8 +9,8 @@ export default function createRouter(useListenersPlugin = false) {
         .setOption('useHash', true)
         .setOption('defaultRoute', 'inbox')
         // Plugins
-        .usePlugin(loggerPlugin())
-        .usePlugin(historyPlugin());
+        .usePlugin(loggerPlugin)
+        .usePlugin(browserPlugin());
 
     if (useListenersPlugin) {
         router.usePlugin(listenersPlugin());

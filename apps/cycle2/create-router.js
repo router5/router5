@@ -7,8 +7,8 @@ const createRouter = (routes) => {
         .add(routes)
         .setOption('useHash', true)
         .setOption('defaultRoute', 'a')
-        .usePlugin(loggerPlugin())
-        .usePlugin(historyPlugin())
+        .usePlugin(loggerPlugin)
+        .usePlugin(browserPlugin())
         .usePlugin(linkInterceptorPlugin());
 };
 
