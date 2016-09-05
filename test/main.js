@@ -4,7 +4,7 @@ import { Child, createTestRouter, FnChild, renderWithRouter } from './utils';
 import { RouterProvider, withRoute, routeNode, BaseLink } from '../modules';
 import { renderIntoDocument, findRenderedComponentWithType } from 'react-addons-test-utils';
 import { spy } from 'sinon';
-import listenersPlugin from 'router5-plugin-listeners';
+import listenersPlugin from 'router5/plugins/listeners';
 import { mount } from 'enzyme';
 
 describe('RouterProvider component', () => {
@@ -26,7 +26,7 @@ describe('withRoute hoc', () => {
 
     it('should throw an error if router5-plugin-listeners plugin is not used', () => {
         const renderTree = () => renderWithRouter(router)(withRoute(() => <div />));
-        expect(renderTree).to.throw('[react-router5][withRoute] missing plugin router5-plugin-listeners');
+        expect(renderTree).to.throw('[react-router5][withRoute] missing listeners plugin');
     });
 
     it('should inject the router in the wrapped component props', () => {
@@ -47,7 +47,7 @@ describe('routeNode hoc', () => {
 
     it('should throw an error if router5-plugin-listeners plugin is not used', () => {
         const renderTree = () => renderWithRouter(router)(routeNode('')(Child));
-        expect(renderTree).to.throw('[react-router5][routeNode] missing plugin router5-plugin-listeners');
+        expect(renderTree).to.throw('[react-router5][routeNode] missing listeners plugin');
     });
 
     it('should inject the router in the wrapped component props', () => {
