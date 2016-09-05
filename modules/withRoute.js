@@ -1,4 +1,4 @@
-import { Component, createElement, PropTypes } from 'react';
+import React, { Component, createElement } from 'react';
 import { ifNot, getDisplayName } from './utils';
 
 function withRoute(BaseComponent) {
@@ -15,8 +15,8 @@ function withRoute(BaseComponent) {
 
         componentDidMount() {
             ifNot(
-                this.router.hasPlugin('listenersPlugin'),
-                '[react-router5][withRoute] missing plugin router5-plugin-listeners'
+                this.router.hasPlugin('LISTENERS_PLUGIN'),
+                '[react-router5][withRoute] missing listeners plugin'
             );
 
             this.listener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
@@ -45,7 +45,7 @@ function withRoute(BaseComponent) {
     }
 
     ComponentWithRoute.contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';

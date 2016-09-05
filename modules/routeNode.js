@@ -1,7 +1,7 @@
-import { Component, PropTypes, createElement } from 'react';
+import React, { Component, createElement } from 'react';
 import { getDisplayName, ifNot } from './utils';
 
-function routeNode(nodeName, register = false) {
+function routeNode(nodeName) {
     return function routeNodeWrapper(RouteSegment) {
         class RouteNode extends Component {
             constructor(props, context) {
@@ -14,13 +14,9 @@ function routeNode(nodeName, register = false) {
             }
 
             componentDidMount() {
-                if (register && this.refs.wrappedInstance && this.refs.wrappedInstance.canDeactivate) {
-                    this.router.canDeactivate(nodeName, this.refs.wrappedInstance.canDeactivate);
-                }
-
                 ifNot(
-                    this.router.hasPlugin('listenersPlugin'),
-                    '[react-router5][routeNode] missing plugin router5-plugin-listeners'
+                    this.router.hasPlugin('LISTENERS_PLUGIN'),
+                    '[react-router5][routeNode] missing listeners plugin'
                 );
 
                 this.nodeListener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
@@ -36,7 +32,7 @@ function routeNode(nodeName, register = false) {
                 const { previousRoute, route } = this.state;
                 const component = createElement(
                     RouteSegment,
-                    {...props, router, previousRoute, route, ref: register ? 'wrappedInstance' : undefined }
+                    {...props, router, previousRoute, route }
                 );
 
                 return component;
@@ -44,7 +40,7 @@ function routeNode(nodeName, register = false) {
         }
 
         RouteNode.contextTypes = {
-            router:       PropTypes.object.isRequired
+            router: React.PropTypes.object.isRequired
         };
 
         RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';

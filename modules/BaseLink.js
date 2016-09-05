@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 
 class BaseLink extends Component {
     constructor(props, context) {
@@ -6,8 +6,8 @@ class BaseLink extends Component {
 
         this.router = context.router;
 
-        if (!this.router.hasPlugin('browserPlugin')) {
-            console.warning('[react-router5][BaseLink] missing plugin router5-plugin-browser, cannot build href');
+        if (!this.router.hasPlugin('BROWSER_PLUGIN')) {
+            console.error('[react-router5][BaseLink] missing browser plugin, href might be build incorrectly');
         };
 
         this.isActive = this.isActive.bind(this);
@@ -21,7 +21,7 @@ class BaseLink extends Component {
             return this.router.buildUrl(routeName, routeParams);
         }
 
-        return '';
+        return this.router.builPath(routeName, routeParams);
     }
 
     isActive() {
@@ -60,17 +60,17 @@ class BaseLink extends Component {
 }
 
 BaseLink.contextTypes = {
-    router: PropTypes.object.isRequired
+    router: React.PropTypes.object.isRequired
 };
 
-BaseLink.propTypes = {
-    routeName:       PropTypes.string.isRequired,
-    routeParams:     PropTypes.object,
-    routeOptions:    PropTypes.object,
-    activeClassName: PropTypes.string,
-    activeStrict:    PropTypes.bool,
-    onClick:         PropTypes.func
-};
+// BaseLink.propTypes = {
+//     routeName:       React.PropTypes.string.isRequired,
+//     routeParams:     React.PropTypes.object,
+//     routeOptions:    React.PropTypes.object,
+//     activeClassName: React.PropTypes.string,
+//     activeStrict:    React.PropTypes.bool,
+//     onClick:         React.PropTypes.func
+// };
 
 BaseLink.defaultProps = {
     activeClassName: 'active',
