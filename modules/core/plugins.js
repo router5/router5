@@ -20,7 +20,7 @@ export default function withPlugins(router) {
     }
 
     function hasPlugin(pluginName) {
-        return plugins.filter(p => p.name === pluginName).length > 0;
+        return plugins.filter(p => p.pluginName === pluginName || p.name === pluginName).length > 0;
     }
 
     function startPlugin(plugin) {

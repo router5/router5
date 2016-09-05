@@ -5,7 +5,7 @@ const defaultOptions = {
 };
 
 function listenersPluginFactory(options = defaultOptions) {
-    return function listenersPlugin(router) {
+    function listenersPlugin(router) {
         let listeners = {};
 
         function removeListener(name, cb) {
@@ -62,6 +62,10 @@ function listenersPluginFactory(options = defaultOptions) {
 
         return { onTransitionSuccess };
     };
+
+    listenersPlugin.pluginName = 'LISTENERS_PLUGIN';
+
+    return listenersPlugin;
 }
 
 export default listenersPluginFactory;

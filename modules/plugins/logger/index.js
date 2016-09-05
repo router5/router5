@@ -31,4 +31,6 @@ function loggerPlugin() {
     };
 };
 
+loggerPlugin.pluginName = 'LOGGER_PLUGIN';
+
 export default loggerPlugin;

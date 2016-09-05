@@ -15,7 +15,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
     const options = { ...defaultOptions, ...opts };
     const transitionOptions = { forceDeactivate: options.forceDeactivate, source };
 
-    return function browserPlugin(router) {
+    function browserPlugin(router) {
         const routerOptions = router.getOptions();
         const routerStart = router.start;
 
@@ -105,6 +105,10 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
         return { onStart, onStop, onTransitionSuccess, onPopState };
     };
+
+    browserPlugin.pluginName = 'BROWSER_PLUGIN';
+
+    return browserPlugin;
 }
 
 export default browserPluginFactory;

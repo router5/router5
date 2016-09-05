@@ -6,8 +6,6 @@ const getDefinedParams = params =>
             {}
         );
 
-const pluginName = 'PERSISTENT_PARAMS';
-
 function persistentParamsPluginFactory(params = {}) {
     function persistentParamsPlugin(router) {
         // Persistent parameters
@@ -46,7 +44,7 @@ function persistentParamsPluginFactory(params = {}) {
         };
     }
 
-    persistentParamsPlugin.pluginName = pluginName;
+    persistentParamsPlugin.pluginName = 'PERSISTENT_PARAMS_PLUGIN';
 
     return persistentParamsPlugin;
 }
