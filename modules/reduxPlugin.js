@@ -1,7 +1,7 @@
 import * as actions from './actions';
 
 function reduxPluginFactory(dispatch) {
-    return function reduxPlugin() {
+    function reduxPlugin() {
         return {
             onTransitionStart(toState, fromState) {
                 dispatch(actions.transitionStart(toState, fromState));
@@ -14,6 +14,10 @@ function reduxPluginFactory(dispatch) {
             }
         };
     };
+
+    reduxPlugin.pluginName = 'REDUX_PLUGIN';
+
+    return reduxPlugin;
 }
 
 export default reduxPluginFactory;
