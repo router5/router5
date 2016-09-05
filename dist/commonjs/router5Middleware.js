@@ -8,35 +8,20 @@ var _actionTypes = require('./actionTypes');
 
 var actionTypes = _interopRequireWildcard(_actionTypes);
 
-var _actions = require('./actions');
+var _reduxPlugin = require('./reduxPlugin');
 
-var actions = _interopRequireWildcard(_actions);
+var _reduxPlugin2 = _interopRequireDefault(_reduxPlugin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var routerPlugin = function routerPlugin(dispatch) {
-    return function () {
-        return {
-            name: 'REDUX_PLUGIN',
-            onTransitionStart: function onTransitionStart(toState, fromState) {
-                dispatch(actions.transitionStart(toState, fromState));
-            },
-            onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
-                dispatch(actions.transitionSuccess(toState, fromState));
-            },
-            onTransitionError: function onTransitionError(toState, fromState, err) {
-                dispatch(actions.transitionError(toState, fromState, err));
-            }
-        };
-    };
-};
 
 var router5ReduxMiddleware = function router5ReduxMiddleware(router) {
     return function (store) {
         var dispatch = store.dispatch;
 
-        router.setAdditionalArgs(store);
-        router.usePlugin(routerPlugin(dispatch));
+        router.setDependency('store', store);
+        router.usePlugin((0, _reduxPlugin2.default)(dispatch));
 
         return function (next) {
             return function (action) {

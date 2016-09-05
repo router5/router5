@@ -1,3 +1,12 @@
+<a name="4.0.0"></a>
+# 4.0.0 (2016-09-05)
+
+
+### BREAKING CHANGE
+
+* AMD bundle no longer provided, use UMD one instead
+
+
 <a name="3.1.0"></a>
 # 3.1.0 (2016-06-03)
 

@@ -1,29 +1,12 @@
 import * as actionTypes from './actionTypes';
-import * as actions from './actions';
-
-var routerPlugin = function routerPlugin(dispatch) {
-    return function () {
-        return {
-            name: 'REDUX_PLUGIN',
-            onTransitionStart: function onTransitionStart(toState, fromState) {
-                dispatch(actions.transitionStart(toState, fromState));
-            },
-            onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
-                dispatch(actions.transitionSuccess(toState, fromState));
-            },
-            onTransitionError: function onTransitionError(toState, fromState, err) {
-                dispatch(actions.transitionError(toState, fromState, err));
-            }
-        };
-    };
-};
+import reduxPlugin from './reduxPlugin';
 
 var router5ReduxMiddleware = function router5ReduxMiddleware(router) {
     return function (store) {
         var dispatch = store.dispatch;
 
-        router.setAdditionalArgs(store);
-        router.usePlugin(routerPlugin(dispatch));
+        router.setDependency('store', store);
+        router.usePlugin(reduxPlugin(dispatch));
 
         return function (next) {
             return function (action) {
