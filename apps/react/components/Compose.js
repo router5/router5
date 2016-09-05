@@ -11,6 +11,7 @@ class Compose extends Component {
         this.updateTitle = this.updateTitle.bind(this);
         this.updateMessage = this.updateMessage.bind(this);
         this.canDeactivate = this.canDeactivate.bind(this);
+        this.props.router.canDeactivate('compose', () => this.canDeactivate.bind(this));
     }
 
     canDeactivate() {
@@ -46,4 +47,4 @@ class Compose extends Component {
     }
 }
 
-export default routeNode('compose', true)(Compose);
+export default routeNode('compose')(Compose);
