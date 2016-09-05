@@ -1,3 +1,13 @@
+<a name="4.0.2"></a>
+## [4.0.2](https://github.com/router5/router5/compare/v4.0.10...v4.0.2) (2016-09-05)
+
+
+### Bug Fixes
+
+* make sure decorated start function returns the router instance ([068ba86](https://github.com/router5/router5/commit/068ba86))
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/router5/router5/compare/v3.0.3...v4.0.0) (2016-09-05)
 

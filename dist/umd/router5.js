@@ -1411,7 +1411,6 @@
     }
 
     function withMiddleware(router) {
-        var middlewareFactories = [];
         var middlewareFunctions = [];
 
         router.useMiddleware = useMiddleware;
@@ -1429,7 +1428,6 @@
         }
 
         function clearMiddleware() {
-            middlewareFactories = [];
             middlewareFunctions = [];
         }
 
@@ -1438,11 +1436,6 @@
         }
 
         function addMiddleware(middleware) {
-            middlewareFactories.push(middleware);
-            startMiddleware(middleware);
-        }
-
-        function startMiddleware(middleware) {
             middlewareFunctions.push(router.executeFactory(middleware));
         }
     }
@@ -1500,10 +1493,8 @@
     };
 
     function withRouteLifecycle(router) {
-        var canActivateFactories = {};
-        var canActivateFunctions = {};
-        var canDeactivateFactories = {};
         var canDeactivateFunctions = {};
+        var canActivateFunctions = {};
 
         router.canDeactivate = canDeactivate;
         router.canActivate = canActivate;
@@ -1517,46 +1508,20 @@
         function canDeactivate(name, canDeactivateHandler) {
             var factory = toFunction(canDeactivateHandler);
 
-            canDeactivateFactories[name] = factory;
-
-            if (router.isStarted()) {
-                canDeactivateFunctions[name] = router.executeFactory(factory);
-            }
-
+            canDeactivateFunctions[name] = router.executeFactory(factory);
             return router;
         }
 
         function clearCanDeactivate(name) {
-            canDeactivateFactories[name] = undefined;
             canDeactivateFunctions[name] = undefined;
         }
 
         function canActivate(name, canActivateHandler) {
             var factory = toFunction(canActivateHandler);
-            canActivateFactories[name] = factory;
 
-            if (router.isStarted()) {
-                canActivateFunctions[name] = router.executeFactory(factory);
-            }
-
+            canActivateFunctions[name] = router.executeFactory(factory);
             return router;
         }
-
-        function executeFactories() {
-            var reduceFactories = function reduceFactories(factories) {
-                return Object.keys(factories).reduce(function (functionsMap, key) {
-                    if (factories[key]) {
-                        functionsMap[key] = router.executeFactory(factories[key]);
-                    }
-                    return functionsMap;
-                }, {});
-            };
-
-            canActivateFunctions = reduceFactories(canActivateFactories);
-            canDeactivateFunctions = reduceFactories(canDeactivateFactories);
-        }
-
-        router.addEventListener(constants.ROUTER_START, executeFactories);
     }
 
     var defaultOptions = {

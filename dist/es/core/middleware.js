@@ -1,5 +1,4 @@
 export default function withMiddleware(router) {
-    var middlewareFactories = [];
     var middlewareFunctions = [];
 
     router.useMiddleware = useMiddleware;
@@ -17,7 +16,6 @@ export default function withMiddleware(router) {
     }
 
     function clearMiddleware() {
-        middlewareFactories = [];
         middlewareFunctions = [];
     }
 
@@ -26,11 +24,6 @@ export default function withMiddleware(router) {
     }
 
     function addMiddleware(middleware) {
-        middlewareFactories.push(middleware);
-        startMiddleware(middleware);
-    }
-
-    function startMiddleware(middleware) {
         middlewareFunctions.push(router.executeFactory(middleware));
     }
 }

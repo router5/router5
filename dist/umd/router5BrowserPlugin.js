@@ -175,6 +175,8 @@
                 } else {
                     routerStart.apply(undefined, args);
                 }
+
+                return router;
             };
 
             router.replaceHistoryState = function (name) {
