@@ -1,22 +1,23 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define('router5', ['exports'], factory) :
-    (factory((global.router5 = {})));
+    (factory((global.router5 = global.router5 || {})));
 }(this, function (exports) { 'use strict';
 
-    var babelHelpers_typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    var babelHelpers = {};
+    babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
       return typeof obj;
     } : function (obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
     };
 
-    var babelHelpers_classCallCheck = function (instance, Constructor) {
+    babelHelpers.classCallCheck = function (instance, Constructor) {
       if (!(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
       }
     };
 
-    var babelHelpers_createClass = function () {
+    babelHelpers.createClass = function () {
       function defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
           var descriptor = props[i];
@@ -34,7 +35,7 @@
       };
     }();
 
-    var babelHelpers_defineProperty = function (obj, key, value) {
+    babelHelpers.defineProperty = function (obj, key, value) {
       if (key in obj) {
         Object.defineProperty(obj, key, {
           value: value,
@@ -49,7 +50,7 @@
       return obj;
     };
 
-    var babelHelpers_extends = Object.assign || function (target) {
+    babelHelpers.extends = Object.assign || function (target) {
       for (var i = 1; i < arguments.length; i++) {
         var source = arguments[i];
 
@@ -63,311 +64,58 @@
       return target;
     };
 
-    var constants = {
-        ROUTER_NOT_STARTED: 'NOT_STARTED',
-        ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
-        ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
-        SAME_STATES: 'SAME_STATES',
-        CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
-        CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
-        TRANSITION_ERR: 'TRANSITION_ERR',
-        TRANSITION_CANCELLED: 'CANCELLED'
-    };
+    babelHelpers.slicedToArray = function () {
+      function sliceIterator(arr, i) {
+        var _arr = [];
+        var _n = true;
+        var _d = false;
+        var _e = undefined;
 
-    function asyncProcess(functions, _ref, callback) {
-        var isCancelled = _ref.isCancelled;
-        var toState = _ref.toState;
-        var fromState = _ref.fromState;
-        var additionalArgs = _ref.additionalArgs;
-        var errorKey = _ref.errorKey;
+        try {
+          for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+            _arr.push(_s.value);
 
-        var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
-
-        var isState = function isState(obj) {
-            return (typeof obj === 'undefined' ? 'undefined' : babelHelpers_typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
-        };
-        var hasStateChanged = function hasStateChanged(state) {
-            return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
-        };
-
-        var processFn = function processFn(done) {
-            if (!remainingFunctions.length) return true;
-
-            var isMapped = typeof remainingFunctions[0] === 'string';
-            var errBase = errorKey && isMapped ? babelHelpers_defineProperty({}, errorKey, remainingFunctions[0]) : {};
-            var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
-
-            // const len = stepFn.length;
-            var res = stepFn.apply(null, additionalArgs.concat([toState, fromState, done]));
-
-            if (isCancelled()) {
-                done(null);
-            } else if (typeof res === 'boolean') {
-                done(res ? null : errBase);
-            } else if (res && typeof res.then === 'function') {
-                res.then(function (resVal) {
-                    if (resVal instanceof Error) done({ error: resVal }, null);else done(null, resVal);
-                }, function (err) {
-                    if (err instanceof Error) {
-                        console.error(err.stack || err);
-                        done(babelHelpers_extends({}, errBase, { promiseError: err }), null);
-                    } else {
-                        done((typeof err === 'undefined' ? 'undefined' : babelHelpers_typeof(err)) === 'object' ? babelHelpers_extends({}, errBase, err) : errBase, null);
-                    }
-                });
-            }
-            // else: wait for done to be called
-
-            return false;
-        };
-
-        var iterate = function iterate(err, val) {
-            if (err) callback(err);else {
-                if (val && isState(val)) {
-                    if (hasStateChanged(val)) console.error('[router5][transition] State values changed during transition process and ignored.');else toState = val;
-                }
-                remainingFunctions = remainingFunctions.slice(1);
-                next();
-            }
-        };
-
-        var next = function next() {
-            if (isCancelled()) {
-                callback(null);
-            } else {
-                var finished = processFn(iterate);
-                if (finished) callback(null, toState);
-            }
-        };
-
-        next();
-    }
-
-    function nameToIDs(name) {
-        return name.split('.').reduce(function (ids, name) {
-            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
-        }, []);
-    }
-
-    function extractSegmentParams(name, state) {
-        if (!state._meta || !state._meta[name]) return {};
-
-        return Object.keys(state._meta[name]).reduce(function (params, p) {
-            params[p] = state.params[p];
-            return params;
-        }, {});
-    }
-
-    function transitionPath(toState, fromState) {
-        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
-        var toStateIds = nameToIDs(toState.name);
-        var maxI = Math.min(fromStateIds.length, toStateIds.length);
-
-        function pointOfDifference() {
-            var i = undefined;
-
-            var _loop = function _loop() {
-                var left = fromStateIds[i];
-                var right = toStateIds[i];
-
-                if (left !== right) return {
-                        v: i
-                    };
-
-                var leftParams = extractSegmentParams(left, toState);
-                var rightParams = extractSegmentParams(right, fromState);
-
-                if (leftParams.length !== rightParams.length) return {
-                        v: i
-                    };
-                if (leftParams.length === 0) return 'continue';
-
-                var different = Object.keys(leftParams).some(function (p) {
-                    return rightParams[p] !== leftParams[p];
-                });
-                if (different) {
-                    return {
-                        v: i
-                    };
-                }
-            };
-
-            for (i = 0; i < maxI; i += 1) {
-                var _ret = _loop();
-
-                switch (_ret) {
-                    case 'continue':
-                        continue;
-
-                    default:
-                        if ((typeof _ret === 'undefined' ? 'undefined' : babelHelpers_typeof(_ret)) === "object") return _ret.v;
-                }
-            }
-
-            return i;
+            if (i && _arr.length === i) break;
+          }
+        } catch (err) {
+          _d = true;
+          _e = err;
+        } finally {
+          try {
+            if (!_n && _i["return"]) _i["return"]();
+          } finally {
+            if (_d) throw _e;
+          }
         }
 
-        var i = undefined;
-        if (!fromState) {
-            i = 0;
-        } else if (!fromState || toState.name === fromState.name && (!toState._meta || !fromState._meta)) {
-            console.log('[router5.transition-path] Some states are missing metadata, reloading all segments');
-            i = 0;
+        return _arr;
+      }
+
+      return function (arr, i) {
+        if (Array.isArray(arr)) {
+          return arr;
+        } else if (Symbol.iterator in Object(arr)) {
+          return sliceIterator(arr, i);
         } else {
-            i = pointOfDifference();
+          throw new TypeError("Invalid attempt to destructure non-iterable instance");
         }
+      };
+    }();
 
-        var toDeactivate = fromStateIds.slice(i).reverse();
-        var toActivate = toStateIds.slice(i);
+    babelHelpers.toConsumableArray = function (arr) {
+      if (Array.isArray(arr)) {
+        for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
 
-        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
-
-        return {
-            intersection: intersection,
-            toDeactivate: toDeactivate,
-            toActivate: toActivate
-        };
-    }
-
-    function transition(router, toState, fromState, options, callback) {
-        var cancelled = false;
-        var additionalArgs = router.getAdditionalArgs();
-        var isCancelled = function isCancelled() {
-            return cancelled;
-        };
-        var cancel = function cancel() {
-            return cancelled = true;
-        };
-        var done = function done(err, state) {
-            if (!err && !isCancelled() && router.options.autoCleanUp) {
-                (function () {
-                    var activeSegments = nameToIDs(toState.name);
-                    Object.keys(router._canDeact).forEach(function (name) {
-                        if (activeSegments.indexOf(name) === -1) router._canDeact[name] = undefined;
-                    });
-                })();
-            }
-            callback(isCancelled() ? { code: constants.TRANSITION_CANCELLED } : err, state || toState);
-        };
-        var makeError = function makeError(base, err) {
-            return babelHelpers_extends({}, base, err instanceof Object ? err : { error: err });
-        };
-
-        var _transitionPath = transitionPath(toState, fromState);
-
-        var toDeactivate = _transitionPath.toDeactivate;
-        var toActivate = _transitionPath.toActivate;
-
-        var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState, additionalArgs: [] };
-
-        var canDeactivate = function canDeactivate(toState, fromState, cb) {
-            var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
-                return router._canDeact[name];
-            }).reduce(function (fnMap, name) {
-                return babelHelpers_extends({}, fnMap, babelHelpers_defineProperty({}, name, router._canDeact[name]));
-            }, {});
-
-            asyncProcess(canDeactivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs, errorKey: 'segment' }), function (err) {
-                return cb(err ? makeError({ code: constants.CANNOT_DEACTIVATE }, err) : null);
-            });
-        };
-
-        var canActivate = function canActivate(toState, fromState, cb) {
-            var canActivateFunctionMap = toActivate.filter(function (name) {
-                return router._canAct[name];
-            }).reduce(function (fnMap, name) {
-                return babelHelpers_extends({}, fnMap, babelHelpers_defineProperty({}, name, router._canAct[name]));
-            }, {});
-
-            asyncProcess(canActivateFunctionMap, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs, errorKey: 'segment' }), function (err) {
-                return cb(err ? makeError({ code: constants.CANNOT_ACTIVATE }, err) : null);
-            });
-        };
-
-        var middlewareFn = router.mware;
-        var middleware = function middleware(toState, fromState, cb) {
-            var mwareFunction = Array.isArray(router.mware) ? router.mware : [router.mware];
-
-            asyncProcess(mwareFunction, babelHelpers_extends({}, asyncBase, { additionalArgs: additionalArgs }), function (err, state) {
-                return cb(err ? makeError({ code: constants.TRANSITION_ERR }, err) : null, state || toState);
-            });
-        };
-
-        var pipeline = (fromState && !options.forceDeactivate ? [canDeactivate] : []).concat(canActivate).concat(middlewareFn ? middleware : []);
-
-        asyncProcess(pipeline, asyncBase, done);
-
-        return cancel;
-    }
-
-    // Split path
-    var getPath = function getPath(path) {
-        return path.split('?')[0];
-    };
-    var getSearch = function getSearch(path) {
-        return path.split('?')[1];
+        return arr2;
+      } else {
+        return Array.from(arr);
+      }
     };
 
-    // Search param value
-    var isSerialisable = function isSerialisable(val) {
-        return val !== undefined && val !== null && val !== '';
-    };
-
-    // Search param name
-    var bracketTest = /\[\]$/;
-    var withoutBrackets$1 = function withoutBrackets(paramName) {
-        return paramName.replace(bracketTest, '');
-    };
-
-    /**
-     * Parse a querystring and return a list of params (Objects with name and value properties)
-     * @param  {String} querystring The querystring to parse
-     * @return {Array[Object]}      The list of params
-     */
-    var parse = function parse(querystring) {
-        return querystring.split('&').reduce(function (params, param) {
-            var split = param.split('=');
-            var name = split[0];
-            var value = split[1];
-            return params.concat({ name: name, value: decodeURIComponent(value) });
-        }, []);
-    };
-
-    /**
-     * Build a querystring from a list of parameters
-     * @param  {Array} paramList The list of parameters (see `.parse()`)
-     * @return {String}          The querystring
-     */
-    var build = function build(paramList) {
-        return paramList.map(function (_ref2) {
-            var name = _ref2.name;
-            var value = _ref2.value;
-            return [name].concat(isSerialisable(value) ? encodeURIComponent(value) : []);
-        }).map(function (param) {
-            return param.join('=');
-        }).join('&');
-    };
-
-    /**
-     * Remove a list of parameters from a querystring
-     * @param  {String} querystring  The original querystring
-     * @param  {Array}  paramsToOmit The parameters to omit
-     * @return {String}              The querystring
-     */
-    var omit = function omit(querystring, paramsToOmit) {
-        if (!querystring) return '';
-
-        var remainingQueryParams = parse(querystring).filter(function (_ref3) {
-            var name = _ref3.name;
-            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
-        });
-        var remainingQueryString = build(remainingQueryParams);
-
-        return remainingQueryString || '';
-    };
+    babelHelpers;
 
     var defaultOrConstrained = function defaultOrConstrained(match) {
-        return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~]+') + ')';
+        return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~%]+') + ')';
     };
 
     var rules = [{
@@ -487,7 +235,7 @@
     };
 
     var toSerialisable = function toSerialisable(val) {
-        return val !== undefined && val !== null && val !== '' ? '=' + encodeURIComponent(val) : '';
+        return val !== undefined && val !== null && val !== '' ? '=' + val : '';
     };
 
     var _serialise = function _serialise(key, val) {
@@ -497,7 +245,7 @@
     };
 
     var Path = function () {
-        babelHelpers_createClass(Path, null, [{
+        babelHelpers.createClass(Path, null, [{
             key: 'createPath',
             value: function createPath(path) {
                 return new Path(path);
@@ -510,7 +258,7 @@
         }]);
 
         function Path(path) {
-            babelHelpers_classCallCheck(this, Path);
+            babelHelpers.classCallCheck(this, Path);
 
             if (!path) throw new Error('Please supply a path');
             this.path = path;
@@ -571,7 +319,7 @@
             }).join('');
         }
 
-        babelHelpers_createClass(Path, [{
+        babelHelpers.createClass(Path, [{
             key: '_urlMatch',
             value: function _urlMatch(path, regex) {
                 var _this = this;
@@ -580,7 +328,7 @@
                 if (!match) return null;else if (!this.urlParams.length) return {};
                 // Reduce named params to key-value pairs
                 return match.slice(1, this.urlParams.length + 1).reduce(function (params, m, i) {
-                    params[_this.urlParams[i]] = m;
+                    params[_this.urlParams[i]] = decodeURIComponent(m);
                     return params;
                 }, {});
             }
@@ -646,6 +394,15 @@
                 var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
                 var opts = arguments.length <= 1 || arguments[1] === undefined ? { ignoreConstraints: false, ignoreSearch: false } : arguments[1];
 
+                var encodedParams = Object.keys(params).reduce(function (acc, key) {
+                    // Use encodeURI in case of spats
+                    if (params[key] === undefined) {
+                        acc[key] = undefined;
+                    } else {
+                        acc[key] = Array.isArray(params[key]) ? params[key].map(encodeURI) : encodeURI(params[key]);
+                    }
+                    return acc;
+                }, {});
                 // Check all params are provided (not search parameters which are optional)
                 if (this.urlParams.some(function (p) {
                     return params[p] === undefined;
@@ -657,7 +414,7 @@
                         return (/^url-parameter/.test(t.type) && !/-splat$/.test(t.type)
                         );
                     }).every(function (t) {
-                        return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(params[t.val]);
+                        return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(encodedParams[t.val]);
                     });
 
                     if (!constraintsPassed) throw new Error('Some parameters are of invalid format');
@@ -667,8 +424,8 @@
                     return (/^query-parameter/.test(t.type) === false
                     );
                 }).map(function (t) {
-                    if (t.type === 'url-parameter-matrix') return ';' + t.val + '=' + params[t.val[0]];
-                    return (/^url-parameter/.test(t.type) ? params[t.val[0]] : t.match
+                    if (t.type === 'url-parameter-matrix') return ';' + t.val + '=' + encodedParams[t.val[0]];
+                    return (/^url-parameter/.test(t.type) ? encodedParams[t.val[0]] : t.match
                     );
                 }).join('');
 
@@ -679,9 +436,9 @@
                 }));
 
                 var searchPart = queryParams.filter(function (p) {
-                    return Object.keys(params).indexOf(withoutBrackets(p)) !== -1;
+                    return Object.keys(encodedParams).indexOf(withoutBrackets(p)) !== -1;
                 }).map(function (p) {
-                    return _serialise(p, params[withoutBrackets(p)]);
+                    return _serialise(p, encodedParams[withoutBrackets(p)]);
                 }).join('&');
 
                 return base + (searchPart ? '?' + searchPart : '');
@@ -690,7 +447,73 @@
         return Path;
     }();
 
-    var noop$1 = function noop() {};
+    // Split path
+    var getPath = function getPath(path) {
+        return path.split('?')[0];
+    };
+    var getSearch = function getSearch(path) {
+        return path.split('?')[1];
+    };
+
+    // Search param value
+    var isSerialisable = function isSerialisable(val) {
+        return val !== undefined && val !== null && val !== '';
+    };
+
+    // Search param name
+    var bracketTest = /\[\]$/;
+    var withoutBrackets$1 = function withoutBrackets(paramName) {
+        return paramName.replace(bracketTest, '');
+    };
+
+    /**
+     * Parse a querystring and return a list of params (Objects with name and value properties)
+     * @param  {String} querystring The querystring to parse
+     * @return {Array[Object]}      The list of params
+     */
+    var parse = function parse(querystring) {
+        return querystring.split('&').reduce(function (params, param) {
+            var split = param.split('=');
+            var name = split[0];
+            var value = split[1];
+            return params.concat({ name: name, value: decodeURIComponent(value) });
+        }, []);
+    };
+
+    /**
+     * Build a querystring from a list of parameters
+     * @param  {Array} paramList The list of parameters (see `.parse()`)
+     * @return {String}          The querystring
+     */
+    var build = function build(paramList) {
+        return paramList.map(function (_ref2) {
+            var name = _ref2.name;
+            var value = _ref2.value;
+            return [name].concat(isSerialisable(value) ? encodeURIComponent(value) : []);
+        }).map(function (param) {
+            return param.join('=');
+        }).join('&');
+    };
+
+    /**
+     * Remove a list of parameters from a querystring
+     * @param  {String} querystring  The original querystring
+     * @param  {Array}  paramsToOmit The parameters to omit
+     * @return {String}              The querystring
+     */
+    var omit = function omit(querystring, paramsToOmit) {
+        if (!querystring) return '';
+
+        var remainingQueryParams = parse(querystring).filter(function (_ref3) {
+            var name = _ref3.name;
+            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
+        });
+        var remainingQueryString = build(remainingQueryParams);
+
+        return remainingQueryString || '';
+    };
+
+    var noop = function noop() {};
 
     var RouteNode = function () {
         function RouteNode() {
@@ -698,7 +521,7 @@
             var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
             var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
             var cb = arguments[3];
-            babelHelpers_classCallCheck(this, RouteNode);
+            babelHelpers.classCallCheck(this, RouteNode);
 
             this.name = name;
             this.path = path;
@@ -710,7 +533,7 @@
             return this;
         }
 
-        babelHelpers_createClass(RouteNode, [{
+        babelHelpers.createClass(RouteNode, [{
             key: 'setPath',
             value: function setPath() {
                 var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
@@ -723,9 +546,9 @@
             value: function add(route) {
                 var _this = this;
 
-                var cb = arguments.length <= 1 || arguments[1] === undefined ? noop$1 : arguments[1];
+                var cb = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
 
-                var originalRoute = undefined;
+                var originalRoute = void 0;
                 if (route === undefined || route === null) return;
 
                 if (route instanceof Array) {
@@ -743,7 +566,7 @@
                         throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                     }
                     originalRoute = route;
-                    route = new RouteNode(route.name, route.path, route.children);
+                    route = new RouteNode(route.name, route.path, route.children, cb);
                 }
 
                 var names = route.name.split('.');
@@ -844,11 +667,13 @@
                 var strictQueryParams = options.strictQueryParams;
 
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
+                    var isRoot = nodes.length === 1 && nodes[0].name === '';
+                    // for (child of node.children) {
                     var _loop = function _loop(i) {
                         var child = nodes[i];
                         // Partially match path
                         var match = child.parser.partialMatch(pathSegment);
-                        var remainingPath = undefined;
+                        var remainingPath = void 0;
 
                         if (!match && trailingSlash) {
                             // Try with optional trailing slash
@@ -861,7 +686,7 @@
                             var search = omit(getSearch(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
                             remainingPath = getPath(remainingPath) + (search ? '?' + search : '');
 
-                            if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                            if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                                 remainingPath = '';
                             }
                         }
@@ -872,13 +697,25 @@
                                 return segments.params[param] = match[param];
                             });
 
-                            if (!remainingPath.length || // fully matched
-                            !strictQueryParams && remainingPath.indexOf('?') === 0 // unmatched queryParams in non strict mode
-                            ) {
-                                    return {
-                                        v: segments
-                                    };
-                                }
+                            if (!isRoot && !remainingPath.length) {
+                                // fully matched
+                                return {
+                                    v: segments
+                                };
+                            }
+                            if (!isRoot && !strictQueryParams && remainingPath.indexOf('?') === 0) {
+                                // unmatched queryParams in non strict mode
+                                var remainingQueryParams = parse(remainingPath.slice(1));
+
+                                remainingQueryParams.forEach(function (_ref) {
+                                    var name = _ref.name;
+                                    var value = _ref.value;
+                                    return segments.params[name] = value;
+                                });
+                                return {
+                                    v: segments
+                                };
+                            }
                             // If no children to match against but unmatched path left
                             if (!child.children.length) {
                                 return {
@@ -892,12 +729,12 @@
                         }
                     };
 
-                    // for (child of node.children) {
                     for (var i in nodes) {
                         var _ret = _loop(i);
 
-                        if ((typeof _ret === 'undefined' ? 'undefined' : babelHelpers_typeof(_ret)) === "object") return _ret.v;
+                        if ((typeof _ret === 'undefined' ? 'undefined' : babelHelpers.typeof(_ret)) === "object") return _ret.v;
                     }
+
                     return null;
                 };
 
@@ -939,7 +776,10 @@
                 var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
                     return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
                 }).map(function (p) {
-                    return Path.serialise(p, params[withoutBrackets$1(p)]);
+                    var val = params[withoutBrackets$1(p)];
+                    var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);
+
+                    return Path.serialise(p, encodedVal);
                 }).join('&');
 
                 return segments.map(function (segment) {
@@ -1012,703 +852,907 @@
             key: 'matchPath',
             value: function matchPath(path, options) {
                 var defaultOptions = { trailingSlash: false, strictQueryParams: true };
-                options = babelHelpers_extends({}, defaultOptions, options);
+                options = babelHelpers.extends({}, defaultOptions, options);
                 return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, options));
             }
         }]);
         return RouteNode;
     }();
 
-    var noop = function noop() {};
-    var ifNot = function ifNot(condition, error) {
-        if (!condition) throw new Error(error);
+    function withUtils(router) {
+        var options = router.getOptions();
+
+        router.isActive = isActive;
+        router.areStatesEqual = areStatesEqual;
+        router.areStatesDescendants = areStatesDescendants;
+        router.buildPath = buildPath;
+        router.buildState = buildState;
+        router.matchPath = matchPath;
+        router.setRootPath = setRootPath;
+
+        function isActive(name) {
+            var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+            var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+            var ignoreQueryParams = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+
+            var activeState = router.getState();
+
+            if (!activeState) return false;
+
+            if (strictEquality || activeState.name === name) {
+                return areStatesEqual(router.makeState(name, params), activeState, ignoreQueryParams);
+            }
+
+            return areStatesDescendants(router.makeState(name, params), activeState);
+        }
+
+        function areStatesEqual(state1, state2) {
+            var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
+            if (state1.name !== state2.name) return false;
+
+            var getUrlParams = function getUrlParams(name) {
+                return router.rootNode.getSegmentsByName(name).map(function (segment) {
+                    return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
+                }).reduce(function (params, p) {
+                    return params.concat(p);
+                }, []);
+            };
+
+            var state1Params = getUrlParams(state1.name);
+            var state2Params = getUrlParams(state2.name);
+
+            return state1Params.length === state2Params.length && state1Params.every(function (p) {
+                return state1.params[p] === state2.params[p];
+            });
+        }
+
+        function areStatesDescendants(parentState, childState) {
+            var regex = new RegExp('^' + parentState.name + '\\.(.*)$');
+            if (!regex.test(childState.name)) return false;
+            // If child state name extends parent state name, and all parent state params
+            // are in child state params.
+            return Object.keys(parentState.params).every(function (p) {
+                return parentState.params[p] === childState.params[p];
+            });
+        }
+
+        function buildPath(route, params) {
+            return router.rootNode.buildPath(route, params);
+        }
+
+        function buildState(route, params) {
+            return router.rootNode.buildState(route, params);
+        }
+
+        function matchPath(path, source) {
+            var trailingSlash = options.trailingSlash;
+            var strictQueryParams = options.strictQueryParams;
+
+            var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
+            return match ? router.makeState(match.name, match.params, path, match._meta, source) : null;
+        }
+
+        function setRootPath(rootPath) {
+            router.rootNode.setPath(rootPath);
+        }
+    }
+
+    var errorCodes = {
+        ROUTER_NOT_STARTED: 'NOT_STARTED',
+        NO_START_PATH_OR_STATE: 'NO_START_PATH_OR_STATE',
+        ROUTER_ALREADY_STARTED: 'ALREADY_STARTED',
+        ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
+        SAME_STATES: 'SAME_STATES',
+        CANNOT_DEACTIVATE: 'CANNOT_DEACTIVATE',
+        CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
+        TRANSITION_ERR: 'TRANSITION_ERR',
+        TRANSITION_CANCELLED: 'CANCELLED'
     };
 
-    var makeState = function makeState(name, params, path, _meta) {
-        var state = {};
-        var setProp = function setProp(key, value) {
-            return Object.defineProperty(state, key, { value: value, enumerable: true });
-        };
-        setProp('name', name);
-        setProp('params', params);
-        setProp('path', path);
-        if (_meta) setProp('_meta', _meta);
-        return state;
+    var constants = {
+        UNKNOWN_ROUTE: '@@router5/UNKNOWN_ROUTE',
+        ROUTER_START: '$start',
+        ROUTER_STOP: '$stop',
+        TRANSITION_START: '$$start',
+        TRANSITION_CANCEL: '$$cancel',
+        TRANSITION_SUCCESS: '$$success',
+        TRANSITION_ERROR: '$$error'
     };
 
-    var addCanActivate = function addCanActivate(router) {
-        return function (route) {
-            if (route.canActivate) router.canActivate(route.name, route.canActivate);
+    var noop$1 = function noop() {};
+
+    function withRouterLifecycle(router) {
+        var started = false;
+        var options = router.getOptions();
+
+        router.isStarted = isStarted;
+        router.start = start;
+        router.stop = stop;
+
+        function isStarted() {
+            return started;
+        }
+
+        function start() {
+            var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+            var done = typeof lastArg === 'function' ? lastArg : noop$1;
+            var startPathOrState = typeof (arguments.length <= 0 ? undefined : arguments[0]) !== 'function' ? arguments.length <= 0 ? undefined : arguments[0] : undefined;
+
+            if (started) {
+                done({ code: errorCodes.ROUTER_ALREADY_STARTED });
+                return router;
+            }
+
+            var startPath = void 0,
+                startState = void 0;
+
+            started = true;
+            router.invokeEventListeners(constants.ROUTER_START);
+
+            // callback
+            var cb = function cb(err, state) {
+                var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
+                if (!err) router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, null, { replace: true });
+                if (err && invokeErrCb) router.invokeEventListeners(constants.TRANSITION_ERROR, state, null, err);
+                done(err, state);
+            };
+
+            if (startPathOrState === undefined && !options.defaultRoute) {
+                return cb({ code: errorCodes.NO_START_PATH_OR_STATE });
+            }if (typeof startPathOrState === 'string') {
+                startPath = startPathOrState;
+            } else if ((typeof startPathOrState === 'undefined' ? 'undefined' : babelHelpers.typeof(startPathOrState)) === 'object') {
+                startState = startPathOrState;
+            }
+
+            if (!startState) {
+                (function () {
+                    // If no supplied start state, get start state
+                    startState = startPath === undefined ? null : router.matchPath(startPath);
+                    // Navigate to default function
+                    var navigateToDefault = function navigateToDefault() {
+                        return router.navigateToDefault({ replace: true }, done);
+                    };
+                    var redirect = function redirect(route) {
+                        return router.navigate(route.name, route.params, { replace: true, reload: true }, done);
+                    };
+                    // If matched start path
+                    if (startState) {
+                        router.transitionToState(startState, router.getState(), {}, function (err, state) {
+                            if (!err) cb(null, state);else if (err.redirect) redirect(err.redirect);else if (options.defaultRoute) navigateToDefault();else cb(err, null, false);
+                        });
+                    } else if (options.defaultRoute) {
+                        // If default, navigate to default
+                        navigateToDefault();
+                    } else if (options.allowNotFound) {
+                        cb(null, router.makeNotFoundState(startPath));
+                    } else {
+                        // No start match, no default => do nothing
+                        cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
+                    }
+                })();
+            } else {
+                // Initialise router with provided start state
+                router.setState(startState);
+                done(null, startState);
+            }
+
+            return router;
+        }
+
+        function stop() {
+            if (started) {
+                router.setState(null);
+                started = false;
+                router.invokeEventListeners(constants.ROUTER_STOP);
+            }
+
+            return router;
+        }
+    }
+
+    function nameToIDs(name) {
+        return name.split('.').reduce(function (ids, name) {
+            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+        }, []);
+    }
+
+    function extractSegmentParams(name, state) {
+        if (!state._meta || !state._meta[name]) return {};
+
+        return Object.keys(state._meta[name]).reduce(function (params, p) {
+            params[p] = state.params[p];
+            return params;
+        }, {});
+    }
+
+    function transitionPath(toState, fromState) {
+        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+        var toStateIds = nameToIDs(toState.name);
+        var maxI = Math.min(fromStateIds.length, toStateIds.length);
+
+        function pointOfDifference() {
+            var i = void 0;
+
+            var _loop = function _loop() {
+                var left = fromStateIds[i];
+                var right = toStateIds[i];
+
+                if (left !== right) return {
+                        v: i
+                    };
+
+                var leftParams = extractSegmentParams(left, toState);
+                var rightParams = extractSegmentParams(right, fromState);
+
+                if (leftParams.length !== rightParams.length) return {
+                        v: i
+                    };
+                if (leftParams.length === 0) return 'continue';
+
+                var different = Object.keys(leftParams).some(function (p) {
+                    return rightParams[p] !== leftParams[p];
+                });
+                if (different) {
+                    return {
+                        v: i
+                    };
+                }
+            };
+
+            for (i = 0; i < maxI; i += 1) {
+                var _ret = _loop();
+
+                switch (_ret) {
+                    case 'continue':
+                        continue;
+
+                    default:
+                        if ((typeof _ret === 'undefined' ? 'undefined' : babelHelpers.typeof(_ret)) === "object") return _ret.v;
+                }
+            }
+
+            return i;
+        }
+
+        var i = void 0;
+        if (!fromState) {
+            i = 0;
+        } else if (!fromState || toState.name === fromState.name && (!toState._meta || !fromState._meta)) {
+            console.log('[router5.transition-path] Some states are missing metadata, reloading all segments');
+            i = 0;
+        } else {
+            i = pointOfDifference();
+        }
+
+        var toDeactivate = fromStateIds.slice(i).reverse();
+        var toActivate = toStateIds.slice(i);
+
+        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
+
+        return {
+            intersection: intersection,
+            toDeactivate: toDeactivate,
+            toActivate: toActivate
         };
-    };
+    }
+
+    function resolve(functions, _ref, callback) {
+        var isCancelled = _ref.isCancelled;
+        var toState = _ref.toState;
+        var fromState = _ref.fromState;
+        var errorKey = _ref.errorKey;
+
+        var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
+
+        var isState = function isState(obj) {
+            return (typeof obj === 'undefined' ? 'undefined' : babelHelpers.typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+        };
+        var hasStateChanged = function hasStateChanged(state) {
+            return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
+        };
+
+        var processFn = function processFn(done) {
+            if (!remainingFunctions.length) return true;
+
+            var isMapped = typeof remainingFunctions[0] === 'string';
+            var errBase = errorKey && isMapped ? babelHelpers.defineProperty({}, errorKey, remainingFunctions[0]) : {};
+            var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+
+            // const len = stepFn.length;
+            var res = stepFn.call(null, toState, fromState, done);
+            if (isCancelled()) {
+                done(null);
+            } else if (typeof res === 'boolean') {
+                done(res ? null : errBase);
+            } else if (res && typeof res.then === 'function') {
+                res.then(function (resVal) {
+                    if (resVal instanceof Error) done({ error: resVal }, null);else done(null, resVal);
+                }, function (err) {
+                    if (err instanceof Error) {
+                        console.error(err.stack || err);
+                        done(babelHelpers.extends({}, errBase, { promiseError: err }), null);
+                    } else {
+                        done((typeof err === 'undefined' ? 'undefined' : babelHelpers.typeof(err)) === 'object' ? babelHelpers.extends({}, errBase, err) : errBase, null);
+                    }
+                });
+            }
+            // else: wait for done to be called
+
+            return false;
+        };
+
+        var iterate = function iterate(err, val) {
+            if (isCancelled()) {
+                callback();
+            } else if (err) {
+                callback(err);
+            } else {
+                if (val && isState(val)) {
+                    if (hasStateChanged(val)) console.error('[router5][transition] Warning: state values changed during transition process.');
+                    toState = val;
+                }
+                remainingFunctions = remainingFunctions.slice(1);
+                next();
+            }
+        };
+
+        var next = function next() {
+            if (isCancelled()) {
+                callback();
+            } else {
+                var finished = processFn(iterate);
+                if (finished) callback(null, toState);
+            }
+        };
+
+        next();
+    }
+
+    function transition(router, toState, fromState, opts, callback) {
+        var cancelled = false;
+        var completed = false;
+        var options = router.getOptions();
+
+        var _router$getLifecycleF = router.getLifecycleFunctions();
+
+        var _router$getLifecycleF2 = babelHelpers.slicedToArray(_router$getLifecycleF, 2);
+
+        var canDeactivateFunctions = _router$getLifecycleF2[0];
+        var canActivateFunctions = _router$getLifecycleF2[1];
+
+        var middlewareFunctions = router.getMiddlewareFunctions();
+        var isCancelled = function isCancelled() {
+            return cancelled;
+        };
+        var cancel = function cancel() {
+            if (!cancelled && !completed) {
+                cancelled = true;
+                callback({ code: errorCodes.TRANSITION_CANCELLED }, null);
+            }
+        };
+        var done = function done(err, state) {
+            completed = true;
+
+            if (isCancelled()) {
+                return;
+            }
+
+            if (!err && options.autoCleanUp) {
+                (function () {
+                    var activeSegments = nameToIDs(toState.name);
+                    Object.keys(canDeactivateFunctions).forEach(function (name) {
+                        if (activeSegments.indexOf(name) === -1) router.clearCanDeactivate(name);
+                    });
+                })();
+            }
+
+            callback(err, state || toState);
+        };
+        var makeError = function makeError(base, err) {
+            return babelHelpers.extends({}, base, err instanceof Object ? err : { error: err });
+        };
+
+        var _transitionPath = transitionPath(toState, fromState);
+
+        var toDeactivate = _transitionPath.toDeactivate;
+        var toActivate = _transitionPath.toActivate;
+
+        var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
+
+        var canDeactivate = function canDeactivate(toState, fromState, cb) {
+            var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
+                return canDeactivateFunctions[name];
+            }).reduce(function (fnMap, name) {
+                return babelHelpers.extends({}, fnMap, babelHelpers.defineProperty({}, name, canDeactivateFunctions[name]));
+            }, {});
+
+            resolve(canDeactivateFunctionMap, babelHelpers.extends({}, asyncBase, { errorKey: 'segment' }), function (err) {
+                return cb(err ? makeError({ code: errorCodes.CANNOT_DEACTIVATE }, err) : null);
+            });
+        };
+
+        var canActivate = function canActivate(toState, fromState, cb) {
+            var canActivateFunctionMap = toActivate.filter(function (name) {
+                return canActivateFunctions[name];
+            }).reduce(function (fnMap, name) {
+                return babelHelpers.extends({}, fnMap, babelHelpers.defineProperty({}, name, canActivateFunctions[name]));
+            }, {});
+
+            resolve(canActivateFunctionMap, babelHelpers.extends({}, asyncBase, { errorKey: 'segment' }), function (err) {
+                return cb(err ? makeError({ code: errorCodes.CANNOT_ACTIVATE }, err) : null);
+            });
+        };
+
+        var middleware = !middlewareFunctions.length ? [] : function (toState, fromState, cb) {
+            return resolve(middlewareFunctions, babelHelpers.extends({}, asyncBase), function (err, state) {
+                return cb(err ? makeError({ code: errorCodes.TRANSITION_ERR }, err) : null, state || toState);
+            });
+        };
+
+        var pipeline = (fromState && !opts.forceDeactivate ? [canDeactivate] : []).concat(canActivate).concat(middleware);
+
+        resolve(pipeline, asyncBase, done);
+
+        return cancel;
+    }
+
+    var noop$2 = function noop() {};
+
+    function withNavigation(router) {
+        var cancelCurrentTransition = void 0;
+
+        router.navigate = navigate;
+        router.navigateToDefault = navigateToDefault;
+        router.transitionToState = transitionToState;
+        router.cancel = cancel;
+
+        function cancel() {
+            if (cancelCurrentTransition) {
+                cancelCurrentTransition('navigate');
+                cancelCurrentTransition = null;
+            }
+
+            return router;
+        }
+
+        function navigate() {
+            var name = arguments.length <= 0 ? undefined : arguments[0];
+            var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+            var done = typeof lastArg === 'function' ? lastArg : noop$2;
+            var params = babelHelpers.typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
+            var opts = babelHelpers.typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
+
+            if (!router.isStarted()) {
+                done({ code: errorCodes.ROUTER_NOT_STARTED });
+                return;
+            }
+
+            var toState = router.buildState(name, params);
+
+            if (!toState) {
+                var err = { code: errorCodes.ROUTE_NOT_FOUND };
+                done(err);
+                router.invokeEventListeners(constants.TRANSITION_ERROR, null, router.getState(), err);
+                return;
+            }
+
+            toState.path = router.buildPath(name, params);
+            var sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
+
+            // Do not proceed further if states are the same and no reload
+            // (no desactivation and no callbacks)
+            if (sameStates && !opts.reload) {
+                var _err = { code: errorCodes.SAME_STATES };
+                done(_err);
+                router.invokeEventListeners(constants.TRANSITION_ERROR, toState, router.getState(), _err);
+                return;
+            }
+
+            var fromState = sameStates ? null : router.getState();
+
+            // Transitio
+            return transitionToState(toState, fromState, opts, function (err, state) {
+                if (err) {
+                    if (err.redirect) {
+                        var _err$redirect = err.redirect;
+                        var _name = _err$redirect.name;
+                        var _params = _err$redirect.params;
+
+
+                        navigate(_name, _params, babelHelpers.extends({}, opts, { reload: true }), done);
+                    } else {
+                        done(err);
+                    }
+                } else {
+                    router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, fromState, opts);
+                    done(null, state);
+                }
+            });
+        }
+
+        function navigateToDefault() {
+            var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+            var done = arguments.length <= 1 || arguments[1] === undefined ? noop$2 : arguments[1];
+
+            var options = router.getOptions();
+
+            return navigate(options.defaultRoute, options.defaultParams, opts, done);
+        }
+
+        function transitionToState(toState, fromState) {
+            var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+            var done = arguments.length <= 3 || arguments[3] === undefined ? noop$2 : arguments[3];
+
+            cancel();
+            router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
+
+            cancelCurrentTransition = transition(router, toState, fromState, options, function (err, state) {
+                cancelCurrentTransition = null;
+                state = state || toState;
+
+                if (err) {
+                    if (err.code === errorCodes.TRANSITION_CANCELLED) {
+                        router.invokeEventListeners(constants.TRANSITION_CANCELLED, toState, fromState);
+                    } else {
+                        router.invokeEventListeners(constants.TRANSITION_ERROR, toState, fromState, err);
+                    }
+                    done(err);
+                } else {
+                    router.setState(state);
+                    done(null, state);
+                }
+            });
+
+            return cancelCurrentTransition;
+        }
+    }
+
+    function withMiddleware(router) {
+        var middlewareFactories = [];
+        var middlewareFunctions = [];
+
+        router.useMiddleware = useMiddleware;
+        router.getMiddlewareFunctions = getMiddlewareFunctions;
+        router.clearMiddleware = clearMiddleware;
+
+        function useMiddleware() {
+            for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+                middlewares[_key] = arguments[_key];
+            }
+
+            middlewares.forEach(addMiddleware);
+
+            return router;
+        }
+
+        function clearMiddleware() {
+            middlewareFactories = [];
+            middlewareFunctions = [];
+        }
+
+        function getMiddlewareFunctions() {
+            return middlewareFunctions;
+        }
+
+        function addMiddleware(middleware) {
+            middlewareFactories.push(middleware);
+            startMiddleware(middleware);
+        }
+
+        function startMiddleware(middleware) {
+            middlewareFunctions.push(router.executeFactory(middleware));
+        }
+    }
+
+    var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+
+    function withPlugins(router) {
+        var plugins = [];
+        var removePluginListeners = [];
+
+        router.usePlugin = usePlugin;
+        router.hasPlugin = hasPlugin;
+
+        function usePlugin() {
+            for (var _len = arguments.length, plugins = Array(_len), _key = 0; _key < _len; _key++) {
+                plugins[_key] = arguments[_key];
+            }
+
+            plugins.forEach(addPlugin);
+            return router;
+        }
+
+        function addPlugin(plugin) {
+            if (!hasPlugin(plugin)) {
+                plugins.push(plugin);
+                startPlugin(plugin);
+            }
+        }
+
+        function hasPlugin(pluginName) {
+            return plugins.filter(function (p) {
+                return p.pluginName === pluginName || p.name === pluginName;
+            }).length > 0;
+        }
+
+        function startPlugin(plugin) {
+            var appliedPlugin = router.executeFactory(plugin);
+
+            var removeEventListeners = pluginMethods.map(function (methodName) {
+                if (appliedPlugin[methodName]) {
+                    return router.addEventListener(methodName.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), appliedPlugin[methodName]);
+                }
+            }).filter(Boolean);
+
+            removePluginListeners.push.apply(removePluginListeners, babelHelpers.toConsumableArray(removeEventListeners));
+        }
+    }
 
     var toFunction = function toFunction(val) {
         return typeof val === 'function' ? val : function () {
-            return val;
+            return function () {
+                return val;
+            };
         };
     };
 
-    /**
-     * Create a new Router5 instance
-     * @class
-     * @param {RouteNode[]|Object[]|RouteNode|Object} routes The router routes
-     * @param {Object} [opts={}] The router options: useHash, defaultRoute and defaultParams can be specified.
-     * @return {Router5} The router instance
-     */
+    function withRouteLifecycle(router) {
+        var canActivateFactories = {};
+        var canActivateFunctions = {};
+        var canDeactivateFactories = {};
+        var canDeactivateFunctions = {};
 
-    var Router5 = function () {
-        function Router5(routes) {
-            var _this = this;
+        router.canDeactivate = canDeactivate;
+        router.canActivate = canActivate;
+        router.getLifecycleFunctions = getLifecycleFunctions;
+        router.clearCanDeactivate = clearCanDeactivate;
 
-            var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-            babelHelpers_classCallCheck(this, Router5);
-
-            this.started = false;
-            this.mware = null;
-            this._cbs = {};
-            this._canAct = {};
-            this._canDeact = {};
-            this.lastStateAttempt = null;
-            this.lastKnownState = null;
-            this.rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes, addCanActivate(this));
-            this.options = {
-                useHash: false,
-                hashPrefix: '',
-                base: false,
-                trailingSlash: 0,
-                autoCleanUp: true,
-                strictQueryParams: true
-            };
-            Object.keys(opts).forEach(function (opt) {
-                return _this.options[opt] = opts[opt];
-            });
-            this.registeredPlugins = {};
-            this._extraArgs = [];
+        function getLifecycleFunctions() {
+            return [canDeactivateFunctions, canActivateFunctions];
         }
 
-        /**
-         * Set an option value
-         * @param  {String} opt The option to set
-         * @param  {*}      val The option value
-         * @return {Router5}    The Router5 instance
-         */
+        function canDeactivate(name, canDeactivateHandler) {
+            var factory = toFunction(canDeactivateHandler);
 
-        babelHelpers_createClass(Router5, [{
-            key: 'setOption',
-            value: function setOption(opt, val) {
-                this.options[opt] = val;
-                return this;
+            canDeactivateFactories[name] = factory;
+
+            if (router.isStarted()) {
+                canDeactivateFunctions[name] = router.executeFactory(factory);
             }
 
-            /**
-             * Set additional arguments used in lifecycle functions.
-             * Additional arguments are used in canActivate, canDeactivate and middleware functions in first positions (before `toState`).
-             * @param  {Array} args The additional arguments
-             */
+            return router;
+        }
 
-        }, {
-            key: 'setAdditionalArgs',
-            value: function setAdditionalArgs(args) {
-                this._extraArgs = Array.isArray(args) ? args : [args];
-                return this;
+        function clearCanDeactivate(name) {
+            canDeactivateFactories[name] = undefined;
+            canDeactivateFunctions[name] = undefined;
+        }
+
+        function canActivate(name, canActivateHandler) {
+            var factory = toFunction(canActivateHandler);
+            canActivateFactories[name] = factory;
+
+            if (router.isStarted()) {
+                canActivateFunctions[name] = router.executeFactory(factory);
             }
 
-            /**
-             * Return additional arguments used in lifecycle functions
-             */
+            return router;
+        }
 
-        }, {
-            key: 'getAdditionalArgs',
-            value: function getAdditionalArgs() {
-                return this._extraArgs;
-            }
-
-            /**
-             * Add route(s)
-             * @param  {RouteNode[]|Object[]|RouteNode|Object} routes Route(s) to add
-             * @return {Router5}  The Router5 instance
-             */
-
-        }, {
-            key: 'add',
-            value: function add(routes) {
-                this.rootNode.add(routes, addCanActivate(this));
-                return this;
-            }
-
-            /**
-             * Add a route to the router.
-             * @param {String}   name          The route name
-             * @param {String}   path          The route path
-             * @param {Function} [canActivate] A function to determine if the route can be activated.
-             *                                 It will be invoked during a transition with `toState`
-             *                                 and `fromState` parameters.
-             * @return {Router5}             The Router5 instance
-             */
-
-        }, {
-            key: 'addNode',
-            value: function addNode(name, path, canActivate) {
-                this.rootNode.addNode(name, path);
-                if (canActivate) this._canAct[name] = canActivate;
-                return this;
-            }
-        }, {
-            key: 'usePlugin',
-            value: function usePlugin(pluginFactory) {
-                var _this2 = this;
-
-                ifNot(typeof pluginFactory === 'function', '[router5.usePlugin] Plugins are now functions, see http://router5.github.io/docs/plugins.html.');
-                var plugin = pluginFactory(this);
-                var name = plugin.name || pluginFactory.name;
-                ifNot(name, '[router5.usePlugin] Tried to register an unamed plugin.');
-
-                var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
-                var defined = pluginMethods.some(function (method) {
-                    return plugin[method] !== undefined;
-                });
-
-                ifNot(defined, '[router5.usePlugin] plugin ' + plugin.name + ' has none of the expected methods implemented');
-                this.registeredPlugins[name] = plugin;
-
-                pluginMethods.forEach(function (method) {
-                    if (plugin[method]) {
-                        _this2._addListener(method.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'), plugin[method]);
+        function executeFactories() {
+            var reduceFactories = function reduceFactories(factories) {
+                return Object.keys(factories).reduce(function (functionsMap, key) {
+                    if (factories[key]) {
+                        functionsMap[key] = router.executeFactory(factories[key]);
                     }
-                });
+                    return functionsMap;
+                }, {});
+            };
 
-                return this;
+            canActivateFunctions = reduceFactories(canActivateFactories);
+            canDeactivateFunctions = reduceFactories(canDeactivateFactories);
+        }
+
+        router.addEventListener(constants.ROUTER_START, executeFactories);
+    }
+
+    var defaultOptions = {
+        trailingSlash: 0,
+        autoCleanUp: true,
+        strictQueryParams: true,
+        allowNotFound: false
+    };
+
+    function createRouter(routes, opts) {
+        var routerState = null;
+        var callbacks = {};
+        var dependencies = {};
+        var options = babelHelpers.extends({}, defaultOptions, opts);
+
+        var router = {
+            rootNode: rootNode,
+            getOptions: getOptions,
+            setOption: setOption,
+            getState: getState,
+            setState: setState,
+            makeState: makeState,
+            makeNotFoundState: makeNotFoundState,
+            setDependency: setDependency,
+            setDependencies: setDependencies,
+            getDependencies: getDependencies,
+            add: add,
+            addNode: addNode,
+            executeFactory: executeFactory,
+            addEventListener: addEventListener,
+            removeEventListener: removeEventListener,
+            invokeEventListeners: invokeEventListeners
+        };
+
+        function invokeEventListeners(eventName) {
+            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
             }
 
-            /**
-             * Set a transition middleware function `.useMiddleware(fn1, fn2, fn3, ...)`
-             * @param {Function} fn The middleware function
-             */
+            (callbacks[eventName] || []).forEach(function (cb) {
+                return cb.apply(undefined, args);
+            });
+        }
 
-        }, {
-            key: 'useMiddleware',
-            value: function useMiddleware() {
-                var _this3 = this;
+        function removeEventListener(eventName, cb) {
+            callbacks[eventName] = callbacks[eventName].filter(function (_cb) {
+                return _cb !== cb;
+            });
+        }
 
-                this.mware = Array.prototype.slice.call(arguments).map(function (m) {
-                    var middlewareFn = m(_this3);
-                    ifNot(typeof middlewareFn === 'function', '[router5.usePlugin] Middleware have changed, see http://router5.github.io/docs/middleware.html.');
-                    return middlewareFn;
-                });
-                return this;
+        function addEventListener(eventName, cb) {
+            callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
+
+            return function () {
+                return removeEventListener(eventName, cb);
+            };
+        }
+
+        withUtils(router);
+        withPlugins(router);
+        withMiddleware(router);
+        withRouteLifecycle(router);
+        withRouterLifecycle(router);
+        withNavigation(router);
+
+        var rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes, addCanActivate);
+
+        router.rootNode = rootNode;
+
+        return router;
+
+        function addCanActivate(route) {
+            if (route.canActivate) router.canActivate(route.name, route.canActivate);
+        }
+
+        function makeState(name, params, path, metaParams, source) {
+            var state = {};
+            var setProp = function setProp(key, value) {
+                return Object.defineProperty(state, key, { value: value, enumerable: true });
+            };
+            setProp('name', name);
+            setProp('params', params);
+            setProp('path', path);
+            if (metaParams || source) {
+                var meta = { params: metaParams };
+
+                if (source) meta.source = source;
+
+                setProp('meta', meta);
             }
-
-            /**
-             * Start the router
-             * @param  {String|Object} [startPathOrState] An optional start path or state
-             *                                            (use it for universal applications)
-             * @param  {Function}      [done]             An optional callback which will be called
-             *                                            when starting is done
-             * @return {Router5}  The router instance
-             */
-
-        }, {
-            key: 'start',
-            value: function start() {
-                var _this4 = this;
-
-                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                    args[_key] = arguments[_key];
-                }
-
-                var lastArg = args.slice(-1)[0];
-                var done = lastArg instanceof Function ? lastArg : noop;
-                var startPath = undefined,
-                    startState = undefined;
-
-                if (this.started) {
-                    done({ code: constants.ROUTER_ALREADY_STARTED });
-                    return this;
-                }
-
-                this.started = true;
-                this._invokeListeners('$start');
-                var opts = this.options;
-
-                if (args.length > 0) {
-                    if (typeof args[0] === 'string') startPath = args[0];
-                    if (babelHelpers_typeof(args[0]) === 'object') startState = args[0];
-                }
-
-                // callback
-                var cb = function cb(err, state) {
-                    var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
-
-                    if (!err) _this4._invokeListeners('$$success', state, null, { replace: true });
-                    if (err && invokeErrCb) _this4._invokeListeners('$$error', state, null, err);
-                    done(err, state);
-                };
-
-                // Get start path
-                if (startPath === undefined && startState === undefined && this.getLocation) {
-                    startPath = this.getLocation();
-                }
-
-                if (!startState) {
-                    (function () {
-                        // If no supplied start state, get start state
-                        startState = startPath === undefined ? null : _this4.matchPath(startPath);
-                        // Navigate to default function
-                        var navigateToDefault = function navigateToDefault() {
-                            return _this4.navigate(opts.defaultRoute, opts.defaultParams, { replace: true }, done);
-                        };
-                        var redirect = function redirect(route) {
-                            return _this4.navigate(route.name, route.params, { replace: true, reload: true }, done);
-                        };
-                        // If matched start path
-                        if (startState) {
-                            _this4.lastStateAttempt = startState;
-                            _this4._transition(_this4.lastStateAttempt, _this4.lastKnownState, {}, function (err, state) {
-                                if (!err) cb(null, state);else if (err.redirect) redirect(err.redirect);else if (opts.defaultRoute) navigateToDefault();else cb(err, null, false);
-                            });
-                        } else if (opts.defaultRoute) {
-                            // If default, navigate to default
-                            navigateToDefault();
-                        } else {
-                            // No start match, no default => do nothing
-                            cb({ code: constants.ROUTE_NOT_FOUND, path: startPath }, null);
-                        }
-                    })();
-                } else {
-                    // Initialise router with provided start state
-                    this.lastKnownState = startState;
-                    done(null, startState);
-                }
-
-                return this;
-            }
-
-            /**
-             * Stop the router
-             * @return {Router5} The router instance
-             */
-
-        }, {
-            key: 'stop',
-            value: function stop() {
-                if (!this.started) return this;
-                this.lastKnownState = null;
-                this.lastStateAttempt = null;
-                this.started = false;
-                this._invokeListeners('$stop');
-
-                return this;
-            }
-
-            /**
-             * Return the current state object
-             * @return {Object} The current state
-             */
-
-        }, {
-            key: 'getState',
-            value: function getState() {
-                return this.lastKnownState;
-            }
-
-            /**
-             * Whether or not the given route name with specified params is active.
-             * @param  {String}   name             The route name
-             * @param  {Object}   [params={}]      The route parameters
-             * @param  {Boolean}  [strictEquality=false] If set to false (default), isActive will return true
-             *                                           if the provided route name and params are descendants
-             *                                           of the active state.
-             * @param  {Boolean}   [ignoreQueryParams=true] Whether or not to ignore URL query parameters when
-             *                                              comparing the two states together.
-             *                                              query parameters when comparing two states together.
-             * @return {Boolean}                    Whether nor not the route is active
-             */
-
-        }, {
-            key: 'isActive',
-            value: function isActive(name) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-                var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-                var ignoreQueryParams = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
-
-                var activeState = this.getState();
-
-                if (!activeState) return false;
-
-                if (strictEquality || activeState.name === name) {
-                    return this.areStatesEqual(makeState(name, params), activeState, ignoreQueryParams);
-                }
-
-                return this.areStatesDescendants(makeState(name, params), activeState);
-            }
-
-            /**
-             * @private
-             */
-
-        }, {
-            key: 'areStatesEqual',
-            value: function areStatesEqual(state1, state2) {
-                var _this5 = this;
-
-                var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
-
-                if (state1.name !== state2.name) return false;
-
-                var getUrlParams = function getUrlParams(name) {
-                    return _this5.rootNode.getSegmentsByName(name).map(function (segment) {
-                        return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
-                    }).reduce(function (params, p) {
-                        return params.concat(p);
-                    }, []);
-                };
-
-                var state1Params = getUrlParams(state1.name);
-                var state2Params = getUrlParams(state2.name);
-
-                return state1Params.length === state2Params.length && state1Params.every(function (p) {
-                    return state1.params[p] === state2.params[p];
-                });
-            }
-
-            /**
-             * Whether two states are descendants
-             * @param  {Object} parentState The parent state
-             * @param  {Object} childState  The child state
-             * @return {Boolean}            Whether the two provided states are related
-             */
-
-        }, {
-            key: 'areStatesDescendants',
-            value: function areStatesDescendants(parentState, childState) {
-                var regex = new RegExp('^' + parentState.name + '\\.(.*)$');
-                if (!regex.test(childState.name)) return false;
-                // If child state name extends parent state name, and all parent state params
-                // are in child state params.
-                return Object.keys(parentState.params).every(function (p) {
-                    return parentState.params[p] === childState.params[p];
-                });
-            }
-
-            /**
-             * @private
-             */
-
-        }, {
-            key: '_invokeListeners',
-            value: function _invokeListeners(name) {
-                for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-                    args[_key2 - 1] = arguments[_key2];
-                }
-
-                (this._cbs[name] || []).forEach(function (cb) {
-                    return cb.apply(undefined, args);
-                });
-            }
-
-            /**
-             * @private
-             */
-
-        }, {
-            key: '_addListener',
-            value: function _addListener(name, cb) {
-                this._cbs[name] = (this._cbs[name] || []).concat(cb);
-                return this;
-            }
-
-            /**
-             * A function to determine whether or not a segment can be deactivated.
-             * @param  {String}  name          The route segment full name
-             * @param  {Boolean} canDeactivate Whether the segment can be deactivated or not
-             * @return {[type]}
-             */
-
-        }, {
-            key: 'canDeactivate',
-            value: function canDeactivate(name, _canDeactivate) {
-                this._canDeact[name] = toFunction(_canDeactivate);
-                return this;
-            }
-
-            /**
-             * A function to determine whether or not a segment can be activated.
-             * @param  {String}   name        The route name to register the canActivate method for
-             * @param  {Function} canActivate The canActivate function. It should return `true`, `false`
-             *                                or a promise
-             * @return {Router5}  The router instance
-             */
-
-        }, {
-            key: 'canActivate',
-            value: function canActivate(name, _canActivate) {
-                this._canAct[name] = toFunction(_canActivate);
-                return this;
-            }
-
-            /**
-             * Generates an URL from a route name and route params.
-             * The generated URL will be prefixed by hash if useHash is set to true
-             * @param  {String} route  The route name
-             * @param  {Object} params The route params (key-value pairs)
-             * @return {String}        The built URL
-             */
-
-        }, {
-            key: 'buildUrl',
-            value: function buildUrl(route, params) {
-                return this._buildUrl(this.buildPath(route, params));
-            }
-
-            /**
-             * @private
-             */
-
-        }, {
-            key: '_buildUrl',
-            value: function _buildUrl(path) {
-                return (this.options.base || '') + (this.options.useHash ? '#' + this.options.hashPrefix : '') + path;
-            }
-
-            /**
-             * Build a path from a route name and route params
-             * The generated URL will be prefixed by hash if useHash is set to true
-             * @param  {String} route  The route name
-             * @param  {Object} params The route params (key-value pairs)
-             * @return {String}        The built Path
-             */
-
-        }, {
-            key: 'buildPath',
-            value: function buildPath(route, params) {
-                return this.rootNode.buildPath(route, params);
-            }
-
-            /**
-             * Build a state object from a route name and route params
-             * @param  {String} route  The route name
-             * @param  {Object} params The route params (key-value pairs)
-             * @return {String}        The built Path
-             */
-
-        }, {
-            key: 'buildState',
-            value: function buildState(route, params) {
-                return this.rootNode.buildState(route, params);
-            }
-
-            /**
-             * Match a path against the route tree.
-             * @param  {String} path   The path to match
-             * @return {Object}        The matched state object (null if no match)
-             */
-
-        }, {
-            key: 'matchPath',
-            value: function matchPath(path) {
-                var _options = this.options;
-                var trailingSlash = _options.trailingSlash;
-                var strictQueryParams = _options.strictQueryParams;
-
-                var match = this.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
-                return match ? makeState(match.name, match.params, path, match._meta) : null;
-            }
-
-            /**
-             * Parse / extract a path from an url
-             * @param  {String} url The URL
-             * @return {String}     The extracted path
-             */
-
-        }, {
-            key: 'urlToPath',
-            value: function urlToPath(url) {
-                var match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
-                var path = match ? match[1] : url;
-
-                var pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
-
-                if (!pathParts) throw new Error('[router5] Could not parse url ' + url);
-
-                var pathname = pathParts[1];
-                var hash = pathParts[2] || '';
-                var search = pathParts[3] || '';
-                var opts = this.options;
-
-                return (opts.useHash ? hash.replace(new RegExp('^#' + opts.hashPrefix), '') : opts.base ? pathname.replace(new RegExp('^' + opts.base), '') : pathname) + search;
-            }
-
-            /**
-             * Parse path from an url and match it against the route tree.
-             * @param  {String} url    The URL to match
-             * @return {Object}        The matched state object (null if no match)
-             */
-
-        }, {
-            key: 'matchUrl',
-            value: function matchUrl(url) {
-                return this.matchPath(this.urlToPath(url));
-            }
-
-            /**
-             * @private
-             */
-
-        }, {
-            key: '_transition',
-            value: function _transition(toState, fromState) {
-                var _this6 = this;
-
-                var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-                var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
-
-                // Cancel current transition
-                this.cancel();
-                this._invokeListeners('$$start', toState, fromState);
-
-                var tr = transition(this, toState, fromState, options, function (err, state) {
-                    state = state || toState;
-                    _this6._tr = null;
-
-                    if (err) {
-                        if (err.code === constants.TRANSITION_CANCELLED) _this6._invokeListeners('$$cancel', toState, fromState);else _this6._invokeListeners('$$error', toState, fromState, err);
-
-                        done(err);
-                        return;
-                    }
-
-                    _this6.lastKnownState = state; // toState or modified state?
-
-                    done(null, state);
-                });
-
-                this._tr = tr;
-                return function () {
-                    return !tr || tr();
-                };
-            }
-
-            /**
-             * Undocumented for now
-             * @private
-             */
-
-        }, {
-            key: 'cancel',
-            value: function cancel() {
-                if (this._tr) this._tr();
-            }
-
-            /**
-             * Navigate to a specific route
-             * @param  {String}   name        The route name
-             * @param  {Object}   [params={}] The route params
-             * @param  {Object}   [opts={}]   The route options (replace, reload)
-             * @param  {Function} done        A optional callback(err) to call when transition has been performed
-             *                                either successfully or unsuccessfully.
-             * @return {Function}             A cancellation function
-             */
-
-        }, {
-            key: 'navigate',
-            value: function navigate(name) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-                var _this7 = this;
-
-                var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-                var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
-
-                if (!this.started) {
-                    done({ code: constants.ROUTER_NOT_STARTED });
-                    return;
-                }
-
-                var toState = this.buildState(name, params);
-
-                if (!toState) {
-                    var err = { code: constants.ROUTE_NOT_FOUND };
-                    done(err);
-                    this._invokeListeners('$$error', null, this.lastKnownState, err);
-                    return;
-                }
-
-                toState.path = this.buildPath(name, params);
-                this.lastStateAttempt = toState;
-                var sameStates = this.lastKnownState ? this.areStatesEqual(this.lastKnownState, this.lastStateAttempt, false) : false;
-
-                // Do not proceed further if states are the same and no reload
-                // (no desactivation and no callbacks)
-                if (sameStates && !opts.reload) {
-                    var err = { code: constants.SAME_STATES };
-                    done(err);
-                    this._invokeListeners('$$error', toState, this.lastKnownState, err);
-                    return;
-                }
-
-                var fromState = sameStates ? null : this.lastKnownState;
-
-                // Transition and amend history
-                return this._transition(toState, sameStates ? null : this.lastKnownState, opts, function (err, state) {
-                    if (err) {
-                        if (err.redirect) _this7.navigate(err.redirect.name, err.redirect.params, { reload: true }, done);else done(err);
-                        return;
-                    }
-
-                    _this7._invokeListeners('$$success', state, fromState, opts);
-                    done(null, state);
-                });
-            }
-        }]);
-        return Router5;
-    }();
+            return state;
+        }
+
+        function makeNotFoundState(path) {
+            return makeState(constants.UNKNOWN_ROUTE, { path: path }, path, {});
+        }
+
+        function getState() {
+            return routerState;
+        }
+
+        function setState(state) {
+            routerState = state;
+        }
+
+        function getOptions() {
+            return options;
+        }
+
+        function setOption(option, value) {
+            options[option] = value;
+            return router;
+        }
+
+        function setDependency(dependencyName, dependency) {
+            dependencies[dependencyName] = dependency;
+            return router;
+        }
+
+        function setDependencies(deps) {
+            Object.keys(deps).forEach(function (depName) {
+                dependencies[depName] = deps[depName];
+            });
+        }
+
+        function getDependencies() {
+            return dependencies;
+        }
+
+        function getInjectables() {
+            return [router, dependencies];
+        }
+
+        function executeFactory(factoryFunction) {
+            return factoryFunction.apply(undefined, babelHelpers.toConsumableArray(getInjectables()));
+        }
+
+        function add(routes) {
+            rootNode.add(routes, addCanActivate);
+            return router;
+        }
+
+        function addNode(name, path, canActivateHandler) {
+            rootNode.addNode(name, path);
+            if (canActivateHandler) router.canActivate(name, canActivateHandler);
+            return router;
+        }
+    }
 
     /* istanbul ignore next */
-    var loggerPlugin = function loggerPlugin() {
-        return function () {
-            var startGroup = function startGroup() {
-                return console.group('Router transition');
-            };
-            var endGroup = function endGroup() {
-                return console.groupEnd('Router transition');
-            };
+    function loggerPlugin() {
+        var startGroup = function startGroup() {
+            return console.group('Router transition');
+        };
+        var endGroup = function endGroup() {
+            return console.groupEnd('Router transition');
+        };
 
-            return {
-                name: 'LOGGER',
-                onStart: function onStart() {
-                    console.info('Router started');
-                },
-                onStop: function onStop() {
-                    console.info('Router stopped');
-                },
-                onTransitionStart: function onTransitionStart(toState, fromState) {
-                    endGroup();
-                    startGroup();
-                    console.log('Transition started from state');
-                    console.log(fromState);
-                    console.log('To state');
-                    console.log(toState);
-                },
-                onTransitionCancel: function onTransitionCancel() {
-                    console.warn('Transition cancelled');
-                },
-                onTransitionError: function onTransitionError(toState, fromState, err) {
-                    console.warn('Transition error with code ' + err.code);
-                    endGroup();
-                },
-                onTransitionSuccess: function onTransitionSuccess() {
-                    console.log('Transition success');
-                    endGroup();
-                }
-            };
+        console.info('Router started');
+
+        return {
+            onStop: function onStop() {
+                console.info('Router stopped');
+            },
+            onTransitionStart: function onTransitionStart(toState, fromState) {
+                endGroup();
+                startGroup();
+                console.log('Transition started from state');
+                console.log(fromState);
+                console.log('To state');
+                console.log(toState);
+            },
+            onTransitionCancel: function onTransitionCancel() {
+                console.warn('Transition cancelled');
+            },
+            onTransitionError: function onTransitionError(toState, fromState, err) {
+                console.warn('Transition error with code ' + err.code);
+                endGroup();
+            },
+            onTransitionSuccess: function onTransitionSuccess() {
+                console.log('Transition success');
+                endGroup();
+            }
         };
     };
 
-    exports['default'] = Router5;
-    exports.Router5 = Router5;
+    loggerPlugin.pluginName = 'LOGGER_PLUGIN';
+
+    exports['default'] = createRouter;
+    exports.createRouter = createRouter;
     exports.RouteNode = RouteNode;
     exports.loggerPlugin = loggerPlugin;
-    exports.errCodes = constants;
+    exports.errorCodes = errorCodes;
     exports.transitionPath = transitionPath;
+    exports.constants = constants;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

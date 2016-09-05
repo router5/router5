@@ -1,3 +1,35 @@
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/router5/router5/compare/v3.0.3...v4.0.0) (2016-09-05)
+
+See [RELEASE NOTES](http://router5.github.io/docs/migration-4.html)
+
+### Bug Fixes
+
+* inherit navigate options when redirecting ([b11d67c](https://github.com/router5/router5/commit/b11d67c))
+
+### Features
+
+* add a hasPlugin function ([3626480](https://github.com/router5/router5/commit/3626480))
+* add allowNotFound option to allow router states for unknown URLs ([3e4c71e](https://github.com/router5/router5/commit/3e4c71e))
+* add NO_START_PATH_OR_STATE error code ([5375060](https://github.com/router5/router5/commit/5375060))
+* add setRootPath function ([5c10043](https://github.com/router5/router5/commit/5c10043))
+* change signatures of lifecyle and middleware functions ([f8743f5](https://github.com/router5/router5/commit/f8743f5))
+* make params and options optional in navigate, allowing users to only supply name ([13762d3](https://github.com/router5/router5/commit/13762d3))
+
+### Performance Improvements
+
+* make cancellations invoke done callbacks immediately ([c5e19a7](https://github.com/router5/router5/commit/c5e19a7))
+
+
+### BREAKING CHANGES
+
+* router5 exports errorCodes insteand of errCodes
+* 'setAdditionalArgs' has been renamed to 'inject'
+* 'getAdditionalArgs' has been replaced by 'getInjectables'
+* addition arguments (injectables) are now injected alongside your router instance in middleware functions
+* canActivate and canDeactivate functions have now the same shape than middlewares
+
+
 <a name="3.0.3"></a>
 ## [3.0.3](https://github.com/router5/router5/compare/v3.0.2...v3.0.3) (2016-04-24)
 

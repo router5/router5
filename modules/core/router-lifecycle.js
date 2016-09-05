@@ -1,5 +1,6 @@
 import constants, { errorCodes }  from '../constants';
-import { noop } from '../utils';
+
+const noop = function() {};
 
 export default function withRouterLifecycle(router) {
     let started = false;

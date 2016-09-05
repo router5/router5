@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "3.0.3",
+  "version": "4.0.0",
   "description": "An HTML5 router, based on route-node and path-parser",
   "main": "index.js",
   "jsnext:main": "dist/es/index.js",
@@ -9,9 +9,9 @@
     "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
     "build:cjs": "babel modules --out-dir ./",
     "build:umd:core": "rollup -c rollup.config.js && rollup -c rollup.config.js --uglify",
-    "build:umd:browser": "rollup -c rollup.config.js --module browser && rollup -c rollup.config.js --module browser --uglify",
-    "build:umd:persistentParams": "rollup -c rollup.config.js --module persistentParams && rollup -c rollup.config.js --module persistentParams --uglify",
-    "build:umd:listeners": "rollup -c rollup.config.js --module listeners && rollup -c rollup.config.js --module listeners --uglify",
+    "build:umd:browser": "rollup -c rollup.config.js --module browser",
+    "build:umd:persistentParams": "rollup -c rollup.config.js --module persistentParams",
+    "build:umd:listeners": "rollup -c rollup.config.js --module listeners",
     "build:umd": "npm run build:umd:core && npm run build:umd:browser && npm run build:umd:persistentParams && npm run build:umd:listeners",
     "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
     "test": "mocha --compilers js:babel-core/register --recursive --require ./tests/_helpers.js 'tests/**/*.js'",
@@ -37,7 +37,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "~1.4.1",
+    "route-node": "~1.4.6",
     "router5.transition-path": "~3.0.0"
   },
   "devDependencies": {

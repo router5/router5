@@ -1,6 +1,7 @@
 import constants, { errorCodes }  from '../constants';
 import transition from '../transition';
-import { noop } from '../utils';
+
+const noop = function() {};
 
 export default function withNavigation(router) {
     let cancelCurrentTransition;
