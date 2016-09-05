@@ -5,7 +5,6 @@
 
 > Higher-order components and components for React when using [router5](https://github.com/router5/router5).
 
-This package replaces `router5-react` which is deprecated.
 
 ### Installation
 
@@ -56,12 +55,11 @@ ReactDOM.render(
 
 ### routeNode HOC
 
-__routeNode(nodeName, registerComponent = false)__: higher-order component to wrap a route node component.
+__routeNode(nodeName)__: higher-order component to wrap a route node component.
 
 - Specify your component node name (`''` if root node)
-- If you set `registerComponent` to true, you cannot use functional stateless components as `routeNode` make uses of _refs_.
 
-__Note:__ your router needs to use `router5-listeners` plugin.
+__Note:__ your router needs to use `listenersPlugin` from `router5`.
 
 ```javascript
 import React from 'react';
