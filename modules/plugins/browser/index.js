@@ -27,6 +27,8 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             } else {
                 routerStart(...args);
             }
+
+            return router;
         };
 
         router.replaceHistoryState = function(name, params = {}) {
