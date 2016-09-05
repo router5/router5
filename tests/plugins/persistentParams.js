@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import createRouter from 'router5';
+import createRouter from '../../modules';
 import persistentParamsPlugin from '../../modules/plugins/persistentParams';
 
 const createTestRouter = () => createRouter([
