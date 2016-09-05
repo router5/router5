@@ -1,12 +1,12 @@
 import { Component, PropTypes, Children } from 'react';
 
-var RouterProvider = (function (_Component) {
+var RouterProvider = function (_Component) {
     babelHelpers.inherits(RouterProvider, _Component);
 
     function RouterProvider(props, context) {
         babelHelpers.classCallCheck(this, RouterProvider);
 
-        var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(RouterProvider).call(this, props, context));
+        var _this = babelHelpers.possibleConstructorReturn(this, (RouterProvider.__proto__ || Object.getPrototypeOf(RouterProvider)).call(this, props, context));
 
         _this.router = props.router;
         return _this;
@@ -33,7 +33,7 @@ var RouterProvider = (function (_Component) {
         }
     }]);
     return RouterProvider;
-})(Component);
+}(Component);
 
 RouterProvider.propTypes = {
     router: PropTypes.object.isRequired,

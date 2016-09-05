@@ -1,17 +1,15 @@
-import { Component, PropTypes, createElement } from 'react';
+import React, { Component, createElement } from 'react';
 import { getDisplayName, ifNot } from './utils';
 
 function routeNode(nodeName) {
-    var register = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-
     return function routeNodeWrapper(RouteSegment) {
-        var RouteNode = (function (_Component) {
+        var RouteNode = function (_Component) {
             babelHelpers.inherits(RouteNode, _Component);
 
             function RouteNode(props, context) {
                 babelHelpers.classCallCheck(this, RouteNode);
 
-                var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(RouteNode).call(this, props, context));
+                var _this = babelHelpers.possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
 
                 _this.router = context.router;
                 _this.state = {
@@ -26,11 +24,7 @@ function routeNode(nodeName) {
                 value: function componentDidMount() {
                     var _this2 = this;
 
-                    if (register && this.refs.wrappedInstance && this.refs.wrappedInstance.canDeactivate) {
-                        this.router.canDeactivate(nodeName, this.refs.wrappedInstance.canDeactivate);
-                    }
-
-                    ifNot(this.router.registeredPlugins.LISTENERS, '[react-router5][routeNode] missing plugin router5-listeners');
+                    ifNot(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][routeNode] missing listeners plugin');
 
                     this.nodeListener = function (toState, fromState) {
                         return _this2.setState({ previousRoute: fromState, route: toState });
@@ -51,16 +45,16 @@ function routeNode(nodeName) {
                     var previousRoute = _state.previousRoute;
                     var route = _state.route;
 
-                    var component = createElement(RouteSegment, babelHelpers.extends({}, props, { router: router, previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
+                    var component = createElement(RouteSegment, babelHelpers.extends({}, props, { router: router, previousRoute: previousRoute, route: route }));
 
                     return component;
                 }
             }]);
             return RouteNode;
-        })(Component);
+        }(Component);
 
         RouteNode.contextTypes = {
-            router: PropTypes.object.isRequired
+            router: React.PropTypes.object.isRequired
         };
 
         RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';

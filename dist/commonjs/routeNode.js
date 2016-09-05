@@ -1,16 +1,20 @@
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
+var _react2 = _interopRequireDefault(_react);
+
 var _utils = require('./utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -19,16 +23,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 function routeNode(nodeName) {
-    var register = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-
     return function routeNodeWrapper(RouteSegment) {
-        var RouteNode = (function (_Component) {
+        var RouteNode = function (_Component) {
             _inherits(RouteNode, _Component);
 
             function RouteNode(props, context) {
                 _classCallCheck(this, RouteNode);
 
-                var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RouteNode).call(this, props, context));
+                var _this = _possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
 
                 _this.router = context.router;
                 _this.state = {
@@ -43,11 +45,7 @@ function routeNode(nodeName) {
                 value: function componentDidMount() {
                     var _this2 = this;
 
-                    if (register && this.refs.wrappedInstance && this.refs.wrappedInstance.canDeactivate) {
-                        this.router.canDeactivate(nodeName, this.refs.wrappedInstance.canDeactivate);
-                    }
-
-                    (0, _utils.ifNot)(this.router.registeredPlugins.LISTENERS, '[react-router5][routeNode] missing plugin router5-listeners');
+                    (0, _utils.ifNot)(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][routeNode] missing listeners plugin');
 
                     this.nodeListener = function (toState, fromState) {
                         return _this2.setState({ previousRoute: fromState, route: toState });
@@ -68,17 +66,17 @@ function routeNode(nodeName) {
                     var previousRoute = _state.previousRoute;
                     var route = _state.route;
 
-                    var component = (0, _react.createElement)(RouteSegment, _extends({}, props, { router: router, previousRoute: previousRoute, route: route, ref: register ? 'wrappedInstance' : undefined }));
+                    var component = (0, _react.createElement)(RouteSegment, _extends({}, props, { router: router, previousRoute: previousRoute, route: route }));
 
                     return component;
                 }
             }]);
 
             return RouteNode;
-        })(_react.Component);
+        }(_react.Component);
 
         RouteNode.contextTypes = {
-            router: _react.PropTypes.object.isRequired
+            router: _react2.default.PropTypes.object.isRequired
         };
 
         RouteNode.displayName = 'RouteNode[' + (0, _utils.getDisplayName)(RouteSegment) + ']';

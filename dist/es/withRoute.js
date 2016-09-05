@@ -1,14 +1,14 @@
-import { Component, createElement, PropTypes } from 'react';
+import React, { Component, createElement } from 'react';
 import { ifNot, getDisplayName } from './utils';
 
 function withRoute(BaseComponent) {
-    var ComponentWithRoute = (function (_Component) {
+    var ComponentWithRoute = function (_Component) {
         babelHelpers.inherits(ComponentWithRoute, _Component);
 
         function ComponentWithRoute(props, context) {
             babelHelpers.classCallCheck(this, ComponentWithRoute);
 
-            var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(ComponentWithRoute).call(this, props, context));
+            var _this = babelHelpers.possibleConstructorReturn(this, (ComponentWithRoute.__proto__ || Object.getPrototypeOf(ComponentWithRoute)).call(this, props, context));
 
             _this.router = context.router;
             _this.state = {
@@ -24,7 +24,7 @@ function withRoute(BaseComponent) {
             value: function componentDidMount() {
                 var _this2 = this;
 
-                ifNot(this.router.registeredPlugins.LISTENERS, '[react-router5][withRoute] missing plugin router5-listeners');
+                ifNot(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][withRoute] missing listeners plugin');
 
                 this.listener = function (toState, fromState) {
                     return _this2.setState({ previousRoute: fromState, route: toState });
@@ -53,10 +53,10 @@ function withRoute(BaseComponent) {
             }
         }]);
         return ComponentWithRoute;
-    })(Component);
+    }(Component);
 
     ComponentWithRoute.contextTypes = {
-        router: PropTypes.object.isRequired
+        router: React.PropTypes.object.isRequired
     };
 
     ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';

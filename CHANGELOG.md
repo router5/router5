@@ -1,3 +1,12 @@
+<a name="4.0.0"></a>
+# [4.0.0](https://github.com/router5/react-router5/compare/v3.1.0...v4.0.0) (2016-09-05)
+
+### BREAKING CHANGES
+
+* `registerComponent` argument in `routeNode` HOC is no longer supported
+* AMD bundle is no longer distributed (use UMD instead)
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/router5/react-router5/compare/v3.0.0...v3.0.1) (2016-03-25)
 
