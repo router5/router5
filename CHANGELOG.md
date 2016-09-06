@@ -1,3 +1,13 @@
+<a name="4.0.3"></a>
+## [4.0.3](https://github.com/router5/router5/compare/v4.0.2...v4.0.3) (2016-09-06)
+
+
+### Bug Fixes
+
+* do not invoke removed listeners ([4fd90dd](https://github.com/router5/router5/commit/4fd90dd)), closes [router5/router5-listeners#4](https://github.com/router5/router5-listeners/issues/4)
+
+
+
 <a name="4.0.2"></a>
 ## [4.0.2](https://github.com/router5/router5/compare/v4.0.10...v4.0.2) (2016-09-05)
 

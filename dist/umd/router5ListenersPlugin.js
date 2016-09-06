@@ -160,7 +160,9 @@
 
             function invokeListeners(name, toState, fromState) {
                 (listeners[name] || []).forEach(function (cb) {
-                    return cb(toState, fromState);
+                    if (listeners[name].indexOf(cb) !== -1) {
+                        cb(toState, fromState);
+                    }
                 });
             }
 
