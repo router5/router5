@@ -119,4 +119,20 @@ describe('listenersPlugin', function () {
         router.addRouteListener('fake.route', function () {});
         expect(console.warn).to.have.been.called;
     });
+
+    it('should not invoke listeners removed by previously called listeners', function (done) {
+        router.navigate('home', {}, {}, function () {
+            const previousState = router.lastKnownState;
+            const listener2 = spy();
+            const listener1 = spy(() => router.removeListener(listener2));
+            router.addListener(listener1);
+            router.addListener(listener2);
+
+            router.navigate('orders.pending', {}, {}, function () {
+                expect(listener2).not.to.have.been.called;
+                router.removeListener(listener1);
+                done();
+            });
+        });
+    });
 });

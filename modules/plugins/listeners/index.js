@@ -43,7 +43,11 @@ function listenersPluginFactory(options = defaultOptions) {
         router.removeRouteListener = (name, cb) => removeListener('=' + name, cb);
 
         function invokeListeners(name, toState, fromState) {
-            (listeners[name] || []).forEach(cb => cb(toState, fromState));
+            (listeners[name] || []).forEach(cb => {
+                if (listeners[name].indexOf(cb) !== -1) {
+                    cb(toState, fromState);
+                }
+            });
         }
 
         function onTransitionSuccess(toState, fromState, opts) {
