@@ -131,6 +131,8 @@ import { actions } from 'redux-router5';
 
 ## routeNodeSelector
 
+__In order to use routeNodeSelector efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.__
+
 `routeNodeSelector` is a selector designed to be used on a route node and works with `connect` higher-order component from `react-redux`.
 
 If your routes are nested, you'll have a few route nodes in your application. On each route change, only _one_ route node needs to be re-rendered.
@@ -167,5 +169,19 @@ function Root({ route }) {
     }
 }
 
-export default connect(routeNodeSelector(''))(Root);
+export default connect(state => routeNodeSelector(''))(Root);
+```
+
+When using `routeNodeSelector` with other connect properties:
+
+```js
+export default connect(state => {
+    const selector = routeNodeSelector('');
+
+    return (state) => ({
+        a: state.a,
+        b: state.b,
+        ...selector(state)
+    })
+)(Root);
 ```
