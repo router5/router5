@@ -19,4 +19,4 @@ const Main = {
     }
 };
 
-export default connect(routeNodeSelector(''))(Main);
+export default connect((state) => routeNodeSelector(''))(Main);

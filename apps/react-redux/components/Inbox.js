@@ -15,4 +15,4 @@ function Inbox(props) {
     );
 }
 
-export default connect(routeNodeSelector('inbox'))(Inbox);
+export default connect((state) => routeNodeSelector('inbox'))(Inbox);

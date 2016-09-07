@@ -17,4 +17,4 @@ function Main(props) {
     return createElement(components[segment] || NotFound);
 }
 
-export default connect(routeNodeSelector(''))(Main);
+export default connect((state) => routeNodeSelector(''))(Main);
