@@ -48,7 +48,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             const routerState = router.getState();
             // Do nothing if no state or if last know state is poped state (it should never happen)
             const newState = !evt.state || !evt.state.name;
-            const state = newState ? router.matchPath(browser.getLocation(router.routerOptions), source) : evt.state;
+            const state = newState ? router.matchPath(browser.getLocation(options), source) : evt.state;
             const { defaultRoute, defaultParams } = routerOptions;
 
             if (!state) {
