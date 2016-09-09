@@ -14,6 +14,7 @@ export default function withRouteLifecycle(router) {
     router.canActivate = canActivate;
     router.getLifecycleFunctions = getLifecycleFunctions;
     router.clearCanDeactivate = clearCanDeactivate;
+    router.addNode = addNode;
 
     function getLifecycleFunctions() {
         return [canDeactivateFunctions, canActivateFunctions];
@@ -34,6 +35,18 @@ export default function withRouteLifecycle(router) {
         var factory = toFunction(canActivateHandler);
 
         canActivateFunctions[name] = router.executeFactory(factory);
+        return router;
+    }
+
+    /**
+     * Add a single route (node)
+     * @param {String} name                  The route name (full name)
+     * @param {String} path                  The route path (from parent)
+     * @param {Function=} canActivateHandler The canActivate handler for this node
+     */
+    function addNode(name, path, canActivateHandler) {
+        router.rootNode.addNode(name, path);
+        if (canActivateHandler) router.canActivate(name, canActivateHandler);
         return router;
     }
 }

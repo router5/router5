@@ -1,3 +1,13 @@
+<a name="4.0.4"></a>
+## [4.0.4](https://github.com/router5/router5/compare/v4.0.3...v4.0.4) (2016-09-09)
+
+
+### Bug Fixes
+
+* **browserPlugin:** pass right options to getLocation on popstate ([bb4b270](https://github.com/router5/router5/commit/bb4b270))
+
+
+
 <a name="4.0.3"></a>
 ## [4.0.3](https://github.com/router5/router5/compare/v4.0.2...v4.0.3) (2016-09-06)
 

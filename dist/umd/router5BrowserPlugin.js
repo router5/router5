@@ -196,7 +196,7 @@
                 var routerState = router.getState();
                 // Do nothing if no state or if last know state is poped state (it should never happen)
                 var newState = !evt.state || !evt.state.name;
-                var state = newState ? router.matchPath(browser.getLocation(router.routerOptions), source) : evt.state;
+                var state = newState ? router.matchPath(browser.getLocation(options), source) : evt.state;
                 var defaultRoute = routerOptions.defaultRoute;
                 var defaultParams = routerOptions.defaultParams;
 
