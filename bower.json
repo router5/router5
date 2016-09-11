@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "3.0.3",
+  "version": "4.0.5",
   "homepage": "http://router5.github.io",
   "authors": [
     "Thomas Roch <thomas.c.roch@gmail.com>"
@@ -16,25 +16,21 @@
   ],
   "keywords": [
     "router",
-    "HTML5"
+    "routing",
+    "html5",
+    "functional"
   ],
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
+    "modules",
     "coverage",
     "scripts",
-    "npm-debug.log",
     "tests",
-    "bower.json",
-    "README.md",
-    "CONTRIBUTING.md",
-    "CHANGELOG.md",
-    ".travis.yml",
-    "karma.config.js",
-    "package.json",
-    ".gitignore",
-    "gulpfile.js"
+    "node_modules",
+    "npm-debug.log",
+    "*.md",
+    "*.config.js",
+    "package.json"
   ]
 }
