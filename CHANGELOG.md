@@ -1,3 +1,13 @@
+<a name="4.0.5"></a>
+## [4.0.5](https://github.com/router5/router5/compare/v4.0.4...v4.0.5) (2016-09-11)
+
+
+### Bug Fixes
+
+* update version of route-node (handling of undefined and null query params) ([2363300](https://github.com/router5/router5/commit/2363300))
+
+
+
 <a name="4.0.4"></a>
 ## [4.0.4](https://github.com/router5/router5/compare/v4.0.3...v4.0.4) (2016-09-09)
 
