@@ -48,11 +48,13 @@
     "rollup": "^0.26.3",
     "rollup-plugin-babel": "^2.4.0",
     "rollup-plugin-npm": "^1.4.0",
-    "yargs": "^4.7.1"
+    "yargs": "^4.7.1",
+    "immutable": "^3.0.0"
   },
   "peerDependencies": {
     "router5": "^4.0.0",
-    "redux": "^3.0.0"
+    "redux": "^3.0.0",
+    "immutable": "^3.0.0"
   },
   "dependencies": {
     "router5.transition-path": "~3.0.0"

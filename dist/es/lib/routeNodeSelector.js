@@ -4,7 +4,7 @@ function routeNodeSelector(routeNode) {
     var reducerKey = arguments.length <= 1 || arguments[1] === undefined ? 'router' : arguments[1];
 
     var routerStateSelector = function routerStateSelector(state) {
-        return state[reducerKey];
+        return state[reducerKey] || state.get && state.get(reducerKey);
     };
     var lastReturnedValue = void 0;
 

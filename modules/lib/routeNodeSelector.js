@@ -1,7 +1,7 @@
 import transitionPath from 'router5.transition-path';
 
 function routeNodeSelector(routeNode, reducerKey = 'router') {
-    const routerStateSelector = state => state[reducerKey];
+    const routerStateSelector = state => state[reducerKey] || (state.get && state.get(reducerKey));
     let lastReturnedValue;
 
     return function(state) {

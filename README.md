@@ -86,6 +86,12 @@ Under the hood, it simply adds a plugin to your router instance so your router
 dispatches actions on transition start, error, success and cancel (You can read more about router5 plugins [here](http://router5.github.io/docs/plugins.html)).
 It also relay `navigateTo` actions to the router.
 
+If you are using [immutable-js](https://github.com/facebook/immutable-js) and [redux-immutable](https://github.com/gajus/redux-immutable) simply use the reducer from 'redux-router5/immutable/reducer' 
+
+```javascript
+import { router5Middleware } from 'redux-router5';
+import router5Reducer from 'redux-router5/immutable/reducer';
+```
 
 ## Router5 reduxPlugin
 
