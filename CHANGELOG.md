@@ -1,3 +1,13 @@
+<a name="4.1.0"></a>
+# [4.1.0](https://github.com/router5/redux-router5/compare/v4.0.0...v4.1.0) (2016-09-13)
+
+
+### Features
+
+* rework directory structure ([903df0a](https://github.com/router5/redux-router5/commit/903df0a))
+
+
+
 <a name="4.0.0"></a>
 # 4.0.0 (2016-09-05)
 
@@ -11,9 +21,9 @@
 # 3.1.0 (2016-06-03)
 
 
-### feat
+### Features
 
-* feat: add canActivate and canDeactivate actions ([670efa5](https://github.com/router5/redux-router5/commit/670efa5))
+* add canActivate and canDeactivate actions ([670efa5](https://github.com/router5/redux-router5/commit/670efa5))
 
 
 
