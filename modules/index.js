@@ -1,9 +1,9 @@
-import router5Middleware from './router5Middleware';
-import router5Reducer from './router5Reducer';
-import routeNodeSelector from './routeNodeSelector';
-import * as actions from './actions';
-import * as actionTypes from './actionTypes';
-import reduxPlugin from './reduxPlugin';
+import router5Middleware from './lib/router5Middleware';
+import router5Reducer from './lib/router5Reducer';
+import routeNodeSelector from './lib/routeNodeSelector';
+import * as actions from './lib/actions';
+import * as actionTypes from './lib/actionTypes';
+import reduxPlugin from './lib/reduxPlugin';
 
 export {
     router5Middleware,
