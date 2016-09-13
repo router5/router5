@@ -1,4 +1,4 @@
-import * as actionTypes from '../actionTypes';
+import * as actionTypes from '../lib/actionTypes';
 import { Record } from 'immutable';
 
 // eslint-disable-next-line new-cap

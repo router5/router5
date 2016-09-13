@@ -1,3 +1,13 @@
+<a name="4.2.0"></a>
+# 4.2.0 (2016-09-13)
+
+
+### Features
+
+* add immutable-js support in routeNodeSelector and immutable-js reducer ([8764ce6](https://github.com/router5/redux-router5/commit/8764ce6))
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/router5/redux-router5/compare/v4.0.0...v4.1.0) (2016-09-13)
 

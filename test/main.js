@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { routeNodeSelector, router5Reducer, actions, actionTypes } from '../modules';
-import immutableReducer from '../modules/lib/immutable/reducer';
+import immutableReducer from '../modules/immutable/reducer';
 import { Record, Map } from 'immutable';
 
 const route1 = { name: 'a.1' };
