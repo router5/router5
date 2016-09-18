@@ -21,7 +21,7 @@ class BaseLink extends Component {
             return this.router.buildUrl(routeName, routeParams);
         }
 
-        return this.router.builPath(routeName, routeParams);
+        return this.router.buildPath(routeName, routeParams);
     }
 
     isActive() {
