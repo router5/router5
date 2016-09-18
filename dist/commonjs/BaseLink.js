@@ -46,7 +46,7 @@ var BaseLink = function (_Component) {
                 return this.router.buildUrl(routeName, routeParams);
             }
 
-            return this.router.builPath(routeName, routeParams);
+            return this.router.buildPath(routeName, routeParams);
         }
     }, {
         key: 'isActive',

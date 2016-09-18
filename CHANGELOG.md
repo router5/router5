@@ -1,3 +1,13 @@
+<a name="4.0.1"></a>
+## [4.0.1](https://github.com/router5/react-router5/compare/v4.0.0...v4.0.1) (2016-09-18)
+
+
+### Bug Fixes
+
+* building a path if browser plugin not in use ([214e8cb](https://github.com/router5/react-router5/commit/214e8cb))
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/router5/react-router5/compare/v3.1.0...v4.0.0) (2016-09-05)
 
