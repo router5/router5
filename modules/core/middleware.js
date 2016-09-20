@@ -9,8 +9,8 @@ export default function withMiddleware(router) {
 
     /**
      * Register middleware functions.
-     * @param  {...Function} The middleware functions
-     * @return {Object}      The router instance
+     * @param  {...Function} middlewares The middleware functions
+     * @return {Object}                  The router instance
      */
     function useMiddleware(...middlewares) {
         middlewares.forEach(addMiddleware);

@@ -6,7 +6,17 @@ export default function withPlugins(router) {
 
     router.usePlugin = usePlugin;
     router.hasPlugin = hasPlugin;
+    router.getPlugins = getPlugins;
 
+    function getPlugins() {
+        return plugins;
+    }
+
+    /**
+     * Use plugins
+     * @param  {...Function} plugins An argument list of plugins
+     * @return {Object}              The router instance
+     */
     function usePlugin() {
         for (var _len = arguments.length, plugins = Array(_len), _key = 0; _key < _len; _key++) {
             plugins[_key] = arguments[_key];
@@ -23,6 +33,11 @@ export default function withPlugins(router) {
         }
     }
 
+    /**
+     * Check if a plugin has already been registered.
+     * @param  {String}  pluginName The plugin name
+     * @return {Boolean}            Whether the plugin has been registered
+     */
     function hasPlugin(pluginName) {
         return plugins.filter(function (p) {
             return p.pluginName === pluginName || p.name === pluginName;

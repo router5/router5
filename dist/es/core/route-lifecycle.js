@@ -7,46 +7,64 @@ var toFunction = function toFunction(val) {
 };
 
 export default function withRouteLifecycle(router) {
+    var canDeactivateFactories = {};
+    var canActivateFactories = {};
     var canDeactivateFunctions = {};
     var canActivateFunctions = {};
 
     router.canDeactivate = canDeactivate;
     router.canActivate = canActivate;
+    router.getLifecycleFactories = getLifecycleFactories;
     router.getLifecycleFunctions = getLifecycleFunctions;
     router.clearCanDeactivate = clearCanDeactivate;
-    router.addNode = addNode;
+
+    function getLifecycleFactories() {
+        return [canDeactivateFactories, canActivateFactories];
+    }
 
     function getLifecycleFunctions() {
         return [canDeactivateFunctions, canActivateFunctions];
     }
 
+    /**
+     * Register a canDeactivate handler or specify a if a route can be deactivated
+     * @param  {String} name                           The route name
+     * @param  {Function|Boolean} canDeactivateHandler The canDeactivate handler or boolean
+     * @return {Object}                                The router instance
+     */
     function canDeactivate(name, canDeactivateHandler) {
         var factory = toFunction(canDeactivateHandler);
 
+        canDeactivateFactories[name] = factory;
         canDeactivateFunctions[name] = router.executeFactory(factory);
-        return router;
-    }
 
-    function clearCanDeactivate(name) {
-        canDeactivateFunctions[name] = undefined;
-    }
-
-    function canActivate(name, canActivateHandler) {
-        var factory = toFunction(canActivateHandler);
-
-        canActivateFunctions[name] = router.executeFactory(factory);
         return router;
     }
 
     /**
-     * Add a single route (node)
-     * @param {String} name                  The route name (full name)
-     * @param {String} path                  The route path (from parent)
-     * @param {Function=} canActivateHandler The canActivate handler for this node
+     * Remove a canDeactivate handler for a route
+     * @param  {String} name The route name
+     * @return {Object}      The router instance
      */
-    function addNode(name, path, canActivateHandler) {
-        router.rootNode.addNode(name, path);
-        if (canActivateHandler) router.canActivate(name, canActivateHandler);
+    function clearCanDeactivate(name) {
+        canDeactivateFactories[name] = undefined;
+        canDeactivateFunctions[name] = undefined;
+
+        return router;
+    }
+
+    /**
+     * Register a canActivate handler or specify a if a route can be deactivated
+     * @param  {String} name                         The route name
+     * @param  {Function|Boolean} canActivateHandler The canActivate handler or boolean
+     * @return {Object}                              The router instance
+     */
+    function canActivate(name, canActivateHandler) {
+        var factory = toFunction(canActivateHandler);
+
+        canActivateFactories[name] = factory;
+        canActivateFunctions[name] = router.executeFactory(factory);
+
         return router;
     }
 }

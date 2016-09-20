@@ -17,10 +17,10 @@ const defaultOptions = {
 
 /**
  * Create a router
- * @param  {Array}  [routes]       The routes
- * @param  {Object} [options]      The router options
- * @param  {Object} [dependencies] The router dependencies
- * @return {Object}                The router instance
+ * @param  {Array}  [routes]          The routes
+ * @param  {Object} [options={}]      The router options
+ * @param  {Object} [dependencies={}] The router dependencies
+ * @return {Object}                   The router instance
  */
 function createRouter(routes, opts = {}, deps={}) {
     let routerState = null;
@@ -105,12 +105,12 @@ function createRouter(routes, opts = {}, deps={}) {
 
     /**
      * Build a state object
-     * @param  {String} name       The state name
-     * @param  {Object} params     The state params
-     * @param  {String} path       The state path
-     * @param  {Object} metaParams Description of the state params
-     * @param  {String=} source    The source of the routing state
-     * @return {Object}            The state object
+     * @param  {String} name         The state name
+     * @param  {Object} params       The state params
+     * @param  {String} path         The state path
+     * @param  {Object} [metaParams] Description of the state params
+     * @param  {String} [source]     The source of the routing state
+     * @return {Object}              The state object
      */
     function makeState(name, params, path, metaParams, source) {
         const state = {};

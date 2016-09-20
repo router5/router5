@@ -11,6 +11,10 @@ export default function withNavigation(router) {
     router.transitionToState = transitionToState;
     router.cancel = cancel;
 
+    /**
+     * Cancel the current transition if there is one
+     * @return {Object} The router instance
+     */
     function cancel() {
         if (cancelCurrentTransition) {
             cancelCurrentTransition('navigate');
@@ -20,6 +24,14 @@ export default function withNavigation(router) {
         return router;
     }
 
+    /**
+     * Navigate to a route
+     * @param  {String}   routeName      The route name
+     * @param  {Object}   [routeParams]  The route params
+     * @param  {Object}   [options]      The navigation options (`replace`, `reload`)
+     * @param  {Function} [done]         A done node style callback (err, state)
+     * @return {Function}                A cancel function
+     */
     function navigate() {
         var name = arguments.length <= 0 ? undefined : arguments[0];
         var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
@@ -75,13 +87,22 @@ export default function withNavigation(router) {
         });
     }
 
+    /**
+     * Navigate to the default route (if defined)
+     * @param  {Object}   [opts] The navigation options
+     * @param  {Function} [done] A done node style callback (err, state)
+     * @return {Function}        A cancel function
+     */
     function navigateToDefault() {
-        var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-        var done = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
-
+        var opts = babelHelpers.typeof(arguments.length <= 0 ? undefined : arguments[0]) === 'object' ? arguments.length <= 0 ? undefined : arguments[0] : {};
+        var done = arguments.length === 2 ? arguments.length <= 1 ? undefined : arguments[1] : typeof (arguments.length <= 0 ? undefined : arguments[0]) === 'function' ? arguments.length <= 0 ? undefined : arguments[0] : noop;
         var options = router.getOptions();
 
-        return navigate(options.defaultRoute, options.defaultParams, opts, done);
+        if (options.defaultRoute) {
+            return navigate(options.defaultRoute, options.defaultParams, opts, done);
+        }
+
+        return function () {};
     }
 
     function transitionToState(toState, fromState) {

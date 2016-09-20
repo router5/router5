@@ -1,3 +1,14 @@
+<a name="4.1.0"></a>
+# [4.1.0](https://github.com/router5/router5/compare/v4.0.5...v4.1.0) (2016-09-20)
+
+
+### Features
+
+* add router cloning functionality ([637f3b1](https://github.com/router5/router5/commit/637f3b1))
+* support setting dependencies in createRouter function ([e72f6c6](https://github.com/router5/router5/commit/e72f6c6))
+
+
+
 <a name="4.0.5"></a>
 ## [4.0.5](https://github.com/router5/router5/compare/v4.0.4...v4.0.5) (2016-09-11)
 

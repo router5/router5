@@ -9,6 +9,14 @@ export default function withUtils(router) {
     router.matchPath = matchPath;
     router.setRootPath = setRootPath;
 
+    /**
+     * Check if a route is currently active
+     * @param  {String}  name                     The route name
+     * @param  {Object}  params                   The route params
+     * @param  {Boolean} [strictEquality=false]   Whether to check if the given route is the active route, or part of the active route
+     * @param  {Boolean} [ignoreQueryParams=true] Whether to ignore query parameters
+     * @return {Boolean}                          Whether the given route is active
+     */
     function isActive(name) {
         var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
         var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
@@ -25,6 +33,13 @@ export default function withUtils(router) {
         return areStatesDescendants(router.makeState(name, params), activeState);
     }
 
+    /**
+     * Compare two route state objects
+     * @param  {Object}  state1            The route state
+     * @param  {Object}  state2            The other route state
+     * @param  {Boolean} ignoreQueryParams Whether to ignore query parameters or not
+     * @return {Boolean}                   Whether the two route state are equal or not
+     */
     function areStatesEqual(state1, state2) {
         var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
@@ -46,6 +61,12 @@ export default function withUtils(router) {
         });
     }
 
+    /**
+     * Check if two states are related
+     * @param  {State} parentState  The parent state
+     * @param  {State} childState   The child state
+     * @return {Boolean}            Whether the two states are descendants or not
+     */
     function areStatesDescendants(parentState, childState) {
         var regex = new RegExp('^' + parentState.name + '\\.(.*)$');
         if (!regex.test(childState.name)) return false;
@@ -56,6 +77,12 @@ export default function withUtils(router) {
         });
     }
 
+    /**
+     * Build a path
+     * @param  {String} route  The route name
+     * @param  {Object} params The route params
+     * @return {String}        The path
+     */
     function buildPath(route, params) {
         return router.rootNode.buildPath(route, params);
     }
@@ -64,6 +91,12 @@ export default function withUtils(router) {
         return router.rootNode.buildState(route, params);
     }
 
+    /**
+     * Match a path
+     * @param  {String} path     The path to match
+     * @param  {String} [source] The source (optional, used internally)
+     * @return {Object}          The matched state (null if unmatched)
+     */
     function matchPath(path, source) {
         var trailingSlash = options.trailingSlash;
         var strictQueryParams = options.strictQueryParams;
@@ -72,6 +105,10 @@ export default function withUtils(router) {
         return match ? router.makeState(match.name, match.params, path, match._meta, source) : null;
     }
 
+    /**
+     * Set the root node patch, use carefully. It can be used to set app-wide allowed query parameters.
+     * @param {String} rootPath The root node path
+     */
     function setRootPath(rootPath) {
         router.rootNode.setPath(rootPath);
     }
