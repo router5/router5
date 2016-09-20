@@ -16,15 +16,15 @@ const defaultOptions = {
 
 /**
  * Create a router
- * @param  {Array}  routes       The routes
- * @param  {Object} options      The router options
- * @param  {Object} dependencies The router dependencies
- * @return {Object}              The router instance
+ * @param  {Array}  [routes]       The routes
+ * @param  {Object} [options]      The router options
+ * @param  {Object} [dependencies] The router dependencies
+ * @return {Object}                The router instance
  */
-function createRouter(routes, opts = {}) {
+function createRouter(routes, opts = {}, deps={}) {
     let routerState = null;
     const callbacks = {};
-    const dependencies = {};
+    const dependencies = deps;
     const options = { ...defaultOptions, ...opts };
 
     const router = {
