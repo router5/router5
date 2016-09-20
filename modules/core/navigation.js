@@ -11,6 +11,10 @@ export default function withNavigation(router) {
     router.transitionToState = transitionToState;
     router.cancel = cancel;
 
+    /**
+     * Cancel the current transition if there is one
+     * @return {Object} The router instance
+     */
     function cancel() {
         if (cancelCurrentTransition) {
             cancelCurrentTransition('navigate');
@@ -20,6 +24,14 @@ export default function withNavigation(router) {
         return router;
     }
 
+    /**
+     * Navigate to a route
+     * @param  {String}   routeName      The route name
+     * @param  {Object}   [routeParams]  The route params
+     * @param  {Object}   [options]      The navigation options (`replace`, `reload`)
+     * @param  {Function} [done]         A done node style callback (err, state)
+     * @return {Function}                A cancel function
+     */
     function navigate(...args) {
         const name = args[0];
         const lastArg = args[args.length - 1];
@@ -72,10 +84,22 @@ export default function withNavigation(router) {
         });
     }
 
-    function navigateToDefault(opts = {}, done = noop) {
+    /**
+     * Navigate to the default route (if defined)
+     * @param  {Object}   [opts] The navigation options
+     * @param  {Function} [done] A done node style callback (err, state)
+     * @return {Function}        A cancel function
+     */
+    function navigateToDefault(...args) {
+        const opts = typeof args[0] === 'object' ? args[0] : {};
+        const done = args.length === 2 ? args[1] : (typeof args[0] === 'function' ? args[0] : noop);
         const options = router.getOptions();
 
-        return navigate(options.defaultRoute, options.defaultParams, opts, done);
+        if (options.defaultRoute) {
+            return navigate(options.defaultRoute, options.defaultParams, opts, done);
+        }
+
+        return () => {};
     }
 
     function transitionToState(toState, fromState, options = {}, done = noop) {

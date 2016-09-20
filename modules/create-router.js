@@ -14,7 +14,14 @@ const defaultOptions = {
     allowNotFound: false
 };
 
-function createRouter(routes, opts) {
+/**
+ * Create a router
+ * @param  {Array}  routes       The routes
+ * @param  {Object} options      The router options
+ * @param  {Object} dependencies The router dependencies
+ * @return {Object}              The router instance
+ */
+function createRouter(routes, opts = {}) {
     let routerState = null;
     const callbacks = {};
     const dependencies = {};
@@ -39,14 +46,36 @@ function createRouter(routes, opts) {
         invokeEventListeners
     };
 
+    /**
+     * Invoke all event listeners by event name. Possible event names are listed under constants
+     * (`import { constants } from 'router5'`): `ROUTER_START`, `ROUTER_STOP`, `TRANSITION_START`,
+     * `TRANSITION_CANCEL`, `TRANSITION_SUCCESS`, `TRANSITION_ERROR`.
+     * This method is used internally and should not be invoked directly, but it can be useful for
+     * testing purposes.
+     * @private
+     * @name invokeEventListeners
+     * @param  {String}    eventName The event name
+     */
     function invokeEventListeners(eventName, ...args) {
         (callbacks[eventName] || []).forEach(cb => cb(...args));
     }
 
+    /**
+     * Removes an event listener
+     * @private
+     * @param  {String}   eventName The event name
+     * @param  {Function} cb        The callback to remove
+     */
     function removeEventListener(eventName, cb) {
         callbacks[eventName] = callbacks[eventName].filter((_cb) => _cb !== cb);
     }
 
+    /**
+     * Add an event listener
+     * @private
+     * @param {String}   eventName The event name
+     * @param {Function} cb        The callback to add
+     */
     function addEventListener(eventName, cb) {
         callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
 
@@ -72,6 +101,15 @@ function createRouter(routes, opts) {
         if (route.canActivate) router.canActivate(route.name, route.canActivate);
     }
 
+    /**
+     * Build a state object
+     * @param  {String} name       The state name
+     * @param  {Object} params     The state params
+     * @param  {String} path       The state path
+     * @param  {Object} metaParams Description of the state params
+     * @param  {String=} source    The source of the routing state
+     * @return {Object}            The state object
+     */
     function makeState(name, params, path, metaParams, source) {
         const state = {};
         const setProp = (key, value) => Object.defineProperty(state, key, { value, enumerable: true });
@@ -88,57 +126,108 @@ function createRouter(routes, opts) {
         return state;
     }
 
+    /**
+     * Build a not found state for a given path
+     * @param  {String} path The unmatched path
+     * @return {Object}      The not found state object
+     */
     function makeNotFoundState(path) {
         return makeState(constants.UNKNOWN_ROUTE, { path }, path, {});
     }
 
+    /**
+     * Get the current router state
+     * @return {Object} The current state
+     */
     function getState() {
         return routerState;
     }
 
+    /**
+     * Set the current router state
+     * @param {Object} state The state object
+     */
     function setState(state) {
         routerState = state;
     }
 
+    /**
+     * Get router options
+     * @return {Object} The router options
+     */
     function getOptions() {
         return options;
     }
 
+    /**
+     * Set an option
+     * @param  {String} option The option name
+     * @param  {*}      value  The option value
+     * @return {Object}       The router instance
+     */
     function setOption(option, value) {
         options[option] = value;
         return router;
     }
 
+    /**
+     * Set a router dependency
+     * @param  {String} dependencyName The dependency name
+     * @param  {*}      dependency     The dependency
+     * @return {Object}                The router instance
+     */
     function setDependency(dependencyName, dependency) {
         dependencies[dependencyName] = dependency;
         return router;
     }
 
+    /**
+     * Add dependencies
+     * @param { Object} deps A object of dependencies (key-value pairs)
+     * @return {Object}      The router instance
+     */
     function setDependencies(deps) {
         Object.keys(deps).forEach((depName) => {
             dependencies[depName] = deps[depName];
         });
+
+        return router;
     }
 
+    /**
+     * Get dependencies
+     * @return {Object} The dependencies
+     */
     function getDependencies() {
         return dependencies;
     }
 
     function getInjectables() {
-        return [ router, dependencies ];
+        return [ router, getDependencies() ];
     }
 
     function executeFactory(factoryFunction) {
         return factoryFunction(...getInjectables());
     }
 
+    /**
+     * Add routes
+     * @param  {Array} routes A list of routes to add
+     * @return {Object}       The router instance
+     */
     function add(routes) {
         rootNode.add(routes, addCanActivate);
         return router;
     }
 
+    /**
+     * Add a single route (node)
+     * @param {String} name                   The route name (full name)
+     * @param {String} path                   The route path (from parent)
+     * @param {Function} [canActivateHandler] The canActivate handler for this node
+     */
     function addNode(name, path, canActivateHandler) {
-        rootNode.addNode(name, path);
+        router.rootNode.addNode(name, path);
         if (canActivateHandler) router.canActivate(name, canActivateHandler);
         return router;
     }

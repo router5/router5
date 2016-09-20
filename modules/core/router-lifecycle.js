@@ -10,10 +10,20 @@ export default function withRouterLifecycle(router) {
     router.start = start;
     router.stop = stop;
 
+    /**
+     * Check if the router is started
+     * @return {Boolean} Whether the router is started or not
+     */
     function isStarted() {
         return started;
     }
 
+    /**
+     * Start the router
+     * @param  {String|Object} startPathOrState The start path or state. This is optional when using the browser plugin.
+     * @param  {Function}      done             A done node style callback (err, state)
+     * @return {Object}                         The router instance
+     */
     function start(...args) {
         const lastArg = args[args.length - 1];
         const done = typeof lastArg === 'function' ? lastArg : noop;
@@ -76,6 +86,10 @@ export default function withRouterLifecycle(router) {
         return router;
     }
 
+    /**
+     * Stop the router
+     * @return {Object} The router instance
+     */
     function stop() {
         if (started) {
             router.setState(null);
