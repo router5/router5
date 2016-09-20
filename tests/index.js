@@ -52,7 +52,7 @@ function omitMeta(obj) {
 describe('router5', function () {
     let router, sandbox;
 
-    before(() => router = createTestRouter());
+    before(() => router = createTestRouter().clone());
     after(() => router.stop());
 
     afterEach(() => sandbox.restore());

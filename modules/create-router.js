@@ -5,6 +5,7 @@ import withNavigation from './core/navigation';
 import withMiddleware from './core/middleware';
 import withPlugins from './core/plugins';
 import withRouteLifecycle from './core/route-lifecycle';
+import withCloning from './core/clone';
 import constants from './constants';
 
 const defaultOptions = {
@@ -88,6 +89,7 @@ function createRouter(routes, opts = {}, deps={}) {
     withRouteLifecycle(router);
     withRouterLifecycle(router);
     withNavigation(router);
+    withCloning(router, createRouter);
 
     const rootNode  = routes instanceof RouteNode
         ? routes
