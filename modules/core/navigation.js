@@ -44,16 +44,16 @@ export default function withNavigation(router) {
             return;
         }
 
-        const toState = router.buildState(name, params);
+        const route = router.buildState(name, params);
 
-        if (!toState) {
+        if (!route) {
             const err = { code: errorCodes.ROUTE_NOT_FOUND };
             done(err);
             router.invokeEventListeners(constants.TRANSITION_ERROR, null, router.getState(), err);
             return;
         }
 
-        toState.path = router.buildPath(name, params);
+        const toState = router.makeState(route.name, route.params, router.buildPath(name, params), route._meta);
         const sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
 
         // Do not proceed further if states are the same and no reload

@@ -29,7 +29,7 @@ describe('listenersPlugin', function () {
         router.addNodeListener('', nodeListener);
 
         router.start(function (err, state) {
-            expect(state).to.eql({_meta: {home: {}}, name: 'home', path: '/home', params: {}});
+            expect(state).to.eql({meta: { params: {home: {}} }, name: 'home', path: '/home', params: {}});
             expect(nodeListener).to.have.been.called;
             done();
         });
@@ -118,6 +118,7 @@ describe('listenersPlugin', function () {
         stub(console, 'warn');
         router.addRouteListener('fake.route', function () {});
         expect(console.warn).to.have.been.called;
+        console.warn.restore();
     });
 
     it('should not invoke listeners removed by previously called listeners', function (done) {
