@@ -3,9 +3,9 @@ import { routeNodeSelector, router5Reducer, actions, actionTypes } from '../modu
 import immutableReducer from '../modules/immutable/reducer';
 import { Record, Map } from 'immutable';
 
-const route1 = { name: 'a.1' };
-const route2 = { name: 'a.2' };
-const route3 = { name: 'b' };
+const route1 = { name: 'a.1', meta: { params: {}} };
+const route2 = { name: 'a.2', meta: { params: {}} };
+const route3 = { name: 'b', meta: { params: {}} };
 const State = Record({
     route: null,
     previousRoute: null,
