@@ -1,3 +1,13 @@
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/router5/redux-router5/compare/v4.2.0...v4.2.1) (2016-09-22)
+
+
+### Bug Fixes
+
+* update router5.transition-path ([95c08f6](https://github.com/router5/redux-router5/commit/95c08f6))
+
+
+
 <a name="4.2.0"></a>
 # 4.2.0 (2016-09-13)
 

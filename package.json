@@ -1,6 +1,6 @@
 {
   "name": "redux-router5",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Router5 integration with redux",
   "main": "index.js",
   "jnext:main": "dist/es/index.js",
