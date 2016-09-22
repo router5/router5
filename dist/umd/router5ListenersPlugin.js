@@ -18,10 +18,18 @@
         }, []);
     }
 
-    function extractSegmentParams(name, state) {
-        if (!state._meta || !state._meta[name]) return {};
+    function exists(val) {
+        return val !== undefined && val !== null;
+    }
 
-        return Object.keys(state._meta[name]).reduce(function (params, p) {
+    function hasMetaParams(state) {
+        return state && state.meta && state.meta.params;
+    }
+
+    function extractSegmentParams(name, state) {
+        if (!exists(state.meta.params[name])) return {};
+
+        return Object.keys(state.meta.params[name]).reduce(function (params, p) {
             params[p] = state.params[p];
             return params;
         }, {});
@@ -79,8 +87,8 @@
         var i = void 0;
         if (!fromState) {
             i = 0;
-        } else if (!fromState || toState.name === fromState.name && (!toState._meta || !fromState._meta)) {
-            console.log('[router5.transition-path] Some states are missing metadata, reloading all segments');
+        } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
+            console.warn('[router5.transition-path] Some states are missing metadata, reloading all segments');
             i = 0;
         } else {
             i = pointOfDifference();

@@ -1,3 +1,13 @@
+<a name="4.1.1"></a>
+## [4.1.1](https://github.com/router5/router5/compare/v4.1.0...v4.1.1) (2016-09-22)
+
+
+### Bug Fixes
+
+* state generation in navigate function, use router5.transition-path v4 ([d04b042](https://github.com/router5/router5/commit/d04b042))
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/router5/router5/compare/v4.0.5...v4.1.0) (2016-09-20)
 
