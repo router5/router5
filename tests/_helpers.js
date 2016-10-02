@@ -10,3 +10,11 @@ const win = doc.defaultView;
 global.document = doc;
 global.window = win;
 global.navigator = win.navigator;
+
+export function omitMeta(obj) {
+    return {
+        name: obj.name,
+        params: obj.params,
+        path: obj.path
+    };
+}

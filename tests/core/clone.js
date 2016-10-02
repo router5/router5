@@ -2,51 +2,49 @@ import { expect } from 'chai';
 import createTestRouter from '../_create-router';
 
 describe('core/clone', () => {
-    describe('#clone', () => {
-        it('should clone the root node', () => {
-            const router = createTestRouter();
-            const otherRouter = createTestRouter();
+    it('should clone the root node', () => {
+        const router = createTestRouter();
+        const otherRouter = createTestRouter();
 
-            expect(router.rootNode).to.not.equal(otherRouter.rootNode);
+        expect(router.rootNode).to.not.equal(otherRouter.rootNode);
 
-            const clonedRouter = router.clone();
+        const clonedRouter = router.clone();
 
-            expect(clonedRouter.rootNode).to.equal(router.rootNode);
+        expect(clonedRouter.rootNode).to.equal(router.rootNode);
+    });
+
+    it('should clone plugins', () => {
+        const router = createTestRouter();
+        const myPlugin = () => ({
+            onTransitionSuccess: () => true
         });
 
-        it('should clone plugins', () => {
-            const router = createTestRouter();
-            const myPlugin = () => ({
-                onTransitionSuccess: () => true
-            });
+        router.usePlugin(myPlugin);
 
-            router.usePlugin(myPlugin);
+        const clonedRouter = router.clone();
 
-            const clonedRouter = router.clone();
+        expect(clonedRouter.getPlugins()).to.contain(myPlugin);
+    });
 
-            expect(clonedRouter.getPlugins()).to.contain(myPlugin);
-        });
+    it('should clone middleware functions', () => {
+        const router = createTestRouter();
+        const myMiddleware = () => () => true;
 
-        it('should clone middleware functions', () => {
-            const router = createTestRouter();
-            const myMiddleware = () => () => true;
+        router.useMiddleware(myMiddleware);
 
-            router.useMiddleware(myMiddleware);
+        const clonedRouter = router.clone();
 
-            const clonedRouter = router.clone();
+        expect(clonedRouter.getMiddlewareFactories()).to.contain(myMiddleware);
+    });
 
-            expect(clonedRouter.getMiddlewareFactories()).to.contain(myMiddleware);
-        });
+    it('should clone canActivate handlers', () => {
+        const router = createTestRouter();
+        const canActivateAdmin = () => () => false;
 
-        it('should clone canActivate handlers', () => {
-            const router = createTestRouter();
-            const canActivateAdmin = () => () => false;
+        router.canActivate('admin', canActivateAdmin);
 
-            router.canActivate('admin', canActivateAdmin);
+        const clonedRouter = router.clone();
 
-            const clonedRouter = router.clone();
-
-            expect(clonedRouter.getLifecycleFactories()[1].admin).to.equal(canActivateAdmin);
-        });
+        expect(clonedRouter.getLifecycleFactories()[1].admin).to.equal(canActivateAdmin);
     });
 });
