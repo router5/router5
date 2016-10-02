@@ -518,12 +518,17 @@
             var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
             var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
             var cb = arguments[3];
+            var parent = arguments[4];
             babelHelpers.classCallCheck(this, RouteNode);
 
             this.name = name;
-            this.path = path;
-            this.parser = path ? new Path(path) : null;
+            this.absolute = /^~/.test(path);
+            this.path = this.absolute ? path.slice(1) : path;
+            this.parser = this.path ? new Path(this.path) : null;
             this.children = [];
+            this.parent = parent;
+
+            this.checkParents();
 
             this.add(childRoutes, cb);
 
@@ -531,6 +536,61 @@
         }
 
         babelHelpers.createClass(RouteNode, [{
+            key: 'checkParents',
+            value: function checkParents() {
+                if (this.absolute && this.haveParentsParams()) {
+                    throw new Error('[RouteNode] A RouteNode with an abolute path cannot have parents with route parameters');
+                }
+            }
+        }, {
+            key: 'haveParentsParams',
+            value: function haveParentsParams() {
+                if (this.parent && this.parent.parser) {
+                    var parser = this.parent.parser;
+                    var hasParams = parser.hasUrlParams || parser.hasSpatParam || parser.hasMatrixParams || parser.hasQueryParams;
+
+                    return hasParams || this.parent.haveParentsParams();
+                }
+
+                return false;
+            }
+        }, {
+            key: 'getNonAbsoluteChildren',
+            value: function getNonAbsoluteChildren() {
+                return this.children.filter(function (child) {
+                    return !child.absolute;
+                });
+            }
+        }, {
+            key: 'findAbsoluteChildren',
+            value: function findAbsoluteChildren() {
+                return this.children.reduce(function (absoluteChildren, child) {
+                    return absoluteChildren.concat(child.absolute ? child : []).concat(child.findAbsoluteChildren());
+                }, []);
+            }
+        }, {
+            key: 'findSlashChild',
+            value: function findSlashChild() {
+                var slashChildren = this.getNonAbsoluteChildren().filter(function (child) {
+                    return child.parser.path === '/';
+                });
+
+                return slashChildren[0];
+            }
+        }, {
+            key: 'getParentSegments',
+            value: function getParentSegments() {
+                var segments = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+                return this.parent && this.parent.parser ? this.parent.getParentSegments(segments.concat(this.parent)) : segments.reverse();
+            }
+        }, {
+            key: 'setParent',
+            value: function setParent(parent) {
+                this.parent = parent;
+                this.checkParents();
+            }
+        }, {
             key: 'setPath',
             value: function setPath() {
                 var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
@@ -557,13 +617,14 @@
 
                 if (!(route instanceof RouteNode) && !(route instanceof Object)) {
                     throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.');
-                }
-                if (route instanceof Object) {
+                } else if (route instanceof RouteNode) {
+                    route.setParent(this);
+                } else {
                     if (!route.name || !route.path) {
                         throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                     }
                     originalRoute = route;
-                    route = new RouteNode(route.name, route.path, route.children, cb);
+                    route = new RouteNode(route.name, route.path, route.children, cb, this);
                 }
 
                 var names = route.name.split('.');
@@ -713,15 +774,17 @@
                                     v: segments
                                 };
                             }
+                            // Continue matching on non absolute children
+                            var children = child.getNonAbsoluteChildren();
                             // If no children to match against but unmatched path left
-                            if (!child.children.length) {
+                            if (!children.length) {
                                 return {
                                     v: null
                                 };
                             }
                             // Else: remaining path and children
                             return {
-                                v: matchChildren(child.children, remainingPath, segments)
+                                v: matchChildren(children, remainingPath, segments)
                             };
                         }
                     };
@@ -735,7 +798,11 @@
                     return null;
                 };
 
-                var startingNodes = this.parser ? [this] : this.children;
+                var topLevelNodes = this.parser ? [this] : this.children;
+                var startingNodes = topLevelNodes.reduce(function (nodes, node) {
+                    return nodes.concat(node, node.findAbsoluteChildren());
+                }, []);
+
                 var segments = [];
                 segments.params = {};
 
@@ -785,9 +852,13 @@
                     return Path.serialise(p, encodedVal);
                 }).join('&');
 
-                return segments.map(function (segment) {
-                    return segment.parser.build(params, { ignoreSearch: true });
-                }).join('') + (searchPart ? '?' + searchPart : '');
+                var path = segments.reduce(function (path, segment) {
+                    var segmentPath = segment.parser.build(params, { ignoreSearch: true });
+
+                    return segment.absolute ? segmentPath : path + segmentPath;
+                }, '');
+
+                return path + (searchPart ? '?' + searchPart : '');
             }
         }, {
             key: 'getMetaFromSegments',
@@ -816,8 +887,19 @@
             key: 'buildPath',
             value: function buildPath(routeName) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-                return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+                var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+
+                if (options.trailingSlash === true) {
+                    return (/\/$/.test(path) ? path : path + '/'
+                    );
+                } else if (options.trailingSlash === false) {
+                    return (/\/$/.test(path) ? path.slice(0, -1) : path
+                    );
+                }
+
+                return path;
             }
         }, {
             key: 'buildStateFromSegments',
@@ -855,8 +937,27 @@
             key: 'matchPath',
             value: function matchPath(path, options) {
                 var defaultOptions = { trailingSlash: false, strictQueryParams: true };
-                options = babelHelpers.extends({}, defaultOptions, options);
-                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, options));
+                var opts = babelHelpers.extends({}, defaultOptions, options);
+                var matchedSegments = this.getSegmentsMatchingPath(path, opts);
+
+                if (matchedSegments) {
+                    if (matchedSegments[0].absolute) {
+                        var firstSegmentParams = matchedSegments[0].getParentSegments();
+
+                        matchedSegments.reverse();
+                        matchedSegments.push.apply(matchedSegments, babelHelpers.toConsumableArray(firstSegmentParams));
+                        matchedSegments.reverse();
+                    }
+
+                    var lastSegment = matchedSegments[matchedSegments.length - 1];
+                    var lastSegmentSlashChild = lastSegment.findSlashChild();
+
+                    if (lastSegmentSlashChild) {
+                        matchedSegments.push(lastSegmentSlashChild);
+                    }
+                }
+
+                return this.buildStateFromSegments(matchedSegments);
             }
         }]);
         return RouteNode;
@@ -948,7 +1049,9 @@
          * @return {String}        The path
          */
         function buildPath(route, params) {
-            return router.rootNode.buildPath(route, params);
+            var useTrailingSlash = options.useTrailingSlash;
+
+            return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash });
         }
 
         function buildState(route, params) {
@@ -966,7 +1069,18 @@
             var strictQueryParams = options.strictQueryParams;
 
             var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
-            return match ? router.makeState(match.name, match.params, path, match._meta, source) : null;
+
+            if (match) {
+                var name = match.name;
+                var params = match.params;
+                var _meta = match._meta;
+
+                var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(name, params);
+
+                return router.makeState(name, params, builtPath, _meta, source);
+            }
+
+            return null;
         }
 
         /**
@@ -1711,6 +1825,7 @@
 
     var defaultOptions = {
         trailingSlash: 0,
+        useTrailingSlash: undefined,
         autoCleanUp: true,
         strictQueryParams: true,
         allowNotFound: false
@@ -1730,7 +1845,11 @@
         var routerState = null;
         var callbacks = {};
         var dependencies = deps;
-        var options = babelHelpers.extends({}, defaultOptions, opts);
+        var options = babelHelpers.extends({}, defaultOptions);
+
+        Object.keys(opts).forEach(function (opt) {
+            return setOption(opt, opts[opt]);
+        });
 
         var router = {
             rootNode: rootNode,
@@ -1882,6 +2001,9 @@
          * @return {Object}       The router instance
          */
         function setOption(option, value) {
+            if (option === 'useTrailingSlash' && value !== undefined) {
+                options.trailingSlash = true;
+            }
             options[option] = value;
             return router;
         }

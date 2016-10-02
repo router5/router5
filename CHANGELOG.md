@@ -1,3 +1,13 @@
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/router5/router5/compare/v4.1.1...v4.2.0) (2016-10-02)
+
+
+### Features
+
+* update to route-node v1.5.0, see https://github.com/troch/route-node/blob/master/CHANGELOG.md ([27c48a1](https://github.com/router5/router5/commit/27c48a1))
+
+
+
 <a name="4.1.1"></a>
 ## [4.1.1](https://github.com/router5/router5/compare/v4.1.0...v4.1.1) (2016-09-22)
 
