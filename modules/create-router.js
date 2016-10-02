@@ -10,6 +10,7 @@ import constants from './constants';
 
 const defaultOptions = {
     trailingSlash: 0,
+    useTrailingSlash: undefined,
     autoCleanUp: true,
     strictQueryParams: true,
     allowNotFound: false
@@ -26,7 +27,9 @@ function createRouter(routes, opts = {}, deps={}) {
     let routerState = null;
     const callbacks = {};
     const dependencies = deps;
-    const options = { ...defaultOptions, ...opts };
+    const options = { ...defaultOptions };
+
+    Object.keys(opts).forEach((opt) => setOption(opt, opts[opt]));
 
     const router = {
         rootNode,
@@ -168,6 +171,9 @@ function createRouter(routes, opts = {}, deps={}) {
      * @return {Object}       The router instance
      */
     function setOption(option, value) {
+        if (option === 'useTrailingSlash' && value !== undefined) {
+            options.trailingSlash = true;
+        }
         options[option] = value;
         return router;
     }

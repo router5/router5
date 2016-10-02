@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import createTestRouter from '../_create-router';
+import { omitMeta } from '../_helpers';
 
 describe('core/utils', () => {
     let router;
@@ -25,5 +26,21 @@ describe('core/utils', () => {
         expect(router.isActive('section.query', {section: 'section2'})).to.equal(false);
         expect(router.isActive('section.query', {section: 'section1', param2: '123'}, false, false)).to.equal(false);
         expect(router.isActive('users.view', {id: 123})).to.equal(false);
+    });
+
+    it('should match deep `/` routes', function () {
+        router.setOption('useTrailingSlash', false);
+        expect(omitMeta(router.matchPath('/profile'))).to.eql({
+            name: 'profile.me',
+            params: {},
+            path: '/profile'
+        });
+
+        router.setOption('useTrailingSlash', true);
+        expect(omitMeta(router.matchPath('/profile'))).to.eql({
+            name: 'profile.me',
+            params: {},
+            path: '/profile/'
+        });
     });
 });

@@ -118,16 +118,6 @@ describe('core/router-lifecycle', function () {
         });
     });
 
-    it('should match an URL with extra trailing slashes', function (done) {
-        router.setOption('trailingSlash', 1);
-        router.stop();
-        router.start('/users/list/', function (err, state) {
-            expect(omitMeta(state)).to.eql({name: 'users.list', params: {}, path: '/users/list/'});
-            router.setOption('trailingSlash', 0);
-            done();
-        });
-    });
-
     it('should start with the provided state', function (done) {
         router.stop();
         router.start(homeState, function (err, state) {

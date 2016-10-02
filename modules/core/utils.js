@@ -72,7 +72,8 @@ export default function withUtils(router) {
      * @return {String}        The path
      */
     function buildPath(route, params) {
-        return router.rootNode.buildPath(route, params);
+        const { useTrailingSlash } = options;
+        return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash });
     }
 
 
@@ -89,7 +90,17 @@ export default function withUtils(router) {
     function matchPath(path, source) {
         const { trailingSlash, strictQueryParams } = options;
         const match = router.rootNode.matchPath(path, { trailingSlash, strictQueryParams });
-        return match ? router.makeState(match.name, match.params, path, match._meta, source) : null;
+
+        if (match) {
+            const { name, params, _meta } = match;
+            const builtPath = options.useTrailingSlash === undefined
+                ? path
+                : router.buildPath(name, params);
+
+            return router.makeState(name, params, builtPath, _meta, source);
+        }
+
+        return null;
     }
 
     /**

@@ -16,12 +16,19 @@ const sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
     new RouteNode('query', '/query?param1[]&param2&param3')
 ]);
 
-export default function createTestRouter() {
+const profileRoute = new RouteNode('profile', '/profile', [
+    { name: 'me', path: '/' },
+    { name: 'user', path: '/:userId'}
+]);
+
+export default function createTestRouter(options) {
     return createRouter([
             usersRoute,
-            sectionRoute
+            sectionRoute,
+            profileRoute
         ], {
-            defaultRoute: 'home'
+            defaultRoute: 'home',
+            ...options
         })
         .add(ordersRoute)
         .addNode('index', '/')
