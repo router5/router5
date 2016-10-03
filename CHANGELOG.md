@@ -1,3 +1,13 @@
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/router5/router5/compare/v4.2.0...v4.2.1) (2016-10-03)
+
+
+### Bug Fixes
+
+* make sure TRANSITION_SUCCESS is caled when starting with state ([6639a81](https://github.com/router5/router5/commit/6639a81))
+
+
+
 <a name="4.2.0"></a>
 # [4.2.0](https://github.com/router5/router5/compare/v4.1.1...v4.2.0) (2016-10-02)
 
