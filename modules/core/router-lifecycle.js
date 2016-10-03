@@ -80,7 +80,7 @@ export default function withRouterLifecycle(router) {
         } else {
             // Initialise router with provided start state
             router.setState(startState);
-            done(null, startState);
+            cb(null, startState);
         }
 
         return router;
