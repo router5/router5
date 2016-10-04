@@ -1,3 +1,13 @@
+<a name="4.2.3"></a>
+## [4.2.3](https://github.com/router5/router5/compare/v4.2.2...v4.2.3) (2016-10-04)
+
+
+### Bug Fixes
+
+* update route-node package ([74487f1](https://github.com/router5/router5/commit/74487f1))
+
+
+
 <a name="4.2.2"></a>
 ## [4.2.2](https://github.com/router5/router5/compare/v4.2.1...v4.2.2) (2016-10-04)
 
