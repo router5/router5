@@ -37,7 +37,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "1.5.1",
+    "route-node": "1.5.2",
     "router5.transition-path": "4.0.1"
   },
   "devDependencies": {
