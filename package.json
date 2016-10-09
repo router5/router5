@@ -14,7 +14,7 @@
     "build:umd:listeners": "rollup -c rollup.config.js --module listeners",
     "build:umd": "npm run build:umd:core && npm run build:umd:browser && npm run build:umd:persistentParams && npm run build:umd:listeners",
     "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
-    "test": "mocha --compilers js:babel-core/register --recursive --require ./tests/_helpers.js 'tests/**/*.js'",
+    "test": "mocha --compilers js:babel-core/register --recursive --require ./tests/_helpers.js tests/**/*.js",
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./tests/_helpers.js 'tests/**/*.js'",
     "clog": "conventional-changelog -p angular -i CHANGELOG.md -w",
     "lint": "eslint modules",
