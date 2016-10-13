@@ -114,6 +114,95 @@
 
     babelHelpers;
 
+    // Split path
+    var getPath = function getPath(path) {
+        return path.split('?')[0];
+    };
+    var getSearch = function getSearch(path) {
+        return path.split('?')[1];
+    };
+
+    // Search param name
+    var bracketTest = /\[\]$/;
+    var hasBrackets = function hasBrackets(paramName) {
+        return bracketTest.test(paramName);
+    };
+    var withoutBrackets = function withoutBrackets(paramName) {
+        return paramName.replace(bracketTest, '');
+    };
+
+    /**
+     * Parse a querystring and return a list of params (Objects with name and value properties)
+     * @param  {String} querystring The querystring to parse
+     * @return {Array[Object]}      The list of params
+     */
+    var parse = function parse(querystring) {
+        return querystring.split('&').reduce(function (params, param) {
+            var split = param.split('=');
+            var name = split[0];
+            var value = split[1];
+
+            return params.concat(split.length === 1 ? { name: name, value: true } : { name: name, value: decodeURIComponent(value) });
+        }, []);
+    };
+
+    /**
+     * Reduce a list of parameters (returned by `.parse()``) to an object (key-value pairs)
+     * @param  {Array} paramList The list of parameters returned by `.parse()`
+     * @return {Object}          The object of parameters (key-value pairs)
+     */
+    var toObject = function toObject(paramList) {
+        return paramList.reduce(function (params, _ref) {
+            var name = _ref.name;
+            var value = _ref.value;
+
+            var isArray = hasBrackets(name);
+            var currentValue = params[withoutBrackets(name)];
+
+            if (currentValue === undefined) {
+                params[withoutBrackets(name)] = isArray ? [value] : value;
+            } else {
+                params[withoutBrackets(name)] = [].concat(currentValue, value);
+            }
+
+            return params;
+        }, {});
+    };
+
+    /**
+     * Build a querystring from a list of parameters
+     * @param  {Array} paramList The list of parameters (see `.parse()`)
+     * @return {String}          The querystring
+     */
+    var build = function build(paramList) {
+        return paramList.filter(function (_ref2) {
+            var value = _ref2.value;
+            return value !== undefined && value !== null;
+        }).map(function (_ref3) {
+            var name = _ref3.name;
+            var value = _ref3.value;
+            return value === true ? name : name + '=' + encodeURIComponent(value);
+        }).join('&');
+    };
+
+    /**
+     * Remove a list of parameters from a querystring
+     * @param  {String} querystring  The original querystring
+     * @param  {Array}  paramsToOmit The parameters to omit
+     * @return {String}              The querystring
+     */
+    var omit = function omit(querystring, paramsToOmit) {
+        if (!querystring) return '';
+
+        var remainingQueryParams = parse(querystring).filter(function (_ref4) {
+            var name = _ref4.name;
+            return paramsToOmit.indexOf(withoutBrackets(name)) === -1;
+        });
+        var remainingQueryString = build(remainingQueryParams);
+
+        return remainingQueryString || '';
+    };
+
     var defaultOrConstrained = function defaultOrConstrained(match) {
         return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~%]+') + ')';
     };
@@ -172,6 +261,10 @@
         }
     }];
 
+    var exists = function exists(val) {
+        return val !== undefined && val !== null;
+    };
+
     var tokenise = function tokenise(str) {
         var tokens = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
 
@@ -205,8 +298,11 @@
         return source.replace(/\\\/$/, '') + '(?:\\/)?';
     };
 
-    var withoutBrackets = function withoutBrackets(param) {
-        return param.replace(/\[\]$/, '');
+    var upToDelimiter = function upToDelimiter(source, delimiter) {
+        if (!delimiter) return source;
+
+        return (/(\/)$/.test(source) ? source : source + '(\\/|\\?|\\.|;|$)'
+        );
     };
 
     var appendQueryParam = function appendQueryParam(params, param) {
@@ -224,25 +320,25 @@
     };
 
     var parseQueryParams = function parseQueryParams(path) {
-        var searchPart = path.split('?')[1];
+        var searchPart = getSearch(path);
         if (!searchPart) return {};
 
-        return searchPart.split('&').map(function (_) {
-            return _.split('=');
-        }).reduce(function (obj, m) {
-            return appendQueryParam(obj, m[0], m[1] ? decodeURIComponent(m[1]) : m[1]);
-        }, {});
+        return toObject(parse(searchPart));
     };
 
-    var toSerialisable = function toSerialisable(val) {
-        return val !== undefined && val !== null && val !== '' ? '=' + val : '';
-    };
+    function _serialise(key, val) {
+        if (Array.isArray(val)) {
+            return val.map(function (v) {
+                return _serialise(key, v);
+            }).join('&');
+        }
 
-    var _serialise = function _serialise(key, val) {
-        return Array.isArray(val) ? val.map(function (v) {
-            return _serialise(key, v);
-        }).join('&') : key + toSerialisable(val);
-    };
+        if (val === true) {
+            return key;
+        }
+
+        return key + '=' + val;
+    }
 
     var Path = function () {
         babelHelpers.createClass(Path, null, [{
@@ -281,34 +377,12 @@
                 );
             }).length > 0;
             // Extract named parameters from tokens
-            this.urlParams = !this.hasUrlParams ? [] : this.tokens.filter(function (t) {
-                return (/^url-parameter/.test(t.type)
-                );
-            }).map(function (t) {
-                return t.val.slice(0, 1);
-            })
-            // Flatten
-            .reduce(function (r, v) {
-                return r.concat(v);
-            });
+            this.spatParams = this._getParams('url-parameter-splat');
+            this.urlParams = this._getParams(/^url-parameter/);
             // Query params
-            this.queryParams = !this.hasQueryParams ? [] : this.tokens.filter(function (t) {
-                return t.type === 'query-parameter';
-            }).map(function (t) {
-                return t.val;
-            }).reduce(function (r, v) {
-                return r.concat(v);
-            }, []);
-
-            this.queryParamsBr = !this.hasQueryParams ? [] : this.tokens.filter(function (t) {
-                return (/-bracket$/.test(t.type)
-                );
-            }).map(function (t) {
-                return t.val;
-            }).reduce(function (r, v) {
-                return r.concat(v);
-            }, []);
-
+            this.queryParams = this._getParams('query-parameter');
+            this.queryParamsBr = this._getParams('query-parameter-bracket');
+            // All params
             this.params = this.urlParams.concat(this.queryParams).concat(this.queryParamsBr);
             // Check if hasQueryParams
             // Regular expressions for url part only (full and partial match)
@@ -320,8 +394,26 @@
         }
 
         babelHelpers.createClass(Path, [{
-            key: '_urlMatch',
-            value: function _urlMatch(path, regex) {
+            key: '_getParams',
+            value: function _getParams(type) {
+                var predicate = type instanceof RegExp ? function (t) {
+                    return type.test(t.type);
+                } : function (t) {
+                    return t.type === type;
+                };
+
+                return this.tokens.filter(predicate).map(function (t) {
+                    return t.val[0];
+                });
+            }
+        }, {
+            key: '_isSpatParam',
+            value: function _isSpatParam(name) {
+                return this.spatParams.indexOf(name) !== -1;
+            }
+        }, {
+            key: '_urlTest',
+            value: function _urlTest(path, regex) {
                 var _this = this;
 
                 var match = path.match(regex);
@@ -333,16 +425,15 @@
                 }, {});
             }
         }, {
-            key: 'match',
-            value: function match(path) {
+            key: 'test',
+            value: function test(path, opts) {
                 var _this2 = this;
 
-                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-
+                var options = babelHelpers.extends({ trailingSlash: false }, opts);
                 // trailingSlash: falsy => non optional, truthy => optional
-                var source = optTrailingSlash(this.source, trailingSlash);
+                var source = optTrailingSlash(this.source, options.trailingSlash);
                 // Check if exact match
-                var matched = this._urlMatch(path, new RegExp('^' + source + (this.hasQueryParams ? '(\\?.*$|$)' : '$')));
+                var matched = this._urlTest(path, new RegExp('^' + source + (this.hasQueryParams ? '(\\?.*$|$)' : '$')));
                 // If no match, or no query params, no need to go further
                 if (!matched || !this.hasQueryParams) return matched;
                 // Extract query params
@@ -363,16 +454,15 @@
                 return null;
             }
         }, {
-            key: 'partialMatch',
-            value: function partialMatch(path) {
+            key: 'partialTest',
+            value: function partialTest(path, opts) {
                 var _this3 = this;
 
-                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-
+                var options = babelHelpers.extends({ delimited: true }, opts);
                 // Check if partial match (start of given path matches regex)
                 // trailingSlash: falsy => non optional, truthy => optional
-                var source = optTrailingSlash(this.source, trailingSlash);
-                var match = this._urlMatch(path, new RegExp('^' + source));
+                var source = upToDelimiter(this.source, options.delimited);
+                var match = this._urlTest(path, new RegExp('^' + source));
 
                 if (!match) return match;
 
@@ -391,25 +481,38 @@
         }, {
             key: 'build',
             value: function build() {
-                var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-                var opts = arguments.length <= 1 || arguments[1] === undefined ? { ignoreConstraints: false, ignoreSearch: false } : arguments[1];
+                var _this4 = this;
 
+                var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+                var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+                var options = babelHelpers.extends({ ignoreConstraints: false, ignoreSearch: false }, opts);
                 var encodedParams = Object.keys(params).reduce(function (acc, key) {
-                    // Use encodeURI in case of spats
-                    if (params[key] === undefined) {
-                        acc[key] = undefined;
-                    } else {
-                        acc[key] = Array.isArray(params[key]) ? params[key].map(encodeURI) : encodeURI(params[key]);
+                    if (!exists(params[key])) {
+                        return acc;
                     }
+
+                    var val = params[key];
+                    var encode = _this4._isSpatParam(key) ? encodeURI : encodeURIComponent;
+
+                    if (typeof val === 'boolean') {
+                        acc[key] = val;
+                    } else if (Array.isArray(val)) {
+                        acc[key] = val.map(encode);
+                    } else {
+                        acc[key] = encode(val);
+                    }
+
                     return acc;
                 }, {});
+
                 // Check all params are provided (not search parameters which are optional)
                 if (this.urlParams.some(function (p) {
-                    return params[p] === undefined;
+                    return !exists(encodedParams[p]);
                 })) throw new Error('Missing parameters');
 
                 // Check constraints
-                if (!opts.ignoreConstraints) {
+                if (!options.ignoreConstraints) {
                     var constraintsPassed = this.tokens.filter(function (t) {
                         return (/^url-parameter/.test(t.type) && !/-splat$/.test(t.type)
                         );
@@ -429,7 +532,7 @@
                     );
                 }).join('');
 
-                if (opts.ignoreSearch) return base;
+                if (options.ignoreSearch) return base;
 
                 var queryParams = this.queryParams.concat(this.queryParamsBr.map(function (p) {
                     return p + '[]';
@@ -446,69 +549,6 @@
         }]);
         return Path;
     }();
-
-    // Split path
-    var getPath = function getPath(path) {
-        return path.split('?')[0];
-    };
-    var getSearch = function getSearch(path) {
-        return path.split('?')[1];
-    };
-
-    // Search param name
-    var bracketTest = /\[\]$/;
-    var withoutBrackets$1 = function withoutBrackets(paramName) {
-        return paramName.replace(bracketTest, '');
-    };
-
-    /**
-     * Parse a querystring and return a list of params (Objects with name and value properties)
-     * @param  {String} querystring The querystring to parse
-     * @return {Array[Object]}      The list of params
-     */
-    var parse = function parse(querystring) {
-        return querystring.split('&').reduce(function (params, param) {
-            var split = param.split('=');
-            var name = split[0];
-            var value = split[1];
-
-            return params.concat(split.length === 1 ? { name: name, value: true } : { name: name, value: decodeURIComponent(value) });
-        }, []);
-    };
-
-    /**
-     * Build a querystring from a list of parameters
-     * @param  {Array} paramList The list of parameters (see `.parse()`)
-     * @return {String}          The querystring
-     */
-    var build = function build(paramList) {
-        return paramList.filter(function (_ref2) {
-            var value = _ref2.value;
-            return value !== undefined && value !== null;
-        }).map(function (_ref3) {
-            var name = _ref3.name;
-            var value = _ref3.value;
-            return value === true ? name : name + '=' + encodeURIComponent(value);
-        }).join('&');
-    };
-
-    /**
-     * Remove a list of parameters from a querystring
-     * @param  {String} querystring  The original querystring
-     * @param  {Array}  paramsToOmit The parameters to omit
-     * @return {String}              The querystring
-     */
-    var omit = function omit(querystring, paramsToOmit) {
-        if (!querystring) return '';
-
-        var remainingQueryParams = parse(querystring).filter(function (_ref4) {
-            var name = _ref4.name;
-            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
-        });
-        var remainingQueryString = build(remainingQueryParams);
-
-        return remainingQueryString || '';
-    };
 
     var noop = function noop() {};
 
@@ -723,6 +763,7 @@
             value: function getSegmentsMatchingPath(path, options) {
                 var trailingSlash = options.trailingSlash;
                 var strictQueryParams = options.strictQueryParams;
+                var strongMatching = options.strongMatching;
 
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                     var isRoot = nodes.length === 1 && nodes[0].name === '';
@@ -731,26 +772,30 @@
                         var child = nodes[i];
 
                         // Partially match path
-                        var match = child.parser.partialMatch(pathSegment);
+                        var match = void 0;
                         var remainingPath = void 0;
 
-                        if (!match && trailingSlash) {
-                            // Try with optional trailing slash
-                            match = child.parser.match(pathSegment, true);
-                            remainingPath = '';
-                        } else if (match) {
-                            // Remove consumed segment from path
-                            var consumedPath = child.parser.build(match, { ignoreSearch: true });
-                            remainingPath = pathSegment.replace(consumedPath, '');
-                            var search = omit(getSearch(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
-                            remainingPath = getPath(remainingPath) + (search ? '?' + search : '');
+                        if (!child.children.length) {
+                            match = child.parser.test(pathSegment, { trailingSlash: trailingSlash });
+                        }
 
-                            if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
-                                remainingPath = '';
-                            }
+                        if (!match) {
+                            match = child.parser.partialTest(pathSegment, { delimiter: strongMatching });
                         }
 
                         if (match) {
+                            // Remove consumed segment from path
+                            var consumedPath = child.parser.build(match, { ignoreSearch: true });
+                            if (trailingSlash && !child.children.length) {
+                                consumedPath = consumedPath.replace(/\/$/, '');
+                            }
+                            remainingPath = pathSegment.replace(consumedPath, '');
+                            var search = omit(getSearch(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
+                            remainingPath = getPath(remainingPath) + (search ? '?' + search : '');
+                            if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                                remainingPath = '';
+                            }
+
                             segments.push(child);
                             Object.keys(match).forEach(function (param) {
                                 return segments.params[param] = match[param];
@@ -839,15 +884,15 @@
                 }, []);
 
                 var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
-                    if (Object.keys(params).indexOf(withoutBrackets$1(p)) === -1) {
+                    if (Object.keys(params).indexOf(withoutBrackets(p)) === -1) {
                         return false;
                     }
 
-                    var val = params[withoutBrackets$1(p)];
+                    var val = params[withoutBrackets(p)];
 
                     return val !== undefined && val !== null;
                 }).map(function (p) {
-                    var val = params[withoutBrackets$1(p)];
+                    var val = params[withoutBrackets(p)];
                     var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);
 
                     return Path.serialise(p, encodedVal);
@@ -937,7 +982,7 @@
         }, {
             key: 'matchPath',
             value: function matchPath(path, options) {
-                var defaultOptions = { trailingSlash: false, strictQueryParams: true };
+                var defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
                 var opts = babelHelpers.extends({}, defaultOptions, options);
                 var matchedSegments = this.getSegmentsMatchingPath(path, opts);
 
@@ -1068,8 +1113,9 @@
         function matchPath(path, source) {
             var trailingSlash = options.trailingSlash;
             var strictQueryParams = options.strictQueryParams;
+            var strongMatching = options.strongMatching;
 
-            var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
+            var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams, strongMatching: strongMatching });
 
             if (match) {
                 var name = match.name;
@@ -1228,7 +1274,7 @@
         }, []);
     }
 
-    function exists(val) {
+    function exists$1(val) {
         return val !== undefined && val !== null;
     }
 
@@ -1237,7 +1283,7 @@
     }
 
     function extractSegmentParams(name, state) {
-        if (!exists(state.meta.params[name])) return {};
+        if (!exists$1(state.meta.params[name])) return {};
 
         return Object.keys(state.meta.params[name]).reduce(function (params, p) {
             params[p] = state.params[p];
@@ -1829,7 +1875,8 @@
         useTrailingSlash: undefined,
         autoCleanUp: true,
         strictQueryParams: true,
-        allowNotFound: false
+        allowNotFound: false,
+        strongMatching: true
     };
 
     /**

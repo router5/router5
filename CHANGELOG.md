@@ -1,3 +1,13 @@
+<a name="4.3.0"></a>
+# [4.3.0](https://github.com/router5/router5/compare/v4.2.3...v4.3.0) (2016-10-13)
+
+
+### Features
+
+* update route-node version for better matching and add stronMatching option (defa ([d854109](https://github.com/router5/router5/commit/d854109))
+
+
+
 <a name="4.2.3"></a>
 ## [4.2.3](https://github.com/router5/router5/compare/v4.2.2...v4.2.3) (2016-10-04)
 

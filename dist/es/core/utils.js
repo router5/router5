@@ -102,8 +102,9 @@ export default function withUtils(router) {
     function matchPath(path, source) {
         var trailingSlash = options.trailingSlash;
         var strictQueryParams = options.strictQueryParams;
+        var strongMatching = options.strongMatching;
 
-        var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams });
+        var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams, strongMatching: strongMatching });
 
         if (match) {
             var name = match.name;
