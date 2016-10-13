@@ -88,8 +88,8 @@ export default function withUtils(router) {
      * @return {Object}          The matched state (null if unmatched)
      */
     function matchPath(path, source) {
-        const { trailingSlash, strictQueryParams } = options;
-        const match = router.rootNode.matchPath(path, { trailingSlash, strictQueryParams });
+        const { trailingSlash, strictQueryParams, strongMatching } = options;
+        const match = router.rootNode.matchPath(path, { trailingSlash, strictQueryParams, strongMatching });
 
         if (match) {
             const { name, params, _meta } = match;

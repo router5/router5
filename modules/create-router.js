@@ -13,7 +13,8 @@ const defaultOptions = {
     useTrailingSlash: undefined,
     autoCleanUp: true,
     strictQueryParams: true,
-    allowNotFound: false
+    allowNotFound: false,
+    strongMatching: true
 };
 
 /**
