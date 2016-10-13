@@ -4,7 +4,7 @@
 
 ### Features
 
-* update route-node version for better matching and add stronMatching option (defa ([d854109](https://github.com/router5/router5/commit/d854109))
+* update route-node version for better matching and add strongMatching option (default to true) ([d854109](https://github.com/router5/router5/commit/d854109))
 
 
 
