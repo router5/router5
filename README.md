@@ -10,7 +10,7 @@
 A simple, powerful, modular and extensible router, organising your __named routes__ in a __tree__ and handling route transitions.
 In its simplest form, router5 processes routing __instructions__ and outputs __state__ updates.
 
-_router5_ is library and framework agnostic, works universaally, and makes no asumption on your implementation. It favours __convention over configuration__, by giving you the means to observe route changes
+_router5_ is library and framework agnostic, works universally, and makes no asumption on your implementation. It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
 To get started, look here: __[Understanding router5](http://router5.github.io/docs/understanding-router5.html)__ and __[Get started](http://router5.github.io/docs/get-started.html)__.
