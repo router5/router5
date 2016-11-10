@@ -1639,7 +1639,7 @@
 
                 if (err) {
                     if (err.code === errorCodes.TRANSITION_CANCELLED) {
-                        router.invokeEventListeners(constants.TRANSITION_CANCELLED, toState, fromState);
+                        router.invokeEventListeners(constants.TRANSITION_CANCEL, toState, fromState);
                     } else {
                         router.invokeEventListeners(constants.TRANSITION_ERROR, toState, fromState, err);
                     }

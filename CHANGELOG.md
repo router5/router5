@@ -1,3 +1,12 @@
+<a name="4.3.2"></a>
+## [4.3.2](https://github.com/router5/router5/compare/v4.3.1...v4.3.2) (2016-11-10)
+
+### Bug Fixes
+
+* onTransitionCancel() not get called in plugins ([8c88c4d](https://github.com/router5/router5/commit/8c88c4d))
+
+
+
 <a name="4.3.1"></a>
 ## [4.3.1](https://github.com/router5/router5/compare/v4.3.0...v4.3.1) (2016-11-01)
 
