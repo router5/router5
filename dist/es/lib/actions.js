@@ -1,8 +1,8 @@
 import * as actionTypes from './actionTypes';
 
 export function navigateTo(name) {
-    var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     return {
         type: actionTypes.NAVIGATE_TO,

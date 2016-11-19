@@ -10,7 +10,7 @@ var State = Record({
 });
 
 function router5Reducer() {
-  var state = arguments.length <= 0 || arguments[0] === undefined ? new State() : arguments[0];
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new State();
   var action = arguments[1];
 
   switch (action.type) {

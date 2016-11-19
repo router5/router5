@@ -1,3 +1,5 @@
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 import * as actionTypes from './actionTypes';
 
 var initialState = {
@@ -8,18 +10,18 @@ var initialState = {
 };
 
 function router5Reducer() {
-    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
     var action = arguments[1];
 
     switch (action.type) {
         case actionTypes.TRANSITION_START:
-            return babelHelpers.extends({}, state, {
+            return _extends({}, state, {
                 transitionRoute: action.payload.route,
                 transitionError: null
             });
 
         case actionTypes.TRANSITION_SUCCESS:
-            return babelHelpers.extends({}, state, {
+            return _extends({}, state, {
                 transitionRoute: null,
                 transitionError: null,
                 previousRoute: action.payload.previousRoute,
@@ -27,13 +29,13 @@ function router5Reducer() {
             });
 
         case actionTypes.TRANSITION_ERROR:
-            return babelHelpers.extends({}, state, {
+            return _extends({}, state, {
                 transitionRoute: action.payload.route,
                 transitionError: action.payload.transitionError
             });
 
         case actionTypes.CLEAR_ERRORS:
-            return babelHelpers.extends({}, state, {
+            return _extends({}, state, {
                 transitionRoute: null,
                 transitionError: null
             });

@@ -1,7 +1,7 @@
 import transitionPath from 'router5.transition-path';
 
 function routeNodeSelector(routeNode) {
-    var reducerKey = arguments.length <= 1 || arguments[1] === undefined ? 'router' : arguments[1];
+    var reducerKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'router';
 
     var routerStateSelector = function routerStateSelector(state) {
         return state[reducerKey] || state.get && state.get(reducerKey);
@@ -9,10 +9,9 @@ function routeNodeSelector(routeNode) {
     var lastReturnedValue = void 0;
 
     return function (state) {
-        var _routerStateSelector = routerStateSelector(state);
-
-        var route = _routerStateSelector.route;
-        var previousRoute = _routerStateSelector.previousRoute;
+        var _routerStateSelector = routerStateSelector(state),
+            route = _routerStateSelector.route,
+            previousRoute = _routerStateSelector.previousRoute;
 
         var intersection = route ? transitionPath(route, previousRoute).intersection : '';
 
