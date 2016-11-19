@@ -1,3 +1,9 @@
+<a name="4.2.2"></a>
+## [4.2.2](https://github.com/router5/redux-router5/compare/v4.2.1...v4.2.2) (2016-11-19)
+
+
+
+
 <a name="4.2.1"></a>
 ## [4.2.1](https://github.com/router5/redux-router5/compare/v4.2.0...v4.2.1) (2016-09-22)
 
