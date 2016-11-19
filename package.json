@@ -53,7 +53,9 @@
   },
   "peerDependencies": {
     "router5": "^4.0.0",
-    "redux": "^3.0.0",
+    "redux": "^3.0.0"
+  },
+  "optionalDependencies": {
     "immutable": "^3.0.0"
   },
   "dependencies": {
