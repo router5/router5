@@ -1,10 +1,9 @@
 {
   "name": "router5",
-  "version": "4.3.3",
+  "version": "4.3.4",
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
   "main": "index.js",
   "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
   "scripts": {
     "clean": "babel-node scripts/clean.js",
     "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",

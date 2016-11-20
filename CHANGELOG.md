@@ -1,3 +1,9 @@
+<a name="4.3.4"></a>
+## [4.3.4](https://github.com/router5/router5/compare/v4.3.3...v4.3.4) (2016-11-20)
+
+
+
+
 <a name="4.3.3"></a>
 ## [4.3.3](https://github.com/router5/router5/compare/v4.3.2...v4.3.3) (2016-11-20)
 
