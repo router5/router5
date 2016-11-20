@@ -1,3 +1,5 @@
+import constants from '../constants';
+
 export default function withUtils(router) {
     var options = router.getOptions();
 
@@ -18,9 +20,9 @@ export default function withUtils(router) {
      * @return {Boolean}                          Whether the given route is active
      */
     function isActive(name) {
-        var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-        var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-        var ignoreQueryParams = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+        var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var strictEquality = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+        var ignoreQueryParams = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
         var activeState = router.getState();
 
@@ -41,7 +43,7 @@ export default function withUtils(router) {
      * @return {Boolean}                   Whether the two route state are equal or not
      */
     function areStatesEqual(state1, state2) {
-        var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+        var ignoreQueryParams = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
         if (state1.name !== state2.name) return false;
 
@@ -84,6 +86,10 @@ export default function withUtils(router) {
      * @return {String}        The path
      */
     function buildPath(route, params) {
+        if (route === constants.UNKNOWN_ROUTE) {
+            return params.path;
+        }
+
         var useTrailingSlash = options.useTrailingSlash;
 
         return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash });
@@ -100,16 +106,16 @@ export default function withUtils(router) {
      * @return {Object}          The matched state (null if unmatched)
      */
     function matchPath(path, source) {
-        var trailingSlash = options.trailingSlash;
-        var strictQueryParams = options.strictQueryParams;
-        var strongMatching = options.strongMatching;
+        var trailingSlash = options.trailingSlash,
+            strictQueryParams = options.strictQueryParams,
+            strongMatching = options.strongMatching;
 
         var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams, strongMatching: strongMatching });
 
         if (match) {
-            var name = match.name;
-            var params = match.params;
-            var _meta = match._meta;
+            var name = match.name,
+                params = match.params,
+                _meta = match._meta;
 
             var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(name, params);
 

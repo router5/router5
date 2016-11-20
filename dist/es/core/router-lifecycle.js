@@ -1,3 +1,5 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 import constants, { errorCodes } from '../constants';
 
 var noop = function noop() {};
@@ -25,7 +27,9 @@ export default function withRouterLifecycle(router) {
      * @return {Object}                         The router instance
      */
     function start() {
-        var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+        var _ref;
+
+        var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
         var done = typeof lastArg === 'function' ? lastArg : noop;
         var startPathOrState = typeof (arguments.length <= 0 ? undefined : arguments[0]) !== 'function' ? arguments.length <= 0 ? undefined : arguments[0] : undefined;
 
@@ -42,7 +46,7 @@ export default function withRouterLifecycle(router) {
 
         // callback
         var cb = function cb(err, state) {
-            var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+            var invokeErrCb = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
             if (!err) router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, null, { replace: true });
             if (err && invokeErrCb) router.invokeEventListeners(constants.TRANSITION_ERROR, state, null, err);
@@ -53,7 +57,7 @@ export default function withRouterLifecycle(router) {
             return cb({ code: errorCodes.NO_START_PATH_OR_STATE });
         }if (typeof startPathOrState === 'string') {
             startPath = startPathOrState;
-        } else if ((typeof startPathOrState === 'undefined' ? 'undefined' : babelHelpers.typeof(startPathOrState)) === 'object') {
+        } else if ((typeof startPathOrState === 'undefined' ? 'undefined' : _typeof(startPathOrState)) === 'object') {
             startState = startPathOrState;
         }
 

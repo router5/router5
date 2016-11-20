@@ -1,3 +1,13 @@
+<a name="4.3.3"></a>
+## [4.3.3](https://github.com/router5/router5/compare/v4.3.2...v4.3.3) (2016-11-20)
+
+
+### Bug Fixes
+
+* browser plugin not building correct  URLs for 'not found' states when using option `allowNotFound` ([f8d8766](https://github.com/router5/router5/commit/f8d8766))
+
+
+
 <a name="4.3.2"></a>
 ## [4.3.2](https://github.com/router5/router5/compare/v4.3.1...v4.3.2) (2016-11-10)
 

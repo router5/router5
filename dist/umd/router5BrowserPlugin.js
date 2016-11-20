@@ -120,7 +120,11 @@
         router.matchUrl = matchUrl;
 
         function buildUrl(route, params) {
-            return (options.base || '') + (options.useHash ? '#' + options.hashPrefix : '') + router.buildPath(route, params);
+            var base = options.base || '';
+            var prefix = options.useHash ? '#' + options.hashPrefix : '';
+            var path = router.buildPath(route, params);
+
+            return base + prefix + path;
         }
 
         function urlToPath(url) {

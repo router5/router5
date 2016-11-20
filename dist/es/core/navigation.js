@@ -1,3 +1,7 @@
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 import constants, { errorCodes } from '../constants';
 import transition from '../transition';
 
@@ -33,11 +37,13 @@ export default function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate() {
+        var _ref;
+
         var name = arguments.length <= 0 ? undefined : arguments[0];
-        var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+        var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
         var done = typeof lastArg === 'function' ? lastArg : noop;
-        var params = babelHelpers.typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
-        var opts = babelHelpers.typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
+        var params = _typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
+        var opts = _typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
 
         if (!router.isStarted()) {
             done({ code: errorCodes.ROUTER_NOT_STARTED });
@@ -71,12 +77,12 @@ export default function withNavigation(router) {
         return transitionToState(toState, fromState, opts, function (err, state) {
             if (err) {
                 if (err.redirect) {
-                    var _err$redirect = err.redirect;
-                    var _name = _err$redirect.name;
-                    var _params = _err$redirect.params;
+                    var _err$redirect = err.redirect,
+                        _name = _err$redirect.name,
+                        _params = _err$redirect.params;
 
 
-                    navigate(_name, _params, babelHelpers.extends({}, opts, { reload: true }), done);
+                    navigate(_name, _params, _extends({}, opts, { reload: true }), done);
                 } else {
                     done(err);
                 }
@@ -94,7 +100,7 @@ export default function withNavigation(router) {
      * @return {Function}        A cancel function
      */
     function navigateToDefault() {
-        var opts = babelHelpers.typeof(arguments.length <= 0 ? undefined : arguments[0]) === 'object' ? arguments.length <= 0 ? undefined : arguments[0] : {};
+        var opts = _typeof(arguments.length <= 0 ? undefined : arguments[0]) === 'object' ? arguments.length <= 0 ? undefined : arguments[0] : {};
         var done = arguments.length === 2 ? arguments.length <= 1 ? undefined : arguments[1] : typeof (arguments.length <= 0 ? undefined : arguments[0]) === 'function' ? arguments.length <= 0 ? undefined : arguments[0] : noop;
         var options = router.getOptions();
 
@@ -106,8 +112,8 @@ export default function withNavigation(router) {
     }
 
     function transitionToState(toState, fromState) {
-        var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-        var done = arguments.length <= 3 || arguments[3] === undefined ? noop : arguments[3];
+        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+        var done = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : noop;
 
         cancel();
         router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
