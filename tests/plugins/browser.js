@@ -2,6 +2,7 @@ import createTestRouter from '../_create-router';
 import { spy } from 'sinon';
 import browserPlugin from '../../modules/plugins/browser';
 import browser from '../../modules/plugins/browser/browser';
+import constants from '../../modules/constants';
 import { expect } from 'chai';
 
 const base = window.location.pathname;
@@ -103,6 +104,14 @@ function test(useHash) {
         it('should match an URL', function () {
             expect(withoutMeta(router.matchUrl(makeUrl('/home')))).to.eql({name: 'home', params: {}, path: '/home'});
             expect(withoutMeta(router.matchUrl(makeUrl('/users/view/1')))).to.eql({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
+        });
+
+        it('should build URLs', () => {
+            const prefix = base + (useHash ? '#!' : '');
+
+            expect(router.buildUrl('home', {})).to.equal(prefix + '/home');
+            expect(router.buildUrl(constants.UNKNOWN_ROUTE, { path: '/route-not-found' }))
+                .to.equal(prefix + '/route-not-found');
         });
     });
 }

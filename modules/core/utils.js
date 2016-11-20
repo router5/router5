@@ -1,3 +1,5 @@
+import constants from '../constants';
+
 export default function withUtils(router) {
     const options = router.getOptions();
 
@@ -72,6 +74,10 @@ export default function withUtils(router) {
      * @return {String}        The path
      */
     function buildPath(route, params) {
+        if (route === constants.UNKNOWN_ROUTE) {
+            return params.path;
+        }
+
         const { useTrailingSlash } = options;
         return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash });
     }

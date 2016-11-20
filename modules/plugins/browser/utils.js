@@ -4,9 +4,11 @@ export default function withUtils(router, options) {
     router.matchUrl = matchUrl;
 
     function buildUrl(route, params) {
-        return (options.base || '') +
-            (options.useHash ? '#' + options.hashPrefix : '') +
-            router.buildPath(route, params);
+        const base = options.base || '';
+        const prefix = options.useHash ? `#${options.hashPrefix}` : '';
+        const path = router.buildPath(route, params);
+
+        return base + prefix + path;
     }
 
     function urlToPath(url) {
