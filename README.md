@@ -36,7 +36,7 @@ Version 4 is a refactor of router5, some of the API has slightly changed: [relea
 
 router5 offers two essential tools: __middlewares__ and __plugins__.
 
--__Middlewares__ allow you to decide the fate of a transition: you can delay it while performing asynchronous operations (data loading), fail it or simply hook some custom business logic.
+- __Middlewares__ allow you to decide the fate of a transition: you can delay it while performing asynchronous operations (data loading), fail it or simply hook some custom business logic.
 - __Plugins__ are perfect for side-effects and 3rd party integration, by allowing you to react to router events: when it starts or stops, when a transition starts, is successful, has failed or has been cancelled. You can use them for updating the page title in the browser, sending page view analytic events, creating observables, sending your router state to a data store, etc...
 
 ### Features
