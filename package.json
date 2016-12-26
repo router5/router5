@@ -40,7 +40,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "1.7.1",
+    "route-node": "1.7.2",
     "router5.transition-path": "4.0.1"
   },
   "devDependencies": {

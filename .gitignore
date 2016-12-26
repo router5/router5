@@ -8,6 +8,6 @@ npm-debug.log
 /plugins
 /transition
 /utils
-constants.js
-create-router.js
-index.js
+/constants.js
+/create-router.js
+/index.js
