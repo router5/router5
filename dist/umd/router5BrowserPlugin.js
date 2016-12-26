@@ -157,8 +157,8 @@
     var source = 'popstate';
 
     function browserPluginFactory() {
-        var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-        var browser = arguments.length <= 1 || arguments[1] === undefined ? safeBrowser : arguments[1];
+        var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var browser = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : safeBrowser;
 
         var options = babelHelpers.extends({}, defaultOptions, opts);
         var transitionOptions = { forceDeactivate: options.forceDeactivate, source: source };
@@ -184,7 +184,7 @@
             };
 
             router.replaceHistoryState = function (name) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
                 var state = router.buildState(name, params);
                 var url = router.buildUrl(name, params);
@@ -201,8 +201,8 @@
                 // Do nothing if no state or if last know state is poped state (it should never happen)
                 var newState = !evt.state || !evt.state.name;
                 var state = newState ? router.matchPath(browser.getLocation(options), source) : evt.state;
-                var defaultRoute = routerOptions.defaultRoute;
-                var defaultParams = routerOptions.defaultParams;
+                var defaultRoute = routerOptions.defaultRoute,
+                    defaultParams = routerOptions.defaultParams;
 
 
                 if (!state) {
@@ -218,9 +218,9 @@
                 router.transitionToState(state, routerState, transitionOptions, function (err, toState) {
                     if (err) {
                         if (err.redirect) {
-                            var _err$redirect = err.redirect;
-                            var name = _err$redirect.name;
-                            var params = _err$redirect.params;
+                            var _err$redirect = err.redirect,
+                                name = _err$redirect.name,
+                                params = _err$redirect.params;
 
 
                             router.navigate(name, params, babelHelpers.extends({}, transitionOptions, { replace: true }));
@@ -233,9 +233,9 @@
                             // else do nothing or history will be messed up
                             // TODO: history.back()?
                         } else {
-                                // Force navigation to default state
-                                defaultRoute && router.navigate(defaultRoute, defaultParams, babelHelpers.extends({}, transitionOptions, { reload: true, replace: true }));
-                            }
+                            // Force navigation to default state
+                            defaultRoute && router.navigate(defaultRoute, defaultParams, babelHelpers.extends({}, transitionOptions, { reload: true, replace: true }));
+                        }
                     } else {
                         router.invokeEventListeners(constants.TRANSITION_SUCCESS, toState, routerState, { replace: true });
                     }

@@ -8,7 +8,7 @@
     babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
       return typeof obj;
     } : function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
 
     babelHelpers.classCallCheck = function (instance, Constructor) {
@@ -231,14 +231,12 @@
         //                   ?:param1&:param2
         name: 'query-parameter-bracket',
         pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(?:\[\])/
-    }, // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
-    {
+    }, {
         // Query parameter: ?param1&param2
         //                   ?:param1&:param2
         name: 'query-parameter',
         pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
-    }, // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
-    {
+    }, {
         // Delimiter /
         name: 'delimiter',
         pattern: /^(\/|\?)/,
@@ -266,7 +264,7 @@
     };
 
     var tokenise = function tokenise(str) {
-        var tokens = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
+        var tokens = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
         // Look for a matching rule
         var matched = rules.some(function (rule) {
@@ -306,7 +304,7 @@
     };
 
     var appendQueryParam = function appendQueryParam(params, param) {
-        var val = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+        var val = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
         if (/\[\]$/.test(param)) {
             param = withoutBrackets(param);
@@ -483,8 +481,8 @@
             value: function build() {
                 var _this4 = this;
 
-                var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-                var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+                var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
                 var options = babelHelpers.extends({ ignoreConstraints: false, ignoreSearch: false }, opts);
                 var encodedParams = Object.keys(params).reduce(function (acc, key) {
@@ -554,9 +552,9 @@
 
     var RouteNode = function () {
         function RouteNode() {
-            var name = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
-            var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-            var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+            var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+            var childRoutes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
             var cb = arguments[3];
             var parent = arguments[4];
             babelHelpers.classCallCheck(this, RouteNode);
@@ -620,7 +618,7 @@
         }, {
             key: 'getParentSegments',
             value: function getParentSegments() {
-                var segments = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+                var segments = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
                 return this.parent && this.parent.parser ? this.parent.getParentSegments(segments.concat(this.parent)) : segments.reverse();
             }
@@ -633,7 +631,7 @@
         }, {
             key: 'setPath',
             value: function setPath() {
-                var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+                var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
                 this.path = path;
                 this.parser = path ? new Path(path) : null;
@@ -643,7 +641,7 @@
             value: function add(route) {
                 var _this = this;
 
-                var cb = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
+                var cb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : noop;
 
                 var originalRoute = void 0;
                 if (route === undefined || route === null) return;
@@ -723,7 +721,14 @@
                     }
                 }
 
-                if (originalRoute) cb(originalRoute);
+                if (originalRoute) {
+                    var fullName = route.getParentSegments([route]).map(function (_) {
+                        return _.name;
+                    }).join('.');
+                    cb(babelHelpers.extends({}, originalRoute, {
+                        name: fullName
+                    }));
+                }
 
                 return this;
             }
@@ -761,13 +766,14 @@
         }, {
             key: 'getSegmentsMatchingPath',
             value: function getSegmentsMatchingPath(path, options) {
-                var trailingSlash = options.trailingSlash;
-                var strictQueryParams = options.strictQueryParams;
-                var strongMatching = options.strongMatching;
+                var trailingSlash = options.trailingSlash,
+                    strictQueryParams = options.strictQueryParams,
+                    strongMatching = options.strongMatching;
 
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                     var isRoot = nodes.length === 1 && nodes[0].name === '';
                     // for (child of node.children) {
+
                     var _loop = function _loop(i) {
                         var child = nodes[i];
 
@@ -812,8 +818,8 @@
                                 var remainingQueryParams = parse(remainingPath.slice(1));
 
                                 remainingQueryParams.forEach(function (_ref) {
-                                    var name = _ref.name;
-                                    var value = _ref.value;
+                                    var name = _ref.name,
+                                        value = _ref.value;
                                     return segments.params[name] = value;
                                 });
                                 return {
@@ -871,7 +877,7 @@
         }, {
             key: 'buildPathFromSegments',
             value: function buildPathFromSegments(segments) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
                 if (!segments) return null;
 
@@ -932,8 +938,8 @@
         }, {
             key: 'buildPath',
             value: function buildPath(routeName) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-                var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+                var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+                var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
                 var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
 
@@ -968,7 +974,7 @@
         }, {
             key: 'buildState',
             value: function buildState(name) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+                var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
                 var segments = this.getSegmentsByName(name);
                 if (!segments || !segments.length) return null;
@@ -1051,9 +1057,9 @@
          * @return {Boolean}                          Whether the given route is active
          */
         function isActive(name) {
-            var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-            var strictEquality = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-            var ignoreQueryParams = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var strictEquality = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var ignoreQueryParams = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
             var activeState = router.getState();
 
@@ -1074,7 +1080,7 @@
          * @return {Boolean}                   Whether the two route state are equal or not
          */
         function areStatesEqual(state1, state2) {
-            var ignoreQueryParams = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+            var ignoreQueryParams = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
             if (state1.name !== state2.name) return false;
 
@@ -1137,16 +1143,16 @@
          * @return {Object}          The matched state (null if unmatched)
          */
         function matchPath(path, source) {
-            var trailingSlash = options.trailingSlash;
-            var strictQueryParams = options.strictQueryParams;
-            var strongMatching = options.strongMatching;
+            var trailingSlash = options.trailingSlash,
+                strictQueryParams = options.strictQueryParams,
+                strongMatching = options.strongMatching;
 
             var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams, strongMatching: strongMatching });
 
             if (match) {
-                var name = match.name;
-                var params = match.params;
-                var _meta = match._meta;
+                var name = match.name,
+                    params = match.params,
+                    _meta = match._meta;
 
                 var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(name, params);
 
@@ -1190,7 +1196,9 @@
          * @return {Object}                         The router instance
          */
         function start() {
-            var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+            var _ref;
+
+            var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
             var done = typeof lastArg === 'function' ? lastArg : noop$1;
             var startPathOrState = typeof (arguments.length <= 0 ? undefined : arguments[0]) !== 'function' ? arguments.length <= 0 ? undefined : arguments[0] : undefined;
 
@@ -1207,7 +1215,7 @@
 
             // callback
             var cb = function cb(err, state) {
-                var invokeErrCb = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+                var invokeErrCb = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
                 if (!err) router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, null, { replace: true });
                 if (err && invokeErrCb) router.invokeEventListeners(constants.TRANSITION_ERROR, state, null, err);
@@ -1367,10 +1375,10 @@
     }
 
     function resolve(functions, _ref, callback) {
-        var isCancelled = _ref.isCancelled;
-        var toState = _ref.toState;
-        var fromState = _ref.fromState;
-        var errorKey = _ref.errorKey;
+        var isCancelled = _ref.isCancelled,
+            toState = _ref.toState,
+            fromState = _ref.fromState,
+            errorKey = _ref.errorKey;
 
         var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
@@ -1443,12 +1451,10 @@
         var completed = false;
         var options = router.getOptions();
 
-        var _router$getLifecycleF = router.getLifecycleFunctions();
-
-        var _router$getLifecycleF2 = babelHelpers.slicedToArray(_router$getLifecycleF, 2);
-
-        var canDeactivateFunctions = _router$getLifecycleF2[0];
-        var canActivateFunctions = _router$getLifecycleF2[1];
+        var _router$getLifecycleF = router.getLifecycleFunctions(),
+            _router$getLifecycleF2 = babelHelpers.slicedToArray(_router$getLifecycleF, 2),
+            canDeactivateFunctions = _router$getLifecycleF2[0],
+            canActivateFunctions = _router$getLifecycleF2[1];
 
         var middlewareFunctions = router.getMiddlewareFunctions();
         var isCancelled = function isCancelled() {
@@ -1482,10 +1488,9 @@
             return babelHelpers.extends({}, base, err instanceof Object ? err : { error: err });
         };
 
-        var _transitionPath = transitionPath(toState, fromState);
-
-        var toDeactivate = _transitionPath.toDeactivate;
-        var toActivate = _transitionPath.toActivate;
+        var _transitionPath = transitionPath(toState, fromState),
+            toDeactivate = _transitionPath.toDeactivate,
+            toActivate = _transitionPath.toActivate;
 
         var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
 
@@ -1558,8 +1563,10 @@
          * @return {Function}                A cancel function
          */
         function navigate() {
+            var _ref;
+
             var name = arguments.length <= 0 ? undefined : arguments[0];
-            var lastArg = arguments.length <= arguments.length - 1 + 0 ? undefined : arguments[arguments.length - 1 + 0];
+            var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
             var done = typeof lastArg === 'function' ? lastArg : noop$2;
             var params = babelHelpers.typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
             var opts = babelHelpers.typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
@@ -1596,9 +1603,9 @@
             return transitionToState(toState, fromState, opts, function (err, state) {
                 if (err) {
                     if (err.redirect) {
-                        var _err$redirect = err.redirect;
-                        var _name = _err$redirect.name;
-                        var _params = _err$redirect.params;
+                        var _err$redirect = err.redirect,
+                            _name = _err$redirect.name,
+                            _params = _err$redirect.params;
 
 
                         navigate(_name, _params, babelHelpers.extends({}, opts, { reload: true }), done);
@@ -1631,8 +1638,8 @@
         }
 
         function transitionToState(toState, fromState) {
-            var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-            var done = arguments.length <= 3 || arguments[3] === undefined ? noop$2 : arguments[3];
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+            var done = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : noop$2;
 
             cancel();
             router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
@@ -1847,7 +1854,7 @@
          * @return {[type]}      [description]
          */
         function clone() {
-            var deps = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+            var deps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             var clonedDependencies = babelHelpers.extends({}, router.getDependencies(), deps);
             var clonedRouter = createRouter(router.rootNode, router.getOptions(), clonedDependencies);
@@ -1855,13 +1862,10 @@
             clonedRouter.useMiddleware.apply(clonedRouter, babelHelpers.toConsumableArray(router.getMiddlewareFactories()));
             clonedRouter.usePlugin.apply(clonedRouter, babelHelpers.toConsumableArray(router.getPlugins()));
 
-            var _router$getLifecycleF = router.getLifecycleFactories();
-
-            var _router$getLifecycleF2 = babelHelpers.slicedToArray(_router$getLifecycleF, 2);
-
-            var canDeactivateFactories = _router$getLifecycleF2[0];
-            var canActivateFactories = _router$getLifecycleF2[1];
-
+            var _router$getLifecycleF = router.getLifecycleFactories(),
+                _router$getLifecycleF2 = babelHelpers.slicedToArray(_router$getLifecycleF, 2),
+                canDeactivateFactories = _router$getLifecycleF2[0],
+                canActivateFactories = _router$getLifecycleF2[1];
 
             Object.keys(canDeactivateFactories).forEach(function (name) {
                 return clonedRouter.canDeactivate(name, canDeactivateFactories[name]);
@@ -1891,8 +1895,8 @@
      * @return {Object}                   The router instance
      */
     function createRouter(routes) {
-        var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-        var deps = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+        var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        var deps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
         var routerState = null;
         var callbacks = {};

@@ -1,3 +1,13 @@
+<a name="4.3.5"></a>
+## [4.3.5](https://github.com/router5/router5/compare/v4.3.4...v4.3.5) (2016-12-26)
+
+
+### Bug Fixes
+
+* registration of canActivate handlers for nested routes ([1239890](https://github.com/router5/router5/commit/1239890))
+
+
+
 <a name="4.3.4"></a>
 ## [4.3.4](https://github.com/router5/router5/compare/v4.3.3...v4.3.4) (2016-11-20)
 

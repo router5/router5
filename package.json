@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "4.3.4",
+  "version": "4.3.5",
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
   "main": "index.js",
   "jsnext:main": "dist/es/index.js",
@@ -16,7 +16,7 @@
     "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
     "test": "mocha --compilers js:babel-core/register --recursive --require ./tests/_helpers.js tests/**/*.js",
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./tests/_helpers.js 'tests/**/*.js'",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w",
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint": "eslint modules",
     "release": "./scripts/release.js"
   },

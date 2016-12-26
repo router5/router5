@@ -8,7 +8,7 @@
     babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
       return typeof obj;
     } : function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
     babelHelpers;
 
@@ -111,7 +111,7 @@
     };
 
     function listenersPluginFactory() {
-        var options = arguments.length <= 0 || arguments[0] === undefined ? defaultOptions : arguments[0];
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions;
 
         function listenersPlugin(router) {
             var listeners = {};
@@ -175,10 +175,9 @@
             }
 
             function onTransitionSuccess(toState, fromState, opts) {
-                var _transitionPath = transitionPath(toState, fromState);
-
-                var intersection = _transitionPath.intersection;
-                var toDeactivate = _transitionPath.toDeactivate;
+                var _transitionPath = transitionPath(toState, fromState),
+                    intersection = _transitionPath.intersection,
+                    toDeactivate = _transitionPath.toDeactivate;
 
                 var intersectionNode = opts.reload ? '' : intersection;
                 var name = toState.name;

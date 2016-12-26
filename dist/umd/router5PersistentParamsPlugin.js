@@ -46,7 +46,7 @@
     };
 
     function persistentParamsPluginFactory() {
-        var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+        var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         function persistentParamsPlugin(router) {
             // Persistent parameters
@@ -63,8 +63,8 @@
             var path = router.rootNode.path.split('?')[0] + search;
             router.setRootPath(path);
 
-            var buildPath = router.buildPath;
-            var buildState = router.buildState;
+            var buildPath = router.buildPath,
+                buildState = router.buildState;
 
             // Decorators
 
