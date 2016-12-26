@@ -13,7 +13,7 @@ In its simplest form, router5 processes routing __instructions__ and outputs __s
 _router5_ is library and framework agnostic, works universally, and makes no asumption on your implementation. It favours __convention over configuration__, by giving you the means to observe route changes
 and to react to them. Afterall, why treat route changes any different than data changes?
 
-To get started, look here: __[Understanding router5](http://router5.github.io/docs/understanding-router5.html)__ and __[Get started](http://router5.github.io/docs/get-started.html)__.
+To get started, look at __[Understanding router5](http://router5.github.io/docs/understanding-router5.html)__, __[Get started](http://router5.github.io/docs/get-started.html)__, or watch my talk ["Past and future of client-side routing" @ ReactiveConf 2016](https://www.youtube.com/watch?v=hblXdstrAg0).
 
 ```js
 import createRouter from 'router5';
@@ -28,9 +28,7 @@ const router = createRouter(routes)
     .usePlugin(browserPlugin());
 ```
 
-### v4.0.0
-
-Version 4 is a refactor of router5, some of the API has slightly changed: [release notes are available](http://router5.github.io/docs/migration-4.html)
+[!["Past and future of client-side routing" @ ReactiveConf 2016](https://cloud.githubusercontent.com/assets/1777517/21482220/e9889d74-cb68-11e6-8077-ea2b3c9d6fb1.png)
 
 ### Flexible
 
