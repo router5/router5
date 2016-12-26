@@ -28,7 +28,7 @@ const router = createRouter(routes)
     .usePlugin(browserPlugin());
 ```
 
-[!["Past and future of client-side routing" @ ReactiveConf 2016](https://cloud.githubusercontent.com/assets/1777517/21482220/e9889d74-cb68-11e6-8077-ea2b3c9d6fb1.png)
+[!["Past and future of client-side routing" @ ReactiveConf 2016](https://cloud.githubusercontent.com/assets/1777517/21482220/e9889d74-cb68-11e6-8077-ea2b3c9d6fb1.png)](https://www.youtube.com/watch?v=hblXdstrAg0)
 
 ### Flexible
 
