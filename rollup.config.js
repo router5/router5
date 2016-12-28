@@ -1,13 +1,13 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
-import npm from 'rollup-plugin-npm';
+import nodeResolve from 'rollup-plugin-node-resolve';
 import { argv } from 'yargs';
 
 const compress = argv.uglify;
 const module = argv.module || argv.m || 'core';
 
 const babelOptions = {
-    presets: [ 'es2015-rollup' ],
+    presets: [[ 'es2015', { modules: false }]],
     plugins: [
         'transform-object-rest-spread',
         'transform-class-properties',
@@ -45,5 +45,5 @@ const modules = {
 
 export default Object.assign({}, modules[module], {
     format: 'umd',
-    plugins: [ babel(babelOptions), npm({ jsnext: true }) ].concat(compress ? uglify() : [])
+    plugins: [ babel(babelOptions), nodeResolve({ jsnext: true }) ].concat(compress ? uglify() : [])
 });

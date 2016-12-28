@@ -10,7 +10,7 @@
             "presets": [ "es2015" ]
         },
         "es": {
-            "presets": [ "es2015-native-modules" ]
+            "presets": [[ "es2015", { "modules": false }]]
         }
     }
 }
