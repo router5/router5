@@ -484,18 +484,18 @@ var RouteNode = function () {
     _createClass(RouteNode, [{
         key: 'checkParents',
         value: function checkParents() {
-            if (this.absolute && this.haveParentsParams()) {
+            if (this.absolute && this.hasParentsParams()) {
                 throw new Error('[RouteNode] A RouteNode with an abolute path cannot have parents with route parameters');
             }
         }
     }, {
-        key: 'haveParentsParams',
-        value: function haveParentsParams() {
+        key: 'hasParentsParams',
+        value: function hasParentsParams() {
             if (this.parent && this.parent.parser) {
                 var parser = this.parent.parser;
                 var hasParams = parser.hasUrlParams || parser.hasSpatParam || parser.hasMatrixParams || parser.hasQueryParams;
 
-                return hasParams || this.parent.haveParentsParams();
+                return hasParams || this.parent.hasParentsParams();
             }
 
             return false;
@@ -786,16 +786,27 @@ var RouteNode = function () {
         key: 'buildPathFromSegments',
         value: function buildPathFromSegments(segments) {
             var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
             if (!segments) return null;
 
-            var searchParams = segments.filter(function (s) {
-                return s.parser.hasQueryParams;
-            }).reduce(function (params, s) {
-                return params.concat(s.parser.queryParams).concat(s.parser.queryParamsBr.map(function (p) {
-                    return p + '[]';
-                }));
-            }, []);
+            var searchParams = [];
+            var nonSearchParams = [];
+
+            for (var i = 0; i < segments.length; i += 1) {
+                var parser = segments[i].parser;
+                searchParams.push.apply(searchParams, _toConsumableArray$1(parser.queryParams));
+                searchParams.push.apply(searchParams, _toConsumableArray$1(parser.queryParamsBr));
+                nonSearchParams.push.apply(nonSearchParams, _toConsumableArray$1(parser.urlParams));
+                nonSearchParams.push.apply(nonSearchParams, _toConsumableArray$1(parser.spatParams));
+            }
+
+            if (!options.strictQueryParams) {
+                var extraParams = Object.keys(params).reduce(function (acc, p) {
+                    return searchParams.indexOf(p) === -1 && nonSearchParams.indexOf(p) === -1 ? acc.concat(p) : acc;
+                }, []);
+                searchParams.push.apply(searchParams, _toConsumableArray$1(extraParams));
+            }
 
             var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
                 if (Object.keys(params).indexOf(withoutBrackets(p)) === -1) {
@@ -847,9 +858,11 @@ var RouteNode = function () {
         key: 'buildPath',
         value: function buildPath(routeName) {
             var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+            var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-            var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+            var defaultOptions = { strictQueryParams: true };
+            var options = _extends$1({}, defaultOptions, opts);
+            var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
 
             if (options.trailingSlash === true) {
                 return (/\/$/.test(path) ? path : path + '/'
@@ -1036,9 +1049,10 @@ function withUtils(router) {
             return params.path;
         }
 
-        var useTrailingSlash = options.useTrailingSlash;
+        var useTrailingSlash = options.useTrailingSlash,
+            strictQueryParams = options.strictQueryParams;
 
-        return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash });
+        return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash, strictQueryParams: strictQueryParams });
     }
 
     function buildState(route, params) {

@@ -1,3 +1,13 @@
+<a name="4.4.0"></a>
+# [4.4.0](https://github.com/router5/router5/compare/v4.3.6...v4.4.0) (2017-01-13)
+
+
+### Bug Fixes
+
+* allow building path with extra query parameters when strictQueryParams is falsy ([077b4f7](https://github.com/router5/router5/commit/077b4f7))
+
+
+
 <a name="4.3.6"></a>
 ## [4.3.6](https://github.com/router5/router5/compare/v4.3.5...v4.3.6) (2016-12-28)
 

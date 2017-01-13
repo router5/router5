@@ -90,9 +90,10 @@ export default function withUtils(router) {
             return params.path;
         }
 
-        var useTrailingSlash = options.useTrailingSlash;
+        var useTrailingSlash = options.useTrailingSlash,
+            strictQueryParams = options.strictQueryParams;
 
-        return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash });
+        return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash, strictQueryParams: strictQueryParams });
     }
 
     function buildState(route, params) {
