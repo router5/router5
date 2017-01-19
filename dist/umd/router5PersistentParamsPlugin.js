@@ -1,18 +1,43 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define('router5PersistentParamsPlugin', factory) :
-    (global.router5PersistentParamsPlugin = factory());
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define('router5PersistentParamsPlugin', factory) :
+  (global.router5PersistentParamsPlugin = factory());
 }(this, (function () { 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  return obj;
+};
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
 
 var getDefinedParams = function getDefinedParams(params) {
     return Object.keys(params).filter(function (param) {
         return params[param] !== undefined;
     }).reduce(function (acc, param) {
-        return _extends({}, acc, _defineProperty({}, param, params[param]));
+        return _extends({}, acc, defineProperty({}, param, params[param]));
     }, {});
 };
 
@@ -22,7 +47,7 @@ function persistentParamsPluginFactory() {
     function persistentParamsPlugin(router) {
         // Persistent parameters
         var persistentParams = Array.isArray(params) ? params.reduce(function (acc, param) {
-            return _extends({}, acc, _defineProperty({}, param, undefined));
+            return _extends({}, acc, defineProperty({}, param, undefined));
         }, {}) : params;
 
         var paramNames = Object.keys(persistentParams);

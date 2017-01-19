@@ -1,7 +1,7 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define('router5', ['exports'], factory) :
-    (factory((global.router5 = global.router5 || {})));
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define('router5', ['exports'], factory) :
+  (factory((global.router5 = global.router5 || {})));
 }(this, (function (exports) { 'use strict';
 
 // Split path
@@ -93,11 +93,158 @@ var omit = function omit(querystring, paramsToOmit) {
     return remainingQueryString || '';
 };
 
-var _extends$2 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
 
-var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+
+
+
+
+
+
+
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+
+
+
+
+
+
+
+
+
+
+
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
 
 var defaultOrConstrained = function defaultOrConstrained(match) {
     return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~%\':]+') + ')';
@@ -235,7 +382,7 @@ function _serialise(key, val) {
 }
 
 var Path = function () {
-    _createClass$1(Path, null, [{
+    createClass(Path, null, [{
         key: 'createPath',
         value: function createPath(path) {
             return new Path(path);
@@ -248,7 +395,7 @@ var Path = function () {
     }]);
 
     function Path(path) {
-        _classCallCheck$1(this, Path);
+        classCallCheck(this, Path);
 
         if (!path) throw new Error('Please supply a path');
         this.path = path;
@@ -287,7 +434,7 @@ var Path = function () {
         }).join('');
     }
 
-    _createClass$1(Path, [{
+    createClass(Path, [{
         key: '_getParams',
         value: function _getParams(type) {
             var predicate = type instanceof RegExp ? function (t) {
@@ -323,7 +470,7 @@ var Path = function () {
         value: function test(path, opts) {
             var _this2 = this;
 
-            var options = _extends$2({ trailingSlash: false }, opts);
+            var options = _extends({ trailingSlash: false }, opts);
             // trailingSlash: falsy => non optional, truthy => optional
             var source = optTrailingSlash(this.source, options.trailingSlash);
             // Check if exact match
@@ -352,7 +499,7 @@ var Path = function () {
         value: function partialTest(path, opts) {
             var _this3 = this;
 
-            var options = _extends$2({ delimited: true }, opts);
+            var options = _extends({ delimited: true }, opts);
             // Check if partial match (start of given path matches regex)
             // trailingSlash: falsy => non optional, truthy => optional
             var source = upToDelimiter(this.source, options.delimited);
@@ -380,7 +527,7 @@ var Path = function () {
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var options = _extends$2({ ignoreConstraints: false, ignoreSearch: false }, opts);
+            var options = _extends({ ignoreConstraints: false, ignoreSearch: false }, opts);
             var encodedParams = Object.keys(params).reduce(function (acc, key) {
                 if (!exists(params[key])) {
                     return acc;
@@ -441,19 +588,8 @@ var Path = function () {
             return base + (searchPart ? '?' + searchPart : '');
         }
     }]);
-
     return Path;
 }();
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _toConsumableArray$1(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var noop = function noop() {};
 
@@ -464,8 +600,7 @@ var RouteNode = function () {
         var childRoutes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
         var cb = arguments[3];
         var parent = arguments[4];
-
-        _classCallCheck(this, RouteNode);
+        classCallCheck(this, RouteNode);
 
         this.name = name;
         this.absolute = /^~/.test(path);
@@ -481,7 +616,7 @@ var RouteNode = function () {
         return this;
     }
 
-    _createClass(RouteNode, [{
+    createClass(RouteNode, [{
         key: 'checkParents',
         value: function checkParents() {
             if (this.absolute && this.hasParentsParams()) {
@@ -623,7 +758,8 @@ var RouteNode = function () {
                 // Locate parent node
                 var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
                 if (segments) {
-                    segments[segments.length - 1].add(new RouteNode(names[names.length - 1], route.path, route.children));
+                    route.name = names[names.length - 1];
+                    segments[segments.length - 1].add(route);
                 } else {
                     throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
                 }
@@ -633,7 +769,7 @@ var RouteNode = function () {
                 var fullName = route.getParentSegments([route]).map(function (_) {
                     return _.name;
                 }).join('.');
-                cb(_extends$1({}, originalRoute, {
+                cb(_extends({}, originalRoute, {
                     name: fullName
                 }));
             }
@@ -795,17 +931,17 @@ var RouteNode = function () {
 
             for (var i = 0; i < segments.length; i += 1) {
                 var parser = segments[i].parser;
-                searchParams.push.apply(searchParams, _toConsumableArray$1(parser.queryParams));
-                searchParams.push.apply(searchParams, _toConsumableArray$1(parser.queryParamsBr));
-                nonSearchParams.push.apply(nonSearchParams, _toConsumableArray$1(parser.urlParams));
-                nonSearchParams.push.apply(nonSearchParams, _toConsumableArray$1(parser.spatParams));
+                searchParams.push.apply(searchParams, toConsumableArray(parser.queryParams));
+                searchParams.push.apply(searchParams, toConsumableArray(parser.queryParamsBr));
+                nonSearchParams.push.apply(nonSearchParams, toConsumableArray(parser.urlParams));
+                nonSearchParams.push.apply(nonSearchParams, toConsumableArray(parser.spatParams));
             }
 
             if (!options.strictQueryParams) {
                 var extraParams = Object.keys(params).reduce(function (acc, p) {
                     return searchParams.indexOf(p) === -1 && nonSearchParams.indexOf(p) === -1 ? acc.concat(p) : acc;
                 }, []);
-                searchParams.push.apply(searchParams, _toConsumableArray$1(extraParams));
+                searchParams.push.apply(searchParams, toConsumableArray(extraParams));
             }
 
             var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
@@ -861,7 +997,7 @@ var RouteNode = function () {
             var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
             var defaultOptions = { strictQueryParams: true };
-            var options = _extends$1({}, defaultOptions, opts);
+            var options = _extends({}, defaultOptions, opts);
             var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
 
             if (options.trailingSlash === true) {
@@ -910,7 +1046,7 @@ var RouteNode = function () {
         key: 'matchPath',
         value: function matchPath(path, options) {
             var defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
-            var opts = _extends$1({}, defaultOptions, options);
+            var opts = _extends({}, defaultOptions, options);
             var matchedSegments = this.getSegmentsMatchingPath(path, opts);
 
             if (matchedSegments) {
@@ -918,7 +1054,7 @@ var RouteNode = function () {
                     var firstSegmentParams = matchedSegments[0].getParentSegments();
 
                     matchedSegments.reverse();
-                    matchedSegments.push.apply(matchedSegments, _toConsumableArray$1(firstSegmentParams));
+                    matchedSegments.push.apply(matchedSegments, toConsumableArray(firstSegmentParams));
                     matchedSegments.reverse();
                 }
 
@@ -933,7 +1069,6 @@ var RouteNode = function () {
             return this.buildStateFromSegments(matchedSegments);
         }
     }]);
-
     return RouteNode;
 }();
 
@@ -1094,8 +1229,6 @@ function withUtils(router) {
     }
 }
 
-var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var noop$1 = function noop() {};
 
 function withRouterLifecycle(router) {
@@ -1151,7 +1284,7 @@ function withRouterLifecycle(router) {
             return cb({ code: errorCodes.NO_START_PATH_OR_STATE });
         }if (typeof startPathOrState === 'string') {
             startPath = startPathOrState;
-        } else if ((typeof startPathOrState === 'undefined' ? 'undefined' : _typeof$1(startPathOrState)) === 'object') {
+        } else if ((typeof startPathOrState === 'undefined' ? 'undefined' : _typeof(startPathOrState)) === 'object') {
             startState = startPathOrState;
         }
 
@@ -1204,8 +1337,6 @@ function withRouterLifecycle(router) {
         return router;
     }
 }
-
-var _typeof$3 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 function nameToIDs(name) {
     return name.split('.').reduce(function (ids, name) {
@@ -1272,7 +1403,7 @@ function transitionPath(toState, fromState) {
                     continue;
 
                 default:
-                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof$3(_ret)) === "object") return _ret.v;
+                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
             }
         }
 
@@ -1301,12 +1432,6 @@ function transitionPath(toState, fromState) {
     };
 }
 
-var _extends$5 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _typeof$4 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function resolve(functions, _ref, callback) {
     var isCancelled = _ref.isCancelled,
         toState = _ref.toState,
@@ -1316,7 +1441,7 @@ function resolve(functions, _ref, callback) {
     var remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
 
     var isState = function isState(obj) {
-        return (typeof obj === 'undefined' ? 'undefined' : _typeof$4(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
+        return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     };
     var hasStateChanged = function hasStateChanged(state) {
         return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
@@ -1326,7 +1451,7 @@ function resolve(functions, _ref, callback) {
         if (!remainingFunctions.length) return true;
 
         var isMapped = typeof remainingFunctions[0] === 'string';
-        var errBase = errorKey && isMapped ? _defineProperty$1({}, errorKey, remainingFunctions[0]) : {};
+        var errBase = errorKey && isMapped ? defineProperty({}, errorKey, remainingFunctions[0]) : {};
         var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
 
         // const len = stepFn.length;
@@ -1341,9 +1466,9 @@ function resolve(functions, _ref, callback) {
             }, function (err) {
                 if (err instanceof Error) {
                     console.error(err.stack || err);
-                    done(_extends$5({}, errBase, { promiseError: err }), null);
+                    done(_extends({}, errBase, { promiseError: err }), null);
                 } else {
-                    done((typeof err === 'undefined' ? 'undefined' : _typeof$4(err)) === 'object' ? _extends$5({}, errBase, err) : errBase, null);
+                    done((typeof err === 'undefined' ? 'undefined' : _typeof(err)) === 'object' ? _extends({}, errBase, err) : errBase, null);
                 }
             });
         }
@@ -1379,19 +1504,13 @@ function resolve(functions, _ref, callback) {
     next();
 }
 
-var _extends$4 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function transition$1(router, toState, fromState, opts, callback) {
     var cancelled = false;
     var completed = false;
     var options = router.getOptions();
 
     var _router$getLifecycleF = router.getLifecycleFunctions(),
-        _router$getLifecycleF2 = _slicedToArray(_router$getLifecycleF, 2),
+        _router$getLifecycleF2 = slicedToArray(_router$getLifecycleF, 2),
         canDeactivateFunctions = _router$getLifecycleF2[0],
         canActivateFunctions = _router$getLifecycleF2[1];
 
@@ -1424,7 +1543,7 @@ function transition$1(router, toState, fromState, opts, callback) {
         callback(err, state || toState);
     };
     var makeError = function makeError(base, err) {
-        return _extends$4({}, base, err instanceof Object ? err : { error: err });
+        return _extends({}, base, err instanceof Object ? err : { error: err });
     };
 
     var _transitionPath = transitionPath(toState, fromState),
@@ -1437,10 +1556,10 @@ function transition$1(router, toState, fromState, opts, callback) {
         var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
             return canDeactivateFunctions[name];
         }).reduce(function (fnMap, name) {
-            return _extends$4({}, fnMap, _defineProperty({}, name, canDeactivateFunctions[name]));
+            return _extends({}, fnMap, defineProperty({}, name, canDeactivateFunctions[name]));
         }, {});
 
-        resolve(canDeactivateFunctionMap, _extends$4({}, asyncBase, { errorKey: 'segment' }), function (err) {
+        resolve(canDeactivateFunctionMap, _extends({}, asyncBase, { errorKey: 'segment' }), function (err) {
             return cb(err ? makeError({ code: errorCodes.CANNOT_DEACTIVATE }, err) : null);
         });
     };
@@ -1449,16 +1568,16 @@ function transition$1(router, toState, fromState, opts, callback) {
         var canActivateFunctionMap = toActivate.filter(function (name) {
             return canActivateFunctions[name];
         }).reduce(function (fnMap, name) {
-            return _extends$4({}, fnMap, _defineProperty({}, name, canActivateFunctions[name]));
+            return _extends({}, fnMap, defineProperty({}, name, canActivateFunctions[name]));
         }, {});
 
-        resolve(canActivateFunctionMap, _extends$4({}, asyncBase, { errorKey: 'segment' }), function (err) {
+        resolve(canActivateFunctionMap, _extends({}, asyncBase, { errorKey: 'segment' }), function (err) {
             return cb(err ? makeError({ code: errorCodes.CANNOT_ACTIVATE }, err) : null);
         });
     };
 
     var middleware = !middlewareFunctions.length ? [] : function (toState, fromState, cb) {
-        return resolve(middlewareFunctions, _extends$4({}, asyncBase), function (err, state) {
+        return resolve(middlewareFunctions, _extends({}, asyncBase), function (err, state) {
             return cb(err ? makeError({ code: errorCodes.TRANSITION_ERR }, err) : null, state || toState);
         });
     };
@@ -1469,10 +1588,6 @@ function transition$1(router, toState, fromState, opts, callback) {
 
     return cancel;
 }
-
-var _extends$3 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _typeof$2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var noop$2 = function noop() {};
 
@@ -1511,8 +1626,8 @@ function withNavigation(router) {
         var name = arguments.length <= 0 ? undefined : arguments[0];
         var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
         var done = typeof lastArg === 'function' ? lastArg : noop$2;
-        var params = _typeof$2(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
-        var opts = _typeof$2(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
+        var params = _typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
+        var opts = _typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
 
         if (!router.isStarted()) {
             done({ code: errorCodes.ROUTER_NOT_STARTED });
@@ -1551,7 +1666,7 @@ function withNavigation(router) {
                         _params = _err$redirect.params;
 
 
-                    navigate(_name, _params, _extends$3({}, opts, { reload: true }), done);
+                    navigate(_name, _params, _extends({}, opts, { reload: true }), done);
                 } else {
                     done(err);
                 }
@@ -1569,7 +1684,7 @@ function withNavigation(router) {
      * @return {Function}        A cancel function
      */
     function navigateToDefault() {
-        var opts = _typeof$2(arguments.length <= 0 ? undefined : arguments[0]) === 'object' ? arguments.length <= 0 ? undefined : arguments[0] : {};
+        var opts = _typeof(arguments.length <= 0 ? undefined : arguments[0]) === 'object' ? arguments.length <= 0 ? undefined : arguments[0] : {};
         var done = arguments.length === 2 ? arguments.length <= 1 ? undefined : arguments[1] : typeof (arguments.length <= 0 ? undefined : arguments[0]) === 'function' ? arguments.length <= 0 ? undefined : arguments[0] : noop$2;
         var options = router.getOptions();
 
@@ -1657,8 +1772,6 @@ function withMiddleware(router) {
     }
 }
 
-function _toConsumableArray$2(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
 
 function withPlugins(router) {
@@ -1714,7 +1827,7 @@ function withPlugins(router) {
             }
         }).filter(Boolean);
 
-        removePluginListeners.push.apply(removePluginListeners, _toConsumableArray$2(removeEventListeners));
+        removePluginListeners.push.apply(removePluginListeners, toConsumableArray(removeEventListeners));
     }
 }
 
@@ -1789,12 +1902,6 @@ function withRouteLifecycle(router) {
     }
 }
 
-var _slicedToArray$1 = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _extends$6 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-function _toConsumableArray$3(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function withCloning(router, createRouter) {
     router.clone = clone;
 
@@ -1807,14 +1914,14 @@ function withCloning(router, createRouter) {
     function clone() {
         var deps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-        var clonedDependencies = _extends$6({}, router.getDependencies(), deps);
+        var clonedDependencies = _extends({}, router.getDependencies(), deps);
         var clonedRouter = createRouter(router.rootNode, router.getOptions(), clonedDependencies);
 
-        clonedRouter.useMiddleware.apply(clonedRouter, _toConsumableArray$3(router.getMiddlewareFactories()));
-        clonedRouter.usePlugin.apply(clonedRouter, _toConsumableArray$3(router.getPlugins()));
+        clonedRouter.useMiddleware.apply(clonedRouter, toConsumableArray(router.getMiddlewareFactories()));
+        clonedRouter.usePlugin.apply(clonedRouter, toConsumableArray(router.getPlugins()));
 
         var _router$getLifecycleF = router.getLifecycleFactories(),
-            _router$getLifecycleF2 = _slicedToArray$1(_router$getLifecycleF, 2),
+            _router$getLifecycleF2 = slicedToArray(_router$getLifecycleF, 2),
             canDeactivateFactories = _router$getLifecycleF2[0],
             canActivateFactories = _router$getLifecycleF2[1];
 
@@ -1828,10 +1935,6 @@ function withCloning(router, createRouter) {
         return clonedRouter;
     }
 }
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 var defaultOptions = {
     trailingSlash: 0,
@@ -2056,7 +2159,7 @@ function createRouter$1(routes) {
     }
 
     function executeFactory(factoryFunction) {
-        return factoryFunction.apply(undefined, _toConsumableArray(getInjectables()));
+        return factoryFunction.apply(undefined, toConsumableArray(getInjectables()));
     }
 
     /**

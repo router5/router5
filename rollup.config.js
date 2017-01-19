@@ -7,8 +7,10 @@ const compress = argv.uglify;
 const module = argv.module || argv.m || 'core';
 
 const babelOptions = {
+    runtimeHelpers: true,
     presets: [[ 'es2015', { modules: false }]],
     plugins: [
+        'external-helpers',
         'transform-object-rest-spread',
         'transform-class-properties',
         'transform-export-extensions'
