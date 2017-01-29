@@ -26,6 +26,7 @@ const defaultOptions = {
  */
 function createRouter(routes, opts = {}, deps={}) {
     let routerState = null;
+    let stateId = 0;
     const callbacks = {};
     const dependencies = deps;
     const options = { ...defaultOptions };
@@ -122,6 +123,8 @@ function createRouter(routes, opts = {}, deps={}) {
         setProp('name', name);
         setProp('params', params);
         setProp('path', path);
+        stateId += 1;
+        setProp('id', stateId);
         if (metaParams || source) {
             const meta = { params: metaParams };
 

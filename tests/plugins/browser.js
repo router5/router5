@@ -19,6 +19,9 @@ const mockedBrowser = {
 };
 
 function withoutMeta(state) {
+    if (!state.id) {
+        throw new Error('No state id');
+    }
     return {
         name: state.name,
         params: state.params,
