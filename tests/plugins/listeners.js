@@ -29,7 +29,7 @@ describe('listenersPlugin', function () {
         router.addNodeListener('', nodeListener);
 
         router.start(function (err, state) {
-            expect(state).to.eql({meta: { params: {home: {}} }, name: 'home', path: '/home', params: {}});
+            expect(state).to.eql({id: 1, meta: { params: {home: {}} }, name: 'home', path: '/home', params: {}});
             expect(nodeListener).to.have.been.called;
             done();
         });
