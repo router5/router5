@@ -63,9 +63,9 @@ Several plugins are available in this repository:
 - __Persistent parameters plugin__: allows some query parameters to persist and survive navigation, without having to manually specify them for each transition.
 
 ```js
-import browserPlugin from 'router/plugins/browser';
-import listenersPlugin from 'router/plugins/listeners';
-import persistentParamsPlugin from 'router/plugins/persistentParams';
+import browserPlugin from 'router5/plugins/browser';
+import listenersPlugin from 'router5/plugins/listeners';
+import persistentParamsPlugin from 'router5/plugins/persistentParams';
 ```
 
 ### Guides
