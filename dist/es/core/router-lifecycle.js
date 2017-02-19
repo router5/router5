@@ -65,6 +65,7 @@ export default function withRouterLifecycle(router) {
             (function () {
                 // If no supplied start state, get start state
                 startState = startPath === undefined ? null : router.matchPath(startPath);
+                console.log(startState);
                 // Navigate to default function
                 var navigateToDefault = function navigateToDefault() {
                     return router.navigateToDefault({ replace: true }, done);

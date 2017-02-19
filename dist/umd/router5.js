@@ -1292,6 +1292,7 @@ function withRouterLifecycle(router) {
             (function () {
                 // If no supplied start state, get start state
                 startState = startPath === undefined ? null : router.matchPath(startPath);
+                console.log(startState);
                 // Navigate to default function
                 var navigateToDefault = function navigateToDefault() {
                     return router.navigateToDefault({ replace: true }, done);
@@ -1957,6 +1958,7 @@ function createRouter$1(routes) {
     var deps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var routerState = null;
+    var stateId = 0;
     var callbacks = {};
     var dependencies = deps;
     var options = _extends({}, defaultOptions);
@@ -2065,13 +2067,16 @@ function createRouter$1(routes) {
         setProp('name', name);
         setProp('params', params);
         setProp('path', path);
+
         if (metaParams || source) {
-            var meta = { params: metaParams };
+            stateId += 1;
+            var meta = { params: metaParams, id: stateId };
 
             if (source) meta.source = source;
 
             setProp('meta', meta);
         }
+
         return state;
     }
 

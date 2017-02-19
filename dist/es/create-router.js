@@ -33,6 +33,7 @@ function createRouter(routes) {
     var deps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     var routerState = null;
+    var stateId = 0;
     var callbacks = {};
     var dependencies = deps;
     var options = _extends({}, defaultOptions);
@@ -141,13 +142,16 @@ function createRouter(routes) {
         setProp('name', name);
         setProp('params', params);
         setProp('path', path);
+
         if (metaParams || source) {
-            var meta = { params: metaParams };
+            stateId += 1;
+            var meta = { params: metaParams, id: stateId };
 
             if (source) meta.source = source;
 
             setProp('meta', meta);
         }
+
         return state;
     }
 

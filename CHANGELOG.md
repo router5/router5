@@ -1,3 +1,13 @@
+<a name="4.5.0"></a>
+# [4.5.0](https://github.com/router5/router5/compare/v4.4.1...v4.5.0) (2017-02-19)
+
+
+### Features
+
+* add incremented id to meta property of state objects ([1699465](https://github.com/router5/router5/commit/1699465))
+
+
+
 <a name="4.4.1"></a>
 ## [4.4.1](https://github.com/router5/router5/compare/v4.4.0...v4.4.1) (2017-01-19)
 
