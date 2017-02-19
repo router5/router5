@@ -125,13 +125,12 @@ function createRouter(routes, opts = {}, deps={}) {
         setProp('path', path);
 
         if (metaParams || source) {
-            const meta = { params: metaParams };
+            stateId += 1;
+            const meta = { params: metaParams, id: stateId };
 
             if (source) meta.source = source;
 
             setProp('meta', meta);
-            stateId += 1;
-            setProp('id', stateId);
         }
 
         return state;
