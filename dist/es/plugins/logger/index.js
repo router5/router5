@@ -1,4 +1,6 @@
 /* istanbul ignore next */
+/*eslint no-console: 0*/
+
 function loggerPlugin() {
     var startGroup = function startGroup() {
         return console.group('Router transition');

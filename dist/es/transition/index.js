@@ -38,12 +38,10 @@ function transition(router, toState, fromState, opts, callback) {
         }
 
         if (!err && options.autoCleanUp) {
-            (function () {
-                var activeSegments = nameToIDs(toState.name);
-                Object.keys(canDeactivateFunctions).forEach(function (name) {
-                    if (activeSegments.indexOf(name) === -1) router.clearCanDeactivate(name);
-                });
-            })();
+            var activeSegments = nameToIDs(toState.name);
+            Object.keys(canDeactivateFunctions).forEach(function (name) {
+                if (activeSegments.indexOf(name) === -1) router.clearCanDeactivate(name);
+            });
         }
 
         callback(err, state || toState);

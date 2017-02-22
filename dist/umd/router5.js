@@ -1289,32 +1289,30 @@ function withRouterLifecycle(router) {
         }
 
         if (!startState) {
-            (function () {
-                // If no supplied start state, get start state
-                startState = startPath === undefined ? null : router.matchPath(startPath);
-                console.log(startState);
-                // Navigate to default function
-                var navigateToDefault = function navigateToDefault() {
-                    return router.navigateToDefault({ replace: true }, done);
-                };
-                var redirect = function redirect(route) {
-                    return router.navigate(route.name, route.params, { replace: true, reload: true }, done);
-                };
-                // If matched start path
-                if (startState) {
-                    router.transitionToState(startState, router.getState(), {}, function (err, state) {
-                        if (!err) cb(null, state);else if (err.redirect) redirect(err.redirect);else if (options.defaultRoute) navigateToDefault();else cb(err, null, false);
-                    });
-                } else if (options.defaultRoute) {
-                    // If default, navigate to default
-                    navigateToDefault();
-                } else if (options.allowNotFound) {
-                    cb(null, router.makeNotFoundState(startPath));
-                } else {
-                    // No start match, no default => do nothing
-                    cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
-                }
-            })();
+            // If no supplied start state, get start state
+            startState = startPath === undefined ? null : router.matchPath(startPath);
+
+            // Navigate to default function
+            var navigateToDefault = function navigateToDefault() {
+                return router.navigateToDefault({ replace: true }, done);
+            };
+            var redirect = function redirect(route) {
+                return router.navigate(route.name, route.params, { replace: true, reload: true }, done);
+            };
+            // If matched start path
+            if (startState) {
+                router.transitionToState(startState, router.getState(), {}, function (err, state) {
+                    if (!err) cb(null, state);else if (err.redirect) redirect(err.redirect);else if (options.defaultRoute) navigateToDefault();else cb(err, null, false);
+                });
+            } else if (options.defaultRoute) {
+                // If default, navigate to default
+                navigateToDefault();
+            } else if (options.allowNotFound) {
+                cb(null, router.makeNotFoundState(startPath));
+            } else {
+                // No start match, no default => do nothing
+                cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
+            }
         } else {
             // Initialise router with provided start state
             router.setState(startState);
@@ -1533,12 +1531,10 @@ function transition$1(router, toState, fromState, opts, callback) {
         }
 
         if (!err && options.autoCleanUp) {
-            (function () {
-                var activeSegments = nameToIDs(toState.name);
-                Object.keys(canDeactivateFunctions).forEach(function (name) {
-                    if (activeSegments.indexOf(name) === -1) router.clearCanDeactivate(name);
-                });
-            })();
+            var activeSegments = nameToIDs(toState.name);
+            Object.keys(canDeactivateFunctions).forEach(function (name) {
+                if (activeSegments.indexOf(name) === -1) router.clearCanDeactivate(name);
+            });
         }
 
         callback(err, state || toState);
@@ -2191,6 +2187,8 @@ function createRouter$1(routes) {
 }
 
 /* istanbul ignore next */
+/*eslint no-console: 0*/
+
 function loggerPlugin() {
     var startGroup = function startGroup() {
         return console.group('Router transition');

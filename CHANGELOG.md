@@ -1,3 +1,13 @@
+<a name="4.5.1"></a>
+## [4.5.1](https://github.com/router5/router5/compare/v4.5.0...v4.5.1) (2017-02-22)
+
+
+### Bug Fixes
+
+* remove accidental console.log from code ([562ef35](https://github.com/router5/router5/commit/562ef35))
+
+
+
 <a name="4.5.0"></a>
 # [4.5.0](https://github.com/router5/router5/compare/v4.4.1...v4.5.0) (2017-02-19)
 
