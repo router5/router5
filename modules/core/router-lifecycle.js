@@ -57,7 +57,7 @@ export default function withRouterLifecycle(router) {
         if (!startState) {
             // If no supplied start state, get start state
             startState = startPath === undefined ? null : router.matchPath(startPath);
-            console.log(startState);
+
             // Navigate to default function
             const navigateToDefault = () => router.navigateToDefault({replace: true}, done);
             const redirect = (route) => router.navigate(route.name, route.params, {replace: true, reload: true}, done);

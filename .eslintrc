@@ -27,6 +27,7 @@
         "eqeqeq": 2,
         "no-else-return": 2,
         "no-multi-spaces": 0,
+        "no-console": ["error", { "allow": ["warn", "error"] }],
         // Strict mode
         "strict": 0,
         // Variables
