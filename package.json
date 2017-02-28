@@ -29,7 +29,7 @@
     "randomcolor": "^0.4.3",
     "redux-logger": "^2.3.2",
     "router5.helpers": "^1.1.0",
-    "router5.transition-path": "^3.0.0",
+    "router5.transition-path": "^4.0.0",
     "rx": "^4.0.7",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.14.1",
@@ -41,15 +41,15 @@
     "deku-redux": "^1.0.0",
     "deku-router5": "^4.0.0",
     "lodash.find": "^3.2.1",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0",
+    "react": "~15.4.0",
+    "react-dom": "~15.4.0",
     "react-redux": "^4.4.0",
     "react-router5": "^4.0.0",
     "redux": "^3.0.3",
     "redux-router5": "^4.0.0",
     "redux-thunk": "^1.0.0",
     "reselect": "^2.0.0",
-    "router5": "~4.3.5",
+    "router5": "~4.5.1",
     "virtual-element": "^1.2.0"
   }
 }

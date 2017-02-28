@@ -11,7 +11,7 @@ module.exports = {
     ],
     output: {
         path: 'build/',
-        filename: 'router5-' + app + '-example.js'
+        filename: isProd ? 'router5-' + app + '-example.js' : 'app.js'
     },
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin()
