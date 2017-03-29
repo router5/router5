@@ -20,8 +20,8 @@ import createRouter from 'router5';
 import browserPlugin from 'router5/plugins/browser';
 
 const routes = [
-    { name: 'home', '/home' },
-    { name: 'profile', '/profile' }
+    { name: 'home', path: '/home' },
+    { name: 'profile', path: '/profile' }
 ];
 
 const router = createRouter(routes)
