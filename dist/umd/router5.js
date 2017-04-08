@@ -839,7 +839,13 @@ var RouteNode = function () {
                         if (trailingSlash && !child.children.length) {
                             consumedPath = consumedPath.replace(/\/$/, '');
                         }
+
                         remainingPath = pathSegment.replace(consumedPath, '');
+
+                        if (trailingSlash && !child.children.length) {
+                            remainingPath = remainingPath.replace(/^\/\?/, '?');
+                        }
+
                         var search = omit(getSearch(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
                         remainingPath = getPath(remainingPath) + (search ? '?' + search : '');
                         if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
