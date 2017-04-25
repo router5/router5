@@ -1,7 +1,7 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define('router5PersistentParamsPlugin', factory) :
-  (global.router5PersistentParamsPlugin = factory());
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof define === 'function' && define.amd ? define('router5PersistentParamsPlugin', factory) :
+	(global.router5PersistentParamsPlugin = factory());
 }(this, (function () { 'use strict';
 
 var defineProperty = function (obj, key, value) {

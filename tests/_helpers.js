@@ -1,15 +1,14 @@
-import jsdom from 'jsdom';
+import { JSDOM } from 'jsdom';
 import sinonChai from 'sinon-chai';
 import chai from 'chai';
 
 chai.use(sinonChai);
 
-const doc = jsdom.jsdom('<!doctype html><html><body></body></html>');
-const win = doc.defaultView;
+const { window } = new JSDOM('<!doctype html><html><body></body></html>');
 
-global.document = doc;
-global.window = win;
-global.navigator = win.navigator;
+global.document = window.doc;
+global.window = window;
+global.navigator = window.navigator;
 
 export function omitMeta(obj) {
     return {

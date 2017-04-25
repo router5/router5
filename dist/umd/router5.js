@@ -1,7 +1,7 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define('router5', ['exports'], factory) :
-  (factory((global.router5 = global.router5 || {})));
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define('router5', ['exports'], factory) :
+	(factory((global.router5 = global.router5 || {})));
 }(this, (function (exports) { 'use strict';
 
 // Split path
