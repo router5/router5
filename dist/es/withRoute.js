@@ -1,5 +1,6 @@
-import React, { Component, createElement } from 'react';
+import { Component, createElement } from 'react';
 import { ifNot, getDisplayName } from './utils';
+import PropTypes from 'prop-types';
 
 function withRoute(BaseComponent) {
     var ComponentWithRoute = function (_Component) {
@@ -56,7 +57,7 @@ function withRoute(BaseComponent) {
     }(Component);
 
     ComponentWithRoute.contextTypes = {
-        router: React.PropTypes.object.isRequired
+        router: PropTypes.object.isRequired
     };
 
     ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';

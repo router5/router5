@@ -10,9 +10,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _react = require('react');
 
-var _react2 = _interopRequireDefault(_react);
-
 var _utils = require('./utils');
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -60,11 +62,11 @@ function routeNode(nodeName) {
             }, {
                 key: 'render',
                 value: function render() {
-                    var props = this.props;
-                    var router = this.router;
-                    var _state = this.state;
-                    var previousRoute = _state.previousRoute;
-                    var route = _state.route;
+                    var props = this.props,
+                        router = this.router;
+                    var _state = this.state,
+                        previousRoute = _state.previousRoute,
+                        route = _state.route;
 
                     var component = (0, _react.createElement)(RouteSegment, _extends({}, props, { router: router, previousRoute: previousRoute, route: route }));
 
@@ -76,7 +78,7 @@ function routeNode(nodeName) {
         }(_react.Component);
 
         RouteNode.contextTypes = {
-            router: _react2.default.PropTypes.object.isRequired
+            router: _propTypes2.default.object.isRequired
         };
 
         RouteNode.displayName = 'RouteNode[' + (0, _utils.getDisplayName)(RouteSegment) + ']';

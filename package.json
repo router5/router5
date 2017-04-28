@@ -1,6 +1,6 @@
 {
   "name": "react-router5",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "router5 helpers for React",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
@@ -11,7 +11,7 @@
     "build:umd": "rollup -c rollup.config.js -f umd",
     "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
     "test": "mocha --compilers js:babel-core/register --recursive --require ./test/test-helper.js 'test/main.js'",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w",
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "lint": "eslint modules",
     "release": "./scripts/release.js"
   },

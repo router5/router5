@@ -10,9 +10,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _react = require('react');
 
-var _react2 = _interopRequireDefault(_react);
-
 var _utils = require('./utils');
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -78,7 +80,7 @@ function withRoute(BaseComponent) {
     }(_react.Component);
 
     ComponentWithRoute.contextTypes = {
-        router: _react2.default.PropTypes.object.isRequired
+        router: _propTypes2.default.object.isRequired
     };
 
     ComponentWithRoute.displayName = 'WithRoute[' + (0, _utils.getDisplayName)(BaseComponent) + ']';

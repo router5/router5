@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 var BaseLink = function (_Component) {
     babelHelpers.inherits(BaseLink, _Component);
@@ -56,12 +57,12 @@ var BaseLink = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props = this.props;
-            var routeName = _props.routeName;
-            var routeParams = _props.routeParams;
-            var className = _props.className;
-            var activeClassName = _props.activeClassName;
-            var children = _props.children;
+            var _props = this.props,
+                routeName = _props.routeName,
+                routeParams = _props.routeParams,
+                className = _props.className,
+                activeClassName = _props.activeClassName,
+                children = _props.children;
 
 
             var active = this.isActive();
@@ -77,16 +78,16 @@ var BaseLink = function (_Component) {
 }(Component);
 
 BaseLink.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 // BaseLink.propTypes = {
-//     routeName:       React.PropTypes.string.isRequired,
-//     routeParams:     React.PropTypes.object,
-//     routeOptions:    React.PropTypes.object,
-//     activeClassName: React.PropTypes.string,
-//     activeStrict:    React.PropTypes.bool,
-//     onClick:         React.PropTypes.func
+//     routeName:       PropTypes.string.isRequired,
+//     routeParams:     PropTypes.object,
+//     routeOptions:    PropTypes.object,
+//     activeClassName: PropTypes.string,
+//     activeStrict:    PropTypes.bool,
+//     onClick:         PropTypes.func
 // };
 
 BaseLink.defaultProps = {

@@ -1,5 +1,6 @@
-import React, { Component, createElement } from 'react';
+import { Component, createElement } from 'react';
 import { getDisplayName, ifNot } from './utils';
+import PropTypes from 'prop-types';
 
 function routeNode(nodeName) {
     return function routeNodeWrapper(RouteSegment) {
@@ -39,11 +40,11 @@ function routeNode(nodeName) {
             }, {
                 key: 'render',
                 value: function render() {
-                    var props = this.props;
-                    var router = this.router;
-                    var _state = this.state;
-                    var previousRoute = _state.previousRoute;
-                    var route = _state.route;
+                    var props = this.props,
+                        router = this.router;
+                    var _state = this.state,
+                        previousRoute = _state.previousRoute,
+                        route = _state.route;
 
                     var component = createElement(RouteSegment, babelHelpers.extends({}, props, { router: router, previousRoute: previousRoute, route: route }));
 
@@ -54,7 +55,7 @@ function routeNode(nodeName) {
         }(Component);
 
         RouteNode.contextTypes = {
-            router: React.PropTypes.object.isRequired
+            router: PropTypes.object.isRequired
         };
 
         RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';

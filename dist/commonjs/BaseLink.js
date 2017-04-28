@@ -10,6 +10,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -74,12 +78,12 @@ var BaseLink = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _props = this.props;
-            var routeName = _props.routeName;
-            var routeParams = _props.routeParams;
-            var className = _props.className;
-            var activeClassName = _props.activeClassName;
-            var children = _props.children;
+            var _props = this.props,
+                routeName = _props.routeName,
+                routeParams = _props.routeParams,
+                className = _props.className,
+                activeClassName = _props.activeClassName,
+                children = _props.children;
 
 
             var active = this.isActive();
@@ -96,16 +100,16 @@ var BaseLink = function (_Component) {
 }(_react.Component);
 
 BaseLink.contextTypes = {
-    router: _react2.default.PropTypes.object.isRequired
+    router: _propTypes2.default.object.isRequired
 };
 
 // BaseLink.propTypes = {
-//     routeName:       React.PropTypes.string.isRequired,
-//     routeParams:     React.PropTypes.object,
-//     routeOptions:    React.PropTypes.object,
-//     activeClassName: React.PropTypes.string,
-//     activeStrict:    React.PropTypes.bool,
-//     onClick:         React.PropTypes.func
+//     routeName:       PropTypes.string.isRequired,
+//     routeParams:     PropTypes.object,
+//     routeOptions:    PropTypes.object,
+//     activeClassName: PropTypes.string,
+//     activeStrict:    PropTypes.bool,
+//     onClick:         PropTypes.func
 // };
 
 BaseLink.defaultProps = {

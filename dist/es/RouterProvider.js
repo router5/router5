@@ -1,4 +1,5 @@
-import { Component, PropTypes, Children } from 'react';
+import { Component, Children } from 'react';
+import PropTypes from 'prop-types';
 
 var RouterProvider = function (_Component) {
     babelHelpers.inherits(RouterProvider, _Component);
