@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class BaseLink extends Component {
     constructor(props, context) {
@@ -60,16 +61,16 @@ class BaseLink extends Component {
 }
 
 BaseLink.contextTypes = {
-    router: React.PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 // BaseLink.propTypes = {
-//     routeName:       React.PropTypes.string.isRequired,
-//     routeParams:     React.PropTypes.object,
-//     routeOptions:    React.PropTypes.object,
-//     activeClassName: React.PropTypes.string,
-//     activeStrict:    React.PropTypes.bool,
-//     onClick:         React.PropTypes.func
+//     routeName:       PropTypes.string.isRequired,
+//     routeParams:     PropTypes.object,
+//     routeOptions:    PropTypes.object,
+//     activeClassName: PropTypes.string,
+//     activeStrict:    PropTypes.bool,
+//     onClick:         PropTypes.func
 // };
 
 BaseLink.defaultProps = {

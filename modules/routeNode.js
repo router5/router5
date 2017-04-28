@@ -1,5 +1,6 @@
-import React, { Component, createElement } from 'react';
+import { Component, createElement } from 'react';
 import { getDisplayName, ifNot } from './utils';
+import PropTypes from 'prop-types';
 
 function routeNode(nodeName) {
     return function routeNodeWrapper(RouteSegment) {
@@ -40,7 +41,7 @@ function routeNode(nodeName) {
         }
 
         RouteNode.contextTypes = {
-            router: React.PropTypes.object.isRequired
+            router: PropTypes.object.isRequired
         };
 
         RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';

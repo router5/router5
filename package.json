@@ -34,6 +34,7 @@
   },
   "homepage": "http://router5.github.com/router5/react-router5",
   "devDependencies": {
+    "babel-cli": "~6.9.0",
     "babel-core": "~6.9.1",
     "babel-eslint": "~6.0.4",
     "babel-plugin-transform-export-extensions": "~6.8.0",
@@ -54,6 +55,7 @@
     "rimraf": "^2.5.4",
     "rollup": "^0.34.10",
     "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-npm": "^1.4.0",
     "router5": "^4.0.0",
     "sinon": "^1.17.5",
@@ -63,5 +65,8 @@
   "peerDependencies": {
     "router5": "^4.0.0",
     "react": "~0.14.0 || ^15.0.0"
+  },
+  "dependencies": {
+    "prop-types": "^15.5.8"
   }
 }
