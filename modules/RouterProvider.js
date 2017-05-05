@@ -13,7 +13,7 @@ class RouterProvider extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.router !== nextProps.router) {
-            console.error('[react-router5][Router]does not support changing the router object.');
+            console.error('[react-router5][RouterProvider] does not support changing the router object.');
         }
     }
 
