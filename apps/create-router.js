@@ -20,5 +20,3 @@ export default function configureRouter(useListenersPlugin = false) {
 
     return router;
 }
-
-export default configureRouter;
