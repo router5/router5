@@ -57,7 +57,7 @@ export default function withNavigation(router) {
         const sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
 
         // Do not proceed further if states are the same and no reload
-        // (no desactivation and no callbacks)
+        // (no deactivation and no callbacks)
         if (sameStates && !opts.reload) {
             const err = { code: errorCodes.SAME_STATES };
             done(err);
@@ -67,7 +67,7 @@ export default function withNavigation(router) {
 
         const fromState = sameStates ? null : router.getState();
 
-        // Transitio
+        // Transition
         return transitionToState(toState, fromState, opts, (err, state) => {
             if (err) {
                 if (err.redirect) {
