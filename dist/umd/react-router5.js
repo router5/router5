@@ -916,16 +916,20 @@ var BaseLink = function (_Component) {
                 routeParams = _props.routeParams,
                 className = _props.className,
                 activeClassName = _props.activeClassName,
-                children = _props.children;
+                children = _props.children,
+                title = _props.title;
 
 
             var active = this.isActive();
             var href = this.buildUrl(routeName, routeParams);
             var linkclassName = (className ? className.split(' ') : []).concat(active ? [activeClassName] : []).join(' ');
 
-            var onClick = this.clickHandler;
-
-            return React__default.createElement('a', { href: href, className: linkclassName, onClick: onClick }, children);
+            return React__default.createElement('a', {
+                href: href,
+                className: linkclassName,
+                onClick: this.clickHandler,
+                title: title
+            }, children);
         }
     }]);
     return BaseLink;

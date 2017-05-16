@@ -1,3 +1,13 @@
+<a name="4.2.0"></a>
+# [4.2.0](https://github.com/router5/react-router5/compare/v4.1.0...v4.2.0) (2017-05-16)
+
+
+### Features
+
+* support title attribute in links ([678e424](https://github.com/router5/react-router5/commit/678e424))
+
+
+
 <a name="4.1.0"></a>
 # [4.1.0](https://github.com/router5/react-router5/compare/v4.0.1...v4.1.0) (2017-04-28)
 
