@@ -103,14 +103,14 @@ BaseLink.contextTypes = {
     router: _propTypes2.default.object.isRequired
 };
 
-// BaseLink.propTypes = {
-//     routeName:       PropTypes.string.isRequired,
-//     routeParams:     PropTypes.object,
-//     routeOptions:    PropTypes.object,
-//     activeClassName: PropTypes.string,
-//     activeStrict:    PropTypes.bool,
-//     onClick:         PropTypes.func
-// };
+BaseLink.propTypes = {
+    routeName: _propTypes2.default.string.isRequired,
+    routeParams: _propTypes2.default.object,
+    routeOptions: _propTypes2.default.object,
+    activeClassName: _propTypes2.default.string,
+    activeStrict: _propTypes2.default.bool,
+    onClick: _propTypes2.default.func
+};
 
 BaseLink.defaultProps = {
     activeClassName: 'active',

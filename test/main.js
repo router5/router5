@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { Child, createTestRouter, FnChild, renderWithRouter } from './utils';
 import { RouterProvider, withRoute, routeNode, BaseLink } from '../modules';
-import { renderIntoDocument, findRenderedComponentWithType } from 'react-dom/test-utils';
+import { findRenderedComponentWithType } from 'react-dom/test-utils';
 import { spy } from 'sinon';
 import listenersPlugin from 'router5/plugins/listeners';
 import { mount } from 'enzyme';

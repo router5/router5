@@ -1,5 +1,5 @@
 import babel from 'rollup-plugin-babel';
-import npm from 'rollup-plugin-npm';
+import nodeResolve from 'rollup-plugin-node-resolve';
 import common from 'rollup-plugin-commonjs';
 
 const babelOptions = {
@@ -14,7 +14,8 @@ const babelOptions = {
 export default {
     entry: 'modules/index.js',
     format: 'umd',
-    plugins: [ common({ include: 'node_modules/**' }), babel(babelOptions), npm({ jsnext: true, skip: [ 'react' ] }) ],
+    external: [ 'react' ],
+    plugins: [ common({ include: 'node_modules/**' }), babel(babelOptions), nodeResolve({ jsnext: true }) ],
     moduleName: 'reactRouter5',
     moduleId: 'reactRouter5',
     dest: 'dist/umd/react-router5.js'
