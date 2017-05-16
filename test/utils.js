@@ -1,7 +1,8 @@
 import createRouter from 'router5';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { RouterProvider } from '../modules';
-import { renderIntoDocument } from 'react-addons-test-utils';
+import { renderIntoDocument } from 'react-dom/test-utils';
 import browserPlugin from 'router5/plugins/browser';
 
 export class Child extends Component {
