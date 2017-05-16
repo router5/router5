@@ -47,16 +47,30 @@ class BaseLink extends Component {
     }
 
     render() {
-        const { routeName, routeParams, className, activeClassName, children } = this.props;
+        const {
+            routeName,
+            routeParams,
+            className,
+            activeClassName,
+            children,
+            title
+        } = this.props;
 
         const active = this.isActive();
         const href =  this.buildUrl(routeName, routeParams);
         const linkclassName = (className ? className.split(' ') : [])
             .concat(active ? [activeClassName] : []).join(' ');
 
-        const onClick = this.clickHandler;
-
-        return React.createElement('a', {href, className: linkclassName, onClick}, children);
+        return React.createElement(
+            'a',
+            {
+                href,
+                className: linkclassName,
+                onClick: this.clickHandler,
+                title
+            },
+            children
+        );
     }
 }
 
