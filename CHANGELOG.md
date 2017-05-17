@@ -1,3 +1,13 @@
+<a name="4.2.1"></a>
+## [4.2.1](https://github.com/router5/react-router5/compare/v4.2.0...v4.2.1) (2017-05-17)
+
+
+### Bug Fixes
+
+* fix peer dependencies version range ([602f155](https://github.com/router5/react-router5/commit/602f155))
+
+
+
 <a name="4.2.0"></a>
 # [4.2.0](https://github.com/router5/react-router5/compare/v4.1.0...v4.2.0) (2017-05-16)
 
