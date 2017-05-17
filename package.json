@@ -63,8 +63,8 @@
     "yargs": "~8.0.1"
   },
   "peerDependencies": {
-    "react": "~0.14.0 || ~15.0.0",
-    "router5": "~4.5.2"
+    "react": "^0.14.0 || ^15.0.0",
+    "router5": "^4.5.2"
   },
   "dependencies": {
     "prop-types": "~15.5.10"
