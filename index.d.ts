@@ -67,7 +67,7 @@ interface Router5 {
     stop(): Router5;
     urlToPath(path: string): string;
     useMiddleware(...args: Array<Function>): Router5;
-    usePlugin(pluginFactory: Function): Router5;
+    usePlugin(pluginFactory: PluginFactory): Router5;
 }
 
 interface TrasitionOptions {
@@ -84,7 +84,7 @@ export interface PluginCallbacks {
     onStop?: () => void;
 }
 
-export interface Plugin {
+export interface PluginFactory {
     (): PluginCallbacks;
     pluginName?: string;
 }
@@ -96,16 +96,16 @@ interface Router5Factory {
 }
 
 declare var errCodes: constants;
-declare var loggerPlugin: () => Function;
+declare var loggerPlugin: () => PluginFactory;
 declare var RouteNode: RouteNodeFactory;
 declare var Router5: Router5Factory;
 declare var transitionPath: (toState: any, fromState: any) => any;
 
 export default Router5;
 export {
-errCodes,
-loggerPlugin,
-RouteNode,
-Router5,
-transitionPath
+    errCodes,
+    loggerPlugin,
+    RouteNode,
+    Router5,
+    transitionPath
 };
