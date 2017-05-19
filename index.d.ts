@@ -61,12 +61,34 @@ interface Router5 {
     navigate(name: string, ...args: Array<Object | Function>): Function;
     setAdditionalArgs(args: Array<any>): void;
     setOption(opt: string, val: any): Router5;
+    setDependency(dependencyName: string, dependency: any): Router5;
+    setDependencies(dependencies: { [name: string]: any }): Router5;
     start(...args: Array<any>): Router5;
     stop(): Router5;
     urlToPath(path: string): string;
     useMiddleware(...args: Array<Function>): Router5;
     usePlugin(pluginFactory: Function): Router5;
 }
+
+interface TrasitionOptions {
+    replace: boolean;
+    reload: boolean;
+}
+
+export interface PluginCallbacks {
+    onTransitionSuccess?: (toState: State, fromState: State | undefined, opts: TrasitionOptions) => void;
+    onTransitionStart?: (toState: State, fromState?: State) => void;
+    onTransitionCancel?: (toState: State, fromState?: State) => void;
+    onTransitionError?: (toState: State, fromState: State | undefined, err: any) => void;
+    onStart?: () => void;
+    onStop?: () => void;
+}
+
+export interface Plugin {
+    (): PluginCallbacks;
+    pluginName?: string;
+}
+
 
 interface Router5Factory {
     new (routes?: any, opts?: Object): Router5;
