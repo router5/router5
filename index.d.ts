@@ -24,7 +24,7 @@ declare module "router5" {
   interface State {
     meta?: object;
     name: string;
-    params: object;
+    params: any;
     path: string;
   }
 
@@ -140,4 +140,14 @@ declare module "router5/plugins/browser" {
 
   var browserPlugin: (options: BrowserPluginOptions) => PluginFactory;
   export default browserPlugin;
+}
+
+declare module "router5/plugins/listeners" {
+  import { PluginFactory } from "router5";
+  interface ListenersPluginOptions {
+    autoCleanUp: boolean;
+  }
+
+  var listenersPlugin: (options?: ListenersPluginOptions) => PluginFactory;
+  export default listenersPlugin;
 }
