@@ -127,7 +127,7 @@ export default function withUtils(router) {
     }
 
     /**
-     * Set the root node patch, use carefully. It can be used to set app-wide allowed query parameters.
+     * Set the root node path, use carefully. It can be used to set app-wide allowed query parameters.
      * @param {String} rootPath The root node path
      */
     function setRootPath(rootPath) {

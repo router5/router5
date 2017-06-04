@@ -1227,7 +1227,7 @@ function withUtils(router) {
     }
 
     /**
-     * Set the root node patch, use carefully. It can be used to set app-wide allowed query parameters.
+     * Set the root node path, use carefully. It can be used to set app-wide allowed query parameters.
      * @param {String} rootPath The root node path
      */
     function setRootPath(rootPath) {
@@ -1650,7 +1650,7 @@ function withNavigation(router) {
         var sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
 
         // Do not proceed further if states are the same and no reload
-        // (no desactivation and no callbacks)
+        // (no deactivation and no callbacks)
         if (sameStates && !opts.reload) {
             var _err = { code: errorCodes.SAME_STATES };
             done(_err);
@@ -1660,7 +1660,7 @@ function withNavigation(router) {
 
         var fromState = sameStates ? null : router.getState();
 
-        // Transitio
+        // Transition
         return transitionToState(toState, fromState, opts, function (err, state) {
             if (err) {
                 if (err.redirect) {
