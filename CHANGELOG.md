@@ -1,3 +1,13 @@
+<a name="4.6.0"></a>
+# [4.6.0](https://github.com/router5/router5/compare/v4.5.2...v4.6.0) (2017-06-06)
+
+
+### Features
+
+* add TypeScript definitions ([@tals](https://github.com/tals) [@Keats](https://github.com/Keats)) ([378d5f5](https://github.com/router5/router5/commit/378d5f5))
+
+
+
 <a name="4.5.2"></a>
 ## [4.5.2](https://github.com/router5/router5/compare/v4.5.1...v4.5.2) (2017-04-08)
 
