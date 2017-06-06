@@ -1,5 +1,5 @@
 declare module "router5" {
-  interface ErrorCodes {
+  export interface ErrorCodes {
     ROUTER_NOT_STARTED: string;
     NO_START_PATH_OR_STATE: string;
     ROUTER_ALREADY_STARTED: string;
@@ -11,7 +11,7 @@ declare module "router5" {
     TRANSITION_CANCELLED: string;
   }
 
-  interface Constants {
+  export interface Constants {
     UNKNOWN_ROUTE: string;
     ROUTER_START: string;
     ROUTER_STOP: string;
@@ -21,19 +21,19 @@ declare module "router5" {
     TRANSITION_ERROR: string;
   }
 
-  interface State {
+  export interface State {
     meta?: object;
     name: string;
     params: any;
     path: string;
   }
 
-  interface NavigationOptions {
+  export interface NavigationOptions {
     replace?: boolean;
     reload?: boolean;
   }
 
-  interface Plugin {
+  export interface Plugin {
     onStart?(): void;
     onStop?(): void;
     onTransitionStart?(toState: State, fromState: State): void;
@@ -42,20 +42,20 @@ declare module "router5" {
     onTransitionSuccess?(toState: State, fromState: State, options: NavigationOptions): void;
   }
 
-  interface PluginFactory {
+  export interface PluginFactory {
     pluginName?: string;
     (router: Router, dependencies?: any): Plugin;
   }
 
-  interface Middleware {
+  export interface Middleware {
     (toState: State, fromState: State, done?: Function): any;
   }
 
-  interface MiddlewareFactory {
+  export interface MiddlewareFactory {
     (router: Router, dependencies: any): Middleware;
   }
 
-  interface RouterOptions {
+  export interface RouterOptions {
     defaultRoute?: string;
     defaultParams?: object;
     trailingSlash?: boolean;
@@ -65,7 +65,7 @@ declare module "router5" {
     allowNotFound?: boolean;
   }
 
-  interface Router {
+  export interface Router {
     makeState(name: string, params: object, path: string, metaParams?: object, source?: string): object;
     makeNotFoundPath(path: string): object;
     getState(): State;
@@ -111,22 +111,13 @@ declare module "router5" {
   }
 
 
-  var errCodes: ErrorCodes;
-  var constants: Constants;
-  var transitionPath: (toState: any, fromState: any) => any;
-  var loggerPlugin: PluginFactory;
-  var createRouter: (routes?: any, options?: any, dependencies?: any) => Router;
+  export var errCodes: ErrorCodes;
+  export var constants: Constants;
+  export var transitionPath: (toState: any, fromState: any) => any;
+  export var loggerPlugin: PluginFactory;
 
+  var createRouter: (routes?: any, options?: any, dependencies?: any) => Router;
   export default createRouter;
-  export {
-    transitionPath,
-    errCodes,
-    constants,
-    loggerPlugin,
-    Router,
-    PluginFactory,
-    State,
-  };
 }
 
 declare module "router5/plugins/browser" {
