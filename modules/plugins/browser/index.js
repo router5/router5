@@ -102,7 +102,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             const historyState = browser.getState();
             const replace = opts.replace || fromState && router.areStatesEqual(toState, fromState, false) ||
                 opts.reload && historyState && router.areStatesEqual(toState, historyState, false);
-            updateBrowserState(toState, router.buildUrl(toState.name, toState.params), replace);
+            updateBrowserState(toState, router.buildUrl(toState.name, toState.params) + browser.getHash(), replace);
         }
 
         return { onStart, onStop, onTransitionSuccess, onPopState };
