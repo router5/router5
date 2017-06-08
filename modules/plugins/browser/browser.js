@@ -33,12 +33,14 @@ const getLocation = (opts) => {
 
 const getState = () => window.history.state;
 
+const getHash = () => window.location.hash;
+
 /**
  * Export browser object
  */
 let browser = {};
 if (isBrowser) {
-    browser = {getBase, pushState, replaceState, addPopstateListener, removePopstateListener, getLocation, getState};
+    browser = {getBase, pushState, replaceState, addPopstateListener, removePopstateListener, getLocation, getState, getHash};
 } else {
     // istanbul ignore next
     browser = {
@@ -48,7 +50,8 @@ if (isBrowser) {
         addPopstateListener:    noop,
         removePopstateListener: noop,
         getLocation:            identity(''),
-        getState:               identity(null)
+        getState:               identity(null),
+        getHash:                identity('')
     };
 }
 
