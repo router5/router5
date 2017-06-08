@@ -40,6 +40,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
 
         function updateBrowserState(state, url, replace) {
+            state = { ...browser.getState(), ...state };
             if (replace) browser.replaceState(state, '', url);
             else browser.pushState(state, '', url);
         }
