@@ -40,9 +40,9 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
 
         function updateBrowserState(state, url, replace) {
-            state = { ...browser.getState(), ...state };
-            if (replace) browser.replaceState(state, '', url);
-            else browser.pushState(state, '', url);
+            const finalState = { ...browser.getState(), ...state };
+            if (replace) browser.replaceState(finalState, '', url);
+            else browser.pushState(finalState, '', url);
         }
 
         function onPopState(evt) {
