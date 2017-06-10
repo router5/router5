@@ -53,7 +53,8 @@ class BaseLink extends Component {
             className,
             activeClassName,
             children,
-            title
+            title,
+            onMouseOver,
         } = this.props;
 
         const active = this.isActive();
@@ -67,6 +68,7 @@ class BaseLink extends Component {
                 href,
                 className: linkclassName,
                 onClick: this.clickHandler,
+                onMouseOver,
                 title
             },
             children
@@ -84,7 +86,8 @@ BaseLink.propTypes = {
     routeOptions:    PropTypes.object,
     activeClassName: PropTypes.string,
     activeStrict:    PropTypes.bool,
-    onClick:         PropTypes.func
+    onClick:         PropTypes.func,
+    onMouseOver:     PropTypes.func
 };
 
 BaseLink.defaultProps = {
