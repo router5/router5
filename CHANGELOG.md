@@ -1,3 +1,13 @@
+<a name="4.3.0"></a>
+# [4.3.0](https://github.com/router5/react-router5/compare/v4.2.1...v4.3.0) (2017-06-11)
+
+
+### Features
+
+* support onMouseOver event handler in links ([452be83](https://github.com/router5/react-router5/commit/452be83))
+
+
+
 <a name="4.2.1"></a>
 ## [4.2.1](https://github.com/router5/react-router5/compare/v4.2.0...v4.2.1) (2017-05-17)
 

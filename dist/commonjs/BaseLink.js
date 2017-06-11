@@ -84,7 +84,8 @@ var BaseLink = function (_Component) {
                 className = _props.className,
                 activeClassName = _props.activeClassName,
                 children = _props.children,
-                title = _props.title;
+                title = _props.title,
+                onMouseOver = _props.onMouseOver;
 
 
             var active = this.isActive();
@@ -95,6 +96,7 @@ var BaseLink = function (_Component) {
                 href: href,
                 className: linkclassName,
                 onClick: this.clickHandler,
+                onMouseOver: onMouseOver,
                 title: title
             }, children);
         }
@@ -113,7 +115,8 @@ BaseLink.propTypes = {
     routeOptions: _propTypes2.default.object,
     activeClassName: _propTypes2.default.string,
     activeStrict: _propTypes2.default.bool,
-    onClick: _propTypes2.default.func
+    onClick: _propTypes2.default.func,
+    onMouseOver: _propTypes2.default.func
 };
 
 BaseLink.defaultProps = {
