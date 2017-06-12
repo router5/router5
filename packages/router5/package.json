@@ -1,0 +1,47 @@
+{
+  "name": "router5",
+  "version": "4.6.0",
+  "description": "A simple, powerful, view-agnostic, modular and extensible router",
+  "main": "index.js",
+  "jsnext:main": "dist/es/index.js",
+  "scripts": {
+    "clean": "babel-node scripts/clean.js",
+    "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
+    "build:cjs": "babel modules --out-dir ./",
+    "build:umd:core": "rollup -c rollup.config.js && rollup -c rollup.config.js --uglify",
+    "build:umd:browser": "rollup -c rollup.config.js --module browser",
+    "build:umd:persistentParams": "rollup -c rollup.config.js --module persistentParams",
+    "build:umd:listeners": "rollup -c rollup.config.js --module listeners",
+    "build:umd": "npm run build:umd:core && npm run build:umd:browser && npm run build:umd:persistentParams && npm run build:umd:listeners",
+    "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
+    "test": "mocha --compilers js:babel-core/register --recursive --require ./tests/_helpers.js tests/**/*.js",
+    "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./tests/_helpers.js 'tests/**/*.js'",
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "lint": "eslint modules",
+    "release": "./scripts/release.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router",
+    "routing",
+    "html5",
+    "functional",
+    "reactive",
+    "universal",
+    "isomorphic"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router/router5/issues"
+  },
+  "homepage": "http://router5.github.io",
+  "dependencies": {
+    "route-node": "1.8.2",
+    "router5.transition-path": "4.0.1"
+  },
+  "typings": "./index.d.ts"
+}
