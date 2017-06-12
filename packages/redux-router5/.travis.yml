@@ -1,9 +1,0 @@
-language: node_js
-node_js:
-  - '4.4'
-before_install:
-  - npm install -g babel-cli
-script:
-  - npm run lint
-  - npm run build
-  - npm run test

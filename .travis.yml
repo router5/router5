@@ -5,7 +5,6 @@ node_js:
 before_script:
   - lerna bootstrap
 script:
-  - yarn run lint
+  - yarn run check
   - yarn run build
-  - yarn run test
 # after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

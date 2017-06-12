@@ -7,7 +7,8 @@
     "clean": "lerna run clean",
     "build": "lerna run build",
     "test": "lerna run test",
-    "lint": "lerna run lint"
+    "lint": "lerna run lint",
+    "check": "yarn run lint && yarn run test"
   },
   "repository": {
     "type": "git",
