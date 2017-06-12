@@ -3,8 +3,8 @@ cache: yarn
 node_js:
   - '7'
 before_script:
-  - yarn run bootstrap
+  - npm run bootstrap
 script:
-  - yarn run check
-  - yarn run build
+  - npm run build
+  - npm run check
 # after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
