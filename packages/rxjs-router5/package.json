@@ -1,0 +1,42 @@
+{
+  "name": "rxjs-router5",
+  "version": "1.0.1",
+  "description": "RxJS 5+ plugin for router5",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build:cjs": "babel modules --out-dir ./",
+    "build": "rimraf dist && npm run build:cjs",
+    "lint": "eslint modules",
+    "test": "mocha --compilers js:babel-core/register --recursive test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/rxjs-router5.git"
+  },
+  "keywords": [
+    "router",
+    "rx",
+    "rxjs",
+    "stream",
+    "reactive",
+    "router5"
+  ],
+  "author": "Thomas Roch <thomas.c.roch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router/rxjs-router5/issues"
+  },
+  "homepage": "http://router5.github.io",
+  "dependencies": {
+    "router5.transition-path": "~4.0.1",
+    "rxjs": "~5.0.0-beta.11"
+  },
+  "devDependencies": {
+    "router5": "^4.0.2"
+  },
+  "peerDependencies": {
+    "router5": "^4.0.0",
+    "rxjs": "^5.0.0-beta.11"
+  }
+}
