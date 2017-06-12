@@ -1,0 +1,39 @@
+{
+  "name": "xstream-router5",
+  "version": "1.0.1",
+  "description": "xstream plugin for router5",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel modules --out-dir ./",
+    "lint": "eslint modules",
+    "test": "mocha --compilers js:babel-core/register test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/xstream-router5.git"
+  },
+  "keywords": [
+    "router",
+    "xstream",
+    "reactive",
+    "stream",
+    "router5"
+  ],
+  "author": "Thomas Roch <thomas.c.roch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router/xstream-router5/issues"
+  },
+  "homepage": "http://router5.github.io",
+  "dependencies": {
+    "router5.transition-path": "~4.0.1",
+    "xstream": "~6.0.0"
+  },
+  "devDependencies": {
+    "router5": "^4.0.2"
+  },
+  "peerDependencies": {
+    "router5": "^4.0.0",
+    "xstream": "^6.0.0"
+  }
+}
