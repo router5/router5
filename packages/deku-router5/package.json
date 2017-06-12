@@ -1,0 +1,41 @@
+{
+  "name": "deku-router5",
+  "version": "4.0.0",
+  "description": "router5 helpers for Deku",
+  "main": "dist/commonjs/index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build:cjs": "babel modules --out-dir dist/commonjs",
+    "build:umd": "rollup -c rollup.config.js",
+    "build": "npm run clean && npm run build:cjs && npm run build:umd",
+    "test": "echo 'no tests specified yet'",
+    "lint": "eslint modules",
+    "release": "./scripts/release.js",
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/deku-router5.git"
+  },
+  "keywords": [
+    "router",
+    "html5",
+    "history",
+    "tree",
+    "react",
+    "functional"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/deku-router5/issues"
+  },
+  "homepage": "http://router5.github.com/router5/deku-router5",
+  "peerDependencies": {
+    "router5": "^4.0.0",
+    "deku": "~0.5.0 || ^1.0.0"
+  },
+  "dependencies": {
+    "is-equal-shallow": "^0.1.3"
+  }
+}

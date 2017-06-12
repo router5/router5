@@ -1,0 +1,7 @@
+**/.*
+node_modules
+npm-debug.log
+test
+scripts
+*.md
+*.config.js
