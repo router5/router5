@@ -10,8 +10,8 @@ It demonstrates different ways to use router5 functionalities.
 ## Build an example
 
 ```sh
-npm run build -- --app <example-dir>
-# e.g. npm run build -- --app deku-redux
+npm run build:dev -- --app <example-dir>
+# e.g. npm run build:dev -- --app deku-redux
 ```
 
 App directories: `react`, `deku`, `react-redux` or `deku-redux`
@@ -27,12 +27,12 @@ Then navigate to http://localhost:8080
 ## Related packages
 
 - [react](https://github.com/facebook/react)
-- [react-router5](https://github.com/router5/react-router5)
-- [react-redux](https://github.com/rackt/react-redux)
-- [redux-router5](https://github.com/router5/redux-router5)
+- [react-router5](../react-router5)
+- [react-redux](https://github.com/reactjs/react-redux)
+- [redux-router5](../redux-router5)
 - [deku](https://github.com/dekujs/deku)
 - [deku-redux](https://github.com/troch/deku-redux)
-- [deku-router5](https://github.com/router5/deku-router5)
+- [deku-router5](../deku-router5)
 
 
 ## In progress

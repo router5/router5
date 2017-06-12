@@ -1,21 +1,23 @@
-var path       = require('path');
-var webpack    = require('webpack');
+const path       = require('path');
+const webpack    = require('webpack');
 
-var argv = require('yargs').argv;
-var app  = argv.app || 'react';
-var isProd = process.env.NODE_ENV === 'production';
+const argv = require('yargs').argv;
+const app  = argv.app || 'react';
+const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
     entry: [
         './apps/' + app + '/main.js'
     ],
     output: {
-        path: 'build/',
+        path: path.join(__dirname, 'build'),
         filename: isProd ? 'router5-' + app + '-example.js' : 'app.js'
     },
-    plugins: [
-        new webpack.optimize.OccurenceOrderPlugin()
-    ].concat(!isProd ? [] : [
+    plugins: isProd ? [] : [
+        new webpack.LoaderOptionsPlugin({
+            minimize: isProd,
+            debug: false
+        }),
         new webpack.optimize.UglifyJsPlugin({
             compressor: {
                 warnings: false
@@ -26,11 +28,11 @@ module.exports = {
                 'NODE_ENV': JSON.stringify('production')
             }
         })
-    ]),
+    ],
     module: {
-        loaders: [{
+        rules: [{
             test: /\.js$/,
-            loaders: ['babel'],
+            loader: 'babel-loader',
             include: path.join(__dirname, 'apps')
         }]
     }
