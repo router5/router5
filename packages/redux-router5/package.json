@@ -1,0 +1,66 @@
+{
+  "name": "redux-router5",
+  "version": "4.2.3",
+  "description": "Router5 integration with redux",
+  "main": "index.js",
+  "module": "dist/es/index.js",
+  "jnext:main": "dist/es/index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
+    "build:cjs": "babel modules --out-dir ./",
+    "build:umd": "rollup -c rollup.config.js -f umd",
+    "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
+    "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'",
+    "clog": "conventional-changelog -i CHANGELOG.md -p angular -w",
+    "lint": "eslint modules",
+    "release": "./scripts/release.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/redux-router5.git"
+  },
+  "keywords": [
+    "router",
+    "redux",
+    "react",
+    "flux",
+    "router5",
+    "functional"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/redux-router5/issues"
+  },
+  "homepage": "http://router5.github.com/router5/redux-router5",
+  "devDependencies": {
+    "babel-core": "~6.9.1",
+    "babel-eslint": "~6.0.4",
+    "babel-plugin-transform-export-extensions": "~6.8.0",
+    "babel-plugin-transform-object-rest-spread": "~6.8.0",
+    "babel-preset-es2015": "~6.9.0",
+    "babel-preset-es2015-native-modules": "^6.9.4",
+    "babel-preset-es2015-rollup": "~1.1.1",
+    "chai": "^3.5.0",
+    "conventional-changelog": "^1.1.0",
+    "eslint": "^2.11.1",
+    "immutable": "^3.0.0",
+    "mocha": "^2.5.3",
+    "rimraf": "^2.5.2",
+    "rollup": "^0.26.3",
+    "rollup-plugin-babel": "^2.4.0",
+    "rollup-plugin-npm": "^1.4.0",
+    "yargs": "^4.7.1"
+  },
+  "peerDependencies": {
+    "router5": "^4.0.0",
+    "redux": "^3.0.0"
+  },
+  "optionalDependencies": {
+    "immutable": "^3.0.0"
+  },
+  "dependencies": {
+    "router5.transition-path": "~4.0.1"
+  }
+}
