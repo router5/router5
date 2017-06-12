@@ -1,0 +1,29 @@
+{
+  "name": "router5.helpers",
+  "version": "1.2.0",
+  "description": "Router5 helpers for comparing and checking routes",
+  "main": "index.js",
+  "scripts": {
+    "build:cjs": "babel modules/router5Helpers.js -o ./index.js",
+    "build:umd": "BABEL_ENV=umd babel modules --out-dir ./dist/umd/",
+    "build": "rimraf dist && npm run build:cjs && npm run build:umd",
+    "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/router5/helpers.git"
+  },
+  "keywords": [
+    "router5",
+    "helpers"
+  ],
+  "author": "Thomas Roch <thomas.c.roch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/helpers/issues"
+  },
+  "homepage": "https://router5.github.io",
+  "devDependencies": {
+    "babel-plugin-transform-es2015-modules-umd": "~6.24.1"
+  }
+}
