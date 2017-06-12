@@ -3,7 +3,7 @@ cache: yarn
 node_js:
   - '7'
 before_script:
-  - lerna bootstrap
+  - yarn run bootstrap
 script:
   - yarn run check
   - yarn run build
