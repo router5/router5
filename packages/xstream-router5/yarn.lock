@@ -2,9 +2,33 @@
 # yarn lockfile v1
 
 
-router5.transition-path@~4.0.1:
+path-parser@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-2.0.2.tgz#ab90ed1053b682681d1120a69208f6f6a6a734c2"
+  dependencies:
+    search-params "~1.3.0"
+
+route-node@1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-1.8.2.tgz#0e10c324b00ad9bc9b398bbfb97466fad1f9c422"
+  dependencies:
+    path-parser "2.0.2"
+    search-params "~1.3.0"
+
+router5.transition-path@4.0.1, router5.transition-path@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/router5.transition-path/-/router5.transition-path-4.0.1.tgz#6d61d6b78e233aeff2e68f3b91b9a83338c2f723"
+
+router5@^4.0.2:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/router5/-/router5-4.6.0.tgz#c47aff727bedb2cc53ad4783a2fc3569985d0571"
+  dependencies:
+    route-node "1.8.2"
+    router5.transition-path "4.0.1"
+
+search-params@~1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/search-params/-/search-params-1.3.0.tgz#ba1e1c01dcbd8a2e41a25236f602f2cbf710d688"
 
 xstream@~6.0.0:
   version "6.0.0"
