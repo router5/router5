@@ -6,7 +6,8 @@ const defaultOptions = {
     forceDeactivate: true,
     useHash: false,
     hashPrefix: '',
-    base: false
+    base: false,
+    mergeState: false
 };
 
 const source = 'popstate';
@@ -40,7 +41,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
 
         function updateBrowserState(state, url, replace) {
-            const finalState = { ...browser.getState(), ...state };
+            const finalState = options.mergeState === true ? { ...browser.getState(), ...state } : state;
             if (replace) browser.replaceState(finalState, '', url);
             else browser.pushState(finalState, '', url);
         }
