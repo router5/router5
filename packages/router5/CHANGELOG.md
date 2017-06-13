@@ -1,3 +1,31 @@
+<a name="4.7.1"></a>
+## [4.7.1](https://github.com/router5/router5/compare/v4.6.0...v4.7.1) (2017-06-13)
+
+
+### Bug Fixes
+
+* fix error codes object name in TypesSript definitions [@iotch](https://github.com/iotch) ([17bae62](https://github.com/router5/router5/commit/17bae62))
+* only add to browser history state base router state attributes ([975da2e](https://github.com/router5/router5/commit/975da2e))
+
+
+### Features
+
+* add mergeState option in browser plugin to merge router state into current history state [@iotch](https://github.com/iotch) ([7a9e725](https://github.com/router5/router5/commit/7a9e725))
+* add preserveHash option to browser plugin to preserve initial URL hash [@iotch](https://github.com/iotch) ([27c8258](https://github.com/router5/router5/commit/27c8258))
+
+
+
+<a name="4.7.0"></a>
+# [4.7.0](https://github.com/router5/router5/compare/v4.6.0...v4.7.0) (2017-06-13)
+
+
+### Features
+
+* add mergeState option in browser plugin to merge router state into current history state [@iotch](https://github.com/iotch) ([7a9e725](https://github.com/router5/router5/commit/7a9e725))
+* add preserveHash option to browser plugin to preserve initial URL hash [@iotch](https://github.com/iotch) ([27c8258](https://github.com/router5/router5/commit/27c8258))
+
+
+
 <a name="4.6.0"></a>
 # [4.6.0](https://github.com/router5/router5/compare/v4.5.2...v4.6.0) (2017-06-06)
 

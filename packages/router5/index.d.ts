@@ -111,7 +111,7 @@ declare module "router5" {
   }
 
 
-  export var errCodes: ErrorCodes;
+  export var errorCodes: ErrorCodes;
   export var constants: Constants;
   export var transitionPath: (toState: any, fromState: any) => any;
   export var loggerPlugin: PluginFactory;
@@ -127,6 +127,8 @@ declare module "router5/plugins/browser" {
     useHash?: boolean;
     hashPrefix?: string;
     base?: string;
+    mergeState?: boolean;
+    preserveHash?: boolean;
   }
 
   var browserPlugin: (options: BrowserPluginOptions) => PluginFactory;

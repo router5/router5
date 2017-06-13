@@ -75,12 +75,16 @@ var getState = function getState() {
     return window.history.state;
 };
 
+var getHash = function getHash() {
+    return window.location.hash;
+};
+
 /**
  * Export browser object
  */
 var browser = {};
 if (isBrowser) {
-    browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation, getState: getState };
+    browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation, getState: getState, getHash: getHash };
 } else {
     // istanbul ignore next
     browser = {
@@ -90,7 +94,8 @@ if (isBrowser) {
         addPopstateListener: noop,
         removePopstateListener: noop,
         getLocation: identity(''),
-        getState: identity(null)
+        getState: identity(null),
+        getHash: identity('')
     };
 }
 
@@ -147,7 +152,9 @@ var defaultOptions = {
     forceDeactivate: true,
     useHash: false,
     hashPrefix: '',
-    base: false
+    base: false,
+    mergeState: false,
+    preserveHash: false
 };
 
 var source = 'popstate';
@@ -189,7 +196,14 @@ function browserPluginFactory() {
         };
 
         function updateBrowserState(state, url, replace) {
-            if (replace) browser.replaceState(state, '', url);else browser.pushState(state, '', url);
+            var trimmedState = state ? {
+                meta: state.meta,
+                name: state.name,
+                params: state.params,
+                path: state.path
+            } : state;
+            var finalState = options.mergeState === true ? _extends({}, browser.getState(), trimmedState) : trimmedState;
+            if (replace) browser.replaceState(finalState, '', url);else browser.pushState(finalState, '', url);
         }
 
         function onPopState(evt) {
@@ -254,7 +268,11 @@ function browserPluginFactory() {
         function onTransitionSuccess(toState, fromState, opts) {
             var historyState = browser.getState();
             var replace = opts.replace || fromState && router.areStatesEqual(toState, fromState, false) || opts.reload && historyState && router.areStatesEqual(toState, historyState, false);
-            updateBrowserState(toState, router.buildUrl(toState.name, toState.params), replace);
+            var url = router.buildUrl(toState.name, toState.params);
+            if (fromState === null && options.preserveHash === true) {
+                url += browser.getHash();
+            }
+            updateBrowserState(toState, url, replace);
         }
 
         return { onStart: onStart, onStop: onStop, onTransitionSuccess: onTransitionSuccess, onPopState: onPopState };
