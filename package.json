@@ -5,7 +5,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run clean",
-    "build": "lerna run build",
+    "build": "npm run build:umd && lerna run build",
     "build:umd": "rollup -c rollup.config.js",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",
     "lint": "eslint packages/*/modules",

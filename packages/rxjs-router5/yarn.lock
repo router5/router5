@@ -20,8 +20,8 @@ router5.transition-path@4.0.1, router5.transition-path@~4.0.1:
   resolved "https://registry.yarnpkg.com/router5.transition-path/-/router5.transition-path-4.0.1.tgz#6d61d6b78e233aeff2e68f3b91b9a83338c2f723"
 
 router5@^4.0.2:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/router5/-/router5-4.6.0.tgz#c47aff727bedb2cc53ad4783a2fc3569985d0571"
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/router5/-/router5-4.7.1.tgz#d8b8c011eb487ed37eaeac5ddd7ba8b4463ecdc9"
   dependencies:
     route-node "1.8.2"
     router5.transition-path "4.0.1"

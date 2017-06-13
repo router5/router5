@@ -21,8 +21,5 @@
   "bugs": {
     "url": "https://github.com/router5/helpers/issues"
   },
-  "homepage": "https://router5.github.io",
-  "devDependencies": {
-    "babel-plugin-transform-es2015-modules-umd": "~6.24.1"
-  }
+  "homepage": "https://router5.github.io"
 }
