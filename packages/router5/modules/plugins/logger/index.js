@@ -31,7 +31,7 @@ function loggerPlugin() {
             endGroup();
         }
     };
-};
+}
 
 loggerPlugin.pluginName = 'LOGGER_PLUGIN';
 

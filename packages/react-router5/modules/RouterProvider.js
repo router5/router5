@@ -13,7 +13,9 @@ class RouterProvider extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.router !== nextProps.router) {
-            console.error('[react-router5][RouterProvider] does not support changing the router object.');
+            console.error(
+                '[react-router5][RouterProvider] does not support changing the router object.'
+            );
         }
     }
 
@@ -24,12 +26,12 @@ class RouterProvider extends Component {
 }
 
 RouterProvider.propTypes = {
-    router:   PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
     children: PropTypes.element.isRequired
 };
 
 RouterProvider.childContextTypes = {
-    router:   PropTypes.object.isRequired
+    router: PropTypes.object.isRequired
 };
 
 export default RouterProvider;

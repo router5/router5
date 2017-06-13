@@ -20,7 +20,8 @@ function withRoute(BaseComponent) {
                 '[react-router5][withRoute] missing listeners plugin'
             );
 
-            this.listener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
+            this.listener = (toState, fromState) =>
+                this.setState({ previousRoute: fromState, route: toState });
             this.router.addListener(this.listener);
         }
 
@@ -37,11 +38,17 @@ function withRoute(BaseComponent) {
 
         render() {
             ifNot(
-                !this.props.router && !this.props.route && !this.props.previousRoute,
+                !this.props.router &&
+                    !this.props.route &&
+                    !this.props.previousRoute,
                 '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.'
             );
 
-            return createElement(BaseComponent, { ...this.props, ...this.state, router: this.router });
+            return createElement(BaseComponent, {
+                ...this.props,
+                ...this.state,
+                router: this.router
+            });
         }
     }
 
@@ -49,7 +56,8 @@ function withRoute(BaseComponent) {
         router: PropTypes.object.isRequired
     };
 
-    ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';
+    ComponentWithRoute.displayName =
+        'WithRoute[' + getDisplayName(BaseComponent) + ']';
 
     return ComponentWithRoute;
 }

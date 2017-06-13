@@ -1,4 +1,4 @@
-const toFunction = (val) => typeof val === 'function' ? val : () => () => val;
+const toFunction = val => (typeof val === 'function' ? val : () => () => val);
 
 export default function withRouteLifecycle(router) {
     let canDeactivateFactories = {};
@@ -13,11 +13,11 @@ export default function withRouteLifecycle(router) {
     router.clearCanDeactivate = clearCanDeactivate;
 
     function getLifecycleFactories() {
-        return [ canDeactivateFactories, canActivateFactories ];
+        return [canDeactivateFactories, canActivateFactories];
     }
 
     function getLifecycleFunctions() {
-        return [ canDeactivateFunctions, canActivateFunctions ];
+        return [canDeactivateFunctions, canActivateFunctions];
     }
 
     /**

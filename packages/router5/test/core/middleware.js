@@ -31,7 +31,7 @@ const listeners = {
 describe('core/middleware', () => {
     let router, sandbox;
 
-    before(() => router = createTestRouter().clone().start());
+    before(() => (router = createTestRouter().clone().start()));
     after(() => router.stop());
 
     afterEach(() => sandbox.restore());
@@ -39,12 +39,12 @@ describe('core/middleware', () => {
         sandbox = sinon.sandbox.create();
     });
 
-    it('should support a transition middleware', function (done) {
+    it('should support a transition middleware', function(done) {
         sandbox.spy(listeners, 'transition');
         router.stop();
         router.useMiddleware(() => listeners.transition);
         router.start('', () => {
-            router.navigate('users', function (err, state) {
+            router.navigate('users', function(err, state) {
                 expect(listeners.transition).to.have.been.called;
                 expect(state.hitMware).to.equal(true);
                 expect(err).to.equal(null);
@@ -53,12 +53,14 @@ describe('core/middleware', () => {
         });
     });
 
-    it('should log a warning if state is changed during transition', function (done) {
+    it('should log a warning if state is changed during transition', function(
+        done
+    ) {
         sandbox.stub(console, 'error');
         router.stop();
         router.useMiddleware(() => listeners.transitionMutate);
         router.start('', () => {
-            router.navigate('orders', function (err, state) {
+            router.navigate('orders', function(err, state) {
                 expect(console.error).to.have.been.called;
                 expect(err).to.equal(null);
                 router.clearMiddleware();
@@ -67,12 +69,12 @@ describe('core/middleware', () => {
         });
     });
 
-    it('should fail transition if middleware returns an error', function (done) {
+    it('should fail transition if middleware returns an error', function(done) {
         sandbox.spy(listeners, 'transitionErr');
         router.stop();
         router.useMiddleware(() => listeners.transitionErr);
-        router.start('', (err) => {
-            router.navigate('users', function (err, state) {
+        router.start('', err => {
+            router.navigate('users', function(err, state) {
                 expect(listeners.transitionErr).to.have.been.called;
                 expect(err.code).to.equal(errorCodes.TRANSITION_ERR);
                 expect(err.reason).to.equal('because');
@@ -81,14 +83,17 @@ describe('core/middleware', () => {
         });
     });
 
-    it('should be able to take more than one middleware', function (done) {
+    it('should be able to take more than one middleware', function(done) {
         sandbox.spy(listeners, 'transition');
         sandbox.spy(listeners, 'transitionErr');
         router.stop();
         router.clearMiddleware();
-        router.useMiddleware(() => listeners.transition, () => listeners.transitionErr);
+        router.useMiddleware(
+            () => listeners.transition,
+            () => listeners.transitionErr
+        );
         router.start('', (err, state) => {
-            router.navigate('users', function (err, state) {
+            router.navigate('users', function(err, state) {
                 expect(listeners.transition).to.have.been.called;
                 expect(listeners.transitionErr).to.have.been.called;
                 done();

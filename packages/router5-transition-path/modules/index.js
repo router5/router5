@@ -1,5 +1,5 @@
 export function nameToIDs(name) {
-    return name.split('.').reduce(function (ids, name) {
+    return name.split('.').reduce(function(ids, name) {
         return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
     }, []);
 }
@@ -40,7 +40,9 @@ function transitionPath(toState, fromState) {
             if (leftParams.length !== rightParams.length) return i;
             if (leftParams.length === 0) continue;
 
-            const different = Object.keys(leftParams).some(p => rightParams[p] !== leftParams[p]);
+            const different = Object.keys(leftParams).some(
+                p => rightParams[p] !== leftParams[p]
+            );
             if (different) {
                 return i;
             }
@@ -53,15 +55,16 @@ function transitionPath(toState, fromState) {
     if (!fromState) {
         i = 0;
     } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
-        console.warn('[router5.transition-path] Some states are missing metadata, reloading all segments');
+        console.warn(
+            '[router5.transition-path] Some states are missing metadata, reloading all segments'
+        );
         i = 0;
     } else {
         i = pointOfDifference();
     }
 
-
     const toDeactivate = fromStateIds.slice(i).reverse();
-    const toActivate   = toStateIds.slice(i);
+    const toActivate = toStateIds.slice(i);
 
     const intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
 

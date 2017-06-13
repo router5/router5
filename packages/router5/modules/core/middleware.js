@@ -29,11 +29,11 @@ export default function withMiddleware(router) {
         return router;
     }
 
-    function getMiddlewareFactories () {
+    function getMiddlewareFactories() {
         return middlewareFactories;
     }
 
-    function getMiddlewareFunctions () {
+    function getMiddlewareFunctions() {
         return middlewareFunctions;
     }
 

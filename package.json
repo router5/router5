@@ -9,7 +9,15 @@
     "build:umd": "rollup -c rollup.config.js",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",
     "lint": "eslint packages/*/modules",
-    "check": "yarn run lint && yarn run test"
+    "check": "yarn run lint && yarn run test",
+    "format": "prettier",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --tab-width 4 --single-quote --write",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",
@@ -51,12 +59,15 @@
     "del": "~2.2.2",
     "enzyme": "~2.8.2",
     "eslint": "~3.19.0",
+    "husky": "~0.13.4",
     "isparta": "~4.0.0",
     "jsdom": "~10.0.0",
     "lerna": "~2.0.0-rc.5",
+    "lint-staged": "~3.6.1",
     "mkdirp": "~0.5.1",
     "mocha": "~3.3.0",
     "mocha-lcov-reporter": "~1.3.0",
+    "prettier": "~1.4.4",
     "promisify-node": "~0.4.0",
     "react": "~15.5.4",
     "react-addons-test-utils": "~15.5.1",

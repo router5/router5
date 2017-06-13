@@ -3,23 +3,29 @@ import { spy } from 'sinon';
 import createRouter, { RouteNode } from '../../modules';
 
 const canActivate = () => () => true;
-const routes = [{
-    name: 'a',
-    path: '/path',
-    canActivate,
-    children: [{
-        name: 'b',
+const routes = [
+    {
+        name: 'a',
         path: '/path',
         canActivate,
-        children: [{
-            name: 'c',
-            path: '/path',
-            canActivate
-        }]
-    }]
-}];
+        children: [
+            {
+                name: 'b',
+                path: '/path',
+                canActivate,
+                children: [
+                    {
+                        name: 'c',
+                        path: '/path',
+                        canActivate
+                    }
+                ]
+            }
+        ]
+    }
+];
 
-describe('createRouter', function () {
+describe('createRouter', function() {
     let router;
 
     before(() => {
@@ -34,16 +40,25 @@ describe('createRouter', function () {
     //     });
     // });
 
-    it('should create a router and register canActivate handlers', function () {
+    it('should create a router and register canActivate handlers', function() {
         router.add(routes);
 
         expect(router.canActivate).to.have.been.calledThrice;
 
         expect(router.canActivate).to.have.been.calledWith('a', canActivate);
         expect(router.canActivate).to.have.been.calledWith('a.b', canActivate);
-        expect(router.canActivate).to.have.been.calledWith('a.b.c', canActivate);
+        expect(router.canActivate).to.have.been.calledWith(
+            'a.b.c',
+            canActivate
+        );
 
-        expect(router.canActivate).to.not.have.been.calledWith('b', canActivate);
-        expect(router.canActivate).to.not.have.been.calledWith('c', canActivate);
+        expect(router.canActivate).to.not.have.been.calledWith(
+            'b',
+            canActivate
+        );
+        expect(router.canActivate).to.not.have.been.calledWith(
+            'c',
+            canActivate
+        );
     });
 });

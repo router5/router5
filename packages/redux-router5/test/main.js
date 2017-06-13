@@ -1,11 +1,16 @@
 import { expect } from 'chai';
-import { routeNodeSelector, router5Reducer, actions, actionTypes } from '../modules';
+import {
+    routeNodeSelector,
+    router5Reducer,
+    actions,
+    actionTypes
+} from '../modules';
 import immutableReducer from '../modules/immutable/reducer';
 import { Record, Map } from 'immutable';
 
-const route1 = { name: 'a.1', meta: { params: {}} };
-const route2 = { name: 'a.2', meta: { params: {}} };
-const route3 = { name: 'b', meta: { params: {}} };
+const route1 = { name: 'a.1', meta: { params: {} } };
+const route2 = { name: 'a.2', meta: { params: {} } };
+const route3 = { name: 'b', meta: { params: {} } };
 const State = Record({
     route: null,
     previousRoute: null,
@@ -48,42 +53,53 @@ describe('redux-router5', () => {
     });
 
     describe('router5Reducer', () => {
+        const types = [
+            {
+                name: 'regular',
+                reducer: router5Reducer,
+                getState: () => ({
+                    route: null,
+                    previousRoute: null,
+                    transitionRoute: null,
+                    transitionError: null
+                })
+            },
+            {
+                name: 'immutable',
+                reducer: immutableReducer,
+                getState: () => new State()
+            }
+        ];
 
-        const types = [{
-             name: 'regular',
-             reducer: router5Reducer,
-             getState: () => ({
-                route: null,
-                previousRoute: null,
-                transitionRoute: null,
-                transitionError: null
-        })}, {
-            name: 'immutable',
-            reducer: immutableReducer,
-            getState: () => new State()
-        }];
-
-        types.forEach((type) => {
-
+        types.forEach(type => {
             let state;
 
-            before(() => state = type.getState());
+            before(() => (state = type.getState()));
 
             it(`[${type.name}] should handle transitionStart actions`, () => {
-                state = type.reducer(state, actions.transitionStart(route2, route1));
+                state = type.reducer(
+                    state,
+                    actions.transitionStart(route2, route1)
+                );
                 expect(state.transitionRoute).to.equal(route2);
                 expect(state.transitionError).to.equal(null);
             });
 
             it(`[${type.name}] should handle transitionSuccess actions`, () => {
-                state = type.reducer(state, actions.transitionSuccess(route2, route1));
+                state = type.reducer(
+                    state,
+                    actions.transitionSuccess(route2, route1)
+                );
                 expect(state.transitionRoute).to.equal(null);
                 expect(state.transitionError).to.equal(null);
                 expect(state.route).to.equal(route2);
             });
 
             it(`[${type.name}] should handle transitionError actions`, () => {
-                state = type.reducer(state, actions.transitionError(route2, route1, 'ERR'));
+                state = type.reducer(
+                    state,
+                    actions.transitionError(route2, route1, 'ERR')
+                );
                 expect(state.transitionRoute).to.equal(route2);
                 expect(state.transitionError).to.equal('ERR');
             });
@@ -93,9 +109,7 @@ describe('redux-router5', () => {
                 expect(state.transitionRoute).to.equal(null);
                 expect(state.transitionError).to.equal(null);
             });
-
         });
-
     });
 
     describe('routeNodeSelector', () => {

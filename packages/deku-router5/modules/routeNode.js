@@ -2,7 +2,7 @@ function routeNode(nodeName) {
     return function routeNodeWrapper(RouteSegment) {
         const RouteNode = {
             propTypes: {
-                router: {source: 'router'}
+                router: { source: 'router' }
             },
 
             afterMount({ props }, elm, setState) {
@@ -19,7 +19,11 @@ function routeNode(nodeName) {
                     previousRoute = null;
                 }
 
-                return { type: RouteSegment, children: [], attributes: { ...props, route, previousRoute } };
+                return {
+                    type: RouteSegment,
+                    children: [],
+                    attributes: { ...props, route, previousRoute }
+                };
             }
         };
 

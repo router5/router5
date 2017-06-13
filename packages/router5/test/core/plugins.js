@@ -14,7 +14,7 @@ describe('core/plugins', () => {
             onTransitionError: function onTransitionError() {}
         };
         myPlugin = router => {
-            router.myCustomMethod = function () {};
+            router.myCustomMethod = function() {};
 
             return myPluginMethods;
         };
@@ -22,14 +22,14 @@ describe('core/plugins', () => {
     });
     after(() => router.stop());
 
-    it('should register plugins', function (done) {
+    it('should register plugins', function(done) {
         router.stop();
         router.usePlugin(myPlugin);
         expect(router.hasPlugin('PLUGIN_NAME'));
         router.start('', () => {
             expect(router.myCustomMethod).not.to.equal(undefined);
 
-            router.navigate('orders', function (err, state) {
+            router.navigate('orders', function(err, state) {
                 expect(myPluginMethods.onTransitionStart).to.have.been.called;
                 expect(myPluginMethods.onTransitionSuccess).to.have.been.called;
                 done();

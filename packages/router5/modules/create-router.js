@@ -1,4 +1,4 @@
-import RouteNode  from 'route-node';
+import RouteNode from 'route-node';
 import withUtils from './core/utils';
 import withRouterLifecycle from './core/router-lifecycle';
 import withNavigation from './core/navigation';
@@ -24,14 +24,14 @@ const defaultOptions = {
  * @param  {Object} [dependencies={}] The router dependencies
  * @return {Object}                   The router instance
  */
-function createRouter(routes, opts = {}, deps={}) {
+function createRouter(routes, opts = {}, deps = {}) {
     let routerState = null;
     let stateId = 0;
     const callbacks = {};
     const dependencies = deps;
     const options = { ...defaultOptions };
 
-    Object.keys(opts).forEach((opt) => setOption(opt, opts[opt]));
+    Object.keys(opts).forEach(opt => setOption(opt, opts[opt]));
 
     const router = {
         rootNode,
@@ -73,7 +73,7 @@ function createRouter(routes, opts = {}, deps={}) {
      * @param  {Function} cb        The callback to remove
      */
     function removeEventListener(eventName, cb) {
-        callbacks[eventName] = callbacks[eventName].filter((_cb) => _cb !== cb);
+        callbacks[eventName] = callbacks[eventName].filter(_cb => _cb !== cb);
     }
 
     /**
@@ -96,7 +96,7 @@ function createRouter(routes, opts = {}, deps={}) {
     withNavigation(router);
     withCloning(router, createRouter);
 
-    const rootNode  = routes instanceof RouteNode
+    const rootNode = routes instanceof RouteNode
         ? routes
         : new RouteNode('', '', routes, addCanActivate);
 
@@ -105,7 +105,8 @@ function createRouter(routes, opts = {}, deps={}) {
     return router;
 
     function addCanActivate(route) {
-        if (route.canActivate) router.canActivate(route.name, route.canActivate);
+        if (route.canActivate)
+            router.canActivate(route.name, route.canActivate);
     }
 
     /**
@@ -119,7 +120,8 @@ function createRouter(routes, opts = {}, deps={}) {
      */
     function makeState(name, params, path, metaParams, source) {
         const state = {};
-        const setProp = (key, value) => Object.defineProperty(state, key, { value, enumerable: true });
+        const setProp = (key, value) =>
+            Object.defineProperty(state, key, { value, enumerable: true });
         setProp('name', name);
         setProp('params', params);
         setProp('path', path);
@@ -200,7 +202,7 @@ function createRouter(routes, opts = {}, deps={}) {
      * @return {Object}      The router instance
      */
     function setDependencies(deps) {
-        Object.keys(deps).forEach((depName) => {
+        Object.keys(deps).forEach(depName => {
             dependencies[depName] = deps[depName];
         });
 
@@ -216,7 +218,7 @@ function createRouter(routes, opts = {}, deps={}) {
     }
 
     function getInjectables() {
-        return [ router, getDependencies() ];
+        return [router, getDependencies()];
     }
 
     function executeFactory(factoryFunction) {

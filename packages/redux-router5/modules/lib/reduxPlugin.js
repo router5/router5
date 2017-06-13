@@ -13,7 +13,7 @@ function reduxPluginFactory(dispatch) {
                 dispatch(actions.transitionError(toState, fromState, err));
             }
         };
-    };
+    }
 
     reduxPlugin.pluginName = 'REDUX_PLUGIN';
 

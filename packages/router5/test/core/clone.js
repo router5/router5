@@ -45,6 +45,8 @@ describe('core/clone', () => {
 
         const clonedRouter = router.clone();
 
-        expect(clonedRouter.getLifecycleFactories()[1].admin).to.equal(canActivateAdmin);
+        expect(clonedRouter.getLifecycleFactories()[1].admin).to.equal(
+            canActivateAdmin
+        );
     });
 });

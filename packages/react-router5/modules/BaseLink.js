@@ -8,8 +8,10 @@ class BaseLink extends Component {
         this.router = context.router;
 
         if (!this.router.hasPlugin('BROWSER_PLUGIN')) {
-            console.error('[react-router5][BaseLink] missing browser plugin, href might be build incorrectly');
-        };
+            console.error(
+                '[react-router5][BaseLink] missing browser plugin, href might be build incorrectly'
+            );
+        }
 
         this.isActive = this.isActive.bind(this);
         this.clickHandler = this.clickHandler.bind(this);
@@ -26,7 +28,11 @@ class BaseLink extends Component {
     }
 
     isActive() {
-        return this.router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict);
+        return this.router.isActive(
+            this.props.routeName,
+            this.props.routeParams,
+            this.props.activeStrict
+        );
     }
 
     clickHandler(evt) {
@@ -38,11 +44,16 @@ class BaseLink extends Component {
             }
         }
 
-        const comboKey = evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
+        const comboKey =
+            evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
 
         if (evt.button === 0 && !comboKey) {
             evt.preventDefault();
-            this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+            this.router.navigate(
+                this.props.routeName,
+                this.props.routeParams,
+                this.props.routeOptions
+            );
         }
     }
 
@@ -54,13 +65,14 @@ class BaseLink extends Component {
             activeClassName,
             children,
             title,
-            onMouseOver,
+            onMouseOver
         } = this.props;
 
         const active = this.isActive();
-        const href =  this.buildUrl(routeName, routeParams);
+        const href = this.buildUrl(routeName, routeParams);
         const linkclassName = (className ? className.split(' ') : [])
-            .concat(active ? [activeClassName] : []).join(' ');
+            .concat(active ? [activeClassName] : [])
+            .join(' ');
 
         return React.createElement(
             'a',
@@ -81,20 +93,20 @@ BaseLink.contextTypes = {
 };
 
 BaseLink.propTypes = {
-    routeName:       PropTypes.string.isRequired,
-    routeParams:     PropTypes.object,
-    routeOptions:    PropTypes.object,
+    routeName: PropTypes.string.isRequired,
+    routeParams: PropTypes.object,
+    routeOptions: PropTypes.object,
     activeClassName: PropTypes.string,
-    activeStrict:    PropTypes.bool,
-    onClick:         PropTypes.func,
-    onMouseOver:     PropTypes.func
+    activeStrict: PropTypes.bool,
+    onClick: PropTypes.func,
+    onMouseOver: PropTypes.func
 };
 
 BaseLink.defaultProps = {
     activeClassName: 'active',
-    activeStrict:    false,
-    routeParams:     {},
-    routeOptions:    {}
+    activeStrict: false,
+    routeParams: {},
+    routeOptions: {}
 };
 
 export default BaseLink;

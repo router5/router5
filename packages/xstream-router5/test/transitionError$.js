@@ -15,7 +15,12 @@ describe('transitionError$', () => {
         observables.transitionError$.addListener(listener);
 
         router.invokeEventListeners(constants.TRANSITION_START, state1, null);
-        router.invokeEventListeners(constants.TRANSITION_ERROR, state1, null, error);
+        router.invokeEventListeners(
+            constants.TRANSITION_ERROR,
+            state1,
+            null,
+            error
+        );
 
         expect(listener.next).to.have.been.calledTwice;
         expect(listener.next).to.have.been.calledWith(null);
@@ -34,7 +39,12 @@ describe('transitionError$', () => {
         observables.transitionError$.addListener(listener);
 
         router.invokeEventListeners(constants.TRANSITION_START, state1, null);
-        router.invokeEventListeners(constants.TRANSITION_ERROR, state1, null, error);
+        router.invokeEventListeners(
+            constants.TRANSITION_ERROR,
+            state1,
+            null,
+            error
+        );
         router.invokeEventListeners(constants.TRANSITION_START, state2, null);
 
         expect(listener.next).to.have.been.calledThrice;

@@ -8,7 +8,7 @@ const initialState = {
 };
 
 function router5Reducer(state = initialState, action) {
-    switch(action.type) {
+    switch (action.type) {
         case actionTypes.TRANSITION_START:
             return {
                 ...state,
@@ -42,7 +42,6 @@ function router5Reducer(state = initialState, action) {
         default:
             return state;
     }
-
 }
 
 export default router5Reducer;

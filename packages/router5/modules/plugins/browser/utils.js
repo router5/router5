@@ -12,7 +12,9 @@ export default function withUtils(router, options) {
     }
 
     function urlToPath(url) {
-        const match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
+        const match = url.match(
+            /^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/
+        );
         const path = match ? match[1] : url;
 
         const pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
@@ -20,14 +22,16 @@ export default function withUtils(router, options) {
         if (!pathParts) throw new Error(`[router5] Could not parse url ${url}`);
 
         const pathname = pathParts[1];
-        const hash     = pathParts[2] || '';
-        const search   = pathParts[3] || '';
+        const hash = pathParts[2] || '';
+        const search = pathParts[3] || '';
 
         return (
-            options.useHash
-            ? hash.replace(new RegExp('^#' + options.hashPrefix), '')
-            : (options.base ? pathname.replace(new RegExp('^' + options.base), '') : pathname)
-        ) + search;
+            (options.useHash
+                ? hash.replace(new RegExp('^#' + options.hashPrefix), '')
+                : options.base
+                  ? pathname.replace(new RegExp('^' + options.base), '')
+                  : pathname) + search
+        );
     }
 
     function matchUrl(url) {

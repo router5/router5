@@ -2,7 +2,7 @@ const dotOrEnd = '(\\..+$|$)';
 const dotOrStart = '(^.+\\.|^)';
 
 function getName(route) {
-    return typeof route === 'string' ? route : (route.name || '');
+    return typeof route === 'string' ? route : route.name || '';
 }
 
 function test(route, regex) {
@@ -14,12 +14,15 @@ function normaliseSegment(name) {
 }
 
 function testRouteWithSegment(before, after) {
-    return function () {
+    return function() {
         const route = arguments[0];
 
         function applySegment(segment) {
-            return test(route, new RegExp(before + normaliseSegment(segment) + after));
-        };
+            return test(
+                route,
+                new RegExp(before + normaliseSegment(segment) + after)
+            );
+        }
 
         if (arguments.length === 2) {
             return applySegment(arguments[1]);
@@ -32,7 +35,11 @@ function testRouteWithSegment(before, after) {
 export function redirect() {
     const fromRouteName = arguments[0];
 
-    const redirectTo = (routeName, routeParams) => () => (toState, fromState, done) => {
+    const redirectTo = (routeName, routeParams) => () => (
+        toState,
+        fromState,
+        done
+    ) => {
         if (toState.name === fromRouteName) {
             const finalRouteParams = typeof routeParams === 'function'
                 ? routeParams(fromState.params)

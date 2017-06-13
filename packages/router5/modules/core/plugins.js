@@ -1,4 +1,11 @@
-const pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
+const pluginMethods = [
+    'onStart',
+    'onStop',
+    'onTransitionSuccess',
+    'onTransitionStart',
+    'onTransitionError',
+    'onTransitionCancel'
+];
 
 export default function withPlugins(router) {
     const plugins = [];
@@ -35,20 +42,29 @@ export default function withPlugins(router) {
      * @return {Boolean}            Whether the plugin has been registered
      */
     function hasPlugin(pluginName) {
-        return plugins.filter(p => p.pluginName === pluginName || p.name === pluginName).length > 0;
+        return (
+            plugins.filter(
+                p => p.pluginName === pluginName || p.name === pluginName
+            ).length > 0
+        );
     }
 
     function startPlugin(plugin) {
         const appliedPlugin = router.executeFactory(plugin);
 
-        const removeEventListeners = pluginMethods.map((methodName) => {
-            if (appliedPlugin[methodName]) {
-                return router.addEventListener(
-                    methodName.toLowerCase().replace(/^on/, '$$').replace(/transition/, '$$'),
-                    appliedPlugin[methodName]
-                );
-            }
-        }).filter(Boolean);
+        const removeEventListeners = pluginMethods
+            .map(methodName => {
+                if (appliedPlugin[methodName]) {
+                    return router.addEventListener(
+                        methodName
+                            .toLowerCase()
+                            .replace(/^on/, '$$')
+                            .replace(/transition/, '$$'),
+                        appliedPlugin[methodName]
+                    );
+                }
+            })
+            .filter(Boolean);
 
         removePluginListeners.push(...removeEventListeners);
     }

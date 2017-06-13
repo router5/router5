@@ -19,12 +19,20 @@ describe('route$', () => {
         expect(listener.next).to.have.been.calledWith(state1);
 
         router.invokeEventListeners(constants.TRANSITION_START, state2, state1);
-        router.invokeEventListeners(constants.TRANSITION_SUCCESS, state2, state1);
+        router.invokeEventListeners(
+            constants.TRANSITION_SUCCESS,
+            state2,
+            state1
+        );
 
         expect(listener.next).to.have.been.calledWith(state2);
 
         router.invokeEventListeners(constants.TRANSITION_START, state3, state2);
-        router.invokeEventListeners(constants.TRANSITION_SUCCESS, state3, state2);
+        router.invokeEventListeners(
+            constants.TRANSITION_SUCCESS,
+            state3,
+            state2
+        );
 
         expect(listener.next).to.have.been.calledWith(state3);
 

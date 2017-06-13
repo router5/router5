@@ -20,7 +20,8 @@ function routeNode(nodeName) {
                     '[react-router5][routeNode] missing listeners plugin'
                 );
 
-                this.nodeListener = (toState, fromState) => this.setState({ previousRoute: fromState, route: toState });
+                this.nodeListener = (toState, fromState) =>
+                    this.setState({ previousRoute: fromState, route: toState });
                 this.router.addNodeListener(nodeName, this.nodeListener);
             }
 
@@ -31,10 +32,12 @@ function routeNode(nodeName) {
             render() {
                 const { props, router } = this;
                 const { previousRoute, route } = this.state;
-                const component = createElement(
-                    RouteSegment,
-                    {...props, router, previousRoute, route }
-                );
+                const component = createElement(RouteSegment, {
+                    ...props,
+                    router,
+                    previousRoute,
+                    route
+                });
 
                 return component;
             }
@@ -44,7 +47,8 @@ function routeNode(nodeName) {
             router: PropTypes.object.isRequired
         };
 
-        RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';
+        RouteNode.displayName =
+            'RouteNode[' + getDisplayName(RouteSegment) + ']';
 
         return RouteNode;
     };

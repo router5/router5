@@ -29,9 +29,9 @@ function rxjsPluginFactory(observer) {
             onTransitionSuccess: dispatch(TRANSITION_SUCCESS),
             onTransitionError: dispatch(TRANSITION_ERROR, true),
             onTransitionStart: dispatch(TRANSITION_START),
-            onTransitionCancel: dispatch(TRANSITION_CANCEL),
+            onTransitionCancel: dispatch(TRANSITION_CANCEL)
         };
-    };
+    }
 
     rxjsPlugin.pluginName = PLUGIN_NAME;
 
@@ -40,19 +40,22 @@ function rxjsPluginFactory(observer) {
 
 function createObservables(router) {
     // Events observable
-    const transitionEvents$ = Rx.Observable.create((observer) => {
-        router.usePlugin(rxjsPluginFactory(observer));
-    }).publish().refCount();
+    const transitionEvents$ = Rx.Observable
+        .create(observer => {
+            router.usePlugin(rxjsPluginFactory(observer));
+        })
+        .publish()
+        .refCount();
 
     // Transition Route
     const transitionRoute$ = transitionEvents$
-        .map(_ => _.type === TRANSITION_START ? _.toState : null)
+        .map(_ => (_.type === TRANSITION_START ? _.toState : null))
         .startWith(null);
 
     // Error
     const transitionError$ = transitionEvents$
-        .filter(_ => _.type )
-        .map(_ => _.type === TRANSITION_ERROR ? _.error : null)
+        .filter(_ => _.type)
+        .map(_ => (_.type === TRANSITION_ERROR ? _.error : null))
         .startWith(null)
         .distinctUntilChanged();
 
@@ -60,7 +63,7 @@ function createObservables(router) {
     const routeState$ = transitionEvents$
         .filter(_ => _.type === TRANSITION_SUCCESS && _.toState !== null)
         .map(({ toState, fromState }) => {
-            const { intersection } =  transitionPath(toState, fromState);
+            const { intersection } = transitionPath(toState, fromState);
             return { intersection, route: toState };
         })
         .startWith({ intersection: '', route: router.getState() });
@@ -69,7 +72,7 @@ function createObservables(router) {
     const route$ = routeState$.map(({ route }) => route);
 
     // Create a route node observable
-    const routeNode = (node) =>
+    const routeNode = node =>
         routeState$
             .filter(({ intersection }) => intersection === node)
             .map(({ route }) => route)

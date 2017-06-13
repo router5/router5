@@ -29,68 +29,88 @@ function withoutMeta(state) {
     };
 }
 
-describe('browserPlugin', function () {
+describe('browserPlugin', function() {
     test(false);
     test(true);
 });
 
 function test(useHash) {
     function makeUrl(path) {
-        return 'https://www.mysite.com:8080' + base + (useHash ? '#' + hashPrefix : '' ) + path;
+        return (
+            'https://www.mysite.com:8080' +
+            base +
+            (useHash ? '#' + hashPrefix : '') +
+            path
+        );
     }
 
-    describe(useHash ? 'With hash' : 'Without hash', function () {
-        before(function () {
+    describe(useHash ? 'With hash' : 'Without hash', function() {
+        before(function() {
             // window.history.replaceState({}, '', base);
             if (router) router.stop();
             router = createTestRouter();
-            router.usePlugin(browserPlugin({ base, useHash, hashPrefix }, mockedBrowser));
+            router.usePlugin(
+                browserPlugin({ base, useHash, hashPrefix }, mockedBrowser)
+            );
         });
 
-        after(function () {
+        after(function() {
             router.stop();
         });
 
-        it('should be registered', function () {
+        it('should be registered', function() {
             expect(router.hasPlugin('browserPlugin')).to.be.true;
         });
 
-        it('should update history on start', function (done) {
-            router.start(function (err, state) {
-                expect(mockedBrowser.replaceState).to.have.been.calledWith(state);
+        it('should update history on start', function(done) {
+            router.start(function(err, state) {
+                expect(mockedBrowser.replaceState).to.have.been.calledWith(
+                    state
+                );
                 done();
             });
         });
 
-        it('should update on route change', function (done) {
-            router.navigate('users', function (err, state) {
+        it('should update on route change', function(done) {
+            router.navigate('users', function(err, state) {
                 expect(mockedBrowser.pushState).to.have.been.calledWith(state);
                 done();
             });
         });
 
-        it('should handle popstate events', function (done) {
-            const homeState = {name: 'home', params: {}, path: '/home'};
-            const popStateListener = mockedBrowser.addPopstateListener.args[0][0];
-            const popState = (state) => {
+        it('should handle popstate events', function(done) {
+            const homeState = { name: 'home', params: {}, path: '/home' };
+            const popStateListener =
+                mockedBrowser.addPopstateListener.args[0][0];
+            const popState = state => {
                 mockedBrowser.getState = () => state;
                 popStateListener({ state });
             };
 
-            router.navigate('home', function (err, state1) {
+            router.navigate('home', function(err, state1) {
                 expect(withoutMeta(state1)).to.eql(homeState);
 
-                router.navigate('users', function (err, state2) {
-                    expect(withoutMeta(state2)).to.eql({name: 'users', params: {}, path: '/users'});
+                router.navigate('users', function(err, state2) {
+                    expect(withoutMeta(state2)).to.eql({
+                        name: 'users',
+                        params: {},
+                        path: '/users'
+                    });
                     // router.registerComponent('users', {canDeactivate: function () { return false; }});
                     popState(state1);
-                    setTimeout(function () {
-                        expect(mockedBrowser.replaceState).to.have.been.calledWith(state1);
+                    setTimeout(function() {
+                        expect(
+                            mockedBrowser.replaceState
+                        ).to.have.been.calledWith(state1);
                         // expect(withoutMeta(router.getState())).to.eql(homeState);
                         popState(state2);
                         // Push to queue
-                        setTimeout(function () {
-                            expect(withoutMeta(router.getState())).to.eql({name: 'users', params: {}, path: '/users'});
+                        setTimeout(function() {
+                            expect(withoutMeta(router.getState())).to.eql({
+                                name: 'users',
+                                params: {},
+                                path: '/users'
+                            });
                             // router.canDeactivate('users');
                             done();
                         });
@@ -99,22 +119,35 @@ function test(useHash) {
             });
         });
 
-        it('should be able to extract the path of an URL', function () {
+        it('should be able to extract the path of an URL', function() {
             expect(router.urlToPath(makeUrl('/home'))).to.equal('/home');
             expect(() => router.urlToPath('')).to.throw();
         });
 
-        it('should match an URL', function () {
-            expect(withoutMeta(router.matchUrl(makeUrl('/home')))).to.eql({name: 'home', params: {}, path: '/home'});
-            expect(withoutMeta(router.matchUrl(makeUrl('/users/view/1')))).to.eql({name: 'users.view', params: {id: '1'}, path: '/users/view/1'});
+        it('should match an URL', function() {
+            expect(withoutMeta(router.matchUrl(makeUrl('/home')))).to.eql({
+                name: 'home',
+                params: {},
+                path: '/home'
+            });
+            expect(
+                withoutMeta(router.matchUrl(makeUrl('/users/view/1')))
+            ).to.eql({
+                name: 'users.view',
+                params: { id: '1' },
+                path: '/users/view/1'
+            });
         });
 
         it('should build URLs', () => {
             const prefix = base + (useHash ? '#!' : '');
 
             expect(router.buildUrl('home', {})).to.equal(prefix + '/home');
-            expect(router.buildUrl(constants.UNKNOWN_ROUTE, { path: '/route-not-found' }))
-                .to.equal(prefix + '/route-not-found');
+            expect(
+                router.buildUrl(constants.UNKNOWN_ROUTE, {
+                    path: '/route-not-found'
+                })
+            ).to.equal(prefix + '/route-not-found');
         });
     });
 }

@@ -5,10 +5,4 @@ import withRoute from './withRoute';
 
 const Link = withRoute(BaseLink);
 
-export {
-    BaseLink,
-    routeNode,
-    RouterProvider,
-    withRoute,
-    Link
-};
+export { BaseLink, routeNode, RouterProvider, withRoute, Link };

@@ -1,15 +1,32 @@
-export default function resolve(functions, { isCancelled, toState, fromState, errorKey }, callback) {
-    let remainingFunctions = Array.isArray(functions) ? functions : Object.keys(functions);
+export default function resolve(
+    functions,
+    { isCancelled, toState, fromState, errorKey },
+    callback
+) {
+    let remainingFunctions = Array.isArray(functions)
+        ? functions
+        : Object.keys(functions);
 
-    const isState = obj => typeof obj === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
-    const hasStateChanged = state => state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
+    const isState = obj =>
+        typeof obj === 'object' &&
+        obj.name !== undefined &&
+        obj.params !== undefined &&
+        obj.path !== undefined;
+    const hasStateChanged = state =>
+        state.name !== toState.name ||
+        state.params !== toState.params ||
+        state.path !== toState.path;
 
-    const processFn = (done) => {
+    const processFn = done => {
         if (!remainingFunctions.length) return true;
 
         const isMapped = typeof remainingFunctions[0] === 'string';
-        const errBase = errorKey && isMapped ? { [errorKey]: remainingFunctions[0] } : {};
-        let stepFn  = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+        const errBase = errorKey && isMapped
+            ? { [errorKey]: remainingFunctions[0] }
+            : {};
+        let stepFn = isMapped
+            ? functions[remainingFunctions[0]]
+            : remainingFunctions[0];
 
         // const len = stepFn.length;
         const res = stepFn.call(null, toState, fromState, done);
@@ -28,7 +45,12 @@ export default function resolve(functions, { isCancelled, toState, fromState, er
                         console.error(err.stack || err);
                         done({ ...errBase, promiseError: err }, null);
                     } else {
-                        done(typeof err === 'object' ? { ...errBase, ...err } : errBase, null);
+                        done(
+                            typeof err === 'object'
+                                ? { ...errBase, ...err }
+                                : errBase,
+                            null
+                        );
                     }
                 }
             );
@@ -45,7 +67,10 @@ export default function resolve(functions, { isCancelled, toState, fromState, er
             callback(err);
         } else {
             if (val && isState(val)) {
-                if (hasStateChanged(val)) console.error('[router5][transition] Warning: state values changed during transition process.');
+                if (hasStateChanged(val))
+                    console.error(
+                        '[router5][transition] Warning: state values changed during transition process.'
+                    );
                 toState = val;
             }
             remainingFunctions = remainingFunctions.slice(1);

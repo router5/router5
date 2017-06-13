@@ -1,26 +1,34 @@
 const Link = {
     propTypes: {
-        router:          {source: 'router'},
-        route:           {source: 'route'},
-        button:          {type: 'boolean'},
-        routeName:       {type: 'string', optional: false},
-        routeParams:     {type: 'object'},
-        routeOptions:    {type: 'object'},
-        activeClass:     {type: 'string'},
-        activeStrict:    {type: 'function'},
-        onClick:         {type: 'function'}
+        router: { source: 'router' },
+        route: { source: 'route' },
+        button: { type: 'boolean' },
+        routeName: { type: 'string', optional: false },
+        routeParams: { type: 'object' },
+        routeOptions: { type: 'object' },
+        activeClass: { type: 'string' },
+        activeStrict: { type: 'function' },
+        onClick: { type: 'function' }
     },
 
     defaultProps: {
-        activeClass:  'active',
-        button:       false,
+        activeClass: 'active',
+        button: false,
         activeStrict: false,
-        routeParams:  {},
+        routeParams: {},
         routeOptions: {}
     },
 
     render({ props }) {
-        const { button, activeClass, routeName, routeParams, routeOptions, children, router } = props;
+        const {
+            button,
+            activeClass,
+            routeName,
+            routeParams,
+            routeOptions,
+            children,
+            router
+        } = props;
 
         const clickHandler = evt => {
             evt.preventDefault();
@@ -28,19 +36,27 @@ const Link = {
         };
 
         const active = router.isActive(routeName, routeParams);
-        const href =  router.buildUrl(routeName, routeParams);
-
+        const href = router.buildUrl(routeName, routeParams);
 
         const className = (props.class ? props.class.split(' ') : [])
-            .concat(active ? [ activeClass ] : []).join(' ');
+            .concat(active ? [activeClass] : [])
+            .join(' ');
 
         const onClick = props.onClick || clickHandler;
 
         if (button) {
-            return element('button', { type: 'button', 'class': className, onClick }, children);
+            return element(
+                'button',
+                { type: 'button', class: className, onClick },
+                children
+            );
         }
 
-        return { type: 'a', children, attributes: { href, 'class': className, onClick } };
+        return {
+            type: 'a',
+            children,
+            attributes: { href, class: className, onClick }
+        };
     }
 };
 

@@ -18,22 +18,22 @@ const sectionRoute = new RouteNode('section', '/:section<section[\\d]+>', [
 
 const profileRoute = new RouteNode('profile', '/profile', [
     { name: 'me', path: '/' },
-    { name: 'user', path: '/:userId'}
+    { name: 'user', path: '/:userId' }
 ]);
 
 export default function createTestRouter(options) {
-    return createRouter([
-            usersRoute,
-            sectionRoute,
-            profileRoute
-        ], {
-            defaultRoute: 'home',
-            ...options
-        })
+    return createRouter([usersRoute, sectionRoute, profileRoute], {
+        defaultRoute: 'home',
+        ...options
+    })
         .add(ordersRoute)
         .addNode('index', '/')
         .addNode('home', '/home')
         .addNode('admin', '/admin', () => () => false)
         .addNode('sign-in', '/sign-in')
-        .addNode('auth-protected', '/auth-protected', () => () => new Promise((resolve, reject) => reject({ redirect: { name: 'sign-in' }})));
+        .addNode('auth-protected', '/auth-protected', () => () =>
+            new Promise((resolve, reject) =>
+                reject({ redirect: { name: 'sign-in' } })
+            )
+        );
 }

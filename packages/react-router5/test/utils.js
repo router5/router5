@@ -15,12 +15,13 @@ Child.contextTypes = {
     router: PropTypes.object.isRequired
 };
 
-export const FnChild = (props) => <div />;
+export const FnChild = props => <div />;
 
 export const createTestRouter = () => createRouter().usePlugin(browserPlugin());
 
-export const renderWithRouter = router => BaseComponent => mount(
-    <RouterProvider router={ router }>
-        <BaseComponent />
-    </RouterProvider>
-);
+export const renderWithRouter = router => BaseComponent =>
+    mount(
+        <RouterProvider router={router}>
+            <BaseComponent />
+        </RouterProvider>
+    );
