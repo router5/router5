@@ -42,7 +42,13 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
 
         function updateBrowserState(state, url, replace) {
-            const finalState = options.mergeState === true ? { ...browser.getState(), ...state } : state;
+            const trimmedState = state ? {
+                meta: state.meta,
+                name: state.name,
+                params: state.params,
+                path: state.path
+            } : state;
+            const finalState = options.mergeState === true ? { ...browser.getState(), ...trimmedState } : trimmedState;
             if (replace) browser.replaceState(finalState, '', url);
             else browser.pushState(finalState, '', url);
         }
