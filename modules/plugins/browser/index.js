@@ -7,7 +7,8 @@ const defaultOptions = {
     useHash: false,
     hashPrefix: '',
     base: false,
-    mergeState: false
+    mergeState: false,
+    preserveHash: false
 };
 
 const source = 'popstate';
@@ -104,7 +105,11 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             const historyState = browser.getState();
             const replace = opts.replace || fromState && router.areStatesEqual(toState, fromState, false) ||
                 opts.reload && historyState && router.areStatesEqual(toState, historyState, false);
-            updateBrowserState(toState, router.buildUrl(toState.name, toState.params), replace);
+            let url = router.buildUrl(toState.name, toState.params);
+            if(fromState === null && options.preserveHash === true) {
+                url += browser.getHash();
+            }
+            updateBrowserState(toState, url, replace);
         }
 
         return { onStart, onStop, onTransitionSuccess, onPopState };
