@@ -4,9 +4,7 @@
   "description": "xstream plugin for router5",
   "main": "index.js",
   "scripts": {
-    "build": "babel modules --out-dir ./",
-    "lint": "eslint modules",
-    "test": "mocha --compilers js:babel-core/register test/*.js"
+    "build": "babel modules --out-dir ./"
   },
   "repository": {
     "type": "git",

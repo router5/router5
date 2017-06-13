@@ -2,20 +2,9 @@ import React from 'react';
 import { expect } from 'chai';
 import { Child, createTestRouter, FnChild, renderWithRouter } from './utils';
 import { RouterProvider, withRoute, routeNode, BaseLink } from '../modules';
-import { findRenderedComponentWithType } from 'react-dom/test-utils';
 import { spy } from 'sinon';
 import listenersPlugin from 'router5/plugins/listeners';
 import { mount } from 'enzyme';
-
-describe('RouterProvider component', () => {
-    it('should add the store to the child context', () => {
-        const router = createTestRouter();
-        const tree = renderWithRouter(router)(Child);
-
-        const child = findRenderedComponentWithType(tree, Child);
-        expect(child.context.router).to.equal(router);
-    });
-});
 
 describe('withRoute hoc', () => {
     let router;

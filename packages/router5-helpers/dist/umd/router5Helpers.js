@@ -71,9 +71,9 @@
             return redirectTo(arguments[1], arguments[2]);
         } else if (arguments.length === 1) {
             return redirectTo;
-        } else {
-            throw new Error('[router5][helpers][redirect] no arguments supplied.');
         }
+
+        throw new Error('[router5][helpers][redirect] no arguments supplied.');
     }
 
     var startsWithSegment = exports.startsWithSegment = testRouteWithSegment('^', dotOrEnd);

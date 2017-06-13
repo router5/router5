@@ -6,9 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:cjs": "babel modules --out-dir ./",
-    "build": "rimraf dist && npm run build:cjs",
-    "lint": "eslint modules",
-    "test": "mocha --compilers js:babel-core/register --recursive test/*.js"
+    "build": "rimraf dist && npm run build:cjs"
   },
   "repository": {
     "type": "git",

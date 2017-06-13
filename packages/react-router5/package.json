@@ -10,9 +10,7 @@
     "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
     "build:umd": "rollup -c rollup.config.js -f umd",
     "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
-    "test": "mocha --compilers js:babel-core/register --recursive --require ./test/test-helper.js 'test/main.js'",
     "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "lint": "eslint modules",
     "release": "./scripts/release.js"
   },
   "repository": {
@@ -34,13 +32,6 @@
   },
   "homepage": "http://router5.github.com/router5/react-router5",
   "devDependencies": {
-    "chai-enzyme": "~0.6.1",
-    "cheerio": "~0.22.0",
-    "enzyme": "~2.8.2",
-    "react": "~15.5.4",
-    "react-dom": "~15.5.4",
-    "react-test-renderer": "~15.5.4",
-    "rimraf": "~2.6.1",
     "router5": "~4.5.2"
   },
   "peerDependencies": {
