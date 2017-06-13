@@ -52,7 +52,13 @@ function browserPluginFactory() {
         };
 
         function updateBrowserState(state, url, replace) {
-            var finalState = options.mergeState === true ? _extends({}, browser.getState(), state) : state;
+            var trimmedState = state ? {
+                meta: state.meta,
+                name: state.name,
+                params: state.params,
+                path: state.path
+            } : state;
+            var finalState = options.mergeState === true ? _extends({}, browser.getState(), trimmedState) : trimmedState;
             if (replace) browser.replaceState(finalState, '', url);else browser.pushState(finalState, '', url);
         }
 
