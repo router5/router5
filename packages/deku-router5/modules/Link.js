@@ -45,11 +45,11 @@ const Link = {
         const onClick = props.onClick || clickHandler;
 
         if (button) {
-            return element(
-                'button',
-                { type: 'button', class: className, onClick },
-                children
-            );
+            return {
+                type: 'button',
+                children,
+                attributes: { type: 'button', class: className, onClick }
+            };
         }
 
         return {
