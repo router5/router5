@@ -6,7 +6,9 @@ const defaultOptions = {
     forceDeactivate: true,
     useHash: false,
     hashPrefix: '',
-    base: false
+    base: false,
+    mergeState: false,
+    preserveHash: false
 };
 
 const source = 'popstate';
@@ -40,8 +42,9 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
 
         function updateBrowserState(state, url, replace) {
-            if (replace) browser.replaceState(state, '', url);
-            else browser.pushState(state, '', url);
+            const finalState = options.mergeState === true ? { ...browser.getState(), ...state } : state;
+            if (replace) browser.replaceState(finalState, '', url);
+            else browser.pushState(finalState, '', url);
         }
 
         function onPopState(evt) {
@@ -103,7 +106,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             const replace = opts.replace || fromState && router.areStatesEqual(toState, fromState, false) ||
                 opts.reload && historyState && router.areStatesEqual(toState, historyState, false);
             let url = router.buildUrl(toState.name, toState.params);
-            if(fromState === null) {
+            if(fromState === null && options.preserveHash === true) {
                 url += browser.getHash();
             }
             updateBrowserState(toState, url, replace);
