@@ -7,8 +7,8 @@ const defaultOptions = {
     useHash: false,
     hashPrefix: '',
     base: false,
-    mergeState: false,
-    preserveHash: false
+    preserveHash: false,
+    mergeState: false
 };
 
 const source = 'popstate';
