@@ -1,4 +1,5 @@
 {
+    "extends": "eslint:recommended",
     // Parser
     "parser": "babel-eslint",
     // ECMA Features
@@ -23,7 +24,6 @@
         "no-unexpected-multiline": 2,
         // Best practices
         "consistent-return": 0,
-        "curly": [2, "multi-line"],
         "eqeqeq": 2,
         "no-else-return": 2,
         "no-multi-spaces": 0,

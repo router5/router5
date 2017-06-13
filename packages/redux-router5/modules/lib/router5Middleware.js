@@ -9,8 +9,11 @@ const router5ReduxMiddleware = router => store => {
     return next => action => {
         switch (action.type) {
             case actionTypes.NAVIGATE_TO:
-                const { name, params, opts } = action.payload;
-                router.navigate(name, params, opts);
+                router.navigate(
+                    action.payload.name,
+                    action.payload.params,
+                    action.payload.opts
+                );
                 break;
 
             case actionTypes.CANCEL_TRANSITION:
