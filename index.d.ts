@@ -127,6 +127,8 @@ declare module "router5/plugins/browser" {
     useHash?: boolean;
     hashPrefix?: string;
     base?: string;
+    mergeState?: boolean;
+    preserveHash?: boolean;
   }
 
   var browserPlugin: (options: BrowserPluginOptions) => PluginFactory;
