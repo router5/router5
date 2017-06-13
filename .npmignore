@@ -6,4 +6,3 @@ tests
 node_modules
 *.md
 *.config.js
-bower.json
