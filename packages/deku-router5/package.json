@@ -6,9 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:cjs": "babel modules --out-dir dist/commonjs",
-    "build:umd": "rollup -c rollup.config.js",
     "build": "npm run clean && npm run build:cjs && npm run build:umd",
-    "release": "./scripts/release.js",
     "clog": "conventional-changelog -p angular -i CHANGELOG.md -w"
   },
   "repository": {

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build:cjs": "babel modules/router5Helpers.js -o ./index.js",
-    "build:umd": "BABEL_ENV=umd babel modules --out-dir ./dist/umd/",
-    "build": "rimraf dist && npm run build:cjs && npm run build:umd",
+    "build": "rimraf dist && npm run build:cjs",
     "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'"
   },
   "repository": {

@@ -9,8 +9,7 @@
     "clean": "rimraf dist",
     "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
     "build:cjs": "babel modules --out-dir ./",
-    "build:umd": "rollup -c rollup.config.js -f umd",
-    "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
+    "build": "npm run clean && npm run build:cjs && npm run build:es",
     "clog": "conventional-changelog -i CHANGELOG.md -p angular -w",
     "release": "./scripts/release.js"
   },

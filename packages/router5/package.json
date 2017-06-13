@@ -8,12 +8,7 @@
     "clean": "babel-node scripts/clean.js",
     "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
     "build:cjs": "babel modules --out-dir ./",
-    "build:umd:core": "rollup -c rollup.config.js && rollup -c rollup.config.js --uglify",
-    "build:umd:browser": "rollup -c rollup.config.js --module browser",
-    "build:umd:persistentParams": "rollup -c rollup.config.js --module persistentParams",
-    "build:umd:listeners": "rollup -c rollup.config.js --module listeners",
-    "build:umd": "npm run build:umd:core && npm run build:umd:browser && npm run build:umd:persistentParams && npm run build:umd:listeners",
-    "build": "npm run clean && npm run build:cjs && npm run build:es && npm run build:umd",
+    "build": "npm run clean && npm run build:cjs && npm run build:es",
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./test/_helpers.js 'test/**/*.js'",
     "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "release": "./scripts/release.js"
