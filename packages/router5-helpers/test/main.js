@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as helpers from '../modules/router5Helpers';
+import * as helpers from '../modules';
 
 describe('router5.helpers', function() {
     describe('.startsWithSegment()', function() {
