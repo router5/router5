@@ -1,4 +1,4 @@
-import transitionPath from 'router5.transition-path';
+import transitionPath from 'router5-transition-path';
 
 function routeNodeSelector(routeNode, reducerKey = 'router') {
     const routerStateSelector = state =>

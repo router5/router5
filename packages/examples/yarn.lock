@@ -732,12 +732,6 @@ deku-redux@~1.1.2:
     is-equal-shallow "~0.1.3"
     is-plain-object "~2.0.1"
 
-deku-router5@~4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/deku-router5/-/deku-router5-4.0.0.tgz#b6d0a06e6a6fa0f8a2cfe6d0cd59768b086c9a94"
-  dependencies:
-    is-equal-shallow "^0.1.3"
-
 deku@~2.0.0-rc16:
   version "2.0.0-rc9"
   resolved "https://registry.yarnpkg.com/deku/-/deku-2.0.0-rc9.tgz#14c0b0d9fd65b711d1ba4a577fe10a6325cfbac7"
@@ -1344,10 +1338,6 @@ iconv-lite@~0.4.13:
 ieee754@^1.1.4:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
-
-immutable@^3.0.0:
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
 index-of@^0.2.0:
   version "0.2.0"
@@ -2140,7 +2130,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.7, prop-types@~15.5.10, prop-types@~15.5.7:
+prop-types@^15.5.10, prop-types@^15.5.7, prop-types@~15.5.7:
   version "15.5.10"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
   dependencies:
@@ -2255,12 +2245,6 @@ react-redux@~5.0.5:
     loose-envify "^1.1.0"
     prop-types "^15.5.10"
 
-react-router5@~4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/react-router5/-/react-router5-4.3.0.tgz#b4ad5d2f5abae0e73d3b72e86cd096fb18e830fc"
-  dependencies:
-    prop-types "~15.5.10"
-
 react@~15.5.4:
   version "15.5.4"
   resolved "https://registry.yarnpkg.com/react/-/react-15.5.4.tgz#fa83eb01506ab237cdc1c8c3b1cea8de012bf047"
@@ -2326,14 +2310,6 @@ redux-logger@~3.0.6:
   resolved "https://registry.yarnpkg.com/redux-logger/-/redux-logger-3.0.6.tgz#f7555966f3098f3c88604c449cf0baf5778274bf"
   dependencies:
     deep-diff "^0.3.5"
-
-redux-router5@~4.2.3:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/redux-router5/-/redux-router5-4.2.3.tgz#ace7072ebc0684a1c13a2f11a491df87478a6d98"
-  dependencies:
-    router5.transition-path "~4.0.1"
-  optionalDependencies:
-    immutable "^3.0.0"
 
 redux-thunk@~2.2.0:
   version "2.2.0"
@@ -2446,11 +2422,7 @@ route-node@1.8.2:
     path-parser "2.0.2"
     search-params "~1.3.0"
 
-router5.helpers@~1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/router5.helpers/-/router5.helpers-1.2.0.tgz#53dc98d1bc3ed3f40b3e8e54fe59dc163e7a3210"
-
-router5.transition-path@4.0.1, router5.transition-path@~4.0.1:
+router5.transition-path@4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/router5.transition-path/-/router5.transition-path-4.0.1.tgz#6d61d6b78e233aeff2e68f3b91b9a83338c2f723"
 
@@ -2830,8 +2802,8 @@ ua-parser-js@^0.7.9:
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.12.tgz#04c81a99bdd5dc52263ea29d24c6bf8d4818a4bb"
 
 uglify-js@^2.8.27:
-  version "2.8.28"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.28.tgz#e335032df9bb20dcb918f164589d5af47f38834a"
+  version "2.8.29"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
   dependencies:
     source-map "~0.5.1"
     yargs "~3.10.0"

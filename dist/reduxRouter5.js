@@ -249,6 +249,12 @@ function router5Reducer() {
     }
 }
 
+var _typeof$1 = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {
+    return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+} : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+};
+
 function nameToIDs(name) {
     return name.split('.').reduce(function (ids, name) {
         return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
@@ -285,15 +291,15 @@ function transitionPath(toState, fromState) {
             var right = toStateIds[i];
 
             if (left !== right) return {
-                    v: i
-                };
+                v: i
+            };
 
             var leftParams = extractSegmentParams(left, toState);
             var rightParams = extractSegmentParams(right, fromState);
 
             if (leftParams.length !== rightParams.length) return {
-                    v: i
-                };
+                v: i
+            };
             if (leftParams.length === 0) return 'continue';
 
             var different = Object.keys(leftParams).some(function (p) {
@@ -314,7 +320,7 @@ function transitionPath(toState, fromState) {
                     continue;
 
                 default:
-                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof$1(_ret)) === "object") return _ret.v;
             }
         }
 
@@ -325,7 +331,7 @@ function transitionPath(toState, fromState) {
     if (!fromState) {
         i = 0;
     } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
-        console.warn('[router5.transition-path] Some states are missing metadata, reloading all segments');
+        console.warn('[router5-transition-path] Some states are missing metadata, reloading all segments');
         i = 0;
     } else {
         i = pointOfDifference();

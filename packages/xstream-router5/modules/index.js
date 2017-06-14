@@ -1,6 +1,6 @@
 import xs from 'xstream';
 import dropRepeats from 'xstream/extra/dropRepeats';
-import transitionPath from 'router5.transition-path';
+import transitionPath from 'router5-transition-path';
 
 const TRANSITION_SUCCESS = '@@router5/TRANSITION_SUCCESS';
 const TRANSITION_ERROR = '@@router5/TRANSITION_ERROR';

@@ -5,6 +5,7 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "clean": "git clean -fXd -e '!node_modules'",
+    "reset": "lerna clean && rimraf packages/*/yarn.lock && npm run bootstrap",
     "build": "node scripts/build && npm run build:umd",
     "build:umd": "rollup -c rollup.config.js",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",
@@ -68,6 +69,7 @@
     "react": "~15.5.4",
     "react-addons-test-utils": "~15.5.1",
     "react-dom": "~15.5.4",
+    "rimraf": "~2.6.1",
     "rollup": "~0.43.0",
     "rollup-plugin-babel": "~2.7.1",
     "rollup-plugin-commonjs": "~8.0.2",

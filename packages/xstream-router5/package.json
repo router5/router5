@@ -21,7 +21,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "router5.transition-path": "~4.0.1",
+    "router5-transition-path": "~4.0.1",
     "xstream": "~6.0.0"
   },
   "devDependencies": {

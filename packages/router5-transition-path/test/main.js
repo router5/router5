@@ -1,7 +1,7 @@
 import transitionPath from '../modules';
 import { expect } from 'chai';
 
-describe('router5.transition-path', function() {
+describe('router5-transition-path', function() {
     it('should return a transition path with from null state', function() {
         expect(
             transitionPath({ name: 'a.b.c', params: {}, meta: {} }, null)

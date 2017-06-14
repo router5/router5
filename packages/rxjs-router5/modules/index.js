@@ -1,5 +1,5 @@
 import Rx from 'rxjs';
-import transitionPath from 'router5.transition-path';
+import transitionPath from 'router5-transition-path';
 
 const PLUGIN_NAME = 'RXJS_PLUGIN';
 const TRANSITION_SUCCESS = '@@router5/TRANSITION_SUCCESS';

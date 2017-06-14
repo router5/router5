@@ -37,6 +37,6 @@
     "immutable": "^3.0.0"
   },
   "dependencies": {
-    "router5.transition-path": "~4.0.1"
+    "router5-transition-path": "~4.0.1"
   }
 }

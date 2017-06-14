@@ -23,9 +23,12 @@ packages.forEach(pkg => {
     execSync(
         `babel packages/${pkg}/modules --out-dir packages/${pkg}/${cjsDir}`
     );
+
+    console.log('✓ CommonJS');
+
     execSync(
         `BABEL_ENV=es babel packages/${pkg}/modules --out-dir packages/${pkg}/dist/es`
     );
 
-    console.log('Done');
+    console.log('✓ ES');
 });

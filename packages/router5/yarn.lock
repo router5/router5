@@ -15,10 +15,6 @@ route-node@1.8.2:
     path-parser "2.0.2"
     search-params "~1.3.0"
 
-router5.transition-path@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/router5.transition-path/-/router5.transition-path-4.0.1.tgz#6d61d6b78e233aeff2e68f3b91b9a83338c2f723"
-
 search-params@~1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/search-params/-/search-params-1.3.0.tgz#ba1e1c01dcbd8a2e41a25236f602f2cbf710d688"
