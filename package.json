@@ -5,7 +5,8 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "clean": "git clean -fXd -e '!node_modules'",
-    "reset": "lerna clean && rimraf packages/*/yarn.lock && npm run bootstrap",
+    "clean:deps": "lerna clean && rimraf packages/*/yarn.lock",
+    "reset": "npm run clean && npm run clean:deps && npm run bootstrap",
     "build": "node scripts/build && npm run build:umd",
     "build:umd": "rollup -c rollup.config.js",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",

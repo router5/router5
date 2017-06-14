@@ -1,5 +1,5 @@
 {
-  "name": "router5.helpers",
+  "name": "router5-helpers",
   "version": "1.2.0",
   "description": "Router5 helpers for comparing and checking routes",
   "main": "dist/commonjs/index.js",

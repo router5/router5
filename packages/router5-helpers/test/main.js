@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as helpers from '../modules';
 
-describe('router5.helpers', function() {
+describe('router5-helpers', function() {
     describe('.startsWithSegment()', function() {
         it('should return true if a route starts with a segment', function() {
             expect(helpers.startsWithSegment('a.b.c', 'a')).to.be.true;

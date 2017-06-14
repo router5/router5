@@ -148,14 +148,14 @@ when it needs to.
 Then it is just a matter of returning the right component depending on the current route. Your virtual tree will react to route changes, all of that
 by simply __leveraging the power of connect and reselect__!
 
-[router5.helpers](https://github.com/router5/helpers) provides
+[router5-helpers](https://github.com/router5/helpers) provides
 a set of functions to help making those decisions (useful if you have nested routes).
 
 ```javascript
 import { connect } from 'react-redux';
 import { routeNodeSelector } from 'redux-router5';
 import { Home, About, Contact, Admin, NotFound } from './components';
-import { startsWithSegment } from 'router5.helpers';
+import { startsWithSegment } from 'router5-helpers';
 
 function Root({ route }) {
     const { params, name } = route;

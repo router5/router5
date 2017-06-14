@@ -26,7 +26,7 @@ This package also contains a redirect function for `onActivate` handlers.
 - __redirect(fromRouteName)(toRouteName, toRouteParams)__
 
 ```javascript
-import * as helpers from 'router5.helpers';
+import * as helpers from 'router5-helpers';
 
 startsWithSegment('users', 'users');      // => true
 startsWithSegment('users.list', 'users'); // => true
