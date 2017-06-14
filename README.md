@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5)
 [![Coverage Status](https://coveralls.io/repos/router5/router5/badge.svg)](https://coveralls.io/r/router5/router5)
 [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+
 
 > Official website: [router5.github.io](http://router5.github.io)
 

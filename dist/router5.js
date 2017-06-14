@@ -274,11 +274,13 @@ var rules = [{
     //                   ?:param1&:param2
     name: 'query-parameter-bracket',
     pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(?:\[\])/
+    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
 }, {
     // Query parameter: ?param1&param2
     //                   ?:param1&:param2
     name: 'query-parameter',
     pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
+    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
 }, {
     // Delimiter /
     name: 'delimiter',
@@ -1193,7 +1195,10 @@ function withUtils(router) {
         var useTrailingSlash = options.useTrailingSlash,
             strictQueryParams = options.strictQueryParams;
 
-        return router.rootNode.buildPath(route, params, { trailingSlash: useTrailingSlash, strictQueryParams: strictQueryParams });
+        return router.rootNode.buildPath(route, params, {
+            trailingSlash: useTrailingSlash,
+            strictQueryParams: strictQueryParams
+        });
     }
 
     function buildState(route, params) {
@@ -1211,7 +1216,11 @@ function withUtils(router) {
             strictQueryParams = options.strictQueryParams,
             strongMatching = options.strongMatching;
 
-        var match = router.rootNode.matchPath(path, { trailingSlash: trailingSlash, strictQueryParams: strictQueryParams, strongMatching: strongMatching });
+        var match = router.rootNode.matchPath(path, {
+            trailingSlash: trailingSlash,
+            strictQueryParams: strictQueryParams,
+            strongMatching: strongMatching
+        });
 
         if (match) {
             var name = match.name,
@@ -1288,7 +1297,8 @@ function withRouterLifecycle(router) {
 
         if (startPathOrState === undefined && !options.defaultRoute) {
             return cb({ code: errorCodes.NO_START_PATH_OR_STATE });
-        }if (typeof startPathOrState === 'string') {
+        }
+        if (typeof startPathOrState === 'string') {
             startPath = startPathOrState;
         } else if ((typeof startPathOrState === 'undefined' ? 'undefined' : _typeof(startPathOrState)) === 'object') {
             startState = startPathOrState;

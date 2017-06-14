@@ -6,12 +6,7 @@
   "module": "dist/es/index.js",
   "jnext:main": "dist/es/index.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
-    "build:cjs": "babel modules --out-dir ./",
-    "build": "npm run clean && npm run build:cjs && npm run build:es",
-    "clog": "conventional-changelog -i CHANGELOG.md -p angular -w",
-    "release": "./scripts/release.js"
+    "clog": "conventional-changelog -i CHANGELOG.md -p angular -w"
   },
   "repository": {
     "type": "git",

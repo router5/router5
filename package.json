@@ -4,8 +4,8 @@
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "clean": "lerna run clean",
-    "build": "npm run build:umd && lerna run build",
+    "clean": "git clean -fXd -e '!node_modules'",
+    "build": "node scripts/build && npm run build:umd",
     "build:umd": "rollup -c rollup.config.js",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",
     "lint": "eslint packages/*/modules",
@@ -14,7 +14,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
+    "packages/**/*.js": [
       "prettier --tab-width 4 --single-quote --write",
       "git add"
     ]
@@ -43,7 +43,6 @@
     "babel-core": "~6.24.1",
     "babel-eslint": "~7.2.3",
     "babel-plugin-external-helpers": "~6.22.0",
-    "babel-plugin-transform-async-to-generator": "~6.24.1",
     "babel-plugin-transform-class-properties": "~6.24.1",
     "babel-plugin-transform-export-extensions": "~6.22.0",
     "babel-plugin-transform-object-rest-spread": "~6.23.0",
@@ -56,7 +55,6 @@
     "chai-enzyme": "~0.7.1",
     "conventional-changelog": "~1.1.3",
     "coveralls": "~2.13.0",
-    "del": "~2.2.2",
     "enzyme": "~2.8.2",
     "eslint": "~3.19.0",
     "husky": "~0.13.4",
@@ -64,15 +62,12 @@
     "jsdom": "~10.0.0",
     "lerna": "~2.0.0-rc.5",
     "lint-staged": "~3.6.1",
-    "mkdirp": "~0.5.1",
     "mocha": "~3.3.0",
     "mocha-lcov-reporter": "~1.3.0",
     "prettier": "~1.4.4",
-    "promisify-node": "~0.4.0",
     "react": "~15.5.4",
     "react-addons-test-utils": "~15.5.1",
     "react-dom": "~15.5.4",
-    "rimraf": "~2.6.1",
     "rollup": "~0.43.0",
     "rollup-plugin-babel": "~2.7.1",
     "rollup-plugin-commonjs": "~8.0.2",

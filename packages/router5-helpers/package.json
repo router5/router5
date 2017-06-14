@@ -2,12 +2,7 @@
   "name": "router5.helpers",
   "version": "1.2.0",
   "description": "Router5 helpers for comparing and checking routes",
-  "main": "index.js",
-  "scripts": {
-    "build:cjs": "babel modules/router5Helpers.js -o ./index.js",
-    "build": "rimraf dist && npm run build:cjs",
-    "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'"
-  },
+  "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/router5/helpers.git"

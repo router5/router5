@@ -84,7 +84,16 @@ var getHash = function getHash() {
  */
 var browser = {};
 if (isBrowser) {
-    browser = { getBase: getBase, pushState: pushState, replaceState: replaceState, addPopstateListener: addPopstateListener, removePopstateListener: removePopstateListener, getLocation: getLocation, getState: getState, getHash: getHash };
+    browser = {
+        getBase: getBase,
+        pushState: pushState,
+        replaceState: replaceState,
+        addPopstateListener: addPopstateListener,
+        removePopstateListener: removePopstateListener,
+        getLocation: getLocation,
+        getState: getState,
+        getHash: getHash
+    };
 } else {
     // istanbul ignore next
     browser = {
@@ -164,7 +173,10 @@ function browserPluginFactory() {
     var browser = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : safeBrowser;
 
     var options = _extends({}, defaultOptions, opts);
-    var transitionOptions = { forceDeactivate: options.forceDeactivate, source: source };
+    var transitionOptions = {
+        forceDeactivate: options.forceDeactivate,
+        source: source
+    };
 
     function browserPlugin(router) {
         var routerOptions = router.getOptions();
@@ -218,7 +230,10 @@ function browserPluginFactory() {
             if (!state) {
                 // If current state is already the default route, we will have a double entry
                 // Navigating back and forth will emit SAME_STATES error
-                defaultRoute && router.navigateToDefault(_extends({}, transitionOptions, { reload: true, replace: true }));
+                defaultRoute && router.navigateToDefault(_extends({}, transitionOptions, {
+                    reload: true,
+                    replace: true
+                }));
                 return;
             }
             if (routerState && router.areStatesEqual(state, routerState, false)) {
@@ -233,7 +248,9 @@ function browserPluginFactory() {
                             params = _err$redirect.params;
 
 
-                        router.navigate(name, params, _extends({}, transitionOptions, { replace: true }));
+                        router.navigate(name, params, _extends({}, transitionOptions, {
+                            replace: true
+                        }));
                     } else if (err === errorCodes.CANNOT_DEACTIVATE) {
                         var url = router.buildUrl(routerState.name, routerState.params);
                         if (!newState) {
@@ -244,7 +261,10 @@ function browserPluginFactory() {
                         // TODO: history.back()?
                     } else {
                         // Force navigation to default state
-                        defaultRoute && router.navigate(defaultRoute, defaultParams, _extends({}, transitionOptions, { reload: true, replace: true }));
+                        defaultRoute && router.navigate(defaultRoute, defaultParams, _extends({}, transitionOptions, {
+                            reload: true,
+                            replace: true
+                        }));
                     }
                 } else {
                     router.invokeEventListeners(constants.TRANSITION_SUCCESS, toState, routerState, { replace: true });

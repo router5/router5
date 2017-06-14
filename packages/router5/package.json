@@ -5,13 +5,8 @@
   "main": "index.js",
   "jsnext:main": "dist/es/index.js",
   "scripts": {
-    "clean": "babel-node scripts/clean.js",
-    "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
-    "build:cjs": "babel modules --out-dir ./",
-    "build": "npm run clean && npm run build:cjs && npm run build:es",
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./test/_helpers.js 'test/**/*.js'",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "release": "./scripts/release.js"
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",

@@ -5,12 +5,7 @@
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build:cjs": "babel modules --out-dir dist/commonjs",
-    "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
-    "build": "npm run clean && npm run build:cjs && npm run build:es",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "release": "./scripts/release.js"
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",

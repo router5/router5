@@ -1010,7 +1010,11 @@ function routeNode(nodeName) {
                         previousRoute = _state.previousRoute,
                         route = _state.route;
 
-                    var component = React.createElement(RouteSegment, _extends({}, props, { router: router, previousRoute: previousRoute, route: route }));
+                    var component = React.createElement(RouteSegment, _extends({}, props, {
+                        router: router,
+                        previousRoute: previousRoute,
+                        route: route
+                    }));
 
                     return component;
                 }
@@ -1120,7 +1124,9 @@ function withRoute(BaseComponent) {
             value: function render() {
                 ifNot(!this.props.router && !this.props.route && !this.props.previousRoute, '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.');
 
-                return React.createElement(BaseComponent, _extends({}, this.props, this.state, { router: this.router }));
+                return React.createElement(BaseComponent, _extends({}, this.props, this.state, {
+                    router: this.router
+                }));
             }
         }]);
         return ComponentWithRoute;

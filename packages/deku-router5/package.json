@@ -4,9 +4,6 @@
   "description": "router5 helpers for Deku",
   "main": "dist/commonjs/index.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build:cjs": "babel modules --out-dir dist/commonjs",
-    "build": "npm run clean && npm run build:cjs",
     "clog": "conventional-changelog -p angular -i CHANGELOG.md -w"
   },
   "repository": {

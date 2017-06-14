@@ -2,10 +2,7 @@
   "name": "xstream-router5",
   "version": "1.0.1",
   "description": "xstream plugin for router5",
-  "main": "index.js",
-  "scripts": {
-    "build": "babel modules --out-dir ./"
-  },
+  "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/xstream-router5.git"

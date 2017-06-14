@@ -2,13 +2,10 @@
   "name": "router5.transition-path",
   "version": "4.0.1",
   "description": "Router5 transition path helper function",
-  "main": "index.js",
+  "main": "dist/commonjs/index.js",
   "jsnext:main": "modules/index.js",
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "npm run clean && babel modules --out-dir ./",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w",
-    "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'"
+    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w"
   },
   "repository": {
     "type": "git",

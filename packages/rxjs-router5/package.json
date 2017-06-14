@@ -2,12 +2,7 @@
   "name": "rxjs-router5",
   "version": "1.0.1",
   "description": "RxJS 5+ plugin for router5",
-  "main": "index.js",
-  "scripts": {
-    "clean": "rimraf dist",
-    "build:cjs": "babel modules --out-dir ./",
-    "build": "rimraf dist && npm run build:cjs"
-  },
+  "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/rxjs-router5.git"

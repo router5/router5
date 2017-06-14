@@ -143,12 +143,7 @@ var router5ReduxMiddleware = function router5ReduxMiddleware(router) {
             return function (action) {
                 switch (action.type) {
                     case NAVIGATE_TO:
-                        var _action$payload = action.payload,
-                            name = _action$payload.name,
-                            params = _action$payload.params,
-                            opts = _action$payload.opts;
-
-                        router.navigate(name, params, opts);
+                        router.navigate(action.payload.name, action.payload.params, action.payload.opts);
                         break;
 
                     case CANCEL_TRANSITION:
