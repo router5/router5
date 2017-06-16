@@ -1,3 +1,7 @@
+From version 5 and above, [changelog is here]('../../CHANGELOG.md')
+
+
+
 <a name="4.7.1"></a>
 ## [4.7.1](https://github.com/router5/router5/compare/v4.6.0...v4.7.1) (2017-06-13)
 

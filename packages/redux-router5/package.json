@@ -5,13 +5,6 @@
   "main": "index.js",
   "module": "dist/es/index.js",
   "jnext:main": "dist/es/index.js",
-  "scripts": {
-    "clog": "conventional-changelog -i CHANGELOG.md -p angular -w"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/router5/redux-router5.git"
-  },
   "keywords": [
     "router",
     "redux",

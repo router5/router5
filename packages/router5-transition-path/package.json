@@ -4,9 +4,6 @@
   "description": "Router5 transition path helper function",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
-  "scripts": {
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -w"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/router5/transition-path.git"

@@ -4,9 +4,6 @@
   "description": "router5 helpers for React",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
-  "scripts": {
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/react-router5.git"

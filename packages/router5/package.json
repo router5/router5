@@ -6,7 +6,6 @@
   "jsnext:main": "dist/es/index.js",
   "scripts": {
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./test/_helpers.js 'test/**/*.js'",
-    "clog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",

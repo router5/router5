@@ -1,3 +1,7 @@
+From version 5 and above, [changelog is here]('../../CHANGELOG.md')
+
+
+
 <a name="4.0.0"></a>
 # [4.0.0](https://github.com/router5/deku-router5/compare/v3.0.0...v4.0.0) (2016-09-05)
 
