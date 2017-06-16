@@ -13,7 +13,7 @@ export default function withUtils(router, options) {
 
     function urlToPath(url) {
         const match = url.match(
-            /^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/
+            /^(?:http|https):\/\/(?:[0-9a-z_\-.:]+?)(?=\/)(.*)$/
         );
         const path = match ? match[1] : url;
 

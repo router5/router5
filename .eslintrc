@@ -3,15 +3,19 @@
     // Parser
     "parser": "babel-eslint",
     // ECMA Features
-    "ecmaFeatures": {
-        "arrowFunctions": true,
-        "blockBindings": true,
-        "classes": true,
-        "defaultParams": true,
-        "destructuring": true,
-        "modules": true,
-        "objectLiteralComputedProperties": true,
-        "templateStrings": true
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "arrowFunctions": true,
+            "blockBindings": true,
+            "classes": true,
+            "defaultParams": true,
+            "destructuring": true,
+            "modules": true,
+            "objectLiteralComputedProperties": true,
+            "templateStrings": true
+        }
     },
     "rules": {
         // Possible Errors
