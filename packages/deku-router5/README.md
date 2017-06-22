@@ -1,19 +1,18 @@
 # deku-router5
 
-> High-order components and components for Deku when using [router5](https://github.com/router5/router5).
+> High-order components and components for Deku when using [router5](../packages/router5).
 
 This package replaces `router5-deku` which is deprecated.
 
 ### Example
 
-Code here: [https://github.com/router5/examples/tree/master/apps/deku](https://github.com/router5/examples/tree/master/apps/deku)
-Demo here: [http://localhost:8080/docs/with-deku.html#/inbox](http://localhost:8080/docs/with-deku.html#/inbox)
+[Code](../packages/apps/deku)
+[Demo](http://router5.github.io/docs/with-deku.html#/inbox)
 
 ### Requirements
 
 - deku >= __0.5.0__
 - router5 >= __2.0.0__
-
 
 ### routerPlugin
 
@@ -80,8 +79,3 @@ const Menu = {
 
 export default Menu;
 ```
-
-
-### Contributing
-
-Please read [contributing guidelines](https://github.com/router5/router5/blob/master/CONTRIBUTING.md) on router5 repository.

@@ -13,27 +13,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/router5/examples.git"
+    "url": "git+https://github.com/router5/router5.git"
   },
   "author": "Thomas Roch <thomas.c.roch@gmail.com> (http://blog.reactandbethankful.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/router5/examples/issues"
+    "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "https://github.com/router5/examples#readme",
+  "homepage": "https://github.com/router5/router5",
   "devDependencies": {
     "@cycle/core": "~7.0.0",
     "@cycle/dom": "~17.4.0",
-    "babel-core": "~6.25.0",
-    "babel-loader": "~7.0.0",
     "randomcolor": "~0.5.3",
     "redux-logger": "~3.0.6",
     "router5-helpers": "~1.2.0",
     "router5-transition-path": "~4.0.1",
-    "rx": "~4.1.0",
-    "webpack": "~2.6.1",
-    "webpack-dev-server": "~2.4.5",
-    "yargs": "~8.0.1"
+    "rx": "~4.1.0"
   },
   "dependencies": {
     "chance": "~1.0.9",
@@ -41,6 +36,7 @@
     "deku-redux": "~1.1.2",
     "deku-router5": "~4.0.0",
     "lodash.find": "~4.6.0",
+    "proptypes": "~1.1.0",
     "react": "~15.5.4",
     "react-dom": "~15.5.4",
     "react-redux": "~5.0.5",

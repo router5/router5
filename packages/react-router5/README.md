@@ -1,5 +1,4 @@
 [![npm version](https://badge.fury.io/js/react-router5.svg)](https://badge.fury.io/js/react-router5)
-[![Build Status](https://travis-ci.org/router5/react-router5.svg?branch=master)](https://travis-ci.org/router5/react-router5)
 
 # react-router5
 
@@ -14,7 +13,7 @@ npm install --save react-router5
 
 ### Examples
 
-* [Example project](https://github.com/router5/examples/tree/master/apps/react)
+* [Example project](../packages/examples/apps/react)
 * [Demo](https://router5.github.io/docs/with-react.html#/inbox)
 
 ### Requirements
@@ -111,7 +110,3 @@ Same as `Link`, except it won't mark it-self dirty (and re-render) on a route ch
 ### withRoute HOC
 
 Will create a new component, injecting your router instance (from context) and the current route to the wrapped component. Any route change will trigger a re-render.
-
-### Contributing
-
-Please read [contributing guidelines](https://github.com/router5/router5/blob/master/CONTRIBUTING.md) on router5 repository.

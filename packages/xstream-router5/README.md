@@ -1,5 +1,4 @@
 [![npm version](https://badge.fury.io/js/xstream-router5.svg)](https://badge.fury.io/js/xstream-router5)
-[![Build Status](https://travis-ci.org/router5/xstream-router5.svg?branch=master)](https://travis-ci.org/router5/xstream-router5?branch=master)
 
 # xstream-router5
 

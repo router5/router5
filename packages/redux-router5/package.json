@@ -5,6 +5,10 @@
   "main": "index.js",
   "module": "dist/es/index.js",
   "jnext:main": "dist/es/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5.git"
+  },
   "keywords": [
     "router",
     "redux",
@@ -16,9 +20,9 @@
   "author": "Thomas Roch",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/router5/redux-router5/issues"
+    "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "http://router5.github.com/router5/redux-router5",
+  "homepage": "http://router5.github.com",
   "devDependencies": {
     "immutable": "~3.0.0"
   },

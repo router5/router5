@@ -5,7 +5,7 @@
   "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/router5/xstream-router5.git"
+    "url": "https://github.com/router5/router5.git"
   },
   "keywords": [
     "router",
@@ -17,7 +17,7 @@
   "author": "Thomas Roch <thomas.c.roch@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/router/xstream-router5/issues"
+    "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "http://router5.github.io",
   "dependencies": {

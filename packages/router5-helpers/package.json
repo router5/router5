@@ -5,7 +5,7 @@
   "main": "dist/commonjs/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/router5/helpers.git"
+    "url": "git+https://github.com/router5/router5.git"
   },
   "keywords": [
     "router5",
@@ -14,7 +14,7 @@
   "author": "Thomas Roch <thomas.c.roch@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/router5/helpers/issues"
+    "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://router5.github.io"
 }

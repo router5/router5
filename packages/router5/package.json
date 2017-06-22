@@ -23,7 +23,7 @@
   "author": "Thomas Roch",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/router/router5/issues"
+    "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "http://router5.github.io",
   "dependencies": {

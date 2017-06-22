@@ -124,7 +124,7 @@ function withUtils(router, options) {
     }
 
     function urlToPath(url) {
-        var match = url.match(/^(?:http|https)\:\/\/(?:[0-9a-z_\-\.\:]+?)(?=\/)(.*)$/);
+        var match = url.match(/^(?:http|https):\/\/(?:[0-9a-z_\-.:]+?)(?=\/)(.*)$/);
         var path = match ? match[1] : url;
 
         var pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);

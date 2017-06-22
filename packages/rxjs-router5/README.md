@@ -1,5 +1,4 @@
 [![npm version](https://badge.fury.io/js/rxjs-router5.svg)](https://badge.fury.io/js/rxjs-router5)
-[![Build Status](https://travis-ci.org/router5/rxjs-router5.svg?branch=master)](https://travis-ci.org/router5/rxjs-router5?branch=master)
 
 # rxjs-router5
 

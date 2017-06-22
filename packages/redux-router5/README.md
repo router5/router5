@@ -1,12 +1,11 @@
 [![npm version](https://badge.fury.io/js/redux-router5.svg)](https://badge.fury.io/js/redux-router5)
-[![Build Status](https://travis-ci.org/router5/redux-router5.svg?branch=master)](https://travis-ci.org/router5/redux-router5)
 
 # redux-router5
 
-> Router5 integration with redux. If you develop with React, use this package with __[react-redux](https://github.com/rackt/react-redux)__
-and __[react-router5](https://github.com/router5/react-router5)__. Using router5 with redux removes the need to include _router5-listeners_.
+> Router5 integration with redux. If you develop with React, use this package with __[react-redux](../packages/react-redux)__
+and __[react-router5](../packages/react-router5)__. Using router5 with redux removes the need to include _router5-listeners_.
 
-__[Example](https://github.com/router5/examples/tree/master/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
+__[Example](../packages/examples/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
 
 ## Requirements
 
@@ -148,7 +147,7 @@ when it needs to.
 Then it is just a matter of returning the right component depending on the current route. Your virtual tree will react to route changes, all of that
 by simply __leveraging the power of connect and reselect__!
 
-[router5-helpers](https://github.com/router5/helpers) provides
+[router5-helpers](../packages/router5-helpers) provides
 a set of functions to help making those decisions (useful if you have nested routes).
 
 ```javascript
