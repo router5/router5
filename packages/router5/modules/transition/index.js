@@ -1,6 +1,6 @@
 import transitionPath, { nameToIDs } from 'router5-transition-path';
 import resolve from './resolve';
-import { errorCodes } from '../constants';
+import constants, { errorCodes } from '../constants';
 
 export default transition;
 
@@ -42,54 +42,8 @@ function transition(router, toState, fromState, opts, callback) {
         ...(err instanceof Object ? err : { error: err })
     });
 
-    const { toDeactivate, toActivate } = transitionPath(toState, fromState);
     const asyncBase = { isCancelled, toState, fromState };
-
-    const canDeactivate = (toState, fromState, cb) => {
-        let canDeactivateFunctionMap = toDeactivate
-            .filter(name => canDeactivateFunctions[name])
-            .reduce(
-                (fnMap, name) => ({
-                    ...fnMap,
-                    [name]: canDeactivateFunctions[name]
-                }),
-                {}
-            );
-
-        resolve(
-            canDeactivateFunctionMap,
-            { ...asyncBase, errorKey: 'segment' },
-            err =>
-                cb(
-                    err
-                        ? makeError({ code: errorCodes.CANNOT_DEACTIVATE }, err)
-                        : null
-                )
-        );
-    };
-
-    const canActivate = (toState, fromState, cb) => {
-        const canActivateFunctionMap = toActivate
-            .filter(name => canActivateFunctions[name])
-            .reduce(
-                (fnMap, name) => ({
-                    ...fnMap,
-                    [name]: canActivateFunctions[name]
-                }),
-                {}
-            );
-
-        resolve(
-            canActivateFunctionMap,
-            { ...asyncBase, errorKey: 'segment' },
-            err =>
-                cb(
-                    err
-                        ? makeError({ code: errorCodes.CANNOT_ACTIVATE }, err)
-                        : null
-                )
-        );
-    };
+    let pipeline;
 
     const middleware = !middlewareFunctions.length
         ? []
@@ -103,9 +57,67 @@ function transition(router, toState, fromState, opts, callback) {
                   )
               );
 
-    let pipeline = (fromState && !opts.forceDeactivate ? [canDeactivate] : [])
-        .concat(canActivate)
-        .concat(middleware);
+    if (toState.name === constants.UNKNOWN_ROUTE) {
+        pipeline = middleware;
+    } else {
+        const { toDeactivate, toActivate } = transitionPath(toState, fromState);
+
+        const canDeactivate = (toState, fromState, cb) => {
+            let canDeactivateFunctionMap = toDeactivate
+                .filter(name => canDeactivateFunctions[name])
+                .reduce(
+                    (fnMap, name) => ({
+                        ...fnMap,
+                        [name]: canDeactivateFunctions[name]
+                    }),
+                    {}
+                );
+
+            resolve(
+                canDeactivateFunctionMap,
+                { ...asyncBase, errorKey: 'segment' },
+                err =>
+                    cb(
+                        err
+                            ? makeError(
+                                  { code: errorCodes.CANNOT_DEACTIVATE },
+                                  err
+                              )
+                            : null
+                    )
+            );
+        };
+
+        const canActivate = (toState, fromState, cb) => {
+            const canActivateFunctionMap = toActivate
+                .filter(name => canActivateFunctions[name])
+                .reduce(
+                    (fnMap, name) => ({
+                        ...fnMap,
+                        [name]: canActivateFunctions[name]
+                    }),
+                    {}
+                );
+
+            resolve(
+                canActivateFunctionMap,
+                { ...asyncBase, errorKey: 'segment' },
+                err =>
+                    cb(
+                        err
+                            ? makeError(
+                                  { code: errorCodes.CANNOT_ACTIVATE },
+                                  err
+                              )
+                            : null
+                    )
+            );
+        };
+
+        pipeline = (fromState && !opts.forceDeactivate ? [canDeactivate] : [])
+            .concat(canActivate)
+            .concat(middleware);
+    }
 
     resolve(pipeline, asyncBase, done);
 

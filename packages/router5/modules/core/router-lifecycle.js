@@ -85,10 +85,9 @@ export default function withRouterLifecycle(router) {
                     { replace: true, reload: true },
                     done
                 );
-            // If matched start path
-            if (startState) {
+            const transitionToState = state => {
                 router.transitionToState(
-                    startState,
+                    state,
                     router.getState(),
                     {},
                     (err, state) => {
@@ -98,11 +97,16 @@ export default function withRouterLifecycle(router) {
                         else cb(err, null, false);
                     }
                 );
+            };
+
+            // If matched start path
+            if (startState) {
+                transitionToState(startState);
             } else if (options.defaultRoute) {
                 // If default, navigate to default
                 navigateToDefault();
             } else if (options.allowNotFound) {
-                cb(null, router.makeNotFoundState(startPath));
+                transitionToState(router.makeNotFoundState(startPath));
             } else {
                 // No start match, no default => do nothing
                 cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
