@@ -12,7 +12,7 @@ const defaultOptions = {
     trailingSlash: 0,
     useTrailingSlash: undefined,
     autoCleanUp: true,
-    strictQueryParams: true,
+    strictQueryParams: false,
     allowNotFound: false,
     strongMatching: true
 };
