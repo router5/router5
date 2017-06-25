@@ -154,7 +154,11 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                     historyState &&
                     router.areStatesEqual(toState, historyState, false));
             let url = router.buildUrl(toState.name, toState.params);
-            if (fromState === null && options.preserveHash === true) {
+            if (
+                fromState === null &&
+                options.useHash === false &&
+                options.preserveHash === true
+            ) {
                 url += browser.getHash();
             }
             updateBrowserState(toState, url, replace);
