@@ -22,7 +22,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "router5-transition-path": "~5.0.0",
+    "router5-transition-path": "^5.0.0",
     "rxjs": "~5.0.0-beta.11"
   },
   "devDependencies": {

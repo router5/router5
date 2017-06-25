@@ -22,8 +22,8 @@
   },
   "homepage": "http://router5.github.com",
   "peerDependencies": {
-    "router5": "^5.0.0",
-    "deku": "~0.5.0 || ^1.0.0"
+    "deku": "~0.5.0 || ^1.0.0",
+    "router5": "^5.0.0"
   },
   "dependencies": {
     "is-equal-shallow": "^0.1.3"

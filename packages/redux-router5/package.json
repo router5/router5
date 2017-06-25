@@ -27,13 +27,13 @@
     "immutable": "~3.0.0"
   },
   "peerDependencies": {
-    "router5": "^5.0.0",
-    "redux": "^3.0.0"
+    "redux": "^3.0.0",
+    "router5": "^5.0.0"
   },
   "optionalDependencies": {
     "immutable": "^3.0.0"
   },
   "dependencies": {
-    "router5-transition-path": "~5.0.0"
+    "router5-transition-path": "^5.0.0"
   }
 }
