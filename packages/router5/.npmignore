@@ -1,7 +1,6 @@
 **/.*
 modules
 coverage
-scripts
 tests
 node_modules
 *.md
