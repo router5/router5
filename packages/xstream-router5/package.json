@@ -1,6 +1,6 @@
 {
   "name": "xstream-router5",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "xstream plugin for router5",
   "main": "dist/commonjs/index.js",
   "repository": {
@@ -25,10 +25,10 @@
     "xstream": "^10.0.0"
   },
   "devDependencies": {
-    "router5": "^5.0.0"
+    "router5": "^5.0.1"
   },
   "peerDependencies": {
-    "router5": "^5.0.0",
+    "router5": "^5.0.1",
     "xstream": "^10.0.0"
   }
 }
