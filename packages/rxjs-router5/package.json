@@ -1,6 +1,6 @@
 {
   "name": "rxjs-router5",
-  "version": "1.0.1",
+  "version": "5.0.0",
   "description": "RxJS 5+ plugin for router5",
   "main": "dist/commonjs/index.js",
   "repository": {
@@ -22,14 +22,14 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "router5-transition-path": "~4.0.1",
+    "router5-transition-path": "~5.0.0",
     "rxjs": "~5.0.0-beta.11"
   },
   "devDependencies": {
-    "router5": "^4.0.2"
+    "router5": "^5.0.0"
   },
   "peerDependencies": {
-    "router5": "^4.0.0",
+    "router5": "^5.0.0",
     "rxjs": "^5.0.0-beta.11"
   }
 }

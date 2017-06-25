@@ -14,8 +14,10 @@
     "check": "yarn run lint && yarn run test",
     "format": "prettier",
     "precommit": "lint-staged",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -w",
-    "docs:start": "node packages/docs/scripts/start"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "docs:start": "node packages/docs/scripts/start",
+    "copy": "cp -f README.md ./packages/router5/README.md",
+    "release": "git pull --rebase &&  npm run build && npm run copy && lerna publish"
   },
   "lint-staged": {
     "packages/**/*.js": [

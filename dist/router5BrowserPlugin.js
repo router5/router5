@@ -163,7 +163,7 @@ var defaultOptions = {
     hashPrefix: '',
     base: false,
     mergeState: false,
-    preserveHash: false
+    preserveHash: true
 };
 
 var source = 'popstate';
@@ -289,7 +289,7 @@ function browserPluginFactory() {
             var historyState = browser.getState();
             var replace = opts.replace || fromState && router.areStatesEqual(toState, fromState, false) || opts.reload && historyState && router.areStatesEqual(toState, historyState, false);
             var url = router.buildUrl(toState.name, toState.params);
-            if (fromState === null && options.preserveHash === true) {
+            if (fromState === null && options.useHash === false && options.preserveHash === true) {
                 url += browser.getHash();
             }
             updateBrowserState(toState, url, replace);

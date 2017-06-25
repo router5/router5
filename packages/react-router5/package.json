@@ -1,6 +1,6 @@
 {
   "name": "react-router5",
-  "version": "4.3.0",
+  "version": "5.0.0",
   "description": "router5 helpers for React",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
@@ -23,11 +23,11 @@
   },
   "homepage": "http://router5.github.com",
   "devDependencies": {
-    "router5": "~4.5.2"
+    "router5": "^5.0.0"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
-    "router5": "^4.5.2"
+    "router5": "^5.0.0"
   },
   "dependencies": {
     "prop-types": "~15.5.10"

@@ -1315,16 +1315,20 @@ function withRouterLifecycle(router) {
             var redirect = function redirect(route) {
                 return router.navigate(route.name, route.params, { replace: true, reload: true }, done);
             };
-            // If matched start path
-            if (startState) {
-                router.transitionToState(startState, router.getState(), {}, function (err, state) {
+            var transitionToState = function transitionToState(state) {
+                router.transitionToState(state, router.getState(), {}, function (err, state) {
                     if (!err) cb(null, state);else if (err.redirect) redirect(err.redirect);else if (options.defaultRoute) navigateToDefault();else cb(err, null, false);
                 });
+            };
+
+            // If matched start path
+            if (startState) {
+                transitionToState(startState);
             } else if (options.defaultRoute) {
                 // If default, navigate to default
                 navigateToDefault();
             } else if (options.allowNotFound) {
-                cb(null, router.makeNotFoundState(startPath));
+                transitionToState(router.makeNotFoundState(startPath));
             } else {
                 // No start match, no default => do nothing
                 cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
@@ -1565,13 +1569,14 @@ function transition$1(router, toState, fromState, opts, callback) {
         return _extends({}, base, err instanceof Object ? err : { error: err });
     };
 
+    var isUnknownRoute = toState.name === constants.UNKNOWN_ROUTE;
+    var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
+
     var _transitionPath = transitionPath(toState, fromState),
         toDeactivate = _transitionPath.toDeactivate,
         toActivate = _transitionPath.toActivate;
 
-    var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
-
-    var canDeactivate = function canDeactivate(toState, fromState, cb) {
+    var canDeactivate = !fromState || opts.forceDeactivate ? [] : function (toState, fromState, cb) {
         var canDeactivateFunctionMap = toDeactivate.filter(function (name) {
             return canDeactivateFunctions[name];
         }).reduce(function (fnMap, name) {
@@ -1583,7 +1588,7 @@ function transition$1(router, toState, fromState, opts, callback) {
         });
     };
 
-    var canActivate = function canActivate(toState, fromState, cb) {
+    var canActivate = isUnknownRoute ? [] : function (toState, fromState, cb) {
         var canActivateFunctionMap = toActivate.filter(function (name) {
             return canActivateFunctions[name];
         }).reduce(function (fnMap, name) {
@@ -1601,7 +1606,7 @@ function transition$1(router, toState, fromState, opts, callback) {
         });
     };
 
-    var pipeline = (fromState && !opts.forceDeactivate ? [canDeactivate] : []).concat(canActivate).concat(middleware);
+    var pipeline = [].concat(canDeactivate).concat(canActivate).concat(middleware);
 
     resolve(pipeline, asyncBase, done);
 
@@ -1959,7 +1964,7 @@ var defaultOptions = {
     trailingSlash: 0,
     useTrailingSlash: undefined,
     autoCleanUp: true,
-    strictQueryParams: true,
+    strictQueryParams: false,
     allowNotFound: false,
     strongMatching: true
 };
