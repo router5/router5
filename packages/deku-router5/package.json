@@ -1,0 +1,31 @@
+{
+  "name": "deku-router5",
+  "version": "5.0.0",
+  "description": "router5 helpers for Deku",
+  "main": "dist/commonjs/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router",
+    "html5",
+    "history",
+    "tree",
+    "react",
+    "functional"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5/issues"
+  },
+  "homepage": "http://router5.github.com",
+  "peerDependencies": {
+    "deku": "~0.5.0 || ^1.0.0",
+    "router5": "^5.0.0"
+  },
+  "dependencies": {
+    "is-equal-shallow": "^0.1.3"
+  }
+}

@@ -1,16 +1,21 @@
 {
+    "extends": "eslint:recommended",
     // Parser
     "parser": "babel-eslint",
     // ECMA Features
-    "ecmaFeatures": {
-        "arrowFunctions": true,
-        "blockBindings": true,
-        "classes": true,
-        "defaultParams": true,
-        "destructuring": true,
-        "modules": true,
-        "objectLiteralComputedProperties": true,
-        "templateStrings": true
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "arrowFunctions": true,
+            "blockBindings": true,
+            "classes": true,
+            "defaultParams": true,
+            "destructuring": true,
+            "modules": true,
+            "objectLiteralComputedProperties": true,
+            "templateStrings": true
+        }
     },
     "rules": {
         // Possible Errors
@@ -23,7 +28,6 @@
         "no-unexpected-multiline": 2,
         // Best practices
         "consistent-return": 0,
-        "curly": [2, "multi-line"],
         "eqeqeq": 2,
         "no-else-return": 2,
         "no-multi-spaces": 0,
@@ -53,6 +57,7 @@
     },
     "env": {
         "node": true,
-        "browser": true
+        "browser": true,
+        "mocha": true
     }
 }

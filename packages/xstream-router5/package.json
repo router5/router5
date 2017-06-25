@@ -1,0 +1,34 @@
+{
+  "name": "xstream-router5",
+  "version": "5.0.0",
+  "description": "xstream plugin for router5",
+  "main": "dist/commonjs/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router",
+    "xstream",
+    "reactive",
+    "stream",
+    "router5"
+  ],
+  "author": "Thomas Roch <thomas.c.roch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5/issues"
+  },
+  "homepage": "http://router5.github.io",
+  "dependencies": {
+    "router5-transition-path": "^5.0.0",
+    "xstream": "^10.0.0"
+  },
+  "devDependencies": {
+    "router5": "^5.0.0"
+  },
+  "peerDependencies": {
+    "router5": "^5.0.0",
+    "xstream": "^10.0.0"
+  }
+}

@@ -1,14 +1,11 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 import nodeResolve from 'rollup-plugin-node-resolve';
-import { argv } from 'yargs';
-
-const compress = argv.uglify;
-const module = argv.module || argv.m || 'core';
+import common from 'rollup-plugin-commonjs';
 
 const babelOptions = {
     runtimeHelpers: true,
-    presets: [[ 'es2015', { modules: false }]],
+    presets: [['es2015', { modules: false }]],
     plugins: [
         'external-helpers',
         'transform-object-rest-spread',
@@ -19,33 +16,41 @@ const babelOptions = {
 };
 
 const modules = {
-    core: {
-        entry: 'modules/index.js',
-        moduleName: 'router5',
-        moduleId: 'router5',
-        dest: `dist/umd/router5${ compress ? '.min' : '' }.js`
-    },
-    browser: {
-        entry: 'modules/plugins/browser/index.js',
-        moduleName: 'router5BrowserPlugin',
-        moduleId: 'router5BrowserPlugin',
-        dest: `dist/umd/router5BrowserPlugin${ compress ? '.min' : '' }.js`
-    },
-    listeners: {
-        entry: 'modules/plugins/listeners/index.js',
-        moduleName: 'router5ListenersPlugin',
-        moduleId: 'router5ListenersPlugin',
-        dest: `dist/umd/router5ListenersPlugin${ compress ? '.min' : '' }.js`
-    },
-    persistentParams: {
-        entry: 'modules/plugins/persistentParams/index.js',
-        moduleName: 'router5PersistentParamsPlugin',
-        moduleId: 'router5PersistentParamsPlugin',
-        dest: `dist/umd/router5PersistentParamsPlugin${ compress ? '.min' : '' }.js`
-    }
+    router5: 'packages/router5/modules/index.js',
+    router5BrowserPlugin: 'packages/router5/modules/plugins/browser/index.js',
+    router5ListenersPlugin:
+        'packages/router5/modules/plugins/listeners/index.js',
+    persistentParamsPlugin:
+        'packages/router5/modules/plugins/persistentParams/index.js',
+    reactRouter5: 'packages/react-router5/modules/index.js',
+    reduxRouter5: 'packages/redux-router5/modules/index.js',
+    router5Helpers: 'packages/router5-helpers/modules/index.js'
 };
 
-export default Object.assign({}, modules[module], {
-    format: 'umd',
-    plugins: [ babel(babelOptions), nodeResolve({ jsnext: true }) ].concat(compress ? uglify() : [])
-});
+const modulesToBuild = Object.keys(modules).reduce((acc, moduleName) => {
+    const base = {
+        format: 'umd',
+        entry: modules[moduleName],
+        external: ['react'],
+        moduleName
+    };
+    const packageDir = modules[moduleName].match(/^packages\/([\w-]+)\//)[1];
+    const plugins = [
+        common({ include: `packages/${packageDir}/node_modules/**` }),
+        babel(babelOptions),
+        nodeResolve({ jsnext: true })
+    ];
+
+    return acc.concat([
+        Object.assign({}, base, {
+            dest: `dist/${moduleName}.js`,
+            plugins
+        }),
+        Object.assign({}, base, {
+            dest: `dist/${moduleName}.min.js`,
+            plugins: plugins.concat(uglify())
+        })
+    ]);
+}, []);
+
+export default modulesToBuild;

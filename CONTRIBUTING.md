@@ -28,9 +28,9 @@ This Code of Conduct is adapted from the Contributor Covenant, version 1.0.0, av
 Commits on an open PR will trigger builds on Travis. You can build and run tests locally to make sure they will pass before pushing a commit:
 
 ```sh
-npm run lint
+npm run bootstrap
 npm run build
-npm test
+npm run check
 ```
 
 ### Git Commit Guidelines

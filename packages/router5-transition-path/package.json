@@ -1,0 +1,27 @@
+{
+  "name": "router5-transition-path",
+  "version": "5.0.0",
+  "description": "Router5 transition path helper function",
+  "main": "dist/commonjs/index.js",
+  "jsnext:main": "dist/es/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router5",
+    "transition"
+  ],
+  "author": "Thomas Roch <thomas.c.roch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5/issues"
+  },
+  "homepage": "https://router5.github.io",
+  "peerDependencies": {
+    "router5": "^5.0.0"
+  },
+  "devDependencies": {
+    "babel-plugin-add-module-exports": "~0.2.1"
+  }
+}
