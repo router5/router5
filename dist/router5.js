@@ -1617,11 +1617,13 @@ var noop$2 = function noop() {};
 
 function withNavigation(router) {
     var cancelCurrentTransition = void 0;
+    var forwardMap = {};
 
     router.navigate = navigate;
     router.navigateToDefault = navigateToDefault;
     router.transitionToState = transitionToState;
     router.cancel = cancel;
+    router.forward = forward;
 
     /**
      * Cancel the current transition if there is one
@@ -1637,6 +1639,18 @@ function withNavigation(router) {
     }
 
     /**
+     * Forward a route to another route, when calling navigate.
+     * Route parameters for the two routes should match to avoid issues.
+     * @param  {String}   fromRoute      The route name
+     * @param  {String}   toRoute  The route params
+     */
+    function forward(fromRoute, toRoute) {
+        forwardMap[fromRoute] = toRoute;
+
+        return router;
+    }
+
+    /**
      * Navigate to a route
      * @param  {String}   routeName      The route name
      * @param  {Object}   [routeParams]  The route params
@@ -1645,13 +1659,15 @@ function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate() {
-        var _ref;
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+        }
 
-        var name = arguments.length <= 0 ? undefined : arguments[0];
-        var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
+        var name = forwardMap[args[0]] || args[0];
+        var lastArg = args[args.length - 1];
         var done = typeof lastArg === 'function' ? lastArg : noop$2;
-        var params = _typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
-        var opts = _typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
+        var params = _typeof(args[1]) === 'object' ? args[1] : {};
+        var opts = _typeof(args[2]) === 'object' ? args[2] : {};
 
         if (!router.isStarted()) {
             done({ code: errorCodes.ROUTER_NOT_STARTED });
@@ -2063,14 +2079,16 @@ function createRouter$1(routes) {
     withNavigation(router);
     withCloning(router, createRouter$1);
 
-    var rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes, addCanActivate);
+    var rootNode = routes instanceof RouteNode ? routes : new RouteNode('', '', routes, onRouteAdded);
 
     router.rootNode = rootNode;
 
     return router;
 
-    function addCanActivate(route) {
+    function onRouteAdded(route) {
         if (route.canActivate) router.canActivate(route.name, route.canActivate);
+
+        if (route.forwardTo) router.forward(route.name, route.forwardTo);
     }
 
     /**
@@ -2196,7 +2214,7 @@ function createRouter$1(routes) {
      * @return {Object}       The router instance
      */
     function add(routes) {
-        rootNode.add(routes, addCanActivate);
+        rootNode.add(routes, onRouteAdded);
         return router;
     }
 
