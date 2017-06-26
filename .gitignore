@@ -5,3 +5,4 @@ yarn-error.log
 lerna-debug.log
 
 packages/*/dist
+.changelog

@@ -13,4 +13,13 @@
         "*.log"
       ]
     }
+  },
+  "changelog": {
+    "repo": "router5/router5",
+    "labels": {
+        "bug": "Bug fix",
+        "feature": "Feature",
+        "housekeeping": "House keeping"
+    }
   }
+}
