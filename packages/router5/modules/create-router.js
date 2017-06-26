@@ -98,15 +98,17 @@ function createRouter(routes, opts = {}, deps = {}) {
 
     const rootNode = routes instanceof RouteNode
         ? routes
-        : new RouteNode('', '', routes, addCanActivate);
+        : new RouteNode('', '', routes, onRouteAdded);
 
     router.rootNode = rootNode;
 
     return router;
 
-    function addCanActivate(route) {
+    function onRouteAdded(route) {
         if (route.canActivate)
             router.canActivate(route.name, route.canActivate);
+
+        if (route.forwardTo) router.forward(route.name, route.forwardTo);
     }
 
     /**
@@ -231,7 +233,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}       The router instance
      */
     function add(routes) {
-        rootNode.add(routes, addCanActivate);
+        rootNode.add(routes, onRouteAdded);
         return router;
     }
 
