@@ -5,11 +5,13 @@ const noop = function() {};
 
 export default function withNavigation(router) {
     let cancelCurrentTransition;
+    const forwardMap = {};
 
     router.navigate = navigate;
     router.navigateToDefault = navigateToDefault;
     router.transitionToState = transitionToState;
     router.cancel = cancel;
+    router.forward = forward;
 
     /**
      * Cancel the current transition if there is one
@@ -25,6 +27,18 @@ export default function withNavigation(router) {
     }
 
     /**
+     * Forward a route to another route, when calling navigate.
+     * Route parameters for the two routes should match to avoid issues.
+     * @param  {String}   fromRoute      The route name
+     * @param  {String}   toRoute  The route params
+     */
+    function forward(fromRoute, toRoute) {
+        forwardMap[fromRoute] = toRoute;
+
+        return router;
+    }
+
+    /**
      * Navigate to a route
      * @param  {String}   routeName      The route name
      * @param  {Object}   [routeParams]  The route params
@@ -33,7 +47,7 @@ export default function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate(...args) {
-        const name = args[0];
+        const name = forwardMap[args[0]] || args[0];
         const lastArg = args[args.length - 1];
         const done = typeof lastArg === 'function' ? lastArg : noop;
         const params = typeof args[1] === 'object' ? args[1] : {};

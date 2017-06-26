@@ -172,4 +172,14 @@ describe('core/navigation', function() {
             done();
         });
     });
+
+    it('should forward a route to another route', done => {
+        router.forward('profile', 'profile.me');
+
+        router.navigate('profile', (err, state) => {
+            expect(state.name).to.equal('profile.me');
+            router.forward('profile', undefined);
+            done();
+        });
+    });
 });

@@ -85,6 +85,7 @@ declare module "router5" {
 
     // navigation
     cancel(): Router;
+    forward(fromRouteName: string, toRouteName: string): Router;
     navigate(routeName: string, routeParams?: object, options?: NavigationOptions, done?: Function): Function;
     navigateToDefault(options?: NavigationOptions, done?: Function): Function;
 
