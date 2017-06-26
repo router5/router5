@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { spy } from 'sinon';
 import { state1, state2 } from './_helpers';
 import createObservables from '../modules';
-import createRouter, { constants } from 'router5';
+import createRouter, { constants } from '../../router5';
 
 const error = 'error';
 

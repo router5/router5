@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { spy } from 'sinon';
 import { state1, state2 } from './_helpers';
 import createObservables from '../modules';
-import createRouter, { constants } from 'router5';
+import createRouter, { constants } from '../../router5';
 
 const error = 'error';
 
@@ -14,7 +14,12 @@ describe('transitionError$', () => {
 
         observables.transitionError$.subscribe(listener);
         router.invokeEventListeners(constants.TRANSITION_START, state1, null);
-        router.invokeEventListeners(constants.TRANSITION_ERROR, state1, null, error);
+        router.invokeEventListeners(
+            constants.TRANSITION_ERROR,
+            state1,
+            null,
+            error
+        );
 
         expect(listener.next).to.have.been.calledTwice;
         expect(listener.next).to.have.been.calledWith(null);
@@ -32,7 +37,12 @@ describe('transitionError$', () => {
 
         observables.transitionError$.subscribe(listener);
         router.invokeEventListeners(constants.TRANSITION_START, state1, null);
-        router.invokeEventListeners(constants.TRANSITION_ERROR, state1, null, error);
+        router.invokeEventListeners(
+            constants.TRANSITION_ERROR,
+            state1,
+            null,
+            error
+        );
         router.invokeEventListeners(constants.TRANSITION_START, state2, null);
 
         expect(listener.next).to.have.been.calledThrice;

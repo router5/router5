@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { spy } from 'sinon';
 import { state1, state2, state3 } from './_helpers';
 import createObservables from '../modules';
-import createRouter, { constants } from 'router5';
+import createRouter, { constants } from '../../router5';
 
 const nestedA = { name: 'a', path: '/a', meta: { params: {} } };
 const nestedAB = { name: 'a.b', path: '/a/b', meta: { params: {} } };

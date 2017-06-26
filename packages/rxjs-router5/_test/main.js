@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Observable } from 'rxjs';
 import createObservables from '../modules';
-import createRouter from 'router5';
+import createRouter from '../../router5';
 
 describe('rxPlugin', () => {
     let observables;

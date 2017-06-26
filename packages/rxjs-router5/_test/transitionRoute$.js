@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { spy } from 'sinon';
 import { state1 } from './_helpers';
 import createObservables from '../modules';
-import createRouter, { constants } from 'router5';
+import createRouter, { constants } from '../../router5';
 
 describe('transitionRoute$', () => {
     it('should push new values to transitionRoute$ on transitionStart events', () => {

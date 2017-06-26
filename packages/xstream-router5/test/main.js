@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Stream } from 'xstream';
-import createRouter from 'router5';
+import createRouter from '../../router5';
 import createObservables from '../modules';
 
 describe('xsPlugin', () => {
