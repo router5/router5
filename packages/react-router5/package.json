@@ -22,9 +22,6 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "http://router5.github.com",
-  "devDependencies": {
-    "router5": "^5.0.1"
-  },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
     "router5": "^5.0.1"

@@ -4,5 +4,13 @@
     "packages/*"
   ],
   "version": "independent",
-  "npmClient": "yarn"
-}
+  "npmClient": "yarn",
+  "commands": {
+    "publish": {
+      "ignore": [
+        "*.md",
+        "yarn.lock",
+        "*.log"
+      ]
+    }
+  }

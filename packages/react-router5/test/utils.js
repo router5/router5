@@ -1,8 +1,8 @@
-import createRouter from 'router5';
+import createRouter from '../../router5';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { RouterProvider } from '../modules';
-import browserPlugin from 'router5/plugins/browser';
+import browserPlugin from '../../router5/plugins/browser';
 import { mount } from 'enzyme';
 
 export class Child extends Component {
