@@ -1,3 +1,24 @@
+## router5@5.1.0
+
+#### Also released
+
+- react-router5@5.0.2
+- rxjs-router5@5.0.2
+- xstream-router5@5.0.2
+
+#### Feature
+* `router5`
+  * [#154](https://github.com/router5/router5/pull/154) Route forwarding. ([@troch](https://github.com/troch))
+
+#### House keeping
+* `react-router5`, `rxjs-router5`, `xstream-router5`
+  * [#156](https://github.com/router5/router5/pull/156) Remove package internal dev dependencies. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 <a name="5.0.0"></a>
 # 5.0.0
 

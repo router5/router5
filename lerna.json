@@ -20,6 +20,7 @@
         "bug": "Bug fix",
         "feature": "Feature",
         "housekeeping": "House keeping"
-    }
+    },
+    "cacheDir": ".changelog"
   }
 }
