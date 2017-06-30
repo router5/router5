@@ -1,3 +1,13 @@
+## router5@5.1.1 (2017-06-30)
+
+#### Bug fix
+* `router5`
+  * [#158](https://github.com/router5/router5/pull/158) Allow route forwarding on router start. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
 ## router5@5.1.0
 
 #### Also released
