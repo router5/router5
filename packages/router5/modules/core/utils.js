@@ -130,8 +130,15 @@ export default function withUtils(router) {
             const builtPath = options.useTrailingSlash === undefined
                 ? path
                 : router.buildPath(name, params);
+            const routeName = router.forwardMap[name] || name;
 
-            return router.makeState(name, params, builtPath, _meta, source);
+            return router.makeState(
+                routeName,
+                params,
+                builtPath,
+                _meta,
+                source
+            );
         }
 
         return null;

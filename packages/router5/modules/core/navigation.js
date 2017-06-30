@@ -5,8 +5,8 @@ const noop = function() {};
 
 export default function withNavigation(router) {
     let cancelCurrentTransition;
-    const forwardMap = {};
 
+    router.forwardMap = {};
     router.navigate = navigate;
     router.navigateToDefault = navigateToDefault;
     router.transitionToState = transitionToState;
@@ -33,7 +33,7 @@ export default function withNavigation(router) {
      * @param  {String}   toRoute  The route params
      */
     function forward(fromRoute, toRoute) {
-        forwardMap[fromRoute] = toRoute;
+        router.forwardMap[fromRoute] = toRoute;
 
         return router;
     }
@@ -47,7 +47,7 @@ export default function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate(...args) {
-        const name = forwardMap[args[0]] || args[0];
+        const name = router.forwardMap[args[0]] || args[0];
         const lastArg = args[args.length - 1];
         const done = typeof lastArg === 'function' ? lastArg : noop;
         const params = typeof args[1] === 'object' ? args[1] : {};
