@@ -1228,8 +1228,9 @@ function withUtils(router) {
                 _meta = match._meta;
 
             var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(name, params);
+            var routeName = router.forwardMap[name] || name;
 
-            return router.makeState(name, params, builtPath, _meta, source);
+            return router.makeState(routeName, params, builtPath, _meta, source);
         }
 
         return null;
@@ -1617,8 +1618,8 @@ var noop$2 = function noop() {};
 
 function withNavigation(router) {
     var cancelCurrentTransition = void 0;
-    var forwardMap = {};
 
+    router.forwardMap = {};
     router.navigate = navigate;
     router.navigateToDefault = navigateToDefault;
     router.transitionToState = transitionToState;
@@ -1645,7 +1646,7 @@ function withNavigation(router) {
      * @param  {String}   toRoute  The route params
      */
     function forward(fromRoute, toRoute) {
-        forwardMap[fromRoute] = toRoute;
+        router.forwardMap[fromRoute] = toRoute;
 
         return router;
     }
@@ -1663,7 +1664,7 @@ function withNavigation(router) {
             args[_key] = arguments[_key];
         }
 
-        var name = forwardMap[args[0]] || args[0];
+        var name = router.forwardMap[args[0]] || args[0];
         var lastArg = args[args.length - 1];
         var done = typeof lastArg === 'function' ? lastArg : noop$2;
         var params = _typeof(args[1]) === 'object' ? args[1] : {};
