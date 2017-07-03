@@ -1151,14 +1151,14 @@ function withUtils(router) {
 
         var getUrlParams = function getUrlParams(name) {
             return router.rootNode.getSegmentsByName(name).map(function (segment) {
-                return segment.parser[ignoreQueryParams ? 'urlParams' : 'params'];
+                return segment.parser['urlParams'];
             }).reduce(function (params, p) {
                 return params.concat(p);
             }, []);
         };
 
-        var state1Params = getUrlParams(state1.name);
-        var state2Params = getUrlParams(state2.name);
+        var state1Params = ignoreQueryParams ? getUrlParams(state1.name) : Object.keys(state1.params);
+        var state2Params = ignoreQueryParams ? getUrlParams(state2.name) : Object.keys(state2.params);
 
         return state1Params.length === state2Params.length && state1Params.every(function (p) {
             return state1.params[p] === state2.params[p];

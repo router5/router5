@@ -251,7 +251,7 @@ function browserPluginFactory() {
                         router.navigate(name, params, _extends({}, transitionOptions, {
                             replace: true
                         }));
-                    } else if (err === errorCodes.CANNOT_DEACTIVATE) {
+                    } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
                         var url = router.buildUrl(routerState.name, routerState.params);
                         if (!newState) {
                             // Keep history state unchanged but use current URL
@@ -287,7 +287,9 @@ function browserPluginFactory() {
 
         function onTransitionSuccess(toState, fromState, opts) {
             var historyState = browser.getState();
-            var replace = opts.replace || fromState && router.areStatesEqual(toState, fromState, false) || opts.reload && historyState && router.areStatesEqual(toState, historyState, false);
+            var hasState = historyState && historyState.meta && historyState.name && historyState.params;
+            var statesAreEqual = fromState && router.areStatesEqual(fromState, toState, false);
+            var replace = opts.replace || !hasState || statesAreEqual;
             var url = router.buildUrl(toState.name, toState.params);
             if (fromState === null && options.useHash === false && options.preserveHash === true) {
                 url += browser.getHash();
