@@ -56,16 +56,15 @@ export default function withUtils(router) {
         const getUrlParams = name =>
             router.rootNode
                 .getSegmentsByName(name)
-                .map(
-                    segment =>
-                        segment.parser[
-                            ignoreQueryParams ? 'urlParams' : 'params'
-                        ]
-                )
+                .map(segment => segment.parser['urlParams'])
                 .reduce((params, p) => params.concat(p), []);
 
-        const state1Params = getUrlParams(state1.name);
-        const state2Params = getUrlParams(state2.name);
+        const state1Params = ignoreQueryParams
+            ? getUrlParams(state1.name)
+            : Object.keys(state1.params);
+        const state2Params = ignoreQueryParams
+            ? getUrlParams(state2.name)
+            : Object.keys(state2.params);
 
         return (
             state1Params.length === state2Params.length &&

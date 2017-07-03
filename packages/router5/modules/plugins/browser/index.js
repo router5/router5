@@ -146,13 +146,14 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
 
         function onTransitionSuccess(toState, fromState, opts) {
             const historyState = browser.getState();
-            const replace =
-                opts.replace ||
-                (fromState &&
-                    router.areStatesEqual(toState, fromState, false)) ||
-                (opts.reload &&
-                    historyState &&
-                    router.areStatesEqual(toState, historyState, false));
+            const hasState =
+                historyState &&
+                historyState.meta &&
+                historyState.name &&
+                historyState.params;
+            const statesAreEqual =
+                fromState && router.areStatesEqual(fromState, toState, false);
+            const replace = opts.replace || !hasState || statesAreEqual;
             let url = router.buildUrl(toState.name, toState.params);
             if (
                 fromState === null &&
