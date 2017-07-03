@@ -1,7 +1,7 @@
 {
   "name": "router5-examples",
   "private": true,
-  "version": "5.0.3",
+  "version": "5.0.4",
   "description": "A mix of playground code and examples",
   "main": "index.js",
   "scripts": {
@@ -45,7 +45,7 @@
     "redux-router5": "^5.0.0",
     "redux-thunk": "~2.2.0",
     "reselect": "~3.0.1",
-    "router5": "^5.1.1",
+    "router5": "^5.1.2",
     "virtual-element": "~1.2.0"
   }
 }
