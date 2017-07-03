@@ -99,7 +99,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                                 ...transitionOptions,
                                 replace: true
                             });
-                        } else if (err === errorCodes.CANNOT_DEACTIVATE) {
+                        } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
                             const url = router.buildUrl(
                                 routerState.name,
                                 routerState.params
