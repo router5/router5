@@ -42,7 +42,7 @@ export default function withNavigation(router) {
      * Navigate to a route
      * @param  {String}   routeName      The route name
      * @param  {Object}   [routeParams]  The route params
-     * @param  {Object}   [options]      The navigation options (`replace`, `reload`)
+     * @param  {Object}   [options]      The navigation options (`replace`, `reload`, `skipTransition`)
      * @param  {Function} [done]         A done node style callback (err, state)
      * @return {Function}                A cancel function
      */
@@ -97,6 +97,11 @@ export default function withNavigation(router) {
         }
 
         const fromState = sameStates ? null : router.getState();
+
+        if (opts.skipTransition) {
+            done(null, toState);
+            return noop;
+        }
 
         // Transition
         return transitionToState(toState, fromState, opts, (err, state) => {
