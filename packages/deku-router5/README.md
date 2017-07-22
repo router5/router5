@@ -6,7 +6,7 @@ This package replaces `router5-deku` which is deprecated.
 
 ### Example
 
-[Code](../packages/apps/deku)
+[Code](../examples/apps/deku)
 [Demo](http://router5.github.io/docs/with-deku.html#/inbox)
 
 ### Requirements
