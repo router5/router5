@@ -13,7 +13,7 @@ npm install --save react-router5
 
 ### Examples
 
-* [Example project](../packages/examples/apps/react)
+* [Example project](../examples/apps/react)
 * [Demo](https://router5.github.io/docs/with-react.html#/inbox)
 
 ### Requirements

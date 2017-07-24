@@ -5,7 +5,7 @@
 > Router5 integration with redux. If you develop with React, use this package with __[react-redux](../packages/react-redux)__
 and __[react-router5](../packages/react-router5)__. Using router5 with redux removes the need to include _router5-listeners_.
 
-__[Example](../packages/examples/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
+__[Example](../examples/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
 
 ## Requirements
 
