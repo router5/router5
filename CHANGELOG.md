@@ -1,8 +1,19 @@
+## router5@5.1.3 (2017-07-27)
+
+#### Bug fix
+* `router5`
+  * [#166](https://github.com/router5/router5/pull/166) Set source to 'popstate' in meta of state changes caused by history popstate events. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.1.2 (2017-07-03)
 
 #### Bug fix
 * `router5`
-  * [#160](https://github.com/router5/router5/pull/160) Fix cannot deactivate conddition in browser plugin popstate handler. ([@troch](https://github.com/troch))
+  * [#160](https://github.com/router5/router5/pull/160) Fix cannot deactivate condition in browser plugin popstate handler. ([@troch](https://github.com/troch))
   * [#159](https://github.com/router5/router5/pull/159) Correct state comparison (areStatesEqual) with non-strict query parameters. ([@troch](https://github.com/troch))
 
 #### Committers: 1
