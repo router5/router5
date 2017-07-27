@@ -101,7 +101,14 @@ function test(useHash) {
                     setTimeout(function() {
                         expect(
                             mockedBrowser.replaceState
-                        ).to.have.been.calledWith(state1);
+                        ).to.have.been.calledWith({
+                            ...state1,
+                            meta: {
+                                ...state1.meta,
+                                id: state1.meta.id + 2,
+                                source: 'popstate'
+                            }
+                        });
                         // expect(withoutMeta(router.getState())).to.eql(homeState);
                         popState(state2);
                         // Push to queue
