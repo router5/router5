@@ -222,7 +222,7 @@ function browserPluginFactory() {
             var routerState = router.getState();
             // Do nothing if no state or if last know state is poped state (it should never happen)
             var newState = !evt.state || !evt.state.name;
-            var state = newState ? router.matchPath(browser.getLocation(options), source) : evt.state;
+            var state = newState ? router.matchPath(browser.getLocation(options), source) : router.makeState(evt.state.name, evt.state.params, evt.state.path, evt.state.meta.params, source);
             var defaultRoute = routerOptions.defaultRoute,
                 defaultParams = routerOptions.defaultParams;
 
