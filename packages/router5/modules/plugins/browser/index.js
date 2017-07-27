@@ -65,7 +65,13 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             const newState = !evt.state || !evt.state.name;
             const state = newState
                 ? router.matchPath(browser.getLocation(options), source)
-                : evt.state;
+                : router.makeState(
+                      evt.state.name,
+                      evt.state.params,
+                      evt.state.path,
+                      evt.state.meta.params,
+                      source
+                  );
             const { defaultRoute, defaultParams } = routerOptions;
 
             if (!state) {
