@@ -973,7 +973,15 @@ var RouteNode = function () {
                 return segment.absolute ? segmentPath : path + segmentPath;
             }, '');
 
-            return path + (searchPart ? '?' + searchPart : '');
+            var finalPath = path;
+
+            if (options.trailingSlash === true) {
+                finalPath = /\/$/.test(path) ? path : path + '/';
+            } else if (options.trailingSlash === false) {
+                finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
+            }
+
+            return finalPath + (searchPart ? '?' + searchPart : '');
         }
     }, {
         key: 'getMetaFromSegments',
@@ -1007,14 +1015,6 @@ var RouteNode = function () {
             var defaultOptions = { strictQueryParams: true };
             var options = _extends({}, defaultOptions, opts);
             var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
-
-            if (options.trailingSlash === true) {
-                return (/\/$/.test(path) ? path : path + '/'
-                );
-            } else if (options.trailingSlash === false) {
-                return (/\/$/.test(path) ? path.slice(0, -1) : path
-                );
-            }
 
             return path;
         }

@@ -27,7 +27,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "1.8.2",
+    "route-node": "1.8.3",
     "router5-transition-path": "^5.0.0"
   },
   "typings": "./index.d.ts"
