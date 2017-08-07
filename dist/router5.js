@@ -977,7 +977,7 @@ var RouteNode = function () {
 
             if (options.trailingSlash === true) {
                 finalPath = /\/$/.test(path) ? path : path + '/';
-            } else if (options.trailingSlash === false) {
+            } else if (options.trailingSlash === false && path !== '/') {
                 finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
             }
 
