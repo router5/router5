@@ -1,3 +1,14 @@
+## router5@5.1.6 (2017-08-10)
+
+#### Bug fix
+* `router5`
+  * [#172](https://github.com/router5/router5/pull/172) Prevent empty arrays to be serialised in search part. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.1.4 (2017-08-04)
 
 #### Bug fix
