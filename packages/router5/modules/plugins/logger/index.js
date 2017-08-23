@@ -1,8 +1,9 @@
 /* istanbul ignore next */
 /*eslint no-console: 0*/
 
-function loggerPlugin() {
-    const startGroup = () => console.group('Router transition');
+function loggerPlugin(options = {}) {
+    const group = options.collapsed ? console.groupCollapsed : console.group;
+    const startGroup = () => group('Router transition');
     const endGroup = () => console.groupEnd('Router transition');
 
     console.info('Router started');

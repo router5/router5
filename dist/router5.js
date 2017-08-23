@@ -2240,8 +2240,11 @@ function createRouter$1(routes) {
 /*eslint no-console: 0*/
 
 function loggerPlugin() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    var group = options.collapsed ? console.groupCollapsed : console.group;
     var startGroup = function startGroup() {
-        return console.group('Router transition');
+        return group('Router transition');
     };
     var endGroup = function endGroup() {
         return console.groupEnd('Router transition');
