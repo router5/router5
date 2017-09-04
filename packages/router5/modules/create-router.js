@@ -118,9 +118,10 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {String} path         The state path
      * @param  {Object} [metaParams] Description of the state params
      * @param  {String} [source]     The source of the routing state
+     * @param  {Number} [forceId]    The ID to use in meta (incremented by default)
      * @return {Object}              The state object
      */
-    function makeState(name, params, path, metaParams, source) {
+    function makeState(name, params, path, metaParams, source, forceId) {
         const state = {};
         const setProp = (key, value) =>
             Object.defineProperty(state, key, { value, enumerable: true });
@@ -129,8 +130,16 @@ function createRouter(routes, opts = {}, deps = {}) {
         setProp('path', path);
 
         if (metaParams || source) {
-            stateId += 1;
-            const meta = { params: metaParams, id: stateId };
+            let finalStateId;
+
+            if (forceId === undefined) {
+                stateId += 1;
+                finalStateId = stateId;
+            } else {
+                finalStateId = forceId;
+            }
+
+            const meta = { params: metaParams, id: finalStateId };
 
             if (source) meta.source = source;
 

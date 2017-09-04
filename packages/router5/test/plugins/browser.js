@@ -105,7 +105,7 @@ function test(useHash) {
                             ...state1,
                             meta: {
                                 ...state1.meta,
-                                id: state1.meta.id + 2,
+                                id: state1.meta.id,
                                 source: 'popstate'
                             }
                         });
