@@ -42,7 +42,7 @@ export default function withNavigation(router) {
      * Navigate to a route
      * @param  {String}   routeName      The route name
      * @param  {Object}   [routeParams]  The route params
-     * @param  {Object}   [options]      The navigation options (`replace`, `reload`)
+     * @param  {Object}   [options]      The navigation options (`replace`, `reload`, `force`)
      * @param  {Function} [done]         A done node style callback (err, state)
      * @return {Function}                A cancel function
      */
@@ -84,7 +84,7 @@ export default function withNavigation(router) {
 
         // Do not proceed further if states are the same and no reload
         // (no deactivation and no callbacks)
-        if (sameStates && !opts.reload) {
+        if (sameStates && !opts.reload && !opts.force) {
             const err = { code: errorCodes.SAME_STATES };
             done(err);
             router.invokeEventListeners(
@@ -104,7 +104,7 @@ export default function withNavigation(router) {
                 if (err.redirect) {
                     const { name, params } = err.redirect;
 
-                    navigate(name, params, { ...opts, reload: true }, done);
+                    navigate(name, params, { ...opts, force: true }, done);
                 } else {
                     done(err);
                 }
