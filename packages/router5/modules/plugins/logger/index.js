@@ -1,9 +1,15 @@
 /* istanbul ignore next */
 /*eslint no-console: 0*/
+const noop = () => {};
 
 function loggerPlugin() {
-    const startGroup = () => console.group('Router transition');
-    const endGroup = () => console.groupEnd('Router transition');
+    const supportsGroups = console.group && console.groupEnd;
+    const startGroup = supportsGroups
+        ? () => console.group('Router transition')
+        : noop;
+    const endGroup = supportsGroups
+        ? () => console.groupEnd('Router transition')
+        : noop;
 
     console.info('Router started');
 
