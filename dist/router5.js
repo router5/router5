@@ -2103,9 +2103,10 @@ function createRouter$1(routes) {
      * @param  {String} path         The state path
      * @param  {Object} [metaParams] Description of the state params
      * @param  {String} [source]     The source of the routing state
+     * @param  {Number} [forceId]    The ID to use in meta (incremented by default)
      * @return {Object}              The state object
      */
-    function makeState(name, params, path, metaParams, source) {
+    function makeState(name, params, path, metaParams, source, forceId) {
         var state = {};
         var setProp = function setProp(key, value) {
             return Object.defineProperty(state, key, { value: value, enumerable: true });
@@ -2115,8 +2116,16 @@ function createRouter$1(routes) {
         setProp('path', path);
 
         if (metaParams || source) {
-            stateId += 1;
-            var meta = { params: metaParams, id: stateId };
+            var finalStateId = void 0;
+
+            if (forceId === undefined) {
+                stateId += 1;
+                finalStateId = stateId;
+            } else {
+                finalStateId = forceId;
+            }
+
+            var meta = { params: metaParams, id: finalStateId };
 
             if (source) meta.source = source;
 
@@ -2238,14 +2247,16 @@ function createRouter$1(routes) {
 
 /* istanbul ignore next */
 /*eslint no-console: 0*/
+var noop$3 = function noop() {};
 
 function loggerPlugin() {
-    var startGroup = function startGroup() {
+    var supportsGroups = console.group && console.groupEnd;
+    var startGroup = supportsGroups ? function () {
         return console.group('Router transition');
-    };
-    var endGroup = function endGroup() {
+    } : noop$3;
+    var endGroup = supportsGroups ? function () {
         return console.groupEnd('Router transition');
-    };
+    } : noop$3;
 
     console.info('Router started');
 
