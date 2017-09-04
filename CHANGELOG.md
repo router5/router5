@@ -1,3 +1,15 @@
+## router5@5.1.7 (2017-09-04)
+
+#### Bug fix
+* `router5`
+  * [#187](https://github.com/router5/router5/pull/187) Preserve state IDs on popstate. ([@troch](https://github.com/troch))
+  * [#186](https://github.com/router5/router5/pull/186) Only use console groups in logger if available. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.1.6 (2017-08-10)
 
 #### Bug fix
