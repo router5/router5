@@ -107,7 +107,7 @@ declare module "router5" {
      * @param path The route path (from parent)
      * @param canActivate The canActivate handler for this node
      */
-    addNode(name: string, path: string, canActivate?: RouterActivationHandler): void;
+    addNode(name: string, path: string, canActivate?: RouterActivationHandlerFactory): void;
 
     /**
      * Check if two states are related
@@ -144,7 +144,7 @@ declare module "router5" {
      * @param canActivate The canActivate handler or boolean
      * @returns The router instance
      */
-    canActivate(name: string, canActivate: RouterActivationHandler | boolean): Router;
+    canActivate(name: string, canActivate: RouterActivationHandlerFactory | boolean): Router;
 
     /**
      * Register a canDeactivate handler or specify a if a route can be deactivated
@@ -153,7 +153,7 @@ declare module "router5" {
      * @param canDeactivate The canDeactivate handler or boolean
      * @returns The router instance
      */
-    canDeactivate(name: string, canDeactivate: RouterActivationHandler | boolean): Router;
+    canDeactivate(name: string, canDeactivate: RouterActivationHandlerFactory | boolean): Router;
 
     /**
      * Cancel the current transition if there is one
@@ -350,8 +350,9 @@ declare module "router5" {
   /**
    * The result can be synchronous (returning a boolean) or asynchronous (returning a promise or calling done(err, result))
    */
-  export type RouterActivationHandler = (tostring: State, fromState: State) => boolean | Promise<boolean>;
-
+  export type RouterActivationHandler = (tostring: State, fromState: State, done:(err:any,result:any) => void) => boolean | Promise<boolean> | undefined;
+  export type RouterActivationHandlerFactory = (router: Router) => RouterActivationHandler;
+  
   export interface Route {
     name: string;
     path: string;
@@ -364,7 +365,7 @@ declare module "router5" {
     /**
      * a method to control whether or not the route node can be activated
      */
-    canActivate?: (router: Router) => RouterActivationHandler;
+    canActivate?: RouterActivationHandlerFactory;
 
     children?: Array<Route>;
   }
