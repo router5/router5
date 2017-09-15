@@ -3,13 +3,18 @@
 const noop = () => {};
 
 function loggerPlugin() {
-    const supportsGroups = console.group && console.groupEnd;
-    const startGroup = supportsGroups
-        ? () => console.group('Router transition')
-        : noop;
-    const endGroup = supportsGroups
-        ? () => console.groupEnd('Router transition')
-        : noop;
+    let startGroup, endGroup;
+
+    if (console.groupCollapsed) {
+        startGroup = label => console.groupCollapsed(label);
+        endGroup = () => console.groupEnd();
+    } else if (console.group) {
+        startGroup = label => console.group(label);
+        endGroup = () => console.groupEnd();
+    } else {
+        startGroup = noop;
+        endGroup = noop;
+    }
 
     console.info('Router started');
 
@@ -19,7 +24,7 @@ function loggerPlugin() {
         },
         onTransitionStart(toState, fromState) {
             endGroup();
-            startGroup();
+            startGroup('Router transition');
             console.log('Transition started from state');
             console.log(fromState);
             console.log('To state');
