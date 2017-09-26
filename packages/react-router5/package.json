@@ -23,7 +23,7 @@
   },
   "homepage": "http://router5.github.com",
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0",
+    "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
     "router5": "^5.0.1"
   },
   "dependencies": {
