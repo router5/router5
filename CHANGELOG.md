@@ -1,3 +1,26 @@
+## router5@5.2.0 (2017-09-25)
+
+#### Bug fix
+* `router5`
+  * [#192](https://github.com/router5/router5/pull/192) Router plugin buildUrl should return null for undefined routes. ([@ezzatron](https://github.com/ezzatron))
+  * [#188](https://github.com/router5/router5/pull/188) Force redirections on error. ([@troch](https://github.com/troch))
+
+#### Feature
+* `router5`
+  * [#162](https://github.com/router5/router5/pull/162) Add navigation option to skip transition. ([@troch](https://github.com/troch))
+
+#### Enhancement
+* `router5`
+  * [#181](https://github.com/router5/router5/pull/181) Update typescript definition to latest docs. ([@Sebazzz](https://github.com/Sebazzz))
+  * [#190](https://github.com/router5/router5/pull/190) Use console.groupCollapsed() in the logger plugin, where available. ([@ezzatron](https://github.com/ezzatron))
+
+#### Committers: 3
+- Erin ([ezzatron](https://github.com/ezzatron))
+- Sebastiaan Dammann ([Sebazzz](https://github.com/Sebazzz))
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.1.7 (2017-09-04)
 
 #### Bug fix
