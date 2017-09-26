@@ -21,8 +21,13 @@ declare module "router5" {
     TRANSITION_ERROR: string;
   }
 
+  export interface StateMeta {
+      id: string;
+      params: object;
+  }
+
   export interface State {
-    meta?: object;
+    meta?: StateMeta;
 
     name: string;
     params: any;
@@ -32,6 +37,8 @@ declare module "router5" {
   export interface NavigationOptions {
     replace?: boolean;
     reload?: boolean;
+    force?: boolean;
+    skipTransition?: boolean;
   }
 
   export interface Plugin {
@@ -45,7 +52,7 @@ declare module "router5" {
 
   export interface PluginFactory {
     pluginName?: string;
-    (router: Router, dependencies?: any): Plugin;
+    (router: Router, dependencies?: object): Plugin;
   }
 
   export interface Middleware {
@@ -53,7 +60,7 @@ declare module "router5" {
   }
 
   export interface MiddlewareFactory {
-    (router: Router, dependencies: any): Middleware;
+    (router: Router, dependencies: object): Middleware;
   }
 
   export interface RouterOptions {
@@ -94,7 +101,7 @@ declare module "router5" {
   export interface Router {
     /**
      * Add routes
-     * 
+     *
      * @param routes A list of routes to add
      * @returns The router instance
      */
@@ -102,7 +109,7 @@ declare module "router5" {
 
     /**
      * Add a single route (node)
-     * 
+     *
      * @param name The route name (full name)
      * @param path The route path (from parent)
      * @param canActivate The canActivate handler for this node
@@ -111,7 +118,7 @@ declare module "router5" {
 
     /**
      * Check if two states are related
-     * 
+     *
      * @param parentState The parent state
      * @param childState The child state
      * @returns Whether the two states are descendants or not
@@ -120,7 +127,7 @@ declare module "router5" {
 
     /**
      * Compare two route state objects
-     * 
+     *
      * @param state1 The route state
      * @param state2 The other route state
      * @param ignoreQueryParams Whether to ignore query parameters or not
@@ -130,7 +137,7 @@ declare module "router5" {
 
     /**
      * Build a path
-     * 
+     *
      * @param route The route name
      * @param params The route params
      * @returns The path
@@ -139,7 +146,7 @@ declare module "router5" {
 
     /**
      * Register a canActivate handler or specify a if a route can be deactivated
-     * 
+     *
      * @param name The route name
      * @param canActivate The canActivate handler or boolean
      * @returns The router instance
@@ -148,7 +155,7 @@ declare module "router5" {
 
     /**
      * Register a canDeactivate handler or specify a if a route can be deactivated
-     * 
+     *
      * @param name The route name
      * @param canDeactivate The canDeactivate handler or boolean
      * @returns The router instance
@@ -162,33 +169,33 @@ declare module "router5" {
 
     /**
      * Remove all middleware functions
-     * @returns {} 
+     * @returns {}
      */
     clearMiddleware() : Router;
 
     /**
      * Clone the current router configuration. The new returned router will be non-started, with a null state
-     * 
-     * @param deps Dependency tree
+     *
+     * @param dependencies An object of dependencies (key-value pairs)
      * @returns Cloned router
      */
-    clone(deps: any): Router;
+    clone(dependencies: object): Router;
 
     /**
      * Forward a route to another route, when calling navigate. Route parameters for the two routes should match to avoid issues.
-     * 
+     *
      * @param fromRoute The route name
-     * @param toRouter The route name
-     * @returns {} 
+     * @param toRoutes The route name
+     * @returns The router instance
      */
-    forward(fromRoute : string, toRouter : string) : void;
+    forward(fromRoute : string, toRoute : string) : Router;
 
     /**
      * Get dependencies
-     * 
+     *
      * @returns The dependencies
      */
-    getDependencies():any;
+    getDependencies():object;
 
     /**
      * Get router options
@@ -203,7 +210,7 @@ declare module "router5" {
 
     /**
      * Check if a plugin has already been registered.
-     * 
+     *
      * @param pluginName The plugin name
      * @returns Whether the plugin has been registered
      */
@@ -211,7 +218,7 @@ declare module "router5" {
 
     /**
      * Check if a route is currently active
-     * 
+     *
      * @param name The route name
      * @param params The route params
      * @param strictEquality Whether to check if the given route is the active route, or part of the active route
@@ -228,7 +235,7 @@ declare module "router5" {
 
     /**
      * Build a not found state for a given path
-     * 
+     *
      * @param path The unmatched path
      * @returns The not found state object
      */
@@ -236,7 +243,7 @@ declare module "router5" {
 
     /**
      * Build a state object
-     * 
+     *
      * @param name The state name
      * @param params The state params
      * @param path The state path
@@ -258,18 +265,18 @@ declare module "router5" {
 
     /**
      * Navigate to a route
-     * 
+     *
      * @param routeName The route name
      * @param routeParams The route params
      * @param options The navigation options (`replace`, `reload`)
      * @param done A done node style callback (err, state)
-     * @returns {} 
+     * @returns {}
      */
     navigate(routeName: string, routeParams?: any, options ?: NavigationOptions, done ?: Function): Function;
 
     /**
      * Navigate to the default route (if defined)
-     * 
+     *
      * @param opts The navigation options
      * @param done A done node style callback (err, state)
      * @returns A cancel function
@@ -278,14 +285,14 @@ declare module "router5" {
 
     /**
      * Add dependencies
-     * @param deps A object of dependencies (key-value pairs)
+     * @param dependencies An object of dependencies (key-value pairs)
      * @returns The router instance
      */
-    setDependencies(deps: any): Router;
+    setDependencies(dependencies: object): Router;
 
     /**
      * Set a router dependency
-     * 
+     *
      * @param dependencyName The dependency name
      * @param dependency The dependency
      * @returns The router instance
@@ -294,7 +301,7 @@ declare module "router5" {
 
     /**
      * Set an option
-     * 
+     *
      * @param opt The option name
      * @param val The option value
      * @returns The router instance
@@ -303,14 +310,14 @@ declare module "router5" {
 
     /**
      * Set the current router state
-     * 
+     *
      * @param state The state object
      */
     setState(state : State) : void;
 
     /**
      * Start the router
-     * 
+     *
      * @param startPathOrState The start path or state. This is optional when using the browser plugin.
      * @param done A done node style callback (err, state)
      * @returns The router instance
@@ -319,14 +326,14 @@ declare module "router5" {
 
     /**
      * Stop the router
-     * 
+     *
      * @returns The router instance
      */
     stop(): Router;
 
     /**
      * Register middleware functions.
-     * 
+     *
      * @param args The middleware functions
      * @returns The router instance
      */
@@ -341,7 +348,7 @@ declare module "router5" {
 
     /**
      * Set the root node path, use carefully. It can be used to set app-wide allowed query parameters.
-     * 
+     *
      * @param rootPath The root node path
      */
     setRootPath(rootPath : string) : void;
@@ -351,8 +358,8 @@ declare module "router5" {
    * The result can be synchronous (returning a boolean) or asynchronous (returning a promise or calling done(err, result))
    */
   export type RouterActivationHandler = (tostring: State, fromState: State, done:(err:any,result:any) => void) => boolean | Promise<boolean> | undefined;
-  export type RouterActivationHandlerFactory = (router: Router) => RouterActivationHandler;
-  
+  export type RouterActivationHandlerFactory = (router: Router, dependencies: object) => RouterActivationHandler;
+
   export interface Route {
     name: string;
     path: string;
@@ -377,11 +384,11 @@ declare module "router5" {
     @param options The router options
     @param dependencies The router dependencies
   */
-  export function createRouter(routes?: Array<Route>, options?: RouterOptions, dependencies?: any): Router;
+  export function createRouter(routes?: Array<Route>, options?: RouterOptions, dependencies?: object): Router;
 
   export var errorCodes: ErrorCodes;
   export var constants: Constants;
-  export var transitionPath: (toState: any, fromState: any) => any;
+  export var transitionPath: (toState: State, fromState: State | null) => any;
   export var loggerPlugin: PluginFactory;
 
   export default createRouter;
