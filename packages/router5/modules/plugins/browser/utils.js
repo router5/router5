@@ -8,6 +8,8 @@ export default function withUtils(router, options) {
         const prefix = options.useHash ? `#${options.hashPrefix}` : '';
         const path = router.buildPath(route, params);
 
+        if (path === null) return null;
+
         return base + prefix + path;
     }
 
