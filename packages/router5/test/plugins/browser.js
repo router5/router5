@@ -155,6 +155,7 @@ function test(useHash) {
                     path: '/route-not-found'
                 })
             ).to.equal(prefix + '/route-not-found');
+            expect(router.buildUrl('undefined', {})).to.equal(null);
         });
     });
 }
