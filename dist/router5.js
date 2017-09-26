@@ -1659,7 +1659,7 @@ function withNavigation(router) {
      * Navigate to a route
      * @param  {String}   routeName      The route name
      * @param  {Object}   [routeParams]  The route params
-     * @param  {Object}   [options]      The navigation options (`replace`, `reload`)
+     * @param  {Object}   [options]      The navigation options (`replace`, `reload`, `skipTransition`, `force`)
      * @param  {Function} [done]         A done node style callback (err, state)
      * @return {Function}                A cancel function
      */
@@ -1693,7 +1693,7 @@ function withNavigation(router) {
 
         // Do not proceed further if states are the same and no reload
         // (no deactivation and no callbacks)
-        if (sameStates && !opts.reload) {
+        if (sameStates && !opts.reload && !opts.force) {
             var _err = { code: errorCodes.SAME_STATES };
             done(_err);
             router.invokeEventListeners(constants.TRANSITION_ERROR, toState, router.getState(), _err);
@@ -1701,6 +1701,11 @@ function withNavigation(router) {
         }
 
         var fromState = sameStates ? null : router.getState();
+
+        if (opts.skipTransition) {
+            done(null, toState);
+            return noop$2;
+        }
 
         // Transition
         return transitionToState(toState, fromState, opts, function (err, state) {
@@ -1711,7 +1716,7 @@ function withNavigation(router) {
                         _params = _err$redirect.params;
 
 
-                    navigate(_name, _params, _extends({}, opts, { reload: true }), done);
+                    navigate(_name, _params, _extends({}, opts, { force: true }), done);
                 } else {
                     done(err);
                 }
@@ -2250,13 +2255,27 @@ function createRouter$1(routes) {
 var noop$3 = function noop() {};
 
 function loggerPlugin() {
-    var supportsGroups = console.group && console.groupEnd;
-    var startGroup = supportsGroups ? function () {
-        return console.group('Router transition');
-    } : noop$3;
-    var endGroup = supportsGroups ? function () {
-        return console.groupEnd('Router transition');
-    } : noop$3;
+    var startGroup = void 0,
+        endGroup = void 0;
+
+    if (console.groupCollapsed) {
+        startGroup = function startGroup(label) {
+            return console.groupCollapsed(label);
+        };
+        endGroup = function endGroup() {
+            return console.groupEnd();
+        };
+    } else if (console.group) {
+        startGroup = function startGroup(label) {
+            return console.group(label);
+        };
+        endGroup = function endGroup() {
+            return console.groupEnd();
+        };
+    } else {
+        startGroup = noop$3;
+        endGroup = noop$3;
+    }
 
     console.info('Router started');
 
@@ -2266,7 +2285,7 @@ function loggerPlugin() {
         },
         onTransitionStart: function onTransitionStart(toState, fromState) {
             endGroup();
-            startGroup();
+            startGroup('Router transition');
             console.log('Transition started from state');
             console.log(fromState);
             console.log('To state');

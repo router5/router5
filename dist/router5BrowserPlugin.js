@@ -120,6 +120,8 @@ function withUtils(router, options) {
         var prefix = options.useHash ? '#' + options.hashPrefix : '';
         var path = router.buildPath(route, params);
 
+        if (path === null) return null;
+
         return base + prefix + path;
     }
 
@@ -249,7 +251,8 @@ function browserPluginFactory() {
 
 
                         router.navigate(name, params, _extends({}, transitionOptions, {
-                            replace: true
+                            replace: true,
+                            force: true
                         }));
                     } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
                         var url = router.buildUrl(routerState.name, routerState.params);
