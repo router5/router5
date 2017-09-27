@@ -344,7 +344,7 @@ declare module "router5" {
      * @param pluginFactory An argument list of plugins
      * @returns The router instance
      */
-    usePlugin(pluginFactory: PluginFactory): Router;
+    usePlugin(...args: Array<PluginFactory>): Router;
 
     /**
      * Set the root node path, use carefully. It can be used to set app-wide allowed query parameters.
