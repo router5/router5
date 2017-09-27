@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
   "main": "index.js",
   "jsnext:main": "dist/es/index.js",
