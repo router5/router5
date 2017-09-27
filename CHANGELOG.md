@@ -1,4 +1,15 @@
-## router5@5.2.0 (2017-09-25)
+## router5@5.2.1 (2017-09-27)
+
+#### Bug fix
+* `router5`
+  * [#193](https://github.com/router5/router5/pull/193) Fix TypeScript definition of router.usePlugin. ([@Keats](https://github.com/Keats))
+
+#### Committers: 1
+- Vincent Prouillet ([Keats](https://github.com/Keats))
+
+
+
+## router5@5.2.0 (2017-09-26)
 
 #### Bug fix
 * `router5`
