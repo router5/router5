@@ -418,3 +418,13 @@ declare module "router5/plugins/listeners" {
   var listenersPlugin: (options?: ListenersPluginOptions) => PluginFactory;
   export default listenersPlugin;
 }
+
+declare module "router5/plugins/persistentParams" {
+  import { PluginFactory } from "router5";
+  // persistentParamsPlugin takes a single argument which can be:
+  //   - A list of string (parameter names to persist), or
+  //   - A map of key value pairs (keys being the params to persist, values their initial value)
+  type PersistentParamsPluginParams = string[] | object;
+  var persistentParamsPlugin: (params?: PersistentParamsPluginParams) => PluginFactory;
+  export default persistentParamsPlugin;
+}
