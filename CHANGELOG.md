@@ -1,3 +1,14 @@
+## rxjs-router5@5.1.0 (2017-09-29)
+
+#### Feature
+* `rxjs-router5`
+  * [#198](https://github.com/router5/router5/pull/198) Add typings for rxjs-router5. ([@acchou](https://github.com/acchou))
+
+#### Committers: 1
+- Andy Chou ([acchou](https://github.com/acchou))
+
+
+
 ## router5@5.2.1 (2017-09-27)
 
 #### Bug fix
