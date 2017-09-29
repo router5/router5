@@ -1,3 +1,14 @@
+## router5@5.2.2 (2017-09-29)
+
+### Enhancement
+* `router5`
+  * [#196](https://github.com/router5/router5/pull/196) Add type definition for `persistentParamsPlugin`. ([@acchou](https://github.com/acchou))
+
+#### Committers: 1
+- Andy Chou ([acchou](https://github.com/acchou))
+
+
+
 ## rxjs-router5@5.1.0 (2017-09-29)
 
 #### Feature
