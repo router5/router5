@@ -1,3 +1,14 @@
+## react-router5@5.2.0 (2017-10-04)
+
+#### Feature
+* `react-router5`
+  * [#201](https://github.com/router5/router5/pull/201) Pass link props to its hyperlink element. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.2.2 (2017-09-29)
 
 ### Enhancement
