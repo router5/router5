@@ -1,7 +1,13 @@
 import React from 'react';
 import { expect } from 'chai';
 import { Child, createTestRouter, FnChild, renderWithRouter } from './utils';
-import { RouterProvider, withRoute, routeNode, BaseLink } from '../modules';
+import {
+    RouterProvider,
+    withRoute,
+    routeNode,
+    BaseLink,
+    Link
+} from '../modules';
 import { spy } from 'sinon';
 import listenersPlugin from '../../router5/plugins/listeners';
 import { mount } from 'enzyme';
@@ -87,5 +93,33 @@ describe('BaseLink component', () => {
             </RouterProvider>
         );
         expect(output.find('a')).to.have.className('active');
+    });
+
+    it('should spread other props to its link', () => {
+        router.usePlugin(listenersPlugin());
+        router.start();
+        const onMouseLeave = () => {};
+        const output = mount(
+            <RouterProvider router={router}>
+                <Link
+                    routeName={'home'}
+                    title="Hello"
+                    data-test-id="Link"
+                    onMouseLeave={onMouseLeave}
+                />
+            </RouterProvider>
+        );
+
+        const props = output.find('a').props();
+
+        expect(props).to.eql({
+            href: '/home',
+            className: 'active',
+            onClick: props.onClick,
+            title: 'Hello',
+            'data-test-id': 'Link',
+            onMouseLeave,
+            children: undefined
+        });
     });
 });

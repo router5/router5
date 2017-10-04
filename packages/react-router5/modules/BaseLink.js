@@ -58,15 +58,22 @@ class BaseLink extends Component {
     }
 
     render() {
+        /* eslint-disable */
         const {
             routeName,
             routeParams,
+            routeOptions,
             className,
             activeClassName,
+            activeStrict,
+            route,
+            previousRoute,
+            router,
             children,
-            title,
-            onMouseOver
+            onClick,
+            ...linkProps
         } = this.props;
+        /* eslint-enable */
 
         const active = this.isActive();
         const href = this.buildUrl(routeName, routeParams);
@@ -77,11 +84,10 @@ class BaseLink extends Component {
         return React.createElement(
             'a',
             {
+                ...linkProps,
                 href,
                 className: linkclassName,
-                onClick: this.clickHandler,
-                onMouseOver,
-                title
+                onClick: this.clickHandler
             },
             children
         );
