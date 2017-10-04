@@ -253,7 +253,17 @@ var inherits = function (subClass, superClass) {
 
 
 
+var objectWithoutProperties = function (obj, keys) {
+  var target = {};
 
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+
+  return target;
+};
 
 var possibleConstructorReturn = function (self, call) {
   if (!self) {
@@ -911,27 +921,31 @@ var BaseLink = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
+            /* eslint-disable */
             var _props = this.props,
                 routeName = _props.routeName,
                 routeParams = _props.routeParams,
+                routeOptions = _props.routeOptions,
                 className = _props.className,
                 activeClassName = _props.activeClassName,
+                activeStrict = _props.activeStrict,
+                route = _props.route,
+                previousRoute = _props.previousRoute,
+                router = _props.router,
                 children = _props.children,
-                title = _props.title,
-                onMouseOver = _props.onMouseOver;
-
+                onClick = _props.onClick,
+                linkProps = objectWithoutProperties(_props, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'route', 'previousRoute', 'router', 'children', 'onClick']);
+            /* eslint-enable */
 
             var active = this.isActive();
             var href = this.buildUrl(routeName, routeParams);
             var linkclassName = (className ? className.split(' ') : []).concat(active ? [activeClassName] : []).join(' ');
 
-            return React__default.createElement('a', {
+            return React__default.createElement('a', _extends({}, linkProps, {
                 href: href,
                 className: linkclassName,
-                onClick: this.clickHandler,
-                onMouseOver: onMouseOver,
-                title: title
-            }, children);
+                onClick: this.clickHandler
+            }), children);
         }
     }]);
     return BaseLink;
