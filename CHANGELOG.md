@@ -1,3 +1,14 @@
+## router5@5.3.0 (2017-10-05)
+
+#### Feature
+* `router5`
+  * [#203](https://github.com/router5/router5/pull/203) Update route-node to v1.9.0. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## react-router5@5.2.0 (2017-10-04)
 
 #### Feature
