@@ -730,8 +730,8 @@ var RouteNode = function () {
                 this.children.push(route);
                 // Push greedy spats to the bottom of the pile
                 this.children.sort(function (left, right) {
-                    var leftPath = left.path.split('?')[0].replace(/(.+)\/$/, '$1');
-                    var rightPath = right.path.split('?')[0].replace(/(.+)\/$/, '$1');
+                    var leftPath = left.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
+                    var rightPath = right.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
                     // '/' last
                     if (leftPath === '/') return 1;
                     if (rightPath === '/') return -1;

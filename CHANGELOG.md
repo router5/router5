@@ -1,3 +1,14 @@
+## router5@5.4.0 (2017-10-15)
+
+#### Enhancement
+* `router5`
+  * [#207](https://github.com/router5/router5/pull/207) Update route-node package to latest version. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.3.0 (2017-10-05)
 
 #### Feature
