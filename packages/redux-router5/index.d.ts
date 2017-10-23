@@ -13,9 +13,9 @@ declare module "redux-router5" {
 
     export const router5Reducer: Reducer<RouterState>;
 
-    export function reduxPlugin<TState extends RouterState>(dispatch: Dispatch<TState>): Plugin;
+    export function reduxPlugin<TState extends { router: RouterState }>(dispatch: Dispatch<TState>): Plugin;
 
-    export function routeNodeSelector<TState extends RouterState>(routeNode: string, reducerKey?: string): (state: TState) => Route;
+    export function routeNodeSelector<TState extends { router: RouterState }>(routeNode: string, reducerKey?: string): (state: TState) => Route;
 
     // #region actions
 
@@ -29,14 +29,14 @@ declare module "redux-router5" {
     const CAN_ACTIVATE = '@@router5/CAN_ACTIVATE';
 
     export const actionTypes: {
-        NAVIGATE_TO,
-        CANCEL_TRANSITION,
-        TRANSITION_ERROR,
-        TRANSITION_SUCCESS,
-        TRANSITION_START,
-        CLEAR_ERRORS,
-        CAN_DEACTIVATE,
-        CAN_ACTIVATE,
+        NAVIGATE_TO: typeof NAVIGATE_TO,
+        CANCEL_TRANSITION: typeof CANCEL_TRANSITION,
+        TRANSITION_ERROR: typeof TRANSITION_ERROR,
+        TRANSITION_SUCCESS: typeof TRANSITION_SUCCESS,
+        TRANSITION_START: typeof TRANSITION_START,
+        CLEAR_ERRORS: typeof CLEAR_ERRORS,
+        CAN_DEACTIVATE: typeof CAN_DEACTIVATE,
+        CAN_ACTIVATE: typeof CAN_ACTIVATE,
     };
 
     export interface ActionNavigateTo extends Action {
