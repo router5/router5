@@ -35,5 +35,6 @@
   },
   "dependencies": {
     "router5-transition-path": "^5.0.0"
-  }
+  },
+  "typings": "./index.d.ts"
 }
