@@ -1,3 +1,23 @@
+## router5@5.5.0 (2017-11-01)
+
+#### Feature
+* `react-router5`
+  * [#209](https://github.com/router5/router5/pull/209) Add types for react-router5. ([@jkelin](https://github.com/jkelin))
+* `redux-router5`
+  * [#210](https://github.com/router5/router5/pull/210) Add types for redux-router5. ([@jkelin](https://github.com/jkelin))
+
+#### Enhancement
+* `redux-router5`
+  * [#214](https://github.com/router5/router5/pull/214) Fix routeNodeSelector type. ([@faergeek](https://github.com/faergeek))
+* `router5`
+  * [#212](https://github.com/router5/router5/pull/212) Remove `?` from middleware `done` arg to avoid checking it's presence. ([@faergeek](https://github.com/faergeek))
+
+#### Committers: 2
+- Jan Kelin ([jkelin](https://github.com/jkelin))
+- Sergey Slipchenko ([faergeek](https://github.com/faergeek))
+
+
+
 ## router5@5.4.0 (2017-10-15)
 
 #### Enhancement
