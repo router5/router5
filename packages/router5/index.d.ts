@@ -56,7 +56,7 @@ declare module "router5" {
   }
 
   export interface Middleware {
-    (toState: State, fromState: State, done?: Function): any;
+    (toState: State, fromState: State, done: Function): any;
   }
 
   export interface MiddlewareFactory {
