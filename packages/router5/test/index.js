@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import createTestRouter from './_create-router';
 import { spy } from 'sinon';
+import tt from 'typescript-definition-tester';
 
 describe('router5', function() {
     let router;
@@ -22,5 +23,16 @@ describe('router5', function() {
         router.useMiddleware(mware);
         router.setDependencies({ a, b });
         expect(mware).to.have.been.calledWith(router, { a, b });
+    });
+});
+
+describe('TypeScript definitions', function() {
+    it('should compile examples against index.d.ts', function(done) {
+        tt.compileDirectory(
+            `${__dirname}/typescript`,
+            filename => filename.match(/\.ts$/),
+            { lib: ['lib.es2015.d.ts'] },
+            () => done()
+        );
     });
 });
