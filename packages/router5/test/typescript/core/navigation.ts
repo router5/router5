@@ -1,18 +1,21 @@
 /// <reference path="../../../index.d.ts" />
 
-import createRouter from "router5";
+import createRouter, { CancelFn } from "router5";
 
-const router = createRouter([]);
+let router = createRouter([]);
 
-router.cancel();
+router = router.cancel();
 
-router.forward("/", "home");
+router = router.forward("/", "home");
 
-router.navigate("/home", { lang: "en" }, { replace: true }, () => true);
-router.navigate("/home", { lang: "en" }, { replace: true });
-router.navigate("/home", { lang: "en" });
-router.navigate("/home", () => true);
-router.navigate("/home");
+let cancel: CancelFn;
+cancel = router.navigate("/home", { lang: "en" }, { replace: true }, () => true);
+cancel = router.navigate("/home", { lang: "en" }, { replace: true });
+cancel = router.navigate("/home", { lang: "en" }, () => true);
+cancel = router.navigate("/home", { lang: "en" });
+cancel = router.navigate("/home", () => true);
+cancel = router.navigate("/home");
 
-router.navigateToDefault({ replace: true }, () => true);
-router.navigateToDefault();
+cancel = router.navigateToDefault({ replace: true }, () => true);
+cancel = router.navigateToDefault(() => true);
+cancel = router.navigateToDefault();

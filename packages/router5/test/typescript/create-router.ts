@@ -1,23 +1,25 @@
 /// <reference path="../../index.d.ts" />
 
-import createRouter, { Route, Router, RouterOptions, State } from "router5";
+import createRouter, { Dependencies, Route, Router, State } from "router5";
+import { Options } from "router5/create-router";
 
 const routes: Route[] = [
     { name: "home", path: "/" },
     { name: "users", path: "/users/:id" },
 ];
 
-const options: RouterOptions = {
+const options: Options = {
     defaultRoute: "home",
     defaultParams: { lang: "en" },
     trailingSlash: false,
     useTrailingSlash: false,
     autoCleanUp: true,
-    strictQueryParams: true,
-    allowNotFound: true,
+    strictQueryParams: false,
+    allowNotFound: false,
+    strongMatching: true,
 };
 
-const deps = { store: {} };
+const deps: Dependencies = { store: {} };
 
 const router = createRouter([]);
 
@@ -31,6 +33,7 @@ let s: State;
 s = router.makeState("home", {}, "/");
 s = router.makeState("home", {}, "/", {});
 s = router.makeState("home", {}, "/", {}, "");
+s = router.makeState("home", {}, "/", {}, "", 0);
 
 s = router.makeNotFoundState("/");
 
@@ -38,7 +41,7 @@ s = router.getState();
 
 router.setState(s);
 
-const _o: RouterOptions = router.getOptions();
+const _o: Options = router.getOptions();
 
 r = router.setOption("defaultRoute", "home");
 r = router.setOption("defaultParams", { lang: "en" });
@@ -50,9 +53,10 @@ r = router.setDependency("foo", "bar");
 
 r = router.setDependencies(deps);
 
-const _d: object = router.getDependencies();
+const _d: Dependencies = router.getDependencies();
 
 r = router.add(routes);
+r = router.add({ name: "home", path: "/" });
 
-router.addNode("home", "/");
-router.addNode("home", "/", () => () => true);
+r = router.addNode("home", "/");
+r = router.addNode("home", "/", () => () => true);

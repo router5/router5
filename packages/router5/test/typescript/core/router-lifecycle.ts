@@ -8,6 +8,7 @@ const _: boolean = router.isStarted();
 
 router = router.start("", () => {});
 router = router.start("");
+router = router.start(() => {});
 router = router.start();
 
 router = router.stop();

@@ -2,7 +2,7 @@
 
 import createRouter, { State } from "router5";
 
-let res: Boolean;
+let res: boolean;
 
 const router = createRouter([]);
 const state = router.getState();

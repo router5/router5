@@ -1,12 +1,12 @@
 /// <reference path="../../../index.d.ts" />
 
-import createRouter, { Router, State } from "router5";
+import createRouter, { DoneFn, Router, State } from "router5";
 
 let router = createRouter([]);
 
 const middleware1 = () => () => true;
 const middleware2 = () => () => Promise.resolve(true);
-const middleware3 = (_r: Router) => (_to: State, _from: State, done: Function) => {
+const middleware3 = (_r: Router) => (_to: State, _from: State, done: DoneFn) => {
     done();
 };
 
