@@ -1,5 +1,5 @@
 declare module "redux-router5" {
-    import { Router, Plugin, State, Route } from 'router5';
+    import { Router, PluginFactory, State, Route } from 'router5';
     import { Store, Middleware, Reducer, Dispatch, Action } from 'redux';
 
     export function router5Middleware(router: Router): Middleware;
@@ -13,7 +13,7 @@ declare module "redux-router5" {
 
     export const router5Reducer: Reducer<RouterState>;
 
-    export function reduxPlugin<TState extends { router: RouterState }>(dispatch: Dispatch<TState>): Plugin;
+    export function reduxPlugin<TState extends { router: RouterState }>(dispatch: Dispatch<TState>): PluginFactory;
 
     export function routeNodeSelector<TState extends { router: RouterState }>(routeNode: string, reducerKey?: string): (state: TState) => RouterState;
 
