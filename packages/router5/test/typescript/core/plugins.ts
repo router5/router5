@@ -1,6 +1,6 @@
 /// <reference path="../../../index.d.ts" />
 
-import createRouter, { Plugin, PluginFactory, Router } from "router5";
+import createRouter, { Plugin, PluginFactory, Router } from 'router5'
 
 const noopPluginFactory: PluginFactory = Object.assign(
     (router: Router): Plugin => {
@@ -10,16 +10,16 @@ const noopPluginFactory: PluginFactory = Object.assign(
             onTransitionStart() {},
             onTransitionCancel() {},
             onTransitionError() {},
-            onTransitionSuccess() {},
-        };
+            onTransitionSuccess() {}
+        }
     },
-    { pluginName: "NOOP_PLUGIN" },
-);
+    { pluginName: 'NOOP_PLUGIN' }
+)
 
-let router = createRouter([]);
+let router = createRouter([])
 
-router = router.usePlugin();
-router = router.usePlugin(noopPluginFactory);
-router = router.usePlugin(noopPluginFactory, noopPluginFactory);
+router = router.usePlugin()
+router = router.usePlugin(noopPluginFactory)
+router = router.usePlugin(noopPluginFactory, noopPluginFactory)
 
-const _: boolean = router.hasPlugin("NOOP_PLUGIN");
+const _: boolean = router.hasPlugin('NOOP_PLUGIN')

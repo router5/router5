@@ -28,36 +28,36 @@ const Link = {
             routeOptions,
             children,
             router
-        } = props;
+        } = props
 
         const clickHandler = evt => {
-            evt.preventDefault();
-            router.navigate(routeName, routeParams, routeOptions);
-        };
+            evt.preventDefault()
+            router.navigate(routeName, routeParams, routeOptions)
+        }
 
-        const active = router.isActive(routeName, routeParams);
-        const href = router.buildUrl(routeName, routeParams);
+        const active = router.isActive(routeName, routeParams)
+        const href = router.buildUrl(routeName, routeParams)
 
         const className = (props.class ? props.class.split(' ') : [])
             .concat(active ? [activeClass] : [])
-            .join(' ');
+            .join(' ')
 
-        const onClick = props.onClick || clickHandler;
+        const onClick = props.onClick || clickHandler
 
         if (button) {
             return {
                 type: 'button',
                 children,
                 attributes: { type: 'button', class: className, onClick }
-            };
+            }
         }
 
         return {
             type: 'a',
             children,
             attributes: { href, class: className, onClick }
-        };
+        }
     }
-};
+}
 
-export default Link;
+export default Link

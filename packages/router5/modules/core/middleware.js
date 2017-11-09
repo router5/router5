@@ -1,11 +1,11 @@
 export default function withMiddleware(router) {
-    let middlewareFactories = [];
-    let middlewareFunctions = [];
+    let middlewareFactories = []
+    let middlewareFunctions = []
 
-    router.useMiddleware = useMiddleware;
-    router.getMiddlewareFactories = getMiddlewareFactories;
-    router.getMiddlewareFunctions = getMiddlewareFunctions;
-    router.clearMiddleware = clearMiddleware;
+    router.useMiddleware = useMiddleware
+    router.getMiddlewareFactories = getMiddlewareFactories
+    router.getMiddlewareFunctions = getMiddlewareFunctions
+    router.clearMiddleware = clearMiddleware
 
     /**
      * Register middleware functions.
@@ -13,9 +13,9 @@ export default function withMiddleware(router) {
      * @return {Object}                  The router instance
      */
     function useMiddleware(...middlewares) {
-        middlewares.forEach(addMiddleware);
+        middlewares.forEach(addMiddleware)
 
-        return router;
+        return router
     }
 
     /**
@@ -23,22 +23,22 @@ export default function withMiddleware(router) {
      * @return {Object} The router instance
      */
     function clearMiddleware() {
-        middlewareFactories = [];
-        middlewareFunctions = [];
+        middlewareFactories = []
+        middlewareFunctions = []
 
-        return router;
+        return router
     }
 
     function getMiddlewareFactories() {
-        return middlewareFactories;
+        return middlewareFactories
     }
 
     function getMiddlewareFunctions() {
-        return middlewareFunctions;
+        return middlewareFunctions
     }
 
     function addMiddleware(middleware) {
-        middlewareFactories.push(middleware);
-        middlewareFunctions.push(router.executeFactory(middleware));
+        middlewareFactories.push(middleware)
+        middlewareFunctions.push(router.executeFactory(middleware))
     }
 }

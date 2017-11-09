@@ -1,23 +1,31 @@
-import element from 'virtual-element';
-import { routeNode } from 'deku-router5';
+import element from 'virtual-element'
+import { routeNode } from 'deku-router5'
 
 const Compose = {
     intitalState(props) {
-        return { title: '', message: '' };
+        return { title: '', message: '' }
     },
 
     render({ state }, setState) {
-        const { title, message } = state;
+        const { title, message } = state
 
-        const updateState = prop => evt => setState(prop, evt.target.value);
+        const updateState = prop => evt => setState(prop, evt.target.value)
 
         return element('div', { class: 'compose' }, [
             element('h4', {}, 'Compose a new message'),
-            element('input', { name: 'title', value: title, onChange: updateState('title') }),
-            element('textarea', { name: 'message', value: message, onChange: updateState('message') })
-        ]);
+            element('input', {
+                name: 'title',
+                value: title,
+                onChange: updateState('title')
+            }),
+            element('textarea', {
+                name: 'message',
+                value: message,
+                onChange: updateState('message')
+            })
+        ])
         // { warning ? <p>Clear inputs before continuing</p> : null }
     }
-};
+}
 
-export default routeNode('compose')(Compose);
+export default routeNode('compose')(Compose)

@@ -2,45 +2,45 @@
  * Dumb functions
  */
 // istanbul ignore next
-const identity = arg => () => arg;
+const identity = arg => () => arg
 // istanbul ignore next
-const noop = () => {};
+const noop = () => {}
 
 /**
  * Browser detection
  */
-const isBrowser = typeof window !== 'undefined' && window.history;
+const isBrowser = typeof window !== 'undefined' && window.history
 
 /**
  * Browser functions needed by router5
  */
-const getBase = () => window.location.pathname.replace(/\/$/, '');
+const getBase = () => window.location.pathname.replace(/\/$/, '')
 
 const pushState = (state, title, path) =>
-    window.history.pushState(state, title, path);
+    window.history.pushState(state, title, path)
 
 const replaceState = (state, title, path) =>
-    window.history.replaceState(state, title, path);
+    window.history.replaceState(state, title, path)
 
-const addPopstateListener = fn => window.addEventListener('popstate', fn);
+const addPopstateListener = fn => window.addEventListener('popstate', fn)
 
-const removePopstateListener = fn => window.removeEventListener('popstate', fn);
+const removePopstateListener = fn => window.removeEventListener('popstate', fn)
 
 const getLocation = opts => {
     const path = opts.useHash
         ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '')
-        : window.location.pathname.replace(new RegExp('^' + opts.base), '');
-    return (path || '/') + window.location.search;
-};
+        : window.location.pathname.replace(new RegExp('^' + opts.base), '')
+    return (path || '/') + window.location.search
+}
 
-const getState = () => window.history.state;
+const getState = () => window.history.state
 
-const getHash = () => window.location.hash;
+const getHash = () => window.location.hash
 
 /**
  * Export browser object
  */
-let browser = {};
+let browser = {}
 if (isBrowser) {
     browser = {
         getBase,
@@ -51,7 +51,7 @@ if (isBrowser) {
         getLocation,
         getState,
         getHash
-    };
+    }
 } else {
     // istanbul ignore next
     browser = {
@@ -63,7 +63,7 @@ if (isBrowser) {
         getLocation: identity(''),
         getState: identity(null),
         getHash: identity('')
-    };
+    }
 }
 
-export default browser;
+export default browser

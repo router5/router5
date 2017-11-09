@@ -1,6 +1,6 @@
-import Rx from 'rx';
-import transitionPath from 'router5-transition-path';
-import routerToObservable from './router-to-observable';
+import Rx from 'rx'
+import transitionPath from 'router5-transition-path'
+import routerToObservable from './router-to-observable'
 
 const sourceMethods = [
     'getState',
@@ -10,7 +10,7 @@ const sourceMethods = [
     'matchPath',
     'areStatesDescendants',
     'isActive'
-];
+]
 const sinkMethods = [
     'cancel',
     'start',
@@ -18,7 +18,7 @@ const sinkMethods = [
     'navigate',
     'canActivate',
     'canDeactivate'
-];
+]
 
 /**
  * Normalise a sink request to the router driver.
@@ -26,9 +26,8 @@ const sinkMethods = [
  * @return {Array}            An array containing a method name and its arguments
  */
 const normaliseRequest = req => {
-    const normReq = Array.isArray(req) || typeof req === 'string'
-        ? [].concat(req)
-        : [];
+    const normReq =
+        Array.isArray(req) || typeof req === 'string' ? [].concat(req) : []
 
     if (sinkMethods.indexOf(normReq[0]) === -1) {
         throw new Error(
@@ -37,11 +36,11 @@ const normaliseRequest = req => {
                 ' Available sink methods are: ' +
                 sinkMethods.join(',') +
                 '.'
-        );
+        )
     }
 
-    return normReq;
-};
+    return normReq
+}
 
 /**
  * Make a cycle router driver from a router5 instance
@@ -50,16 +49,16 @@ const normaliseRequest = req => {
  * @return {Function}          A cycle sink function
  */
 const makeRouterDriver = (router, autostart = true) => {
-    const startRouter = () => !router.started && autostart && router.start();
+    const startRouter = () => !router.started && autostart && router.start()
 
     // Observe router transitions
-    const transition$ = routerToObservable(router, startRouter);
+    const transition$ = routerToObservable(router, startRouter)
 
     // Helpers
-    const filter = type => transition$.filter(_ => _.type === type);
-    const slice = type => filter(type).map(_ => _.type);
+    const filter = type => transition$.filter(_ => _.type === type)
+    const slice = type => filter(type).map(_ => _.type)
     const sliceSlate = type =>
-        filter(type).map(({ toState, fromState }) => ({ toState, fromState }));
+        filter(type).map(({ toState, fromState }) => ({ toState, fromState }))
 
     // Filter router events observables
     const observables = {
@@ -69,29 +68,29 @@ const makeRouterDriver = (router, autostart = true) => {
         transitionCancel$: sliceSlate('transitionCancel'),
         transitionSuccess$: sliceSlate('transitionSuccess'),
         transitionError$: sliceSlate('transitionError')
-    };
+    }
 
     // Transition Route
     const transitionRoute$ = transition$
         .map(_ => (_.type === 'transitionStart' ? _.toState : null))
-        .startWith(null);
+        .startWith(null)
 
     // Error
     const error$ = transition$
         .map(_ => (_.type === 'transitionError' ? _.error : null))
-        .startWith(null);
+        .startWith(null)
 
     const routeState$ = observables.transitionSuccess$
         .filter(({ toState }) => toState !== null)
         .map(({ toState, fromState }) => {
-            const { intersection } = transitionPath(toState, fromState);
-            return { intersection, route: toState };
-        });
+            const { intersection } = transitionPath(toState, fromState)
+            return { intersection, route: toState }
+        })
 
     // Create a route observable
     const route$ = routeState$
         .map(({ route }) => route)
-        .startWith(router.getState());
+        .startWith(router.getState())
 
     // Create a route node observable
     const routeNode$ = node =>
@@ -99,7 +98,7 @@ const makeRouterDriver = (router, autostart = true) => {
             .filter(({ intersection }) => intersection === node)
             .map(({ route }) => route)
             .startWith(router.getState())
-            .filter(route => route !== null);
+            .filter(route => route !== null)
 
     // Source API methods ready to be consumed
     const sourceApi = sourceMethods.reduce(
@@ -108,7 +107,7 @@ const makeRouterDriver = (router, autostart = true) => {
             [method]: (...args) => router[method].apply(router, args)
         }),
         {}
-    );
+    )
 
     return request$ => {
         request$
@@ -116,7 +115,7 @@ const makeRouterDriver = (router, autostart = true) => {
             .subscribe(
                 ([method, ...args]) => router[method].apply(router, args),
                 err => console.error(err)
-            );
+            )
 
         return {
             ...sourceApi,
@@ -125,8 +124,8 @@ const makeRouterDriver = (router, autostart = true) => {
             routeNode$,
             transitionRoute$,
             error$
-        };
-    };
-};
+        }
+    }
+}
 
-export default makeRouterDriver;
+export default makeRouterDriver

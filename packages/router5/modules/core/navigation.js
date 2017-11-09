@@ -1,17 +1,17 @@
-import constants, { errorCodes } from '../constants';
-import transition from '../transition';
+import constants, { errorCodes } from '../constants'
+import transition from '../transition'
 
-const noop = function() {};
+const noop = function() {}
 
 export default function withNavigation(router) {
-    let cancelCurrentTransition;
+    let cancelCurrentTransition
 
-    router.forwardMap = {};
-    router.navigate = navigate;
-    router.navigateToDefault = navigateToDefault;
-    router.transitionToState = transitionToState;
-    router.cancel = cancel;
-    router.forward = forward;
+    router.forwardMap = {}
+    router.navigate = navigate
+    router.navigateToDefault = navigateToDefault
+    router.transitionToState = transitionToState
+    router.cancel = cancel
+    router.forward = forward
 
     /**
      * Cancel the current transition if there is one
@@ -19,11 +19,11 @@ export default function withNavigation(router) {
      */
     function cancel() {
         if (cancelCurrentTransition) {
-            cancelCurrentTransition('navigate');
-            cancelCurrentTransition = null;
+            cancelCurrentTransition('navigate')
+            cancelCurrentTransition = null
         }
 
-        return router;
+        return router
     }
 
     /**
@@ -33,9 +33,9 @@ export default function withNavigation(router) {
      * @param  {String}   toRoute  The route params
      */
     function forward(fromRoute, toRoute) {
-        router.forwardMap[fromRoute] = toRoute;
+        router.forwardMap[fromRoute] = toRoute
 
-        return router;
+        return router
     }
 
     /**
@@ -47,29 +47,29 @@ export default function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate(...args) {
-        const name = router.forwardMap[args[0]] || args[0];
-        const lastArg = args[args.length - 1];
-        const done = typeof lastArg === 'function' ? lastArg : noop;
-        const params = typeof args[1] === 'object' ? args[1] : {};
-        const opts = typeof args[2] === 'object' ? args[2] : {};
+        const name = router.forwardMap[args[0]] || args[0]
+        const lastArg = args[args.length - 1]
+        const done = typeof lastArg === 'function' ? lastArg : noop
+        const params = typeof args[1] === 'object' ? args[1] : {}
+        const opts = typeof args[2] === 'object' ? args[2] : {}
 
         if (!router.isStarted()) {
-            done({ code: errorCodes.ROUTER_NOT_STARTED });
-            return;
+            done({ code: errorCodes.ROUTER_NOT_STARTED })
+            return
         }
 
-        const route = router.buildState(name, params);
+        const route = router.buildState(name, params)
 
         if (!route) {
-            const err = { code: errorCodes.ROUTE_NOT_FOUND };
-            done(err);
+            const err = { code: errorCodes.ROUTE_NOT_FOUND }
+            done(err)
             router.invokeEventListeners(
                 constants.TRANSITION_ERROR,
                 null,
                 router.getState(),
                 err
-            );
-            return;
+            )
+            return
         }
 
         const toState = router.makeState(
@@ -77,41 +77,41 @@ export default function withNavigation(router) {
             route.params,
             router.buildPath(name, params),
             route._meta
-        );
+        )
         const sameStates = router.getState()
             ? router.areStatesEqual(router.getState(), toState, false)
-            : false;
+            : false
 
         // Do not proceed further if states are the same and no reload
         // (no deactivation and no callbacks)
         if (sameStates && !opts.reload && !opts.force) {
-            const err = { code: errorCodes.SAME_STATES };
-            done(err);
+            const err = { code: errorCodes.SAME_STATES }
+            done(err)
             router.invokeEventListeners(
                 constants.TRANSITION_ERROR,
                 toState,
                 router.getState(),
                 err
-            );
-            return;
+            )
+            return
         }
 
-        const fromState = sameStates ? null : router.getState();
+        const fromState = sameStates ? null : router.getState()
 
         if (opts.skipTransition) {
-            done(null, toState);
-            return noop;
+            done(null, toState)
+            return noop
         }
 
         // Transition
         return transitionToState(toState, fromState, opts, (err, state) => {
             if (err) {
                 if (err.redirect) {
-                    const { name, params } = err.redirect;
+                    const { name, params } = err.redirect
 
-                    navigate(name, params, { ...opts, force: true }, done);
+                    navigate(name, params, { ...opts, force: true }, done)
                 } else {
-                    done(err);
+                    done(err)
                 }
             } else {
                 router.invokeEventListeners(
@@ -119,10 +119,10 @@ export default function withNavigation(router) {
                     state,
                     fromState,
                     opts
-                );
-                done(null, state);
+                )
+                done(null, state)
             }
-        });
+        })
     }
 
     /**
@@ -132,11 +132,12 @@ export default function withNavigation(router) {
      * @return {Function}        A cancel function
      */
     function navigateToDefault(...args) {
-        const opts = typeof args[0] === 'object' ? args[0] : {};
-        const done = args.length === 2
-            ? args[1]
-            : typeof args[0] === 'function' ? args[0] : noop;
-        const options = router.getOptions();
+        const opts = typeof args[0] === 'object' ? args[0] : {}
+        const done =
+            args.length === 2
+                ? args[1]
+                : typeof args[0] === 'function' ? args[0] : noop
+        const options = router.getOptions()
 
         if (options.defaultRoute) {
             return navigate(
@@ -144,19 +145,19 @@ export default function withNavigation(router) {
                 options.defaultParams,
                 opts,
                 done
-            );
+            )
         }
 
-        return () => {};
+        return () => {}
     }
 
     function transitionToState(toState, fromState, options = {}, done = noop) {
-        cancel();
+        cancel()
         router.invokeEventListeners(
             constants.TRANSITION_START,
             toState,
             fromState
-        );
+        )
 
         cancelCurrentTransition = transition(
             router,
@@ -164,8 +165,8 @@ export default function withNavigation(router) {
             fromState,
             options,
             (err, state) => {
-                cancelCurrentTransition = null;
-                state = state || toState;
+                cancelCurrentTransition = null
+                state = state || toState
 
                 if (err) {
                     if (err.code === errorCodes.TRANSITION_CANCELLED) {
@@ -173,23 +174,23 @@ export default function withNavigation(router) {
                             constants.TRANSITION_CANCEL,
                             toState,
                             fromState
-                        );
+                        )
                     } else {
                         router.invokeEventListeners(
                             constants.TRANSITION_ERROR,
                             toState,
                             fromState,
                             err
-                        );
+                        )
                     }
-                    done(err);
+                    done(err)
                 } else {
-                    router.setState(state);
-                    done(null, state);
+                    router.setState(state)
+                    done(null, state)
                 }
             }
-        );
+        )
 
-        return cancelCurrentTransition;
+        return cancelCurrentTransition
     }
 }

@@ -1,23 +1,23 @@
-const toFunction = val => (typeof val === 'function' ? val : () => () => val);
+const toFunction = val => (typeof val === 'function' ? val : () => () => val)
 
 export default function withRouteLifecycle(router) {
-    let canDeactivateFactories = {};
-    let canActivateFactories = {};
-    let canDeactivateFunctions = {};
-    let canActivateFunctions = {};
+    let canDeactivateFactories = {}
+    let canActivateFactories = {}
+    let canDeactivateFunctions = {}
+    let canActivateFunctions = {}
 
-    router.canDeactivate = canDeactivate;
-    router.canActivate = canActivate;
-    router.getLifecycleFactories = getLifecycleFactories;
-    router.getLifecycleFunctions = getLifecycleFunctions;
-    router.clearCanDeactivate = clearCanDeactivate;
+    router.canDeactivate = canDeactivate
+    router.canActivate = canActivate
+    router.getLifecycleFactories = getLifecycleFactories
+    router.getLifecycleFunctions = getLifecycleFunctions
+    router.clearCanDeactivate = clearCanDeactivate
 
     function getLifecycleFactories() {
-        return [canDeactivateFactories, canActivateFactories];
+        return [canDeactivateFactories, canActivateFactories]
     }
 
     function getLifecycleFunctions() {
-        return [canDeactivateFunctions, canActivateFunctions];
+        return [canDeactivateFunctions, canActivateFunctions]
     }
 
     /**
@@ -27,12 +27,12 @@ export default function withRouteLifecycle(router) {
      * @return {Object}                                The router instance
      */
     function canDeactivate(name, canDeactivateHandler) {
-        const factory = toFunction(canDeactivateHandler);
+        const factory = toFunction(canDeactivateHandler)
 
-        canDeactivateFactories[name] = factory;
-        canDeactivateFunctions[name] = router.executeFactory(factory);
+        canDeactivateFactories[name] = factory
+        canDeactivateFunctions[name] = router.executeFactory(factory)
 
-        return router;
+        return router
     }
 
     /**
@@ -41,10 +41,10 @@ export default function withRouteLifecycle(router) {
      * @return {Object}      The router instance
      */
     function clearCanDeactivate(name) {
-        canDeactivateFactories[name] = undefined;
-        canDeactivateFunctions[name] = undefined;
+        canDeactivateFactories[name] = undefined
+        canDeactivateFunctions[name] = undefined
 
-        return router;
+        return router
     }
 
     /**
@@ -54,11 +54,11 @@ export default function withRouteLifecycle(router) {
      * @return {Object}                              The router instance
      */
     function canActivate(name, canActivateHandler) {
-        const factory = toFunction(canActivateHandler);
+        const factory = toFunction(canActivateHandler)
 
-        canActivateFactories[name] = factory;
-        canActivateFunctions[name] = router.executeFactory(factory);
+        canActivateFactories[name] = factory
+        canActivateFunctions[name] = router.executeFactory(factory)
 
-        return router;
+        return router
     }
 }

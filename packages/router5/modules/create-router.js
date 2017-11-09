@@ -1,12 +1,12 @@
-import RouteNode from 'route-node';
-import withUtils from './core/utils';
-import withRouterLifecycle from './core/router-lifecycle';
-import withNavigation from './core/navigation';
-import withMiddleware from './core/middleware';
-import withPlugins from './core/plugins';
-import withRouteLifecycle from './core/route-lifecycle';
-import withCloning from './core/clone';
-import constants from './constants';
+import RouteNode from 'route-node'
+import withUtils from './core/utils'
+import withRouterLifecycle from './core/router-lifecycle'
+import withNavigation from './core/navigation'
+import withMiddleware from './core/middleware'
+import withPlugins from './core/plugins'
+import withRouteLifecycle from './core/route-lifecycle'
+import withCloning from './core/clone'
+import constants from './constants'
 
 const defaultOptions = {
     trailingSlash: 0,
@@ -15,7 +15,7 @@ const defaultOptions = {
     strictQueryParams: false,
     allowNotFound: false,
     strongMatching: true
-};
+}
 
 /**
  * Create a router
@@ -25,13 +25,13 @@ const defaultOptions = {
  * @return {Object}                   The router instance
  */
 function createRouter(routes, opts = {}, deps = {}) {
-    let routerState = null;
-    let stateId = 0;
-    const callbacks = {};
-    const dependencies = deps;
-    const options = { ...defaultOptions };
+    let routerState = null
+    let stateId = 0
+    const callbacks = {}
+    const dependencies = deps
+    const options = { ...defaultOptions }
 
-    Object.keys(opts).forEach(opt => setOption(opt, opts[opt]));
+    Object.keys(opts).forEach(opt => setOption(opt, opts[opt]))
 
     const router = {
         rootNode,
@@ -50,7 +50,7 @@ function createRouter(routes, opts = {}, deps = {}) {
         addEventListener,
         removeEventListener,
         invokeEventListeners
-    };
+    }
 
     /**
      * Invoke all event listeners by event name. Possible event names are listed under constants
@@ -63,7 +63,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {String}    eventName The event name
      */
     function invokeEventListeners(eventName, ...args) {
-        (callbacks[eventName] || []).forEach(cb => cb(...args));
+        ;(callbacks[eventName] || []).forEach(cb => cb(...args))
     }
 
     /**
@@ -73,7 +73,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {Function} cb        The callback to remove
      */
     function removeEventListener(eventName, cb) {
-        callbacks[eventName] = callbacks[eventName].filter(_cb => _cb !== cb);
+        callbacks[eventName] = callbacks[eventName].filter(_cb => _cb !== cb)
     }
 
     /**
@@ -83,32 +83,32 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param {Function} cb        The callback to add
      */
     function addEventListener(eventName, cb) {
-        callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
+        callbacks[eventName] = (callbacks[eventName] || []).concat(cb)
 
-        return () => removeEventListener(eventName, cb);
+        return () => removeEventListener(eventName, cb)
     }
 
-    withUtils(router);
-    withPlugins(router);
-    withMiddleware(router);
-    withRouteLifecycle(router);
-    withRouterLifecycle(router);
-    withNavigation(router);
-    withCloning(router, createRouter);
+    withUtils(router)
+    withPlugins(router)
+    withMiddleware(router)
+    withRouteLifecycle(router)
+    withRouterLifecycle(router)
+    withNavigation(router)
+    withCloning(router, createRouter)
 
-    const rootNode = routes instanceof RouteNode
-        ? routes
-        : new RouteNode('', '', routes, onRouteAdded);
+    const rootNode =
+        routes instanceof RouteNode
+            ? routes
+            : new RouteNode('', '', routes, onRouteAdded)
 
-    router.rootNode = rootNode;
+    router.rootNode = rootNode
 
-    return router;
+    return router
 
     function onRouteAdded(route) {
-        if (route.canActivate)
-            router.canActivate(route.name, route.canActivate);
+        if (route.canActivate) router.canActivate(route.name, route.canActivate)
 
-        if (route.forwardTo) router.forward(route.name, route.forwardTo);
+        if (route.forwardTo) router.forward(route.name, route.forwardTo)
     }
 
     /**
@@ -122,31 +122,31 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}              The state object
      */
     function makeState(name, params, path, metaParams, source, forceId) {
-        const state = {};
+        const state = {}
         const setProp = (key, value) =>
-            Object.defineProperty(state, key, { value, enumerable: true });
-        setProp('name', name);
-        setProp('params', params);
-        setProp('path', path);
+            Object.defineProperty(state, key, { value, enumerable: true })
+        setProp('name', name)
+        setProp('params', params)
+        setProp('path', path)
 
         if (metaParams || source) {
-            let finalStateId;
+            let finalStateId
 
             if (forceId === undefined) {
-                stateId += 1;
-                finalStateId = stateId;
+                stateId += 1
+                finalStateId = stateId
             } else {
-                finalStateId = forceId;
+                finalStateId = forceId
             }
 
-            const meta = { params: metaParams, id: finalStateId };
+            const meta = { params: metaParams, id: finalStateId }
 
-            if (source) meta.source = source;
+            if (source) meta.source = source
 
-            setProp('meta', meta);
+            setProp('meta', meta)
         }
 
-        return state;
+        return state
     }
 
     /**
@@ -155,7 +155,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}      The not found state object
      */
     function makeNotFoundState(path) {
-        return makeState(constants.UNKNOWN_ROUTE, { path }, path, {});
+        return makeState(constants.UNKNOWN_ROUTE, { path }, path, {})
     }
 
     /**
@@ -163,7 +163,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object} The current state
      */
     function getState() {
-        return routerState;
+        return routerState
     }
 
     /**
@@ -171,7 +171,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param {Object} state The state object
      */
     function setState(state) {
-        routerState = state;
+        routerState = state
     }
 
     /**
@@ -179,7 +179,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object} The router options
      */
     function getOptions() {
-        return options;
+        return options
     }
 
     /**
@@ -190,10 +190,10 @@ function createRouter(routes, opts = {}, deps = {}) {
      */
     function setOption(option, value) {
         if (option === 'useTrailingSlash' && value !== undefined) {
-            options.trailingSlash = true;
+            options.trailingSlash = true
         }
-        options[option] = value;
-        return router;
+        options[option] = value
+        return router
     }
 
     /**
@@ -203,8 +203,8 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}                The router instance
      */
     function setDependency(dependencyName, dependency) {
-        dependencies[dependencyName] = dependency;
-        return router;
+        dependencies[dependencyName] = dependency
+        return router
     }
 
     /**
@@ -214,10 +214,10 @@ function createRouter(routes, opts = {}, deps = {}) {
      */
     function setDependencies(deps) {
         Object.keys(deps).forEach(depName => {
-            dependencies[depName] = deps[depName];
-        });
+            dependencies[depName] = deps[depName]
+        })
 
-        return router;
+        return router
     }
 
     /**
@@ -225,15 +225,15 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object} The dependencies
      */
     function getDependencies() {
-        return dependencies;
+        return dependencies
     }
 
     function getInjectables() {
-        return [router, getDependencies()];
+        return [router, getDependencies()]
     }
 
     function executeFactory(factoryFunction) {
-        return factoryFunction(...getInjectables());
+        return factoryFunction(...getInjectables())
     }
 
     /**
@@ -242,8 +242,8 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}       The router instance
      */
     function add(routes) {
-        rootNode.add(routes, onRouteAdded);
-        return router;
+        rootNode.add(routes, onRouteAdded)
+        return router
     }
 
     /**
@@ -253,10 +253,10 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param {Function} [canActivateHandler] The canActivate handler for this node
      */
     function addNode(name, path, canActivateHandler) {
-        router.rootNode.addNode(name, path);
-        if (canActivateHandler) router.canActivate(name, canActivateHandler);
-        return router;
+        router.rootNode.addNode(name, path)
+        if (canActivateHandler) router.canActivate(name, canActivateHandler)
+        return router
     }
 }
 
-export default createRouter;
+export default createRouter

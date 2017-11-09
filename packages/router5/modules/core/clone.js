@@ -1,5 +1,5 @@
 export default function withCloning(router, createRouter) {
-    router.clone = clone;
+    router.clone = clone
 
     /**
      * Clone the current router configuration. The new returned router will be non-started,
@@ -8,28 +8,28 @@ export default function withCloning(router, createRouter) {
      * @return {[type]}      [description]
      */
     function clone(deps = {}) {
-        const clonedDependencies = { ...router.getDependencies(), ...deps };
+        const clonedDependencies = { ...router.getDependencies(), ...deps }
         const clonedRouter = createRouter(
             router.rootNode,
             router.getOptions(),
             clonedDependencies
-        );
+        )
 
-        clonedRouter.useMiddleware(...router.getMiddlewareFactories());
-        clonedRouter.usePlugin(...router.getPlugins());
+        clonedRouter.useMiddleware(...router.getMiddlewareFactories())
+        clonedRouter.usePlugin(...router.getPlugins())
 
         const [
             canDeactivateFactories,
             canActivateFactories
-        ] = router.getLifecycleFactories();
+        ] = router.getLifecycleFactories()
 
         Object.keys(canDeactivateFactories).forEach(name =>
             clonedRouter.canDeactivate(name, canDeactivateFactories[name])
-        );
+        )
         Object.keys(canActivateFactories).forEach(name =>
             clonedRouter.canActivate(name, canActivateFactories[name])
-        );
+        )
 
-        return clonedRouter;
+        return clonedRouter
     }
 }

@@ -1,4 +1,4 @@
-import * as actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes'
 
 export function navigateTo(name, params = {}, opts = {}) {
     return {
@@ -8,19 +8,19 @@ export function navigateTo(name, params = {}, opts = {}) {
             params,
             opts
         }
-    };
+    }
 }
 
 export function cancelTransition() {
     return {
         type: actionTypes.CANCEL_TRANSITION
-    };
+    }
 }
 
 export function clearErrors() {
     return {
         type: actionTypes.CLEAR_ERRORS
-    };
+    }
 }
 
 export function transitionStart(route, previousRoute) {
@@ -30,7 +30,7 @@ export function transitionStart(route, previousRoute) {
             route,
             previousRoute
         }
-    };
+    }
 }
 
 export function transitionSuccess(route, previousRoute) {
@@ -40,7 +40,7 @@ export function transitionSuccess(route, previousRoute) {
             route,
             previousRoute
         }
-    };
+    }
 }
 
 export function transitionError(route, previousRoute, transitionError) {
@@ -51,7 +51,7 @@ export function transitionError(route, previousRoute, transitionError) {
             previousRoute,
             transitionError
         }
-    };
+    }
 }
 
 export function canActivate(name, canActivate) {
@@ -61,7 +61,7 @@ export function canActivate(name, canActivate) {
             name,
             canActivate
         }
-    };
+    }
 }
 
 export function canDeactivate(name, canDeactivate) {
@@ -71,5 +71,5 @@ export function canDeactivate(name, canDeactivate) {
             name,
             canDeactivate
         }
-    };
+    }
 }

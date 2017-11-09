@@ -15,4 +15,4 @@ export default [
         name: 'contacts',
         path: '/contacts'
     }
-];
+]

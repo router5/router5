@@ -1,10 +1,10 @@
-import * as actionTypes from './actionTypes';
-import reduxPlugin from './reduxPlugin';
+import * as actionTypes from './actionTypes'
+import reduxPlugin from './reduxPlugin'
 
 const router5ReduxMiddleware = router => store => {
-    const { dispatch } = store;
-    router.setDependency('store', store);
-    router.usePlugin(reduxPlugin(dispatch));
+    const { dispatch } = store
+    router.setDependency('store', store)
+    router.usePlugin(reduxPlugin(dispatch))
 
     return next => action => {
         switch (action.type) {
@@ -13,31 +13,31 @@ const router5ReduxMiddleware = router => store => {
                     action.payload.name,
                     action.payload.params,
                     action.payload.opts
-                );
-                break;
+                )
+                break
 
             case actionTypes.CANCEL_TRANSITION:
-                router.cancel();
-                break;
+                router.cancel()
+                break
 
             case actionTypes.CAN_DEACTIVATE:
                 router.canDeactivate(
                     action.payload.name,
                     action.payload.canDeactivate
-                );
-                break;
+                )
+                break
 
             case actionTypes.CAN_ACTIVATE:
                 router.canActivate(
                     action.payload.name,
                     action.payload.canDeactivate
-                );
-                break;
+                )
+                break
 
             default:
-                return next(action);
+                return next(action)
         }
-    };
-};
+    }
+}
 
-export default router5ReduxMiddleware;
+export default router5ReduxMiddleware

@@ -1,8 +1,8 @@
-import { expect } from 'chai';
-import { spy } from 'sinon';
-import createRouter, { RouteNode } from '../../modules';
+import { expect } from 'chai'
+import { spy } from 'sinon'
+import createRouter, { RouteNode } from '../../modules'
 
-const canActivate = () => () => true;
+const canActivate = () => () => true
 const routes = [
     {
         name: 'a',
@@ -23,15 +23,15 @@ const routes = [
             }
         ]
     }
-];
+]
 
 describe('createRouter', function() {
-    let router;
+    let router
 
     before(() => {
-        router = createRouter();
-        spy(router, 'canActivate');
-    });
+        router = createRouter()
+        spy(router, 'canActivate')
+    })
 
     // it('should not start with default route if current path matches an existing route', function (done) {
     //     router.start(function (err, state) {
@@ -41,24 +41,15 @@ describe('createRouter', function() {
     // });
 
     it('should create a router and register canActivate handlers', function() {
-        router.add(routes);
+        router.add(routes)
 
-        expect(router.canActivate).to.have.been.calledThrice;
+        expect(router.canActivate).to.have.been.calledThrice
 
-        expect(router.canActivate).to.have.been.calledWith('a', canActivate);
-        expect(router.canActivate).to.have.been.calledWith('a.b', canActivate);
-        expect(router.canActivate).to.have.been.calledWith(
-            'a.b.c',
-            canActivate
-        );
+        expect(router.canActivate).to.have.been.calledWith('a', canActivate)
+        expect(router.canActivate).to.have.been.calledWith('a.b', canActivate)
+        expect(router.canActivate).to.have.been.calledWith('a.b.c', canActivate)
 
-        expect(router.canActivate).to.not.have.been.calledWith(
-            'b',
-            canActivate
-        );
-        expect(router.canActivate).to.not.have.been.calledWith(
-            'c',
-            canActivate
-        );
-    });
-});
+        expect(router.canActivate).to.not.have.been.calledWith('b', canActivate)
+        expect(router.canActivate).to.not.have.been.calledWith('c', canActivate)
+    })
+})

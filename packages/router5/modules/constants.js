@@ -8,7 +8,7 @@ export const errorCodes = {
     CANNOT_ACTIVATE: 'CANNOT_ACTIVATE',
     TRANSITION_ERR: 'TRANSITION_ERR',
     TRANSITION_CANCELLED: 'CANCELLED'
-};
+}
 
 const constants = {
     UNKNOWN_ROUTE: '@@router5/UNKNOWN_ROUTE',
@@ -18,6 +18,6 @@ const constants = {
     TRANSITION_CANCEL: '$$cancel',
     TRANSITION_SUCCESS: '$$success',
     TRANSITION_ERROR: '$$error'
-};
+}
 
-export default constants;
+export default constants

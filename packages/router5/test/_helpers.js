@@ -3,5 +3,5 @@ export function omitMeta(obj) {
         name: obj.name,
         params: obj.params,
         path: obj.path
-    };
+    }
 }

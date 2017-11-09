@@ -5,18 +5,18 @@ const pluginMethods = [
     'onTransitionStart',
     'onTransitionError',
     'onTransitionCancel'
-];
+]
 
 export default function withPlugins(router) {
-    const plugins = [];
-    let removePluginListeners = [];
+    const plugins = []
+    let removePluginListeners = []
 
-    router.usePlugin = usePlugin;
-    router.hasPlugin = hasPlugin;
-    router.getPlugins = getPlugins;
+    router.usePlugin = usePlugin
+    router.hasPlugin = hasPlugin
+    router.getPlugins = getPlugins
 
     function getPlugins() {
-        return plugins;
+        return plugins
     }
 
     /**
@@ -25,14 +25,14 @@ export default function withPlugins(router) {
      * @return {Object}              The router instance
      */
     function usePlugin(...plugins) {
-        plugins.forEach(addPlugin);
-        return router;
+        plugins.forEach(addPlugin)
+        return router
     }
 
     function addPlugin(plugin) {
         if (!hasPlugin(plugin)) {
-            plugins.push(plugin);
-            startPlugin(plugin);
+            plugins.push(plugin)
+            startPlugin(plugin)
         }
     }
 
@@ -46,11 +46,11 @@ export default function withPlugins(router) {
             plugins.filter(
                 p => p.pluginName === pluginName || p.name === pluginName
             ).length > 0
-        );
+        )
     }
 
     function startPlugin(plugin) {
-        const appliedPlugin = router.executeFactory(plugin);
+        const appliedPlugin = router.executeFactory(plugin)
 
         const removeEventListeners = pluginMethods
             .map(methodName => {
@@ -61,11 +61,11 @@ export default function withPlugins(router) {
                             .replace(/^on/, '$$')
                             .replace(/transition/, '$$'),
                         appliedPlugin[methodName]
-                    );
+                    )
                 }
             })
-            .filter(Boolean);
+            .filter(Boolean)
 
-        removePluginListeners.push(...removeEventListeners);
+        removePluginListeners.push(...removeEventListeners)
     }
 }

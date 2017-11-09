@@ -1,64 +1,64 @@
-import { expect } from 'chai';
-import { errorCodes } from '../../modules';
-import createTestRouter from '../_create-router';
-import { omitMeta } from '../_helpers';
+import { expect } from 'chai'
+import { errorCodes } from '../../modules'
+import createTestRouter from '../_create-router'
+import { omitMeta } from '../_helpers'
 
 const homeState = {
     name: 'home',
     params: {},
     path: '/home',
     meta: { params: { home: {} } }
-};
+}
 
 describe('core/router-lifecycle', function() {
-    let router;
+    let router
 
-    before(() => (router = createTestRouter().clone()));
-    after(() => router.stop());
+    before(() => (router = createTestRouter().clone()))
+    after(() => router.stop())
 
     it('should start with the default route', function(done) {
-        expect(router.getState()).to.equal(null);
-        expect(router.isActive('home')).to.equal(false);
+        expect(router.getState()).to.equal(null)
+        expect(router.isActive('home')).to.equal(false)
 
         router.start('', function() {
-            expect(router.isStarted()).to.equal(true);
+            expect(router.isStarted()).to.equal(true)
             expect(omitMeta(router.getState())).to.eql({
                 name: 'home',
                 params: {},
                 path: '/home'
-            });
-            done();
-        });
-    });
+            })
+            done()
+        })
+    })
 
     it('should throw an error when starting with no start path or state', function(
         done
     ) {
-        router.stop();
-        router.setOption('defaultRoute', null);
+        router.stop()
+        router.setOption('defaultRoute', null)
         router.start(err => {
-            expect(err.code).to.equal(errorCodes.NO_START_PATH_OR_STATE);
-            router.setOption('defaultRoute', 'home');
-            done();
-        });
-    });
+            expect(err.code).to.equal(errorCodes.NO_START_PATH_OR_STATE)
+            router.setOption('defaultRoute', 'home')
+            done()
+        })
+    })
 
     it('should not throw an error when starting with no callback', function() {
-        router.stop();
-        expect(() => router.start('')).not.to.throw();
-    });
+        router.stop()
+        expect(() => router.start('')).not.to.throw()
+    })
 
     it('should give an error if trying to start when already started', function(
         done
     ) {
         router.start('', function(err) {
-            expect(err.code).to.equal(errorCodes.ROUTER_ALREADY_STARTED);
-            done();
-        });
-    });
+            expect(err.code).to.equal(errorCodes.ROUTER_ALREADY_STARTED)
+            done()
+        })
+    })
 
     it('should start with the start route if matched', function(done) {
-        router.stop();
+        router.stop()
         router.start('/section123/query?param1[]=1__1&param1[]=2__2', function(
             err,
             state
@@ -67,128 +67,128 @@ describe('core/router-lifecycle', function() {
                 name: 'section.query',
                 params: { section: 'section123', param1: ['1__1', '2__2'] },
                 path: '/section123/query?param1[]=1__1&param1[]=2__2'
-            });
-            done();
-        });
-    });
+            })
+            done()
+        })
+    })
 
     it('should start with the default route if start route is not matched', function(
         done
     ) {
-        router.stop();
+        router.stop()
         router.start('/about', function(err, state) {
             expect(omitMeta(router.getState())).to.eql({
                 name: 'home',
                 params: {},
                 path: '/home'
-            });
-            done();
-        });
-    });
+            })
+            done()
+        })
+    })
 
     it('should start with the default route if navigation to start route is not allowed', function(
         done
     ) {
-        router.stop();
+        router.stop()
         router.start('/admin', function() {
             expect(omitMeta(router.getState())).to.eql({
                 name: 'home',
                 params: {},
                 path: '/home'
-            });
-            done();
-        });
-    });
+            })
+            done()
+        })
+    })
 
     it('should start with the provided path', function(done) {
-        router.stop();
+        router.stop()
         router.start('/users', function(err, state) {
             expect(omitMeta(state)).to.eql({
                 name: 'users',
                 params: {},
                 path: '/users'
-            });
-            done();
-        });
-    });
+            })
+            done()
+        })
+    })
 
     it('should start with an error if navigation to start route is not allowed and no default route is specified', function(
         done
     ) {
-        router.stop();
-        router.setOption('defaultRoute', null);
+        router.stop()
+        router.setOption('defaultRoute', null)
         router.start('/admin', function(err) {
-            expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE);
-            expect(err.segment).to.equal('admin');
-            done();
-        });
-    });
+            expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE)
+            expect(err.segment).to.equal('admin')
+            done()
+        })
+    })
 
     it('should start with a not found error if no matched start state and no default route', function(
         done
     ) {
-        router.stop();
-        router.setOption('defaultRoute', null);
+        router.stop()
+        router.setOption('defaultRoute', null)
         router.start('', function(err) {
-            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
-            done();
-        });
-    });
+            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
+            done()
+        })
+    })
 
     it('should not match an URL with extra trailing slashes', function(done) {
-        router.stop();
+        router.stop()
         router.start('/users/list/', function(err, state) {
-            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
-            expect(state).to.equal(null);
-            done();
-        });
-    });
+            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
+            expect(state).to.equal(null)
+            done()
+        })
+    })
 
     it('should match an URL with extra trailing slashes', function(done) {
-        router.setOption('trailingSlash', 1);
-        router.stop();
+        router.setOption('trailingSlash', 1)
+        router.stop()
         router.start('/users/list/', function(err, state) {
             expect(omitMeta(state)).to.eql({
                 name: 'users.list',
                 params: {},
                 path: '/users/list/'
-            });
-            router.setOption('trailingSlash', 0);
-            done();
-        });
-    });
+            })
+            router.setOption('trailingSlash', 0)
+            done()
+        })
+    })
 
     it('should start with the provided state', function(done) {
-        router.stop();
+        router.stop()
         router.start(homeState, function(err, state) {
-            expect(state).to.eql(homeState);
-            expect(router.getState()).to.eql(homeState);
-            done();
-        });
-    });
+            expect(state).to.eql(homeState)
+            expect(router.getState()).to.eql(homeState)
+            done()
+        })
+    })
 
     it('should return an error if default route access is not found', function(
         done
     ) {
-        router.stop();
-        router.setOption('defaultRoute', 'fake.route');
+        router.stop()
+        router.setOption('defaultRoute', 'fake.route')
 
         router.start('', function(err, state) {
-            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND);
-            done();
-        });
-    });
+            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
+            done()
+        })
+    })
 
     it('should be able to stop routing', function(done) {
         router.navigate('users', function() {
-            router.stop();
-            expect(router.isStarted()).to.equal(false);
+            router.stop()
+            expect(router.isStarted()).to.equal(false)
             router.navigate('users.list', function(err) {
-                expect(err.code).to.equal(errorCodes.ROUTER_NOT_STARTED);
+                expect(err.code).to.equal(errorCodes.ROUTER_NOT_STARTED)
                 // Stopping again shouldn't throw an error
-                router.stop();
-                router.start('', () => done());
-            });
-        });
-    });
-});
+                router.stop()
+                router.start('', () => done())
+            })
+        })
+    })
+})
