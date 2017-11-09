@@ -88,6 +88,8 @@
     "rollup-plugin-uglify": "~2.0.1",
     "sinon": "~2.3.4",
     "sinon-chai": "~2.11.0",
+    "typescript": "^2.6.1",
+    "typescript-definition-tester": "^0.0.5",
     "webpack": "~2.6.1",
     "webpack-dev-middleware": "~1.10.2",
     "webpack-dev-server": "~2.4.5",

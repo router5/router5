@@ -1,430 +1,356 @@
 declare module "router5" {
-  export interface ErrorCodes {
-    ROUTER_NOT_STARTED: string;
-    NO_START_PATH_OR_STATE: string;
-    ROUTER_ALREADY_STARTED: string;
-    ROUTE_NOT_FOUND: string;
-    SAME_STATES: string;
-    CANNOT_DEACTIVATE: string;
-    CANNOT_ACTIVATE: string;
-    TRANSITION_ERR: string;
-    TRANSITION_CANCELLED: string;
-  }
+    import constants, { Constants, errorCodes, ErrorCodes } from "router5/constants";
+    import createRouter, {
+        Dependencies,
+        Params,
+        Route,
+        Router,
+        State,
+        StateMeta,
+        Options as RouterOptions,
+    } from "router5/create-router";
+    import { CancelFn, Options as NavigationOptions } from "router5/core/navigation";
+    import { Middleware, MiddlewareFactory } from "router5/core/middleware";
+    import { Plugin, PluginFactory } from "router5/core/plugins";
+    import { ActivationFn, ActivationFnFactory } from "router5/core/route-lifecycle";
+    import {
+        ActivationFn as RouterActivationHandler,
+        ActivationFnFactory as RouterActivationHandlerFactory,
+    } from "router5/core/route-lifecycle";
+    import loggerPlugin from "router5/plugins/loggers";
 
-  export interface Constants {
-    UNKNOWN_ROUTE: string;
-    ROUTER_START: string;
-    ROUTER_STOP: string;
-    TRANSITION_START: string;
-    TRANSITION_CANCEL: string;
-    TRANSITION_SUCCESS: string;
-    TRANSITION_ERROR: string;
-  }
+    // router5-transition-path
+    const transitionPath: (toState: State, fromState?: State) => any;
 
-  export interface StateMeta {
-      id: string;
-      params: object;
-  }
+    type DoneFn = (err?: any, state?: State) => void;
 
-  export interface State {
-    meta?: StateMeta;
+    export {
+        createRouter,
+        // RouteNode,
+        loggerPlugin,
+        errorCodes,
+        transitionPath,
+        constants,
 
-    name: string;
-    params: any;
-    path: string;
-  }
+        ActivationFn,
+        ActivationFnFactory,
+        CancelFn,
+        Constants,
+        Dependencies,
+        DoneFn,
+        ErrorCodes,
+        Middleware,
+        MiddlewareFactory,
+        NavigationOptions,
+        Params,
+        Plugin,
+        PluginFactory,
+        Route,
+        Router,
+        RouterOptions,
+        State,
+        StateMeta,
 
-  export interface NavigationOptions {
-    replace?: boolean;
-    reload?: boolean;
-    force?: boolean;
-    skipTransition?: boolean;
-  }
+        // compatibility
+        RouterActivationHandler,
+        RouterActivationHandlerFactory,
+    };
 
-  export interface Plugin {
-    onStart?(): void;
-    onStop?(): void;
-    onTransitionStart?(toState: State, fromState: State): void;
-    onTransitionCancel?(toState: State, fromState: State): void;
-    onTransitionError?(toState: State, fromState: State, err: any): void;
-    onTransitionSuccess?(toState: State, fromState: State, options: NavigationOptions): void;
-  }
+    export default createRouter;
+}
 
-  export interface PluginFactory {
-    pluginName?: string;
-    (router: Router, dependencies?: object): Plugin;
-  }
+declare module "router5/constants" {
+    export interface ErrorCodes {
+        ROUTER_NOT_STARTED: string;
+        NO_START_PATH_OR_STATE: string;
+        ROUTER_ALREADY_STARTED: string;
+        ROUTE_NOT_FOUND: string;
+        SAME_STATES: string;
+        CANNOT_DEACTIVATE: string;
+        CANNOT_ACTIVATE: string;
+        TRANSITION_ERR: string;
+        TRANSITION_CANCELLED: string;
+    }
 
-  export interface Middleware {
-    (toState: State, fromState: State, done: Function): any;
-  }
+    export interface Constants {
+        UNKNOWN_ROUTE: string;
+        ROUTER_START: string;
+        ROUTER_STOP: string;
+        TRANSITION_START: string;
+        TRANSITION_CANCEL: string;
+        TRANSITION_SUCCESS: string;
+        TRANSITION_ERROR: string;
+    }
 
-  export interface MiddlewareFactory {
-    (router: Router, dependencies: object): Middleware;
-  }
+    const constants: Constants;
 
-  export interface RouterOptions {
-    /* The default route: When your router instance starts, it will navigate to a default route if such route is defined and if it cannot match the URL against a known route. */
-    defaultRoute?: string;
+    export const errorCodes: ErrorCodes;
+    export default constants;
+}
 
-    /*  the default route params (defaults to {}) */
-    defaultParams?: any;
+declare module "router5/create-router" {
+    import { ActivationFnFactory } from "router5/core/route-lifecycle";
 
-    /*
-    By default, the router is in "strict match" mode. If you want trailing slashes to be optional, you can set trailingSlash to a truthy value.
-    */
-    trailingSlash?: boolean;
+    export interface Dependencies {
+        [key: string]: any;
+    }
 
-    /*
-    By default, the router will build your routes according to your route definitions. You can force or not the use of trailing slashes by setting useTrailingSlash to true or false (default to undefined); When setting this option, trailingSlash will be set to true (non strict matching).
-    */
-    useTrailingSlash?: boolean;
+    export interface Params {
+        [key: string]: any;
+    }
 
-    /*
-    If autoCleanUp is set to true, the router will automatically clear canDeactivate functions / booleans when their associated segment becomes inactive.
-    */
-    autoCleanUp?: true;
+    export interface Route {
+        name: string;
+        path: string;
+        canActivate?: ActivationFnFactory;
+        forwardTo?: string;
+        children?: Route[];
+    }
 
-    /*
-    Query parameters are optional, meaning a route can still be matched if a query parameter defined in its path is not present. However, if extra query parameters are present in the path which is being matched, matching will fail.
+    export interface StateMeta {
+        id: number;
+        params: Params;
+        source?: string;
+    }
 
-    If you want the router to still match routes if extra query parameters are present, set strictQueryParams to false.
-    */
-    strictQueryParams?: true;
+    export interface State {
+        name: string;
+        params: Params;
+        path: string;
+        meta?: StateMeta;
+    }
 
-    /*
-    There are two ways to deal with not found routes: the first one is to configure a defaultRoute (and defaultParams), the second one is to allow those not found routes to create a new routing state. Set allowNotFound to true and the router will emit a state value for unmatched paths.
-    */
-    allowNotFound?: true;
-  }
+    export interface Options {
+        defaultRoute: string;
+        defaultParams: Params;
+        trailingSlash: boolean;
+        useTrailingSlash: boolean;
+        autoCleanUp: boolean;
+        strictQueryParams: boolean;
+        allowNotFound: boolean;
+        strongMatching: boolean;
+    }
 
-  export interface Router {
-    /**
-     * Add routes
-     *
-     * @param routes A list of routes to add
-     * @returns The router instance
-     */
-    add(routes: Array<Route>): Router;
+    export interface Router {
+        makeState(
+            name: string, params: Params, path: string,
+            metaParams?: Params, source?: string, forceId?: number,
+        ): State;
+        makeNotFoundState(path: string): State;
+        getState(): State;
+        setState(state: State): void;
+        getOptions(): Options;
+        setOption(option: string, value: any): Router;
+        setDependency(dependencyName: string, dependency: any): Router;
+        setDependencies(deps: Dependencies): Router;
+        getDependencies(): Dependencies;
+        add(routes: Route[] | Route): Router;
+        addNode(name: string, path: string, canActivateHandler?: ActivationFnFactory): Router;
+    }
 
-    /**
-     * Add a single route (node)
-     *
-     * @param name The route name (full name)
-     * @param path The route path (from parent)
-     * @param canActivate The canActivate handler for this node
-     */
-    addNode(name: string, path: string, canActivate?: RouterActivationHandlerFactory): void;
+    function createRouter(
+        routers: Route[],
+        options?: Partial<Options>,
+        dependencies?: Dependencies
+    ): Router;
 
-    /**
-     * Check if two states are related
-     *
-     * @param parentState The parent state
-     * @param childState The child state
-     * @returns Whether the two states are descendants or not
-     */
-    areStatesDescendants(parentState: any, childState: any): Boolean;
+    export default createRouter;
+}
 
-    /**
-     * Compare two route state objects
-     *
-     * @param state1 The route state
-     * @param state2 The other route state
-     * @param ignoreQueryParams Whether to ignore query parameters or not
-     * @returns Whether the two route state are equal or not
-     */
-    areStatesEqual(state1: any, state2: any, ignoreQueryParams?:boolean): Boolean;
+declare module "router5/core/clone" {
+    module "router5/create-router" {
+        interface Router {
+            clone(deps?: Dependencies): Router;
+        }
+    }
+}
 
-    /**
-     * Build a path
-     *
-     * @param route The route name
-     * @param params The route params
-     * @returns The path
-     */
-    buildPath(route: string, params: Object): string;
+declare module "router5/core/middleware" {
+    import { DoneFn } from "router5";
+    import { Dependencies, State, Router } from "router5/create-router";
 
-    /**
-     * Register a canActivate handler or specify a if a route can be deactivated
-     *
-     * @param name The route name
-     * @param canActivate The canActivate handler or boolean
-     * @returns The router instance
-     */
-    canActivate(name: string, canActivate: RouterActivationHandlerFactory | boolean): Router;
+    export type Middleware = (
+        toState: State,
+        fromState: State,
+        done: DoneFn,
+    ) => boolean | Promise<boolean> | void;
 
-    /**
-     * Register a canDeactivate handler or specify a if a route can be deactivated
-     *
-     * @param name The route name
-     * @param canDeactivate The canDeactivate handler or boolean
-     * @returns The router instance
-     */
-    canDeactivate(name: string, canDeactivate: RouterActivationHandlerFactory | boolean): Router;
+    export type MiddlewareFactory = (
+        router: Router,
+        dependencies: Dependencies,
+    ) => Middleware;
 
-    /**
-     * Cancel the current transition if there is one
-     */
-    cancel(): void;
+    module "router5/create-router" {
+        interface Router {
+            useMiddleware(...middlewares: MiddlewareFactory[]): Router;
+            clearMiddleware(): Router;
+        }
+    }
+}
 
-    /**
-     * Remove all middleware functions
-     * @returns {}
-     */
-    clearMiddleware() : Router;
+declare module "router5/core/navigation" {
+    import { DoneFn } from "router5";
 
-    /**
-     * Clone the current router configuration. The new returned router will be non-started, with a null state
-     *
-     * @param dependencies An object of dependencies (key-value pairs)
-     * @returns Cloned router
-     */
-    clone(dependencies: object): Router;
+    export type CancelFn = () => void;
 
-    /**
-     * Forward a route to another route, when calling navigate. Route parameters for the two routes should match to avoid issues.
-     *
-     * @param fromRoute The route name
-     * @param toRoutes The route name
-     * @returns The router instance
-     */
-    forward(fromRoute : string, toRoute : string) : Router;
+    export interface Options {
+        replace?: boolean;
+        reload?: boolean;
+        skipTransition?: boolean;
+        force?: boolean;
+    }
 
-    /**
-     * Get dependencies
-     *
-     * @returns The dependencies
-     */
-    getDependencies():object;
+    type NavigationOptions = Options;
 
-    /**
-     * Get router options
-     */
-    getOptions() : RouterOptions;
+    module "router5/create-router" {
+        interface Router {
+            cancel(): Router;
+            forward(fromRoute: string, toRoute: string): Router;
+            navigate(routeName: string, routeParams: Params, options: NavigationOptions, done?: DoneFn): CancelFn;
+            navigate(routeName: string, routeParams: Params, done?: DoneFn): CancelFn;
+            navigate(routeName: string, done?: DoneFn): CancelFn;
+            navigateToDefault(opts: NavigationOptions, done?: DoneFn): CancelFn;
+            navigateToDefault(done?: DoneFn): CancelFn;
+        }
+    }
+}
 
-    /**
-     * Get the current router state
-     * @returns The current state
-     */
-    getState(): State;
+declare module "router5/core/plugins" {
+    import { Dependencies, Router, State } from "router5/create-router";
+    import { NavigationOptions } from "router5/core/navigation";
 
-    /**
-     * Check if a plugin has already been registered.
-     *
-     * @param pluginName The plugin name
-     * @returns Whether the plugin has been registered
-     */
-    hasPlugin(pluginName:string) : boolean;
+    export interface Plugin {
+        onStart?(): void;
+        onStop?(): void;
+        onTransitionStart?(toState?: State, fromState?: State): void;
+        onTransitionCancel?(toState?: State, fromState?: State): void;
+        onTransitionError?(toState?: State, fromState?: State, err?: any): void;
+        onTransitionSuccess?(toState?: State, fromState?: State, opts?: NavigationOptions): void;
+    }
 
-    /**
-     * Check if a route is currently active
-     *
-     * @param name The route name
-     * @param params The route params
-     * @param strictEquality Whether to check if the given route is the active route, or part of the active route
-     * @param ignoreQueryParams Whether to ignore query parameters
-     * @returns Whether the given route is active
-     */
-    isActive(name: string, params?: Object, strictEquality?: Boolean, ignoreQueryParams?: Boolean): Boolean;
+    export interface PluginFactory {
+        pluginName: string;
+        (router: Router, dependencies?: Dependencies): Plugin;
+    }
 
-    /**
-     * Check if the router is started
-     * @returns Whether the router is started or not
-     */
-    isStarted() : boolean;
+    module "router5/create-router" {
+        interface Router {
+            usePlugin(...plugins: PluginFactory[]): Router;
+            hasPlugin(pluginName: string): boolean;
+        }
+    }
+}
 
-    /**
-     * Build a not found state for a given path
-     *
-     * @param path The unmatched path
-     * @returns The not found state object
-     */
-    makeNotFoundState(path: string): State;
+declare module "router5/core/route-lifecycle" {
+    import { DoneFn } from "router5";
+    import { Dependencies, Router, State } from "router5/create-router";
 
-    /**
-     * Build a state object
-     *
-     * @param name The state name
-     * @param params The state params
-     * @param path The state path
-     * @param metaParams Description of the state params
-     * @param source The source of the routing state
-     * @returns The state object
-     */
-    makeState(name : string, params : any, path : string, metaParams ?: any, source?:string): State;
+    export type ActivationFn = (toState: State, fromState: State, done: DoneFn) => boolean | Promise<boolean> | void;
+    export type ActivationFnFactory = (router: Router, dependencies?: Dependencies) => ActivationFn;
 
+    module "router5/create-router" {
+        interface Router {
+            canDeactivate(name: string, canDeactivateHandler: ActivationFnFactory | boolean): Router;
+            clearCanDeactivate(name: string): Router;
+            canActivate(name: string, canActivateHandler: ActivationFnFactory | boolean): Router;
+        }
+    }
+}
 
-    /**
-     * Match a path
-     *
-     * @param path The path to match
-     * @param source The source (optional, used internally)
-     * @returns The matched state (null if unmatched)
-     */
-    matchPath(path: string, source ?: string): State | null;
+declare module "router5/core/router-lifecycle" {
+    import { DoneFn } from "router5";
+    import { State } from "router5/create-router";
 
-    /**
-     * Navigate to a route
-     *
-     * @param routeName The route name
-     * @param routeParams The route params
-     * @param options The navigation options (`replace`, `reload`)
-     * @param done A done node style callback (err, state)
-     * @returns {}
-     */
-    navigate(routeName: string, routeParams?: any, options ?: NavigationOptions, done ?: Function): Function;
+    module "router5/create-router" {
+        interface Router {
+            isStarted(): boolean;
+            start(startPathOrState: string | State, done?: DoneFn): Router;
+            start(done?: DoneFn): Router;
+            stop(): Router;
+        }
+    }
+}
 
-    /**
-     * Navigate to the default route (if defined)
-     *
-     * @param opts The navigation options
-     * @param done A done node style callback (err, state)
-     * @returns A cancel function
-     */
-    navigateToDefault(opts ?: NavigationOptions, done?: Function) : Function;
+declare module "router5/core/utils" {
+    module "router5/create-router" {
+        interface Router {
+            isActive(
+                name: string,
+                params?: Params,
+                strictEquality?: boolean,
+                ignoreQueryParams?: boolean,
+            ): boolean;
 
-    /**
-     * Add dependencies
-     * @param dependencies An object of dependencies (key-value pairs)
-     * @returns The router instance
-     */
-    setDependencies(dependencies: object): Router;
+            areStatesEqual(
+                state1: State,
+                state2: State,
+                ignoreQueryParams?: boolean,
+            ): boolean;
 
-    /**
-     * Set a router dependency
-     *
-     * @param dependencyName The dependency name
-     * @param dependency The dependency
-     * @returns The router instance
-     */
-    setDependency(dependencyName: string, dependency : any): Router;
-
-    /**
-     * Set an option
-     *
-     * @param opt The option name
-     * @param val The option value
-     * @returns The router instance
-     */
-    setOption(opt: string, val: any): Router;
-
-    /**
-     * Set the current router state
-     *
-     * @param state The state object
-     */
-    setState(state : State) : void;
-
-    /**
-     * Start the router
-     *
-     * @param startPathOrState The start path or state. This is optional when using the browser plugin.
-     * @param done A done node style callback (err, state)
-     * @returns The router instance
-     */
-    start(startPathOrState ?: string|State, done?:Function): Router;
-
-    /**
-     * Stop the router
-     *
-     * @returns The router instance
-     */
-    stop(): Router;
-
-    /**
-     * Register middleware functions.
-     *
-     * @param args The middleware functions
-     * @returns The router instance
-     */
-    useMiddleware(...args: Array<MiddlewareFactory>): Router;
-
-    /**
-     * Use plugins
-     * @param pluginFactory An argument list of plugins
-     * @returns The router instance
-     */
-    usePlugin(...args: Array<PluginFactory>): Router;
-
-    /**
-     * Set the root node path, use carefully. It can be used to set app-wide allowed query parameters.
-     *
-     * @param rootPath The root node path
-     */
-    setRootPath(rootPath : string) : void;
-  }
-
-  /**
-   * The result can be synchronous (returning a boolean) or asynchronous (returning a promise or calling done(err, result))
-   */
-  export type RouterActivationHandler = (tostring: State, fromState: State, done:(err:any,result:any) => void) => boolean | Promise<boolean> | undefined;
-  export type RouterActivationHandlerFactory = (router: Router, dependencies: object) => RouterActivationHandler;
-
-  export interface Route {
-    name: string;
-    path: string;
-
-    /**
-     * if specified, the router will transition to the forwarded route instead. It is useful for defaulting to a child route, or having multiple paths pointing to the same route.
-     */
-    forwardTo?: string;
-
-    /**
-     * a method to control whether or not the route node can be activated
-     */
-    canActivate?: RouterActivationHandlerFactory;
-
-    children?: Array<Route>;
-  }
-
-  /*
-    Create a router
-
-    @param routes The routes
-    @param options The router options
-    @param dependencies The router dependencies
-  */
-  export function createRouter(routes?: Array<Route>, options?: RouterOptions, dependencies?: object): Router;
-
-  export var errorCodes: ErrorCodes;
-  export var constants: Constants;
-  export var transitionPath: (toState: State, fromState: State | null) => any;
-  export var loggerPlugin: PluginFactory;
-
-  export default createRouter;
+            areStatesDescendants(parentState: State, childState: State): boolean;
+            buildPath(route: string, params: Params): string;
+            matchPath(path: string, source?: string): State | null;
+            setRootPath(rootPath: string): void;
+        }
+    }
 }
 
 declare module "router5/plugins/browser" {
-  import { PluginFactory } from "router5";
-  interface BrowserPluginOptions {
-    forceDeactivate?: boolean;
-    useHash?: boolean;
-    hashPrefix?: string;
-    base?: string;
-    mergeState?: boolean;
-    preserveHash?: boolean;
-  }
+    import { PluginFactory } from "router5/core/plugins";
 
-  var browserPlugin: (options: BrowserPluginOptions) => PluginFactory;
-  export default browserPlugin;
+    export interface Options {
+        forceDeactivate?: boolean;
+        useHash?: boolean;
+        hashPrefix?: string;
+        base?: string;
+        mergeState?: boolean;
+        preserveHash?: boolean;
+    }
+
+    // compatibility
+    export type BrowserPluginOptions = Options;
+
+    function browserPluginFactory(opts?: Options): PluginFactory;
+
+    export default browserPluginFactory;
+}
+
+declare module "router5/plugins/browser/utils" {
+    module "router5/create-router" {
+        interface Router {
+            buildUrl(route: string, params: Params): string;
+            urlToPath(url: string): string;
+            matchUrl(url: string): State | null;
+        }
+    }
 }
 
 declare module "router5/plugins/listeners" {
-  import { PluginFactory } from "router5";
-  interface ListenersPluginOptions {
-    autoCleanUp: boolean;
-  }
+    import { PluginFactory } from "router5/core/plugins";
 
-  var listenersPlugin: (options?: ListenersPluginOptions) => PluginFactory;
-  export default listenersPlugin;
+    export interface Options {
+        autoCleanUp?: boolean;
+    }
+
+    // compatibility
+    export type ListenersPluginOptions = Options;
+
+    function listenersPluginFactory(options?: Options): PluginFactory;
+
+    export default listenersPluginFactory;
+}
+
+declare module "router5/plugins/loggers" {
+    import { PluginFactory } from "router5/core/plugins";
+    const loggerPlugin: PluginFactory;
+    export default loggerPlugin;
 }
 
 declare module "router5/plugins/persistentParams" {
-  import { PluginFactory } from "router5";
-  // persistentParamsPlugin takes a single argument which can be:
-  //   - A list of string (parameter names to persist), or
-  //   - A map of key value pairs (keys being the params to persist, values their initial value)
-  type PersistentParamsPluginParams = string[] | object;
-  var persistentParamsPlugin: (params?: PersistentParamsPluginParams) => PluginFactory;
-  export default persistentParamsPlugin;
+    import { Params } from "router5/create-router";
+    import { PluginFactory } from "router5/core/plugins";
+
+    function persistentParamsPluginFactory(params?: string[] | Params): PluginFactory;
+
+    export default persistentParamsPluginFactory;
 }
