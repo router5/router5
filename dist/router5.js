@@ -330,7 +330,7 @@ var tokenise = function tokenise(str) {
 
     // If no rules matched, throw an error (possible malformed path)
     if (!matched) {
-        throw new Error('Could not parse path.');
+        throw new Error('Could not parse path \'' + str + '\'');
     }
     // Return tokens
     return tokens;
@@ -399,7 +399,7 @@ var Path = function () {
     function Path(path) {
         classCallCheck(this, Path);
 
-        if (!path) throw new Error('Please supply a path');
+        if (!path) throw new Error('Missing path in Path constructor');
         this.path = path;
         this.tokens = tokenise(path);
 
@@ -552,7 +552,12 @@ var Path = function () {
             // Check all params are provided (not search parameters which are optional)
             if (this.urlParams.some(function (p) {
                 return !exists(encodedParams[p]);
-            })) throw new Error('Missing parameters');
+            })) {
+                var missingParameters = this.urlParams.filter(function (p) {
+                    return !exists(encodedParams[p]);
+                });
+                throw new Error('Cannot build path: \'' + this.path + '\' requires missing parameters { ' + missingParameters.join(', ') + ' }');
+            }
 
             // Check constraints
             if (!options.ignoreConstraints) {
@@ -563,7 +568,7 @@ var Path = function () {
                     return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(encodedParams[t.val]);
                 });
 
-                if (!constraintsPassed) throw new Error('Some parameters are of invalid format');
+                if (!constraintsPassed) throw new Error('Some parameters of \'' + this.path + '\' are of invalid format');
             }
 
             var base = this.tokens.filter(function (t) {

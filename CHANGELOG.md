@@ -1,3 +1,22 @@
+## router5@5.6.0 (2017-11-09)
+
+#### Bug fix
+* `redux-router5`
+  * [#219](https://github.com/router5/router5/pull/219) Fix return type of reduxPlugin (TypeScript). ([@zaeleus](https://github.com/zaeleus))
+
+#### Enhancement
+* `router5`
+  * [#218](https://github.com/router5/router5/pull/218) router5: Update type definitions. ([@zaeleus](https://github.com/zaeleus))
+  * [#220](https://github.com/router5/router5/pull/220) Improve path building and parsing error messages. ([@troch](https://github.com/troch))
+
+#### Committers: 3
+- Michael Macias ([zaeleus](https://github.com/zaeleus))
+- Sergey Slipchenko ([faergeek](https://github.com/faergeek))
+- Thomas Roch ([troch](https://github.com/troch))
+~/D/router5 ❯ npm run build                                                                                      master
+
+
+
 ## router5@5.5.0 (2017-11-01)
 
 #### Feature
