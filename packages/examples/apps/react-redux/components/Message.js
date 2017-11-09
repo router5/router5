@@ -8,7 +8,7 @@ function mapStateToProps(state, props) {
     };
 }
 
-export default function Message(props) {
+function Message(props) {
     const { mailTitle, mailMessage } = props.email;
 
     return (
