@@ -11,7 +11,7 @@
     "build:umd": "rollup -c rollup.config.js",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",
     "lint": "eslint packages/*/modules",
-    "format": "prettier --tab-width 4 --single-quote 'packages/**/*.js'",
+    "format": "prettier 'packages/**/*.js'",
     "check": "yarn run lint && yarn run test && yarn run format -- --list-different",
     "precommit": "lint-staged",
     "changelog": "lerna-changelog",
@@ -21,7 +21,7 @@
   },
   "lint-staged": {
     "packages/**/*.js": [
-      "prettier --tab-width 4 --single-quote --write",
+      "prettier --write",
       "git add"
     ]
   },
