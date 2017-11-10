@@ -38,6 +38,7 @@ declare module 'react-router5' {
     export const Link: ComponentClass<LinkProps>
 
     export type InjectedRoute = Partial<{
+        router: Router
         route: State
         previousRoute: State
     }>
