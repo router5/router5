@@ -13,7 +13,6 @@
 - Michael Macias ([zaeleus](https://github.com/zaeleus))
 - Sergey Slipchenko ([faergeek](https://github.com/faergeek))
 - Thomas Roch ([troch](https://github.com/troch))
-~/D/router5 ❯ npm run build                                                                                      master
 
 
 
