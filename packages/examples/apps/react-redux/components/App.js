@@ -1,10 +1,10 @@
-import React from 'react';
-import Nav from './Nav';
-import Main from './Main';
+import React from 'react'
+import Nav from './Nav'
+import Main from './Main'
 
 export default function App(props) {
     return (
-        <div className='mail-client'>
+        <div className="mail-client">
             <aside>
                 <Nav />
             </aside>
@@ -13,5 +13,5 @@ export default function App(props) {
                 <Main />
             </main>
         </div>
-    );
+    )
 }

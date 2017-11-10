@@ -1,5 +1,5 @@
-import * as actionTypes from '../lib/actionTypes';
-import { Record } from 'immutable';
+import * as actionTypes from '../lib/actionTypes'
+import { Record } from 'immutable'
 
 // eslint-disable-next-line new-cap
 const State = Record({
@@ -7,35 +7,35 @@ const State = Record({
     previousRoute: null,
     transitionRoute: null,
     transitionError: null
-});
+})
 
 function router5Reducer(state = new State(), action) {
     switch (action.type) {
         case actionTypes.TRANSITION_START:
             return state
                 .set('transitionRoute', action.payload.route)
-                .set('transitionError', null);
+                .set('transitionError', null)
 
         case actionTypes.TRANSITION_SUCCESS:
             return state
                 .set('transitionRoute', null)
                 .set('transitionError', null)
                 .set('previousRoute', action.payload.previousRoute)
-                .set('route', action.payload.route);
+                .set('route', action.payload.route)
 
         case actionTypes.TRANSITION_ERROR:
             return state
                 .set('transitionRoute', action.payload.route)
-                .set('transitionError', action.payload.transitionError);
+                .set('transitionError', action.payload.transitionError)
 
         case actionTypes.CLEAR_ERRORS:
             return state
                 .set('transitionRoute', null)
-                .set('transitionError', null);
+                .set('transitionError', null)
 
         default:
-            return state;
+            return state
     }
 }
 
-export default router5Reducer;
+export default router5Reducer

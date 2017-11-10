@@ -1,30 +1,30 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 class BaseLink extends Component {
     constructor(props, context) {
-        super(props, context);
+        super(props, context)
 
-        this.router = context.router;
+        this.router = context.router
 
         if (!this.router.hasPlugin('BROWSER_PLUGIN')) {
             console.error(
                 '[react-router5][BaseLink] missing browser plugin, href might be build incorrectly'
-            );
+            )
         }
 
-        this.isActive = this.isActive.bind(this);
-        this.clickHandler = this.clickHandler.bind(this);
+        this.isActive = this.isActive.bind(this)
+        this.clickHandler = this.clickHandler.bind(this)
 
-        this.state = { active: this.isActive() };
+        this.state = { active: this.isActive() }
     }
 
     buildUrl(routeName, routeParams) {
         if (this.router.buildUrl) {
-            return this.router.buildUrl(routeName, routeParams);
+            return this.router.buildUrl(routeName, routeParams)
         }
 
-        return this.router.buildPath(routeName, routeParams);
+        return this.router.buildPath(routeName, routeParams)
     }
 
     isActive() {
@@ -32,28 +32,28 @@ class BaseLink extends Component {
             this.props.routeName,
             this.props.routeParams,
             this.props.activeStrict
-        );
+        )
     }
 
     clickHandler(evt) {
         if (this.props.onClick) {
-            this.props.onClick(evt);
+            this.props.onClick(evt)
 
             if (evt.defaultPrevented) {
-                return;
+                return
             }
         }
 
         const comboKey =
-            evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
+            evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey
 
         if (evt.button === 0 && !comboKey) {
-            evt.preventDefault();
+            evt.preventDefault()
             this.router.navigate(
                 this.props.routeName,
                 this.props.routeParams,
                 this.props.routeOptions
-            );
+            )
         }
     }
 
@@ -72,14 +72,14 @@ class BaseLink extends Component {
             children,
             onClick,
             ...linkProps
-        } = this.props;
+        } = this.props
         /* eslint-enable */
 
-        const active = this.isActive();
-        const href = this.buildUrl(routeName, routeParams);
+        const active = this.isActive()
+        const href = this.buildUrl(routeName, routeParams)
         const linkclassName = (className ? className.split(' ') : [])
             .concat(active ? [activeClassName] : [])
-            .join(' ');
+            .join(' ')
 
         return React.createElement(
             'a',
@@ -90,13 +90,13 @@ class BaseLink extends Component {
                 onClick: this.clickHandler
             },
             children
-        );
+        )
     }
 }
 
 BaseLink.contextTypes = {
     router: PropTypes.object.isRequired
-};
+}
 
 BaseLink.propTypes = {
     routeName: PropTypes.string.isRequired,
@@ -106,13 +106,13 @@ BaseLink.propTypes = {
     activeStrict: PropTypes.bool,
     onClick: PropTypes.func,
     onMouseOver: PropTypes.func
-};
+}
 
 BaseLink.defaultProps = {
     activeClassName: 'active',
     activeStrict: false,
     routeParams: {},
     routeOptions: {}
-};
+}
 
-export default BaseLink;
+export default BaseLink

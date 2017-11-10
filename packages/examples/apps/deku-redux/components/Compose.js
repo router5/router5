@@ -1,7 +1,7 @@
-import element from 'virtual-element';
-import { connect } from 'deku-redux';
-import { createSelector } from 'reselect';
-import { updateTitle, updateMessage } from '../actions/draft';
+import element from 'virtual-element'
+import { connect } from 'deku-redux'
+import { createSelector } from 'reselect'
+import { updateTitle, updateMessage } from '../actions/draft'
 
 const draftSelector = createSelector(
     state => state.draft,
@@ -11,10 +11,14 @@ const draftSelector = createSelector(
         message: draft.message,
         error: hasCannotDeactivateError(router.transitionError)
     })
-);
+)
 
 function hasCannotDeactivateError(error) {
-    return error && error.code === 'CANNOT_DEACTIVATE' && error.segment === 'compose';
+    return (
+        error &&
+        error.code === 'CANNOT_DEACTIVATE' &&
+        error.segment === 'compose'
+    )
 }
 
 const Compose = {
@@ -23,22 +27,37 @@ const Compose = {
     },
 
     intitalState(props) {
-        return { title: '', message: '' };
+        return { title: '', message: '' }
     },
 
     render({ state, props }, setState) {
-        const { title, message, error, updateTitle, updateMessage, router } = props;
+        const {
+            title,
+            message,
+            error,
+            updateTitle,
+            updateMessage,
+            router
+        } = props
 
-        const updateState = prop => evt => setState(prop, evt.target.value);
-        router.canDeactivate('compose', !title && !message);
+        const updateState = prop => evt => setState(prop, evt.target.value)
+        router.canDeactivate('compose', !title && !message)
 
         return element('div', { class: 'compose' }, [
             element('h4', {}, 'Compose a new message'),
-            element('input', { name: 'title', value: title, onChange: updateState('title') }),
-            element('textarea', { name: 'message', value: message, onChange: updateState('message') }),
+            element('input', {
+                name: 'title',
+                value: title,
+                onChange: updateState('title')
+            }),
+            element('textarea', {
+                name: 'message',
+                value: message,
+                onChange: updateState('message')
+            }),
             error ? element('p', {}, 'Clear inputs before continuing') : null
-        ]);
+        ])
     }
-};
+}
 
-export default connect(draftSelector, { updateTitle, updateMessage })(Compose);
+export default connect(draftSelector, { updateTitle, updateMessage })(Compose)

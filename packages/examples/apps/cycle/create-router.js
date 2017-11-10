@@ -1,14 +1,16 @@
-import createRouter, { loggerPlugin } from 'router5';
-import browserPlugin from 'router5/plugins/browser';
+import createRouter, { loggerPlugin } from 'router5'
+import browserPlugin from 'router5/plugins/browser'
 
-const configureRouter = (routes) => {
+const configureRouter = routes => {
     return createRouter(routes, {
-            defaultRoute: 'inbox'
-        })
+        defaultRoute: 'inbox'
+    })
         .usePlugin(loggerPlugin)
-        .usePlugin(browserPlugin({
-            useHash: true
-        }));
-};
+        .usePlugin(
+            browserPlugin({
+                useHash: true
+            })
+        )
+}
 
-export default configureRouter;
+export default configureRouter

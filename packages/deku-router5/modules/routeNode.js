@@ -7,28 +7,28 @@ function routeNode(nodeName) {
 
             afterMount({ props }, elm, setState) {
                 props.router.addNodeListener(nodeName, (toState, fromState) => {
-                    setState({ route: toState, previousRoute: fromState });
-                });
+                    setState({ route: toState, previousRoute: fromState })
+                })
             },
 
             render({ props, state }) {
-                let { route, previousRoute } = state;
+                let { route, previousRoute } = state
 
                 if (route === undefined) {
-                    route = props.router.getState();
-                    previousRoute = null;
+                    route = props.router.getState()
+                    previousRoute = null
                 }
 
                 return {
                     type: RouteSegment,
                     children: [],
                     attributes: { ...props, route, previousRoute }
-                };
+                }
             }
-        };
+        }
 
-        return RouteNode;
-    };
+        return RouteNode
+    }
 }
 
-export default routeNode;
+export default routeNode
