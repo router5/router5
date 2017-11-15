@@ -1,3 +1,16 @@
+## 2017-11-15
+
+#### Enhancement
+* `react-router5`
+  * [#224](https://github.com/router5/router5/pull/224) Fix HOC types. ([@faergeek](https://github.com/faergeek))
+* `deku-router5`, `examples`, `react-router5`, `redux-router5`, `router5-helpers`, `router5-transition-path`, `router5`, `rxjs-router5`, `xstream-router5`
+  * [#223](https://github.com/router5/router5/pull/223) Prettier tweaks. ([@faergeek](https://github.com/faergeek))
+
+#### Committers: 1
+- Sergey Slipchenko ([faergeek](https://github.com/faergeek))
+
+
+
 ## router5@5.6.0 (2017-11-09)
 
 #### Bug fix

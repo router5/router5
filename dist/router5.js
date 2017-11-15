@@ -2007,16 +2007,15 @@ var defaultOptions = {
     strictQueryParams: false,
     allowNotFound: false,
     strongMatching: true
-};
 
-/**
- * Create a router
- * @param  {Array}  [routes]          The routes
- * @param  {Object} [options={}]      The router options
- * @param  {Object} [dependencies={}] The router dependencies
- * @return {Object}                   The router instance
- */
-function createRouter$1(routes) {
+    /**
+     * Create a router
+     * @param  {Array}  [routes]          The routes
+     * @param  {Object} [options={}]      The router options
+     * @param  {Object} [dependencies={}] The router dependencies
+     * @return {Object}                   The router instance
+     */
+};function createRouter$1(routes) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var deps = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
@@ -2047,19 +2046,18 @@ function createRouter$1(routes) {
         addEventListener: addEventListener,
         removeEventListener: removeEventListener,
         invokeEventListeners: invokeEventListeners
-    };
 
-    /**
-     * Invoke all event listeners by event name. Possible event names are listed under constants
-     * (`import { constants } from 'router5'`): `ROUTER_START`, `ROUTER_STOP`, `TRANSITION_START`,
-     * `TRANSITION_CANCEL`, `TRANSITION_SUCCESS`, `TRANSITION_ERROR`.
-     * This method is used internally and should not be invoked directly, but it can be useful for
-     * testing purposes.
-     * @private
-     * @name invokeEventListeners
-     * @param  {String}    eventName The event name
-     */
-    function invokeEventListeners(eventName) {
+        /**
+         * Invoke all event listeners by event name. Possible event names are listed under constants
+         * (`import { constants } from 'router5'`): `ROUTER_START`, `ROUTER_STOP`, `TRANSITION_START`,
+         * `TRANSITION_CANCEL`, `TRANSITION_SUCCESS`, `TRANSITION_ERROR`.
+         * This method is used internally and should not be invoked directly, but it can be useful for
+         * testing purposes.
+         * @private
+         * @name invokeEventListeners
+         * @param  {String}    eventName The event name
+         */
+    };function invokeEventListeners(eventName) {
         for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
             args[_key - 1] = arguments[_key];
         }
