@@ -37,22 +37,23 @@ declare module 'react-router5' {
 
     export const Link: ComponentClass<LinkProps>
 
-    export type InjectedRoute = Partial<{
-        route: State
-        previousRoute: State
-    }>
+    export type InjectedRoute = {
+        router: Router
+        route: State | null
+        previousRoute: State | null
+    }
 
-    export function withRoute<TProps extends InjectedRoute>(
+    export function withRoute<TProps extends Partial<InjectedRoute>>(
         BaseComponent: ComponentType<TProps>
     ): ComponentClass<Omit<TProps, keyof InjectedRoute>>
 
-    export type InjectedRouterNode = Partial<{
+    export type InjectedRouterNode = {
         router: Router
-        previousRoute: State
-        route: State
-    }>
+        previousRoute: State | null
+        route: State | null
+    }
 
-    export function routerNode<TProps extends InjectedRouterNode>(
+    export function routerNode<TProps extends Partial<InjectedRouterNode>>(
         nodeName: string
     ): (
         RouteSegment: ComponentType<TProps>
