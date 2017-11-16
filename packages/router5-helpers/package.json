@@ -3,6 +3,8 @@
   "version": "5.0.1",
   "description": "Router5 helpers for comparing and checking routes",
   "main": "dist/commonjs/index.js",
+  "jsnext:main": "dist/es/index.js",
+  "module": "dist/es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/router5/router5.git"
