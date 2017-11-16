@@ -2,17 +2,17 @@
 # yarn lockfile v1
 
 
-path-parser@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-2.1.0.tgz#bf7b9335ea59ef0add7145faf6807dafb995a696"
+path-parser@3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-3.0.1.tgz#90abf7d98af74b1f7da6d312786591a51c887619"
   dependencies:
     search-params "~1.3.0"
 
-route-node@1.11.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/route-node/-/route-node-1.11.0.tgz#cae4f8282da2069e8183d938eb34f2ce1f4a45e1"
+route-node@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-2.0.2.tgz#5c25ed023a1d54b8c4150f654ef55f986ebf0883"
   dependencies:
-    path-parser "2.1.0"
+    path-parser "3.0.1"
     search-params "~1.3.0"
 
 search-params@~1.3.0:
