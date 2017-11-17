@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import uglify from 'rollup-plugin-uglify';
 import nodeResolve from 'rollup-plugin-node-resolve';
+import alias from 'rollup-plugin-alias';
 import common from 'rollup-plugin-commonjs';
 
 const babelOptions = {
@@ -38,6 +39,10 @@ const modulesToBuild = Object.keys(modules).reduce((acc, moduleName) => {
     const plugins = [
         common({ include: `packages/${packageDir}/node_modules/**` }),
         babel(babelOptions),
+        alias({
+            'path-parser': 'packages/router5/node_modules/path-parser/modules/Path.js',
+            'route-node': 'packages/router5/node_modules/route-node/modules/RouteNode.js',
+        }),
         nodeResolve({ jsnext: true })
     ];
 
