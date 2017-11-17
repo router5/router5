@@ -1,5 +1,6 @@
 import transitionPath from '../modules'
 import { expect } from 'chai'
+import tt from 'typescript-definition-tester'
 
 describe('router5-transition-path', function() {
     it('should return a transition path with from null state', function() {
@@ -64,5 +65,16 @@ describe('router5-transition-path', function() {
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             ).intersection
         ).to.equal('a.b.c')
+    })
+
+    describe('TypeScript definitions', function() {
+        it('should compile examples against index.d.ts', function(done) {
+            tt.compileDirectory(
+                `${__dirname}/typescript`,
+                filename => filename.match(/\.ts$/),
+                { lib: ['lib.es2015.d.ts'] },
+                () => done()
+            )
+        })
     })
 })
