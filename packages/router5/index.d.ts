@@ -28,9 +28,7 @@ declare module 'router5' {
         ActivationFnFactory as RouterActivationHandlerFactory
     } from 'router5/core/route-lifecycle'
     import loggerPlugin from 'router5/plugins/loggers'
-
-    // router5-transition-path
-    const transitionPath: (toState: State, fromState?: State) => any
+    import transitionPath from 'router5-transition-path'
 
     type DoneFn = (err?: any, state?: State) => void
 
