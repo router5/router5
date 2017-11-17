@@ -1,6 +1,6 @@
 {
   "name": "router5-helpers",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "Router5 helpers for comparing and checking routes",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
