@@ -1,3 +1,19 @@
+## router5@5.7.0 (2017-11-17)
+
+#### Feature
+* `router5-transition-path`, `router5`
+  * [#226](https://github.com/router5/router5/pull/226) Add type definitions for router5-transition-path. ([@zaeleus](https://github.com/zaeleus))
+
+#### Enhancement
+* `react-router5`, `redux-router5`, `router5-helpers`, `router5-transition-path`, `router5`, `rxjs-router5`, `xstream-router5`
+  * [#225](https://github.com/router5/router5/pull/225) Configure all packages with jnext:main and module. ([@troch](https://github.com/troch))
+
+#### Committers: 2
+- Michael Macias ([zaeleus](https://github.com/zaeleus))
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## 2017-11-15
 
 #### Enhancement
