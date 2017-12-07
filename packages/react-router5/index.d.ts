@@ -53,7 +53,7 @@ declare module 'react-router5' {
         route: State | null
     }
 
-    export function routerNode<TProps extends Partial<InjectedRouterNode>>(
+    export function routeNode<TProps extends Partial<InjectedRouterNode>>(
         nodeName: string
     ): (
         RouteSegment: ComponentType<TProps>
