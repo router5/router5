@@ -1714,7 +1714,7 @@ function withNavigation(router) {
             return;
         }
 
-        var fromState = sameStates ? null : router.getState();
+        var fromState = sameStates || opts.reload ? null : router.getState();
 
         if (opts.skipTransition) {
             done(null, toState);

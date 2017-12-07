@@ -1,3 +1,14 @@
+## router5@5.7.1 (2017-12-07)
+
+#### Bug fix
+* `router5`
+  * [#232](https://github.com/router5/router5/pull/232) Fix reloading of routes on transition. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.7.0 (2017-11-17)
 
 #### Feature
