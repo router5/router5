@@ -69,6 +69,8 @@ describe('router5-transition-path', function() {
 
     describe('TypeScript definitions', function() {
         it('should compile examples against index.d.ts', function(done) {
+            this.timeout(10000)
+
             tt.compileDirectory(
                 `${__dirname}/typescript`,
                 filename => filename.match(/\.ts$/),
