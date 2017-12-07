@@ -1,3 +1,14 @@
+## react-router@5.4.1 (2017-12-07)
+
+#### Bug fix
+* `react-router5`
+  * [#231](https://github.com/router5/router5/pull/231) Typescript typings specify routerNode instead of routeNode #230. ([@texttechne](https://github.com/texttechne))
+
+#### Committers: 1
+- [texttechne](https://github.com/texttechne)
+
+
+
 ## router5@5.7.1 (2017-12-07)
 
 #### Bug fix
