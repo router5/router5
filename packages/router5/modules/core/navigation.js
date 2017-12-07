@@ -96,7 +96,7 @@ export default function withNavigation(router) {
             return
         }
 
-        const fromState = sameStates ? null : router.getState()
+        const fromState = sameStates || opts.reload ? null : router.getState()
 
         if (opts.skipTransition) {
             done(null, toState)
