@@ -127,7 +127,7 @@ export default function withUtils(router) {
                 options.useTrailingSlash === undefined
                     ? path
                     : router.buildPath(name, params)
-            const routeName = router.forwardMap[name] || name
+            const routeName = router.config.forwardMap[name] || name
 
             return router.makeState(routeName, params, builtPath, _meta, source)
         }

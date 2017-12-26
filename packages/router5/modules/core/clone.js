@@ -17,6 +17,7 @@ export default function withCloning(router, createRouter) {
 
         clonedRouter.useMiddleware(...router.getMiddlewareFactories())
         clonedRouter.usePlugin(...router.getPlugins())
+        clonedRouter.config = router.config
 
         const [
             canDeactivateFactories,

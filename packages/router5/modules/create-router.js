@@ -34,6 +34,7 @@ function createRouter(routes, opts = {}, deps = {}) {
     Object.keys(opts).forEach(opt => setOption(opt, opts[opt]))
 
     const router = {
+        config: {},
         rootNode,
         getOptions,
         setOption,
