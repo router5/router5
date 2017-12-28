@@ -174,7 +174,7 @@ function Root({ route }) {
     }
 }
 
-export default connect(state => routeNodeSelector(''))(Root);
+export default connect(state => routeNodeSelector('')(state))(Root);
 ```
 
 When using `routeNodeSelector` with other connect properties:
