@@ -2,8 +2,8 @@
 
 # redux-router5
 
-> Router5 integration with redux. If you develop with React, use this package with __[react-redux](../packages/react-redux)__
-and __[react-router5](../packages/react-router5)__. Using router5 with redux removes the need to include _router5-listeners_.
+> Router5 integration with redux. If you develop with React, use this package with __[react-redux](https://github.com/reactjs/react-redux)__
+and __[react-router5](../react-router5)__. Using router5 with redux removes the need to include _router5-listeners_.
 
 __[Example](../examples/apps/react-redux)__ | __[Demo](http://router5.github.io/docs/with-react-redux.html)__ | __[Learn router5](http://router5.github.io)__
 
@@ -147,7 +147,7 @@ when it needs to.
 Then it is just a matter of returning the right component depending on the current route. Your virtual tree will react to route changes, all of that
 by simply __leveraging the power of connect and reselect__!
 
-[router5-helpers](../packages/router5-helpers) provides
+[router5-helpers](../router5-helpers) provides
 a set of functions to help making those decisions (useful if you have nested routes).
 
 ```javascript
