@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import * as helpers from '../modules'
+import tt from 'typescript-definition-tester'
 
 describe('router5-helpers', function() {
     describe('.startsWithSegment()', function() {
@@ -63,6 +64,19 @@ describe('router5-helpers', function() {
             ) {
                 expect(err).to.not.exist
             })
+        })
+    })
+
+    describe('TypeScript definitions', function() {
+        it('should compile examples against index.d.ts', function(done) {
+            this.timeout(10000)
+
+            tt.compileDirectory(
+                `${__dirname}/typescript`,
+                filename => filename.match(/\.ts$/),
+                { lib: ['lib.es2015.d.ts'] },
+                () => done()
+            )
         })
     })
 })
