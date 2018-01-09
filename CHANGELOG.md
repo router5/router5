@@ -1,3 +1,14 @@
+## 2018-01-09
+
+#### Enhancement
+* `router5-helpers`
+  * [#241](https://github.com/router5/router5/pull/241) Add type definitions for router5-helpers. ([@zaeleus](https://github.com/zaeleus))
+
+#### Committers: 2
+- Michael Macias ([zaeleus](https://github.com/zaeleus))
+- Nacho Martín ([nacmartin](https://github.com/nacmartin))
+
+
 ## react-router@5.4.1 (2017-12-07)
 
 #### Bug fix
