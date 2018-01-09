@@ -1,7 +1,7 @@
 {
   "name": "router5-examples",
   "private": true,
-  "version": "5.0.22",
+  "version": "5.0.23",
   "description": "A mix of playground code and examples",
   "main": "index.js",
   "scripts": {
@@ -26,8 +26,8 @@
     "@cycle/dom": "~17.4.0",
     "randomcolor": "~0.5.3",
     "redux-logger": "~3.0.6",
-    "router5-helpers": "^5.1.0",
-    "router5-transition-path": "^5.1.0",
+    "router5-helpers": "^5.2.0",
+    "router5-transition-path": "^5.1.1",
     "rx": "~4.1.0"
   },
   "dependencies": {
@@ -42,10 +42,10 @@
     "react-redux": "~5.0.0",
     "react-router5": "^5.4.1",
     "redux": "~3.6.0",
-    "redux-router5": "^5.2.0",
+    "redux-router5": "^5.2.1",
     "redux-thunk": "~2.2.0",
     "reselect": "~3.0.1",
-    "router5": "^5.7.1",
+    "router5": "^5.7.2",
     "virtual-element": "~1.2.0"
   }
 }
