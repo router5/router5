@@ -21,6 +21,14 @@ const profileRoute = new RouteNode('profile', '/profile', [
     { name: 'user', path: '/:userId' }
 ])
 
+const routeWithDefaultParams = {
+    name: 'withDefaultParam',
+    path: '/with-default/:param',
+    defaultParams: {
+        param: 'hello'
+    }
+}
+
 const otherRoute = {
     name: 'withEncoder',
     path: '/encoded/:param1/:param2',
@@ -35,10 +43,19 @@ const otherRoute = {
 }
 
 export default function createTestRouter(options) {
-    return createRouter([usersRoute, sectionRoute, profileRoute, otherRoute], {
-        defaultRoute: 'home',
-        ...options
-    })
+    return createRouter(
+        [
+            usersRoute,
+            sectionRoute,
+            profileRoute,
+            otherRoute,
+            routeWithDefaultParams
+        ],
+        {
+            defaultRoute: 'home',
+            ...options
+        }
+    )
         .add(ordersRoute)
         .addNode('index', '/')
         .addNode('home', '/home')

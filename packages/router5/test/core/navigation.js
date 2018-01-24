@@ -198,4 +198,12 @@ describe('core/navigation', function() {
             }
         )
     })
+
+    it('should extend default params', () => {
+        router.navigate('withDefaultParam', (err, state) => {
+            expect(state.params).to.eql({
+                param: 'hello'
+            })
+        })
+    })
 })

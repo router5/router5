@@ -36,7 +36,8 @@ function createRouter(routes, opts = {}, deps = {}) {
     const router = {
         config: {
             decoders: {},
-            encoders: {}
+            encoders: {},
+            defaultParams: {}
         },
         rootNode,
         getOptions,
@@ -119,6 +120,9 @@ function createRouter(routes, opts = {}, deps = {}) {
 
         if (route.encodeParams)
             router.config.encoders[route.name] = route.encodeParams
+
+        if (route.defaultParams)
+            router.config.defaultParams[route.name] = route.defaultParams
     }
 
     /**

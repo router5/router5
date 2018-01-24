@@ -108,7 +108,12 @@ export default function withUtils(router) {
     }
 
     function buildState(route, params) {
-        return router.rootNode.buildState(route, params)
+        const finalParams = {
+            ...router.config.defaultParams[route],
+            ...params
+        }
+
+        return router.rootNode.buildState(route, finalParams)
     }
 
     /**

@@ -75,7 +75,7 @@ export default function withNavigation(router) {
         const toState = router.makeState(
             route.name,
             route.params,
-            router.buildPath(name, params),
+            router.buildPath(name, route.params),
             route._meta
         )
         const sameStates = router.getState()
