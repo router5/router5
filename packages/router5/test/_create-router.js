@@ -21,8 +21,21 @@ const profileRoute = new RouteNode('profile', '/profile', [
     { name: 'user', path: '/:userId' }
 ])
 
+const otherRoute = {
+    name: 'withEncoder',
+    path: '/encoded/:param1/:param2',
+    encodeParams: ({ one, two }) => ({
+        param1: one,
+        param2: two
+    }),
+    decodeParams: ({ param1, param2 }) => ({
+        one: param1,
+        two: param2
+    })
+}
+
 export default function createTestRouter(options) {
-    return createRouter([usersRoute, sectionRoute, profileRoute], {
+    return createRouter([usersRoute, sectionRoute, profileRoute, otherRoute], {
         defaultRoute: 'home',
         ...options
     })

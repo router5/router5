@@ -50,6 +50,17 @@ describe('core/utils', () => {
             expect(router.isActive('users.view', { id: 123 })).to.equal(false)
         })
 
+        it('should decode path params on match', () => {
+            expect(omitMeta(router.matchPath('/encoded/hello/123'))).to.eql({
+                name: 'withEncoder',
+                params: {
+                    one: 'hello',
+                    two: '123'
+                },
+                path: '/encoded/hello/123'
+            })
+        })
+
         it('should match deep `/` routes', function() {
             router.setOption('useTrailingSlash', false)
             expect(omitMeta(router.matchPath('/profile'))).to.eql({
