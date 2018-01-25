@@ -135,15 +135,19 @@ export default function withUtils(router) {
             const decodedParams = router.config.decoders[name]
                 ? router.config.decoders[name](params)
                 : params
+            const finalParams = {
+                ...router.config.defaultParams[name],
+                ...decodedParams
+            }
             const routeName = router.config.forwardMap[name] || name
             const builtPath =
                 options.useTrailingSlash === undefined
                     ? path
-                    : router.buildPath(routeName, decodedParams)
+                    : router.buildPath(routeName, finalParams)
 
             return router.makeState(
                 routeName,
-                decodedParams,
+                finalParams,
                 builtPath,
                 _meta,
                 source
