@@ -1213,14 +1213,18 @@ function withUtils(router) {
         var useTrailingSlash = options.useTrailingSlash,
             strictQueryParams = options.strictQueryParams;
 
-        return router.rootNode.buildPath(route, params, {
+        var encodedParams = router.config.encoders[route] ? router.config.encoders[route](params) : params;
+
+        return router.rootNode.buildPath(route, encodedParams, {
             trailingSlash: useTrailingSlash,
             strictQueryParams: strictQueryParams
         });
     }
 
     function buildState(route, params) {
-        return router.rootNode.buildState(route, params);
+        var finalParams = _extends({}, router.config.defaultParams[route], params);
+
+        return router.rootNode.buildState(route, finalParams);
     }
 
     /**
@@ -1245,10 +1249,12 @@ function withUtils(router) {
                 params = match.params,
                 _meta = match._meta;
 
-            var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(name, params);
-            var routeName = router.forwardMap[name] || name;
+            var decodedParams = router.config.decoders[name] ? router.config.decoders[name](params) : params;
+            var finalParams = _extends({}, router.config.defaultParams[name], decodedParams);
+            var routeName = router.config.forwardMap[name] || name;
+            var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(routeName, finalParams);
 
-            return router.makeState(routeName, params, builtPath, _meta, source);
+            return router.makeState(routeName, finalParams, builtPath, _meta, source);
         }
 
         return null;
@@ -1637,7 +1643,7 @@ var noop$2 = function noop() {};
 function withNavigation(router) {
     var cancelCurrentTransition = void 0;
 
-    router.forwardMap = {};
+    router.config.forwardMap = {};
     router.navigate = navigate;
     router.navigateToDefault = navigateToDefault;
     router.transitionToState = transitionToState;
@@ -1664,7 +1670,7 @@ function withNavigation(router) {
      * @param  {String}   toRoute  The route params
      */
     function forward(fromRoute, toRoute) {
-        router.forwardMap[fromRoute] = toRoute;
+        router.config.forwardMap[fromRoute] = toRoute;
 
         return router;
     }
@@ -1682,7 +1688,7 @@ function withNavigation(router) {
             args[_key] = arguments[_key];
         }
 
-        var name = router.forwardMap[args[0]] || args[0];
+        var name = router.config.forwardMap[args[0]] || args[0];
         var lastArg = args[args.length - 1];
         var done = typeof lastArg === 'function' ? lastArg : noop$2;
         var params = _typeof(args[1]) === 'object' ? args[1] : {};
@@ -1702,7 +1708,7 @@ function withNavigation(router) {
             return;
         }
 
-        var toState = router.makeState(route.name, route.params, router.buildPath(name, params), route._meta);
+        var toState = router.makeState(route.name, route.params, router.buildPath(name, route.params), route._meta);
         var sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
 
         // Do not proceed further if states are the same and no reload
@@ -1983,6 +1989,7 @@ function withCloning(router, createRouter) {
 
         clonedRouter.useMiddleware.apply(clonedRouter, toConsumableArray(router.getMiddlewareFactories()));
         clonedRouter.usePlugin.apply(clonedRouter, toConsumableArray(router.getPlugins()));
+        clonedRouter.config = router.config;
 
         var _router$getLifecycleF = router.getLifecycleFactories(),
             _router$getLifecycleF2 = slicedToArray(_router$getLifecycleF, 2),
@@ -2030,6 +2037,11 @@ var defaultOptions = {
     });
 
     var router = {
+        config: {
+            decoders: {},
+            encoders: {},
+            defaultParams: {}
+        },
         rootNode: rootNode,
         getOptions: getOptions,
         setOption: setOption,
@@ -2111,6 +2123,12 @@ var defaultOptions = {
         if (route.canActivate) router.canActivate(route.name, route.canActivate);
 
         if (route.forwardTo) router.forward(route.name, route.forwardTo);
+
+        if (route.decodeParams) router.config.decoders[route.name] = route.decodeParams;
+
+        if (route.encodeParams) router.config.encoders[route.name] = route.encodeParams;
+
+        if (route.defaultParams) router.config.defaultParams[route.name] = route.defaultParams;
     }
 
     /**

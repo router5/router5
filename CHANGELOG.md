@@ -1,3 +1,18 @@
+## router5@5.8.0 (2018-01-25)
+
+#### Feature
+* `router5`
+  * [#244](https://github.com/router5/router5/pull/244) Add optional params encoders, params decoders and default params to routes. ([@troch](https://github.com/troch))
+
+#### Fix
+* `router5`
+  * Fix clone function to include route specific config like forwardTo
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## 2018-01-09
 
 #### Enhancement
@@ -7,6 +22,7 @@
 #### Committers: 2
 - Michael Macias ([zaeleus](https://github.com/zaeleus))
 - Nacho Martín ([nacmartin](https://github.com/nacmartin))
+
 
 
 ## react-router@5.4.1 (2017-12-07)
