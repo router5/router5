@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { spy } from 'sinon'
-import createRouter, { RouteNode } from '../../modules'
+import createRouter from '../../modules'
 
 const canActivate = () => () => true
 const routes = [

@@ -187,4 +187,23 @@ describe('core/navigation', function() {
             done()
         })
     })
+
+    it('should encode params to path', done => {
+        router.navigate(
+            'withEncoder',
+            { one: 'un', two: 'deux' },
+            (err, state) => {
+                expect(state.path).to.eql('/encoded/un/deux')
+                done()
+            }
+        )
+    })
+
+    it('should extend default params', () => {
+        router.navigate('withDefaultParam', (err, state) => {
+            expect(state.params).to.eql({
+                param: 'hello'
+            })
+        })
+    })
 })

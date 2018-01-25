@@ -34,6 +34,11 @@ function createRouter(routes, opts = {}, deps = {}) {
     Object.keys(opts).forEach(opt => setOption(opt, opts[opt]))
 
     const router = {
+        config: {
+            decoders: {},
+            encoders: {},
+            defaultParams: {}
+        },
         rootNode,
         getOptions,
         setOption,
@@ -109,6 +114,15 @@ function createRouter(routes, opts = {}, deps = {}) {
         if (route.canActivate) router.canActivate(route.name, route.canActivate)
 
         if (route.forwardTo) router.forward(route.name, route.forwardTo)
+
+        if (route.decodeParams)
+            router.config.decoders[route.name] = route.decodeParams
+
+        if (route.encodeParams)
+            router.config.encoders[route.name] = route.encodeParams
+
+        if (route.defaultParams)
+            router.config.defaultParams[route.name] = route.defaultParams
     }
 
     /**

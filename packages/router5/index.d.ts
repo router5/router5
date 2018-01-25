@@ -111,6 +111,9 @@ declare module 'router5/create-router' {
         canActivate?: ActivationFnFactory
         forwardTo?: string
         children?: Route[]
+        encodeParams?(stateParams: Params): Params
+        decodeParams?(pathParams: Params): Params
+        defaultParams?: Params
     }
 
     export interface StateMeta {
