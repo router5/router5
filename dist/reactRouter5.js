@@ -1011,8 +1011,8 @@ function routeNode(nodeName) {
                     this.router.addNodeListener(nodeName, this.nodeListener);
                 }
             }, {
-                key: 'componentWillUnmout',
-                value: function componentWillUnmout() {
+                key: 'componentWillUnmount',
+                value: function componentWillUnmount() {
                     this.router.removeNodeListener(nodeName, this.nodeListener);
                 }
             }, {

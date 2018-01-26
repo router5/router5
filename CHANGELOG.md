@@ -1,3 +1,14 @@
+## react-router5@5.4.2 (2018-01-26)
+
+#### Bug fix
+* `react-router5`
+  * [#245](https://github.com/router5/router5/pull/245) Fix route node listeners not being unregistered in routeNode HoC. ([@whs](https://github.com/whs))
+
+#### Committers: 1
+- Manatsawin Hanmongkolchai ([whs](https://github.com/whs))
+
+
+
 ## router5@5.8.0 (2018-01-25)
 
 #### Feature
