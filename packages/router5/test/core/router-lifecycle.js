@@ -31,9 +31,7 @@ describe('core/router-lifecycle', function() {
         })
     })
 
-    it('should throw an error when starting with no start path or state', function(
-        done
-    ) {
+    it('should throw an error when starting with no start path or state', function(done) {
         router.stop()
         router.setOption('defaultRoute', null)
         router.start(err => {
@@ -48,9 +46,7 @@ describe('core/router-lifecycle', function() {
         expect(() => router.start('')).not.to.throw()
     })
 
-    it('should give an error if trying to start when already started', function(
-        done
-    ) {
+    it('should give an error if trying to start when already started', function(done) {
         router.start('', function(err) {
             expect(err.code).to.equal(errorCodes.ROUTER_ALREADY_STARTED)
             done()
@@ -72,9 +68,7 @@ describe('core/router-lifecycle', function() {
         })
     })
 
-    it('should start with the default route if start route is not matched', function(
-        done
-    ) {
+    it('should start with the default route if start route is not matched', function(done) {
         router.stop()
         router.start('/about', function(err, state) {
             expect(omitMeta(router.getState())).to.eql({
@@ -86,9 +80,7 @@ describe('core/router-lifecycle', function() {
         })
     })
 
-    it('should start with the default route if navigation to start route is not allowed', function(
-        done
-    ) {
+    it('should start with the default route if navigation to start route is not allowed', function(done) {
         router.stop()
         router.start('/admin', function() {
             expect(omitMeta(router.getState())).to.eql({
@@ -112,9 +104,7 @@ describe('core/router-lifecycle', function() {
         })
     })
 
-    it('should start with an error if navigation to start route is not allowed and no default route is specified', function(
-        done
-    ) {
+    it('should start with an error if navigation to start route is not allowed and no default route is specified', function(done) {
         router.stop()
         router.setOption('defaultRoute', null)
         router.start('/admin', function(err) {
@@ -124,9 +114,7 @@ describe('core/router-lifecycle', function() {
         })
     })
 
-    it('should start with a not found error if no matched start state and no default route', function(
-        done
-    ) {
+    it('should start with a not found error if no matched start state and no default route', function(done) {
         router.stop()
         router.setOption('defaultRoute', null)
         router.start('', function(err) {
@@ -174,13 +162,11 @@ describe('core/router-lifecycle', function() {
             router.navigate('users', function(err, state) {
                 expect(state.meta.id).to.not.eql(1)
                 done()
-            });
+            })
         })
     })
 
-    it('should return an error if default route access is not found', function(
-        done
-    ) {
+    it('should return an error if default route access is not found', function(done) {
         router.stop()
         router.setOption('defaultRoute', 'fake.route')
 

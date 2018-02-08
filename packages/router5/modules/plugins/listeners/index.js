@@ -29,9 +29,7 @@ function listenersPluginFactory(options = defaultOptions) {
                 )
                 if (!segments)
                     console.warn(
-                        `No route found for ${
-                            normalizedName
-                        }, listener might never be called!`
+                        `No route found for ${normalizedName}, listener might never be called!`
                     )
             }
 

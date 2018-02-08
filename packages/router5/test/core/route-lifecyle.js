@@ -14,9 +14,7 @@ describe('core/route-lifecycle', function() {
     )
     after(() => router.stop())
 
-    it('should block navigation if a component refuses deactivation', function(
-        done
-    ) {
+    it('should block navigation if a component refuses deactivation', function(done) {
         router.navigate('users.list', function() {
             // Cannot deactivate
             router.canDeactivate('users.list', () => () => Promise.reject())
@@ -62,9 +60,7 @@ describe('core/route-lifecycle', function() {
         })
     })
 
-    it('should block navigation if a route cannot be activated', function(
-        done
-    ) {
+    it('should block navigation if a route cannot be activated', function(done) {
         router.navigate('home', function() {
             router.navigate('admin', function(err) {
                 expect(err.code).to.equal(errorCodes.CANNOT_ACTIVATE)

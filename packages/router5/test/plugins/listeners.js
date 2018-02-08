@@ -57,9 +57,7 @@ describe('listenersPlugin', function() {
         })
     })
 
-    it('should not invoke listeners if trying to navigate to the current route', function(
-        done
-    ) {
+    it('should not invoke listeners if trying to navigate to the current route', function(done) {
         router.navigate('orders.view', { id: 123 }, {}, function() {
             const listener = spy()
             router.addListener(listener)
@@ -115,9 +113,7 @@ describe('listenersPlugin', function() {
         })
     })
 
-    it('should automatically remove node listeners if autoCleanUp', function(
-        done
-    ) {
+    it('should automatically remove node listeners if autoCleanUp', function(done) {
         router.navigate('orders.completed', {}, {}, function(err, state) {
             router.addNodeListener('orders', () => {})
             router.navigate('users', {}, {}, function(err, state) {
@@ -136,9 +132,7 @@ describe('listenersPlugin', function() {
         console.warn.restore()
     })
 
-    it('should not invoke listeners removed by previously called listeners', function(
-        done
-    ) {
+    it('should not invoke listeners removed by previously called listeners', function(done) {
         router.navigate('home', {}, {}, function() {
             const previousState = router.lastKnownState
             const listener2 = spy()

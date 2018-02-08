@@ -58,9 +58,7 @@ describe('core/middleware', () => {
         })
     })
 
-    it('should log a warning if state is changed during transition', function(
-        done
-    ) {
+    it('should log a warning if state is changed during transition', function(done) {
         sandbox.stub(console, 'error')
         router.stop()
         router.useMiddleware(() => listeners.transitionMutate)
