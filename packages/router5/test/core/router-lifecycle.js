@@ -7,7 +7,7 @@ const homeState = {
     name: 'home',
     params: {},
     path: '/home',
-    meta: { params: { home: {} } }
+    meta: { id: 1, params: { home: {} } }
 }
 
 describe('core/router-lifecycle', function() {
@@ -164,6 +164,17 @@ describe('core/router-lifecycle', function() {
             expect(state).to.eql(homeState)
             expect(router.getState()).to.eql(homeState)
             done()
+        })
+    })
+
+    it('should not reuse id when starting with provided state', function(done) {
+        router.stop()
+        expect(homeState.meta.id).to.eql(1)
+        router.start(homeState, function(err, state) {
+            router.navigate('users', function(err, state) {
+                expect(state.meta.id).to.not.eql(1)
+                done()
+            });
         })
     })
 

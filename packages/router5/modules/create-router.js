@@ -186,6 +186,10 @@ function createRouter(routes, opts = {}, deps = {}) {
      */
     function setState(state) {
         routerState = state
+
+        if(state && state.meta && typeof state.meta.id === 'number'){
+            stateId = state.meta.id
+        }
     }
 
     /**
