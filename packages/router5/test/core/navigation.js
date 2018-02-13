@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { constants, errorCodes } from '../../modules'
+import { constants, errorCodes, createRouter } from '../../modules'
 import createTestRouter from '../_create-router'
 import { omitMeta } from '../_helpers'
 import sinon, { spy } from 'sinon'
@@ -178,6 +178,34 @@ describe('core/navigation', function() {
         router.navigate('profile', (err, state) => {
             expect(state.name).to.equal('profile.me')
             router.forward('profile', undefined)
+            done()
+        })
+    })
+
+    it('should forward a route to another route on start', done => {
+        const routerTest = createRouter([
+            { name: 'app', path: '?:showVersion' },
+            { name: 'app.ip', path: '/ip' },
+            { name: 'app.ip.list', path: '/?:sort?:page' },
+            {
+                name: 'app.ip.item',
+                path: '/:id',
+                forwardTo: 'app.ip.item.view'
+            },
+            { name: 'app.ip.item.edit', path: '/edit' },
+            {
+                name: 'app.ip.item.view',
+                path: '/:version',
+                defaultParams: { version: 'active' }
+            }
+        ])
+
+        routerTest.start('/ip/2', (err, state) => {
+            expect(state.name).to.equal('app.ip.item.view')
+            expect(state.params).to.eql({
+                id: '2',
+                version: 'active'
+            })
             done()
         })
     })
