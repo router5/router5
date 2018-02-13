@@ -107,13 +107,24 @@ export default function withUtils(router) {
         })
     }
 
-    function buildState(route, params) {
-        const finalParams = {
-            ...router.config.defaultParams[route],
-            ...params
+    function forwardState(routeName, routeParams) {
+        const name = router.config.forwardMap[routeName] || routeName
+        const params = {
+            ...router.config.defaultParams[routeName],
+            ...router.config.defaultParams[name],
+            ...routeParams
         }
 
-        return router.rootNode.buildState(route, finalParams)
+        return {
+            name,
+            params
+        }
+    }
+
+    function buildState(routeName, routeParams) {
+        const { name, params } = forwardState(routeName, routeParams)
+
+        return router.rootNode.buildState(name, params)
     }
 
     /**
@@ -135,19 +146,18 @@ export default function withUtils(router) {
             const decodedParams = router.config.decoders[name]
                 ? router.config.decoders[name](params)
                 : params
-            const finalParams = {
-                ...router.config.defaultParams[name],
-                ...decodedParams
-            }
-            const routeName = router.config.forwardMap[name] || name
+            const { name: routeName, params: routeParams } = forwardState(
+                name,
+                decodedParams
+            )
             const builtPath =
                 options.useTrailingSlash === undefined
                     ? path
-                    : router.buildPath(routeName, finalParams)
+                    : router.buildPath(routeName, routeParams)
 
             return router.makeState(
                 routeName,
-                finalParams,
+                routeParams,
                 builtPath,
                 _meta,
                 source

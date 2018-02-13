@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { constants, errorCodes } from '../../modules'
+import { constants, errorCodes, createRouter } from '../../modules'
 import createTestRouter from '../_create-router'
 import { omitMeta } from '../_helpers'
 import sinon, { spy } from 'sinon'
@@ -178,6 +178,33 @@ describe('core/navigation', function() {
         router.navigate('profile', (err, state) => {
             expect(state.name).to.equal('profile.me')
             router.forward('profile', undefined)
+            done()
+        })
+    })
+
+    it('should forward a route to another with default params', done => {
+        const routerTest = createRouter([
+            {
+                name: 'app',
+                path: '/app',
+                forwardTo: 'app.version',
+                defaultParams: {
+                    lang: 'en'
+                }
+            },
+            {
+                name: 'app.version',
+                path: '/:version',
+                defaultParams: { version: 'v1' }
+            }
+        ])
+
+        routerTest.start('/app', (err, state) => {
+            expect(state.name).to.equal('app.version')
+            expect(state.params).to.eql({
+                version: 'v1',
+                lang: 'en'
+            })
             done()
         })
     })

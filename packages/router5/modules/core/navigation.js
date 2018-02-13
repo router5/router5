@@ -47,7 +47,7 @@ export default function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate(...args) {
-        const name = router.config.forwardMap[args[0]] || args[0]
+        const name = args[0]
         const lastArg = args[args.length - 1]
         const done = typeof lastArg === 'function' ? lastArg : noop
         const params = typeof args[1] === 'object' ? args[1] : {}
@@ -75,7 +75,7 @@ export default function withNavigation(router) {
         const toState = router.makeState(
             route.name,
             route.params,
-            router.buildPath(name, route.params),
+            router.buildPath(route.name, route.params),
             route._meta
         )
         const sameStates = router.getState()
