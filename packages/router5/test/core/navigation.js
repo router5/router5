@@ -182,29 +182,28 @@ describe('core/navigation', function() {
         })
     })
 
-    it('should forward a route to another route on start', done => {
+    it('should forward a route to another with default params', done => {
         const routerTest = createRouter([
-            { name: 'app', path: '?:showVersion' },
-            { name: 'app.ip', path: '/ip' },
-            { name: 'app.ip.list', path: '/?:sort?:page' },
             {
-                name: 'app.ip.item',
-                path: '/:id',
-                forwardTo: 'app.ip.item.view'
+                name: 'app',
+                path: '/app',
+                forwardTo: 'app.version',
+                defaultParams: {
+                    lang: 'en'
+                }
             },
-            { name: 'app.ip.item.edit', path: '/edit' },
             {
-                name: 'app.ip.item.view',
+                name: 'app.version',
                 path: '/:version',
-                defaultParams: { version: 'active' }
+                defaultParams: { version: 'v1' }
             }
         ])
 
-        routerTest.start('/ip/2', (err, state) => {
-            expect(state.name).to.equal('app.ip.item.view')
+        routerTest.start('/app', (err, state) => {
+            expect(state.name).to.equal('app.version')
             expect(state.params).to.eql({
-                id: '2',
-                version: 'active'
+                version: 'v1',
+                lang: 'en'
             })
             done()
         })
