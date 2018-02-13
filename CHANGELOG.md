@@ -1,3 +1,14 @@
+## router5@5.8.2 (2018-02-13)
+
+#### Bug fix
+* `router5`
+  * [#253](https://github.com/router5/router5/pull/253) When forwarding, apply default params from initial and final routes. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 # router5@5.8.1 (2018-02-08)
 
 #### Bug fix

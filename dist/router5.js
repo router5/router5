@@ -1221,10 +1221,22 @@ function withUtils(router) {
         });
     }
 
-    function buildState(route, params) {
-        var finalParams = _extends({}, router.config.defaultParams[route], params);
+    function forwardState(routeName, routeParams) {
+        var name = router.config.forwardMap[routeName] || routeName;
+        var params = _extends({}, router.config.defaultParams[routeName], router.config.defaultParams[name], routeParams);
 
-        return router.rootNode.buildState(route, finalParams);
+        return {
+            name: name,
+            params: params
+        };
+    }
+
+    function buildState(routeName, routeParams) {
+        var _forwardState = forwardState(routeName, routeParams),
+            name = _forwardState.name,
+            params = _forwardState.params;
+
+        return router.rootNode.buildState(name, params);
     }
 
     /**
@@ -1250,11 +1262,14 @@ function withUtils(router) {
                 _meta = match._meta;
 
             var decodedParams = router.config.decoders[name] ? router.config.decoders[name](params) : params;
-            var finalParams = _extends({}, router.config.defaultParams[name], decodedParams);
-            var routeName = router.config.forwardMap[name] || name;
-            var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(routeName, finalParams);
 
-            return router.makeState(routeName, finalParams, builtPath, _meta, source);
+            var _forwardState2 = forwardState(name, decodedParams),
+                routeName = _forwardState2.name,
+                routeParams = _forwardState2.params;
+
+            var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(routeName, routeParams);
+
+            return router.makeState(routeName, routeParams, builtPath, _meta, source);
         }
 
         return null;
@@ -1684,15 +1699,13 @@ function withNavigation(router) {
      * @return {Function}                A cancel function
      */
     function navigate() {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-        }
+        var _ref;
 
-        var name = router.config.forwardMap[args[0]] || args[0];
-        var lastArg = args[args.length - 1];
+        var name = arguments.length <= 0 ? undefined : arguments[0];
+        var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
         var done = typeof lastArg === 'function' ? lastArg : noop$2;
-        var params = _typeof(args[1]) === 'object' ? args[1] : {};
-        var opts = _typeof(args[2]) === 'object' ? args[2] : {};
+        var params = _typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
+        var opts = _typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
 
         if (!router.isStarted()) {
             done({ code: errorCodes.ROUTER_NOT_STARTED });
@@ -1708,7 +1721,7 @@ function withNavigation(router) {
             return;
         }
 
-        var toState = router.makeState(route.name, route.params, router.buildPath(name, route.params), route._meta);
+        var toState = router.makeState(route.name, route.params, router.buildPath(route.name, route.params), route._meta);
         var sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
 
         // Do not proceed further if states are the same and no reload
