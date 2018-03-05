@@ -1,3 +1,14 @@
+## router5@5.8.3 (2018-03-05)
+
+#### Bug fix
+* `router5`
+  * [#256](https://github.com/router5/router5/pull/256) Update route-node to latest version (5.0.3). ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.8.2 (2018-02-13)
 
 #### Bug fix

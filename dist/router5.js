@@ -734,6 +734,9 @@ var RouteNode = function () {
 
                 this.children.push(route);
                 // Push greedy spats to the bottom of the pile
+
+                var originalChildren = this.children.slice(0);
+
                 this.children.sort(function (left, right) {
                     var leftPath = left.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
                     var rightPath = right.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
@@ -758,8 +761,9 @@ var RouteNode = function () {
                     var rightParamLength = (rightPath.split('/').slice(-1)[0] || '').length;
                     if (leftParamLength < rightParamLength) return 1;
                     if (leftParamLength > rightParamLength) return -1;
-                    // Same last segment length, preserve definition order
-                    return 0;
+                    // Same last segment length, preserve definition order. Note that we
+                    // cannot just return 0, as sort is not guaranteed to be a stable sort.
+                    return originalChildren.indexOf(left) - originalChildren.indexOf(right);
                 });
             } else {
                 // Locate parent node
