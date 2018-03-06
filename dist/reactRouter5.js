@@ -881,6 +881,7 @@ var BaseLink = function (_Component) {
 
         _this.isActive = _this.isActive.bind(_this);
         _this.clickHandler = _this.clickHandler.bind(_this);
+        _this.callback = _this.callback.bind(_this);
 
         _this.state = { active: _this.isActive() };
         return _this;
@@ -901,6 +902,17 @@ var BaseLink = function (_Component) {
             return this.router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict);
         }
     }, {
+        key: 'callback',
+        value: function callback(err, state) {
+            if (!err && this.props.successCallback) {
+                this.props.successCallback(state);
+            }
+
+            if (err && this.props.errorCallback) {
+                this.props.errorCallback(err);
+            }
+        }
+    }, {
         key: 'clickHandler',
         value: function clickHandler(evt) {
             if (this.props.onClick) {
@@ -915,7 +927,7 @@ var BaseLink = function (_Component) {
 
             if (evt.button === 0 && !comboKey) {
                 evt.preventDefault();
-                this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions);
+                this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions, this.callback);
             }
         }
     }, {
@@ -962,7 +974,9 @@ BaseLink.propTypes = {
     activeClassName: index.string,
     activeStrict: index.bool,
     onClick: index.func,
-    onMouseOver: index.func
+    onMouseOver: index.func,
+    successCallback: index.func,
+    errorCallback: index.func
 };
 
 BaseLink.defaultProps = {

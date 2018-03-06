@@ -1,3 +1,14 @@
+## react-router5 5.5.0 (2018-03-06)
+
+#### Feature
+* `react-router5`
+  * [#258](https://github.com/router5/router5/pull/258) Add successCallback and errorCallback props to React links. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@5.8.3 (2018-03-05)
 
 #### Bug fix
@@ -20,7 +31,7 @@
 
 
 
-# router5@5.8.1 (2018-02-08)
+## router5@5.8.1 (2018-02-08)
 
 #### Bug fix
 * `router5`
