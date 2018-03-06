@@ -83,6 +83,8 @@ class BaseLink extends Component {
             router,
             children,
             onClick,
+            successCallback,
+            errorCallback,
             ...linkProps
         } = this.props
         /* eslint-enable */
