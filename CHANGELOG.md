@@ -1,3 +1,14 @@
+## react-router5 5.5.1 (2018-03-06)
+
+#### Bug fix
+* `react-router5`
+  * Don't pass new callback prorps to underlying hyperlink
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## react-router5 5.5.0 (2018-03-06)
 
 #### Feature

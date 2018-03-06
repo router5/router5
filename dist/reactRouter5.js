@@ -946,7 +946,9 @@ var BaseLink = function (_Component) {
                 router = _props.router,
                 children = _props.children,
                 onClick = _props.onClick,
-                linkProps = objectWithoutProperties(_props, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'route', 'previousRoute', 'router', 'children', 'onClick']);
+                successCallback = _props.successCallback,
+                errorCallback = _props.errorCallback,
+                linkProps = objectWithoutProperties(_props, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'route', 'previousRoute', 'router', 'children', 'onClick', 'successCallback', 'errorCallback']);
             /* eslint-enable */
 
             var active = this.isActive();
