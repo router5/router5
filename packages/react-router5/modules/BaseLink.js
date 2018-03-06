@@ -15,6 +15,7 @@ class BaseLink extends Component {
 
         this.isActive = this.isActive.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
+        this.callback = this.callback.bind(this)
 
         this.state = { active: this.isActive() }
     }
@@ -35,6 +36,16 @@ class BaseLink extends Component {
         )
     }
 
+    callback(err, state) {
+        if (!err && this.props.successCallback) {
+            this.props.successCallback(state)
+        }
+
+        if (err && this.props.errorCallback) {
+            this.props.errorCallback(err)
+        }
+    }
+
     clickHandler(evt) {
         if (this.props.onClick) {
             this.props.onClick(evt)
@@ -52,7 +63,8 @@ class BaseLink extends Component {
             this.router.navigate(
                 this.props.routeName,
                 this.props.routeParams,
-                this.props.routeOptions
+                this.props.routeOptions,
+                this.callback
             )
         }
     }
@@ -105,7 +117,9 @@ BaseLink.propTypes = {
     activeClassName: PropTypes.string,
     activeStrict: PropTypes.bool,
     onClick: PropTypes.func,
-    onMouseOver: PropTypes.func
+    onMouseOver: PropTypes.func,
+    successCallback: PropTypes.func,
+    errorCallback: PropTypes.func
 }
 
 BaseLink.defaultProps = {
