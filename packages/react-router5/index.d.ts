@@ -29,6 +29,8 @@ declare module 'react-router5' {
         activeStrict?: boolean
         onClick?: MouseEventHandler<HTMLAnchorElement>
         onMouseOver?: MouseEventHandler<HTMLAnchorElement>
+        successCallback?(state: State): void
+        errorCallback?(err: any): void
     }
 
     export const BaseLink: ComponentClass<BaseLinkProps>
