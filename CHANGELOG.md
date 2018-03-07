@@ -1,4 +1,15 @@
-## react-router5 5.5.1 (2018-03-06)
+## react-router5@5.5.2 (2018-03-07)
+
+#### Enhancement
+* `react-router5`
+  * [#260](https://github.com/router5/router5/pull/260) feat(react-router5): Update type definitions. ([@zaeleus](https://github.com/zaeleus))
+
+#### Committers: 1
+- Michael Macias ([zaeleus](https://github.com/zaeleus))
+
+
+
+## react-router5@5.5.1 (2018-03-06)
 
 #### Bug fix
 * `react-router5`
@@ -9,7 +20,7 @@
 
 
 
-## react-router5 5.5.0 (2018-03-06)
+## react-router5@5.5.0 (2018-03-06)
 
 #### Feature
 * `react-router5`
