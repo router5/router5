@@ -155,13 +155,10 @@ export default function withUtils(router) {
                     ? path
                     : router.buildPath(routeName, routeParams)
 
-            return router.makeState(
-                routeName,
-                routeParams,
-                builtPath,
-                _meta,
+            return router.makeState(routeName, routeParams, builtPath, {
+                params: _meta,
                 source
-            )
+            })
         }
 
         return null

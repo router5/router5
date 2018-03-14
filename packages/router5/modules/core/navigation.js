@@ -76,7 +76,7 @@ export default function withNavigation(router) {
             route.name,
             route.params,
             router.buildPath(route.name, route.params),
-            route._meta
+            { params: route._meta }
         )
         const sameStates = router.getState()
             ? router.areStatesEqual(router.getState(), toState, false)

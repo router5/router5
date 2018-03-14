@@ -70,8 +70,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                       evt.state.name,
                       evt.state.params,
                       evt.state.path,
-                      evt.state.meta.params,
-                      source,
+                      { ...evt.state.meta, source },
                       evt.state.meta.id
                   )
             const { defaultRoute, defaultParams } = routerOptions
