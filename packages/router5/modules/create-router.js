@@ -164,8 +164,8 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {String} path The unmatched path
      * @return {Object}      The not found state object
      */
-    function makeNotFoundState(path) {
-        return makeState(constants.UNKNOWN_ROUTE, { path }, path, {})
+    function makeNotFoundState(path, options) {
+        return makeState(constants.UNKNOWN_ROUTE, { path }, path, { options })
     }
 
     /**

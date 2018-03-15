@@ -104,7 +104,9 @@ export default function withRouterLifecycle(router) {
                 // If default, navigate to default
                 navigateToDefault()
             } else if (options.allowNotFound) {
-                transitionToState(router.makeNotFoundState(startPath))
+                transitionToState(
+                    router.makeNotFoundState(startPath, { replace: true })
+                )
             } else {
                 // No start match, no default => do nothing
                 cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null)

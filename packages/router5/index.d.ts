@@ -96,6 +96,7 @@ declare module 'router5/constants' {
 
 declare module 'router5/create-router' {
     import { ActivationFnFactory } from 'router5/core/route-lifecycle'
+    import { Options as NavigationOptions } from 'router5/core/navigation'
 
     export interface Dependencies {
         [key: string]: any
@@ -119,6 +120,8 @@ declare module 'router5/create-router' {
     export interface StateMeta {
         id: number
         params: Params
+        options: NavigationOptions
+        redirected: Boolean
         source?: string
     }
 
@@ -215,6 +218,7 @@ declare module 'router5/core/navigation' {
         reload?: boolean
         skipTransition?: boolean
         force?: boolean
+        [key: string]: any
     }
 
     type NavigationOptions = Options
