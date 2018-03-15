@@ -130,8 +130,7 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {String} name         The state name
      * @param  {Object} params       The state params
      * @param  {String} path         The state path
-     * @param  {Object} [metaParams] Description of the state params
-     * @param  {String} [source]     The source of the routing state
+     * @param  {Object} [meta]       The meta object
      * @param  {Number} [forceId]    The ID to use in meta (incremented by default)
      * @return {Object}              The state object
      */
@@ -161,8 +160,9 @@ function createRouter(routes, opts = {}, deps = {}) {
 
     /**
      * Build a not found state for a given path
-     * @param  {String} path The unmatched path
-     * @return {Object}      The not found state object
+     * @param  {String} path      The unmatched path
+     * @param  {Object} [options] The navigation options
+     * @return {Object}           The not found state object
      */
     function makeNotFoundState(path, options) {
         return makeState(constants.UNKNOWN_ROUTE, { path }, path, { options })
