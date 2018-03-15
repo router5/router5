@@ -16,15 +16,30 @@ const isBrowser = typeof window !== 'undefined' && window.history
  */
 const getBase = () => window.location.pathname.replace(/\/$/, '')
 
+const supportsPopStateOnHashChange = () =>
+    window.navigator.userAgent.indexOf('Trident') === -1
+
 const pushState = (state, title, path) =>
     window.history.pushState(state, title, path)
 
 const replaceState = (state, title, path) =>
     window.history.replaceState(state, title, path)
 
-const addPopstateListener = fn => window.addEventListener('popstate', fn)
+const addPopstateListener = fn => {
+    window.addEventListener('popstate', fn)
 
-const removePopstateListener = fn => window.removeEventListener('popstate', fn)
+    if (!supportsPopStateOnHashChange()) {
+        window.addEventListeners('hashchange', fn)
+    }
+}
+
+const removePopstateListener = fn => {
+    window.removeEventListener('popstate', fn)
+
+    if (!supportsPopStateOnHashChange()) {
+        window.removeEventListener('hashchange', fn)
+    }
+}
 
 const getLocation = opts => {
     const path = opts.useHash

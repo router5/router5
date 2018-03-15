@@ -60,7 +60,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
             else browser.pushState(finalState, '', url)
         }
 
-        function onPopState(evt) {
+        function onPopState(evt = {}) {
             const routerState = router.getState()
             // Do nothing if no state or if last know state is poped state (it should never happen)
             const newState = !evt.state || !evt.state.name
