@@ -80,7 +80,7 @@ export default function withRouterLifecycle(router) {
                 router.navigate(
                     route.name,
                     route.params,
-                    { replace: true, reload: true },
+                    { replace: true, reload: true, redirected: true },
                     done
                 )
             const transitionToState = state => {

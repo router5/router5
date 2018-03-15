@@ -105,7 +105,8 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                             router.navigate(name, params, {
                                 ...transitionOptions,
                                 replace: true,
-                                force: true
+                                force: true,
+                                redirected: true
                             })
                         } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
                             const url = router.buildUrl(

@@ -227,4 +227,11 @@ describe('core/navigation', function() {
             })
         })
     })
+
+    it('should add navitation options to meta', () => {
+        const options = { reload: true, replace: true, customOption: 'abc' }
+        router.navigate('profile', {}, options, (err, state) => {
+            expect(state.meta.options).to.eql(options)
+        })
+    })
 })

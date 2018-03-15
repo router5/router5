@@ -76,7 +76,7 @@ export default function withNavigation(router) {
             route.name,
             route.params,
             router.buildPath(route.name, route.params),
-            { params: route._meta }
+            { params: route._meta, options: opts }
         )
         const sameStates = router.getState()
             ? router.areStatesEqual(router.getState(), toState, false)
@@ -109,7 +109,12 @@ export default function withNavigation(router) {
                 if (err.redirect) {
                     const { name, params } = err.redirect
 
-                    navigate(name, params, { ...opts, force: true }, done)
+                    navigate(
+                        name,
+                        params,
+                        { ...opts, force: true, redirected: true },
+                        done
+                    )
                 } else {
                     done(err)
                 }
