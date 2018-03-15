@@ -42,7 +42,7 @@ export default function resolve(
                 _done(null, state)
             }
         }
-        const res = stepFn.call(null, toState, fromState, done)
+        const res = stepFn.call(null, state, fromState, done)
         if (isCancelled()) {
             done(null)
         } else if (typeof res === 'boolean') {
