@@ -1,8 +1,6 @@
 import constants from '../constants'
 
 export default function withUtils(router) {
-    const options = router.getOptions()
-
     router.isActive = isActive
     router.areStatesEqual = areStatesEqual
     router.areStatesDescendants = areStatesDescendants
@@ -96,14 +94,19 @@ export default function withUtils(router) {
             return params.path
         }
 
-        const { useTrailingSlash, strictQueryParams } = options
+        const {
+            trailingSlashMode,
+            queryParamsMode,
+            queryParams
+        } = router.getOptions()
         const encodedParams = router.config.encoders[route]
             ? router.config.encoders[route](params)
             : params
 
         return router.rootNode.buildPath(route, encodedParams, {
-            trailingSlash: useTrailingSlash,
-            strictQueryParams
+            trailingSlashMode,
+            queryParamsMode,
+            queryParams
         })
     }
 
@@ -134,15 +137,11 @@ export default function withUtils(router) {
      * @return {Object}          The matched state (null if unmatched)
      */
     function matchPath(path, source) {
-        const { trailingSlash, strictQueryParams, strongMatching } = options
-        const match = router.rootNode.matchPath(path, {
-            trailingSlash,
-            strictQueryParams,
-            strongMatching
-        })
+        const options = router.getOptions()
+        const match = router.rootNode.matchPath(path, options)
 
         if (match) {
-            const { name, params, _meta } = match
+            const { name, params, meta } = match
             const decodedParams = router.config.decoders[name]
                 ? router.config.decoders[name](params)
                 : params
@@ -151,12 +150,12 @@ export default function withUtils(router) {
                 decodedParams
             )
             const builtPath =
-                options.useTrailingSlash === undefined
+                options.rewritePathOnMatch === false
                     ? path
                     : router.buildPath(routeName, routeParams)
 
             return router.makeState(routeName, routeParams, builtPath, {
-                params: _meta,
+                params: meta,
                 source
             })
         }

@@ -62,14 +62,14 @@ describe('core/utils', () => {
         })
 
         it('should match deep `/` routes', function() {
-            router.setOption('useTrailingSlash', false)
+            router.setOption('trailingSlashMode', 'never')
             expect(omitMeta(router.matchPath('/profile'))).to.eql({
                 name: 'profile.me',
                 params: {},
                 path: '/profile'
             })
 
-            router.setOption('useTrailingSlash', true)
+            router.setOption('trailingSlashMode', 'always')
             expect(omitMeta(router.matchPath('/profile'))).to.eql({
                 name: 'profile.me',
                 params: {},
@@ -78,10 +78,10 @@ describe('core/utils', () => {
         })
     })
 
-    context('without strictQueryParams', () => {
+    context('without strict query params mode', () => {
         before(
             () =>
-                (router = createTestRouter({ strictQueryParams: false })
+                (router = createTestRouter({ queryParamsMode: 'loose' })
                     .clone()
                     .start())
         )

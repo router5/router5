@@ -9,12 +9,13 @@ import withCloning from './core/clone'
 import constants from './constants'
 
 const defaultOptions = {
-    trailingSlash: 0,
-    useTrailingSlash: undefined,
+    trailingSlashMode: 'default',
+    queryParamsMode: 'default',
+    strictTrailingSlash: false,
     autoCleanUp: true,
-    strictQueryParams: false,
     allowNotFound: false,
-    strongMatching: true
+    strongMatching: true,
+    rewritePathOnMatch: true
 }
 
 /**
@@ -203,9 +204,6 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}       The router instance
      */
     function setOption(option, value) {
-        if (option === 'useTrailingSlash' && value !== undefined) {
-            options.trailingSlash = true
-        }
         options[option] = value
         return router
     }

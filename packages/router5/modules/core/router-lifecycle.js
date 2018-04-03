@@ -4,7 +4,6 @@ const noop = function() {}
 
 export default function withRouterLifecycle(router) {
     let started = false
-    const options = router.getOptions()
 
     router.isStarted = isStarted
     router.start = start
@@ -25,6 +24,7 @@ export default function withRouterLifecycle(router) {
      * @return {Object}                         The router instance
      */
     function start(...args) {
+        const options = router.getOptions()
         const lastArg = args[args.length - 1]
         const done = typeof lastArg === 'function' ? lastArg : noop
         const startPathOrState =

@@ -11,10 +11,10 @@ const routes: Route[] = [
 const options: Options = {
     defaultRoute: 'home',
     defaultParams: { lang: 'en' },
-    trailingSlash: false,
-    useTrailingSlash: false,
+    strictTrailingSlash: false,
+    trailingSlashMode: 'never',
     autoCleanUp: true,
-    strictQueryParams: false,
+    queryParamsMode: 'default',
     allowNotFound: false,
     strongMatching: true
 }
@@ -26,7 +26,10 @@ const router = createRouter([])
 let r: Router
 r = createRouter(routes)
 r = createRouter(routes, options)
-r = createRouter(routes, { trailingSlash: true, strictQueryParams: true })
+r = createRouter(routes, {
+    strictTrailingSlash: true,
+    queryParamsMode: 'strict'
+})
 r = createRouter(routes, options, deps)
 
 let s: State
@@ -45,7 +48,7 @@ const _o: Options = router.getOptions()
 
 r = router.setOption('defaultRoute', 'home')
 r = router.setOption('defaultParams', { lang: 'en' })
-r = router.setOption('strictQueryParams', true)
+r = router.setOption('queryParamsMode', 'strict')
 
 r = router.setDependency('store', {})
 r = router.setDependency('counter', 0)

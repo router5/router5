@@ -56,6 +56,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                 options.mergeState === true
                     ? { ...browser.getState(), ...trimmedState }
                     : trimmedState
+
             if (replace) browser.replaceState(finalState, '', url)
             else browser.pushState(finalState, '', url)
         }
