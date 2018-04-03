@@ -50,6 +50,10 @@ var getBase = function getBase() {
     return window.location.pathname.replace(/\/$/, '');
 };
 
+var supportsPopStateOnHashChange = function supportsPopStateOnHashChange() {
+    return window.navigator.userAgent.indexOf('Trident') === -1;
+};
+
 var pushState = function pushState(state, title, path) {
     return window.history.pushState(state, title, path);
 };
@@ -59,11 +63,19 @@ var replaceState = function replaceState(state, title, path) {
 };
 
 var addPopstateListener = function addPopstateListener(fn) {
-    return window.addEventListener('popstate', fn);
+    window.addEventListener('popstate', fn);
+
+    if (!supportsPopStateOnHashChange()) {
+        window.addEventListeners('hashchange', fn);
+    }
 };
 
 var removePopstateListener = function removePopstateListener(fn) {
-    return window.removeEventListener('popstate', fn);
+    window.removeEventListener('popstate', fn);
+
+    if (!supportsPopStateOnHashChange()) {
+        window.removeEventListener('hashchange', fn);
+    }
 };
 
 var getLocation = function getLocation(opts) {
@@ -217,14 +229,17 @@ function browserPluginFactory() {
                 path: state.path
             } : state;
             var finalState = options.mergeState === true ? _extends({}, browser.getState(), trimmedState) : trimmedState;
+
             if (replace) browser.replaceState(finalState, '', url);else browser.pushState(finalState, '', url);
         }
 
-        function onPopState(evt) {
+        function onPopState() {
+            var evt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
             var routerState = router.getState();
             // Do nothing if no state or if last know state is poped state (it should never happen)
             var newState = !evt.state || !evt.state.name;
-            var state = newState ? router.matchPath(browser.getLocation(options), source) : router.makeState(evt.state.name, evt.state.params, evt.state.path, evt.state.meta.params, source, evt.state.meta.id);
+            var state = newState ? router.matchPath(browser.getLocation(options), source) : router.makeState(evt.state.name, evt.state.params, evt.state.path, _extends({}, evt.state.meta, { source: source }), evt.state.meta.id);
             var defaultRoute = routerOptions.defaultRoute,
                 defaultParams = routerOptions.defaultParams;
 
@@ -252,7 +267,8 @@ function browserPluginFactory() {
 
                         router.navigate(name, params, _extends({}, transitionOptions, {
                             replace: true,
-                            force: true
+                            force: true,
+                            redirected: true
                         }));
                     } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
                         var url = router.buildUrl(routerState.name, routerState.params);

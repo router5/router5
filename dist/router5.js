@@ -4,94 +4,496 @@
 	(factory((global.router5 = global.router5 || {})));
 }(this, (function (exports) { 'use strict';
 
-// Split path
-var getPath = function getPath(path) {
-    return path.split('?')[0];
+var makeOptions = function makeOptions(opts) {
+    if (opts === void 0) {
+        opts = {};
+    }
+    return {
+        arrayFormat: opts.arrayFormat || 'none',
+        booleanFormat: opts.booleanFormat || 'none',
+        nullFormat: opts.nullFormat || 'default'
+    };
 };
-var getSearch = function getSearch(path) {
-    return path.split('?')[1];
+var encodeValue = function encodeValue(value) {
+    return encodeURIComponent(value);
 };
-
-// Search param name
-var bracketTest = /\[\]$/;
-var hasBrackets = function hasBrackets(paramName) {
-    return bracketTest.test(paramName);
+var decodeValue = function decodeValue(value) {
+    return decodeURIComponent(value);
 };
-var withoutBrackets = function withoutBrackets(paramName) {
-    return paramName.replace(bracketTest, '');
+var encodeBoolean = function encodeBoolean(name, value, opts) {
+    if (opts.booleanFormat === 'empty-true' && value) {
+        return name;
+    }
+    var encodedValue;
+    if (opts.booleanFormat === 'unicode') {
+        encodedValue = value ? '✓' : '✗';
+    } else {
+        encodedValue = value.toString();
+    }
+    return name + "=" + encodedValue;
 };
-
-/**
- * Parse a querystring and return a list of params (Objects with name and value properties)
- * @param  {String} querystring The querystring to parse
- * @return {Array[Object]}      The list of params
- */
-var parse = function parse(querystring) {
-    return querystring.split('&').reduce(function (params, param) {
-        var split = param.split('=');
-        var name = split[0];
-        var value = split[1];
-
-        return params.concat(split.length === 1 ? { name: name, value: true } : { name: name, value: decodeURIComponent(value) });
-    }, []);
+var encodeNull = function encodeNull(name, opts) {
+    if (opts.nullFormat === 'hidden') {
+        return '';
+    }
+    if (opts.nullFormat === 'string') {
+        return name + "=null";
+    }
+    return name;
 };
-
-/**
- * Reduce a list of parameters (returned by `.parse()``) to an object (key-value pairs)
- * @param  {Array} paramList The list of parameters returned by `.parse()`
- * @return {Object}          The object of parameters (key-value pairs)
- */
-var toObject = function toObject(paramList) {
-    return paramList.reduce(function (params, _ref) {
-        var name = _ref.name;
-        var value = _ref.value;
-
-        var isArray = hasBrackets(name);
-        var currentValue = params[withoutBrackets(name)];
-
-        if (currentValue === undefined) {
-            params[withoutBrackets(name)] = isArray ? [value] : value;
-        } else {
-            params[withoutBrackets(name)] = [].concat(currentValue, value);
+var getNameEncoder = function getNameEncoder(opts) {
+    if (opts.arrayFormat === 'index') {
+        return function (name, index) {
+            return name + "[" + index + "]";
+        };
+    }
+    if (opts.arrayFormat === 'brackets') {
+        return function (name) {
+            return name + "[]";
+        };
+    }
+    return function (name) {
+        return name;
+    };
+};
+var encodeArray = function encodeArray(name, arr, opts) {
+    var encodeName = getNameEncoder(opts);
+    return arr.map(function (val, index) {
+        return encodeName(name, index) + "=" + encodeValue(val);
+    }).join('&');
+};
+var encode = function encode(name, value, opts) {
+    if (value === null) {
+        return encodeNull(name, opts);
+    }
+    if (typeof value === 'boolean') {
+        return encodeBoolean(name, value, opts);
+    }
+    if (Array.isArray(value)) {
+        return encodeArray(name, value, opts);
+    }
+    return name + "=" + encodeValue(value);
+};
+var decode = function decode(value, opts) {
+    if (value === undefined) {
+        return opts.booleanFormat === 'empty-true' ? true : null;
+    }
+    if (opts.booleanFormat === 'string') {
+        if (value === 'true') {
+            return true;
         }
+        if (value === 'false') {
+            return false;
+        }
+    } else if (opts.booleanFormat === 'unicode') {
+        if (value === '✓') {
+            return true;
+        }
+        if (value === '✗') {
+            return false;
+        }
+    } else if (opts.nullFormat === 'string') {
+        if (value === 'null') {
+            return null;
+        }
+    }
+    return decodeValue(value);
+};
 
+var getSearch$1 = function getSearch(path) {
+    var pos = path.indexOf('?');
+    if (pos === -1) {
+        return path;
+    }
+    return path.slice(pos + 1);
+};
+var isSerialisable = function isSerialisable(val) {
+    return val !== undefined;
+};
+var parseName = function parseName(name) {
+    var bracketPosition = name.indexOf('[');
+    var hasBrackets = bracketPosition !== -1;
+    return {
+        hasBrackets: hasBrackets,
+        name: hasBrackets ? name.slice(0, bracketPosition) : name
+    };
+};
+
+/**
+ * Parse a querystring and return an object of parameters
+ */
+var parse = function parse(path, opts) {
+    var options = makeOptions(opts);
+    return getSearch$1(path).split('&').reduce(function (params, param) {
+        var _a = param.split('='),
+            rawName = _a[0],
+            value = _a[1];
+        var _b = parseName(rawName),
+            hasBrackets = _b.hasBrackets,
+            name = _b.name;
+        var currentValue = params[name];
+        var decodedValue = decode(value, options);
+        if (currentValue === undefined) {
+            params[name] = hasBrackets ? [decodedValue] : decodedValue;
+        } else {
+            params[name] = [].concat(currentValue, decodedValue);
+        }
         return params;
     }, {});
 };
-
 /**
- * Build a querystring from a list of parameters
- * @param  {Array} paramList The list of parameters (see `.parse()`)
- * @return {String}          The querystring
+ * Build a querystring from an object of parameters
  */
-var build = function build(paramList) {
-    return paramList.filter(function (_ref2) {
-        var value = _ref2.value;
-        return value !== undefined && value !== null;
-    }).map(function (_ref3) {
-        var name = _ref3.name;
-        var value = _ref3.value;
-        return value === true ? name : name + '=' + encodeURIComponent(value);
-    }).join('&');
+var build = function build(params, opts) {
+    var options = makeOptions(opts);
+    return Object.keys(params).filter(function (paramName) {
+        return isSerialisable(params[paramName]);
+    }).map(function (paramName) {
+        return encode(paramName, params[paramName], options);
+    }).filter(Boolean).join('&');
 };
-
 /**
  * Remove a list of parameters from a querystring
- * @param  {String} querystring  The original querystring
- * @param  {Array}  paramsToOmit The parameters to omit
- * @return {String}              The querystring
  */
-var omit = function omit(querystring, paramsToOmit) {
-    if (!querystring) return '';
-
-    var remainingQueryParams = parse(querystring).filter(function (_ref4) {
-        var name = _ref4.name;
-        return paramsToOmit.indexOf(withoutBrackets(name)) === -1;
-    });
-    var remainingQueryString = build(remainingQueryParams);
-
-    return remainingQueryString || '';
+var omit = function omit(path, paramsToOmit, opts) {
+    var options = makeOptions(opts);
+    var searchPart = getSearch$1(path);
+    if (searchPart === '') {
+        return {
+            querystring: '',
+            removedParams: {}
+        };
+    }
+    var _a = path.split('&').reduce(function (_a, chunk) {
+        var left = _a[0],
+            right = _a[1];
+        var rawName = chunk.split('=')[0];
+        var name = parseName(rawName).name;
+        return paramsToOmit.indexOf(name) === -1 ? [left.concat(chunk), right] : [left, right.concat(chunk)];
+    }, [[], []]),
+        kept = _a[0],
+        removed = _a[1];
+    return {
+        querystring: kept.join('&'),
+        removedParams: parse(removed.join('&'), options)
+    };
 };
+
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+var __assign$1 = Object.assign || function __assign(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) {
+            if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+    }
+    return t;
+};
+
+var defaultOrConstrained = function defaultOrConstrained(match) {
+    return '(' + (match ? match.replace(/(^<|>$)/g, '') : "[a-zA-Z0-9-_.~%':]+") + ')';
+};
+var rules = [{
+    name: 'url-parameter',
+    pattern: /^:([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
+    regex: function regex(match) {
+        return new RegExp(defaultOrConstrained(match[2]));
+    }
+}, {
+    name: 'url-parameter-splat',
+    pattern: /^\*([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/,
+    regex: /([^?]*)/
+}, {
+    name: 'url-parameter-matrix',
+    pattern: /^;([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
+    regex: function regex(match) {
+        return new RegExp(';' + match[1] + '=' + defaultOrConstrained(match[2]));
+    }
+}, {
+    name: 'query-parameter',
+    pattern: /^(?:\?|&)(?::)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
+}, {
+    name: 'delimiter',
+    pattern: /^(\/|\?)/,
+    regex: function regex(match) {
+        return new RegExp('\\' + match[0]);
+    }
+}, {
+    name: 'sub-delimiter',
+    pattern: /^(!|&|-|_|\.|;)/,
+    regex: function regex(match) {
+        return new RegExp(match[0]);
+    }
+}, {
+    name: 'fragment',
+    pattern: /^([0-9a-zA-Z]+)/,
+    regex: function regex(match) {
+        return new RegExp(match[0]);
+    }
+}];
+
+var tokenise = function tokenise(str, tokens) {
+    if (tokens === void 0) {
+        tokens = [];
+    }
+    // Look for a matching rule
+    var matched = rules.some(function (rule) {
+        var match = str.match(rule.pattern);
+        if (!match) {
+            return false;
+        }
+        tokens.push({
+            type: rule.name,
+            match: match[0],
+            val: match.slice(1, 2),
+            otherVal: match.slice(2),
+            regex: rule.regex instanceof Function ? rule.regex(match) : rule.regex
+        });
+        if (match[0].length < str.length) {
+            tokens = tokenise(str.substr(match[0].length), tokens);
+        }
+        return true;
+    });
+    // If no rules matched, throw an error (possible malformed path)
+    if (!matched) {
+        throw new Error("Could not parse path '" + str + "'");
+    }
+    return tokens;
+};
+
+var identity = function identity(_) {
+    return _;
+};
+var exists = function exists(val) {
+    return val !== undefined && val !== null;
+};
+var optTrailingSlash = function optTrailingSlash(source, strictTrailingSlash) {
+    if (strictTrailingSlash) {
+        return source;
+    }
+    if (source === '\\/') {
+        return source;
+    }
+    return source.replace(/\\\/$/, '') + '(?:\\/)?';
+};
+var upToDelimiter = function upToDelimiter(source, delimiter) {
+    if (!delimiter) {
+        return source;
+    }
+    return (/(\/)$/.test(source) ? source : source + '(\\/|\\?|\\.|;|$)'
+    );
+};
+var appendQueryParam = function appendQueryParam(params, param, val) {
+    if (val === void 0) {
+        val = '';
+    }
+    var existingVal = params[param];
+    if (existingVal === undefined) {
+        params[param] = val;
+    } else {
+        params[param] = Array.isArray(existingVal) ? existingVal.concat(val) : [existingVal, val];
+    }
+    return params;
+};
+var Path = /** @class */function () {
+    function Path(path) {
+        if (!path) {
+            throw new Error('Missing path in Path constructor');
+        }
+        this.path = path;
+        this.tokens = tokenise(path);
+        this.hasUrlParams = this.tokens.filter(function (t) {
+            return (/^url-parameter/.test(t.type)
+            );
+        }).length > 0;
+        this.hasSpatParam = this.tokens.filter(function (t) {
+            return (/splat$/.test(t.type)
+            );
+        }).length > 0;
+        this.hasMatrixParams = this.tokens.filter(function (t) {
+            return (/matrix$/.test(t.type)
+            );
+        }).length > 0;
+        this.hasQueryParams = this.tokens.filter(function (t) {
+            return (/^query-parameter/.test(t.type)
+            );
+        }).length > 0;
+        // Extract named parameters from tokens
+        this.spatParams = this.getParams('url-parameter-splat');
+        this.urlParams = this.getParams(/^url-parameter/);
+        // Query params
+        this.queryParams = this.getParams('query-parameter');
+        // All params
+        this.params = this.urlParams.concat(this.queryParams);
+        // Check if hasQueryParams
+        // Regular expressions for url part only (full and partial match)
+        this.source = this.tokens.filter(function (t) {
+            return t.regex !== undefined;
+        }).map(function (r) {
+            return r.regex.source;
+        }).join('');
+    }
+    Path.createPath = function (path) {
+        return new Path(path);
+    };
+    Path.prototype.isQueryParam = function (name) {
+        return this.queryParams.indexOf(name) !== -1;
+    };
+    Path.prototype.test = function (path, opts) {
+        var _this = this;
+        var options = __assign$1({ strictTrailingSlash: false, queryParams: {} }, opts);
+        // trailingSlash: falsy => non optional, truthy => optional
+        var source = optTrailingSlash(this.source, options.strictTrailingSlash);
+        // Check if exact match
+        var match = this.urlTest(path, source + (this.hasQueryParams ? '(\\?.*$|$)' : '$'), opts);
+        // If no match, or no query params, no need to go further
+        if (!match || !this.hasQueryParams) {
+            return match;
+        }
+        // Extract query params
+        var queryParams = parse(path, options.queryParams);
+        var unexpectedQueryParams = Object.keys(queryParams).filter(function (p) {
+            return !_this.isQueryParam(p);
+        });
+        if (unexpectedQueryParams.length === 0) {
+            // Extend url match
+            Object.keys(queryParams).forEach(function (p) {
+                return match[p] = queryParams[p];
+            });
+            return match;
+        }
+        return null;
+    };
+    Path.prototype.partialTest = function (path, opts) {
+        var _this = this;
+        var options = __assign$1({ delimited: true, queryParams: {} }, opts);
+        // Check if partial match (start of given path matches regex)
+        // trailingSlash: falsy => non optional, truthy => optional
+        var source = upToDelimiter(this.source, options.delimited);
+        var match = this.urlTest(path, source, options);
+        if (!match) {
+            return match;
+        }
+        if (!this.hasQueryParams) {
+            return match;
+        }
+        var queryParams = parse(path, options.queryParams);
+        Object.keys(queryParams).filter(function (p) {
+            return _this.isQueryParam(p);
+        }).forEach(function (p) {
+            return appendQueryParam(match, p, queryParams[p]);
+        });
+        return match;
+    };
+    Path.prototype.build = function (params, opts) {
+        var _this = this;
+        if (params === void 0) {
+            params = {};
+        }
+        var options = __assign$1({ ignoreConstraints: false, ignoreSearch: false, queryParams: {} }, opts);
+        var encodedUrlParams = Object.keys(params).filter(function (p) {
+            return !_this.isQueryParam(p);
+        }).reduce(function (acc, key) {
+            if (!exists(params[key])) {
+                return acc;
+            }
+            var val = params[key];
+            var encode = _this.isQueryParam(key) ? identity : encodeURI;
+            if (typeof val === 'boolean') {
+                acc[key] = val;
+            } else if (Array.isArray(val)) {
+                acc[key] = val.map(encode);
+            } else {
+                acc[key] = encode(val);
+            }
+            return acc;
+        }, {});
+        // Check all params are provided (not search parameters which are optional)
+        if (this.urlParams.some(function (p) {
+            return !exists(params[p]);
+        })) {
+            var missingParameters = this.urlParams.filter(function (p) {
+                return !exists(params[p]);
+            });
+            throw new Error("Cannot build path: '" + this.path + "' requires missing parameters { " + missingParameters.join(', ') + ' }');
+        }
+        // Check constraints
+        if (!options.ignoreConstraints) {
+            var constraintsPassed = this.tokens.filter(function (t) {
+                return (/^url-parameter/.test(t.type) && !/-splat$/.test(t.type)
+                );
+            }).every(function (t) {
+                return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(encodedUrlParams[t.val]);
+            });
+            if (!constraintsPassed) {
+                throw new Error("Some parameters of '" + this.path + "' are of invalid format");
+            }
+        }
+        var base = this.tokens.filter(function (t) {
+            return (/^query-parameter/.test(t.type) === false
+            );
+        }).map(function (t) {
+            if (t.type === 'url-parameter-matrix') {
+                return ";" + t.val + "=" + encodedUrlParams[t.val[0]];
+            }
+            return (/^url-parameter/.test(t.type) ? encodedUrlParams[t.val[0]] : t.match
+            );
+        }).join('');
+        if (options.ignoreSearch) {
+            return base;
+        }
+        var searchParams = this.queryParams.filter(function (p) {
+            return Object.keys(params).indexOf(p) !== -1;
+        }).reduce(function (sparams, paramName) {
+            sparams[paramName] = params[paramName];
+            return sparams;
+        }, {});
+        var searchPart = build(searchParams, options.queryParams);
+        return searchPart ? base + '?' + searchPart : base;
+    };
+    Path.prototype.getParams = function (type) {
+        var predicate = type instanceof RegExp ? function (t) {
+            return type.test(t.type);
+        } : function (t) {
+            return t.type === type;
+        };
+        return this.tokens.filter(predicate).map(function (t) {
+            return t.val[0];
+        });
+    };
+    Path.prototype.urlTest = function (path, source, _a) {
+        var _this = this;
+        var _b = (_a === void 0 ? {} : _a).caseSensitive,
+            caseSensitive = _b === void 0 ? false : _b;
+        var regex = new RegExp('^' + source, caseSensitive ? '' : 'i');
+        var match = path.match(regex);
+        if (!match) {
+            return null;
+        } else if (!this.urlParams.length) {
+            return {};
+        }
+        // Reduce named params to key-value pairs
+        return match.slice(1, this.urlParams.length + 1).reduce(function (params, m, i) {
+            params[_this.urlParams[i]] = decodeURIComponent(m);
+            return params;
+        }, {});
+    };
+    return Path;
+}();
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
@@ -109,29 +511,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
 
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
 
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
+
 
 
 
@@ -246,859 +628,482 @@ var toConsumableArray = function (arr) {
   }
 };
 
-var defaultOrConstrained = function defaultOrConstrained(match) {
-    return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~%\':]+') + ')';
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+var __assign = Object.assign || function __assign(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) {
+            if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+    }
+    return t;
 };
 
-var rules = [{
-    // An URL can contain a parameter :paramName
-    // - and _ are allowed but not in last position
-    name: 'url-parameter',
-    pattern: /^:([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
-    regex: function regex(match) {
-        return new RegExp(defaultOrConstrained(match[2]));
-    }
-}, {
-    // Url parameter (splat)
-    name: 'url-parameter-splat',
-    pattern: /^\*([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/,
-    regex: /([^\?]*)/
-}, {
-    name: 'url-parameter-matrix',
-    pattern: /^\;([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(<(.+?)>)?/,
-    regex: function regex(match) {
-        return new RegExp(';' + match[1] + '=' + defaultOrConstrained(match[2]));
-    }
-}, {
-    // Query parameter: ?param1&param2
-    //                   ?:param1&:param2
-    name: 'query-parameter-bracket',
-    pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(?:\[\])/
-    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
-}, {
-    // Query parameter: ?param1&param2
-    //                   ?:param1&:param2
-    name: 'query-parameter',
-    pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
-    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
-}, {
-    // Delimiter /
-    name: 'delimiter',
-    pattern: /^(\/|\?)/,
-    regex: function regex(match) {
-        return new RegExp('\\' + match[0]);
-    }
-}, {
-    // Sub delimiters
-    name: 'sub-delimiter',
-    pattern: /^(\!|\&|\-|_|\.|;)/,
-    regex: function regex(match) {
-        return new RegExp(match[0]);
-    }
-}, {
-    // Unmatched fragment (until delimiter is found)
-    name: 'fragment',
-    pattern: /^([0-9a-zA-Z]+)/,
-    regex: function regex(match) {
-        return new RegExp(match[0]);
-    }
-}];
-
-var exists = function exists(val) {
-    return val !== undefined && val !== null;
+var getMetaFromSegments = function getMetaFromSegments(segments) {
+    var accName = '';
+    return segments.reduce(function (meta, segment) {
+        var urlParams = segment.parser.urlParams.reduce(function (params, p) {
+            params[p] = 'url';
+            return params;
+        }, {});
+        var allParams = segment.parser.queryParams.reduce(function (params, p) {
+            params[p] = 'query';
+            return params;
+        }, urlParams);
+        if (segment.name !== undefined) {
+            accName = accName ? accName + '.' + segment.name : segment.name;
+            meta[accName] = allParams;
+        }
+        return meta;
+    }, {});
 };
-
-var tokenise = function tokenise(str) {
-    var tokens = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-    // Look for a matching rule
-    var matched = rules.some(function (rule) {
-        var match = str.match(rule.pattern);
-        if (!match) return false;
-
-        tokens.push({
-            type: rule.name,
-            match: match[0],
-            val: match.slice(1, 2),
-            otherVal: match.slice(2),
-            regex: rule.regex instanceof Function ? rule.regex(match) : rule.regex
+var buildStateFromMatch = function buildStateFromMatch(match) {
+    if (!match || !match.segments || !match.segments.length) {
+        return null;
+    }
+    var name = match.segments.map(function (segment) {
+        return segment.name;
+    }).filter(function (name) {
+        return name;
+    }).join('.');
+    var params = match.params;
+    return {
+        name: name,
+        params: params,
+        meta: getMetaFromSegments(match.segments)
+    };
+};
+var buildPathFromSegments = function buildPathFromSegments(segments, params, options) {
+    if (params === void 0) {
+        params = {};
+    }
+    if (options === void 0) {
+        options = {};
+    }
+    if (!segments) {
+        return null;
+    }
+    var _a = options.queryParamsMode,
+        queryParamsMode = _a === void 0 ? 'default' : _a,
+        _b = options.trailingSlashMode;
+    var searchParams = [];
+    var nonSearchParams = [];
+    for (var _i = 0, segments_1 = segments; _i < segments_1.length; _i++) {
+        var segment = segments_1[_i];
+        var parser = segment.parser;
+        searchParams.push.apply(searchParams, parser.queryParams);
+        nonSearchParams.push.apply(nonSearchParams, parser.urlParams);
+        nonSearchParams.push.apply(nonSearchParams, parser.spatParams);
+    }
+    if (queryParamsMode === 'loose') {
+        var extraParams = Object.keys(params).reduce(function (acc, p) {
+            return searchParams.indexOf(p) === -1 && nonSearchParams.indexOf(p) === -1 ? acc.concat(p) : acc;
+        }, []);
+        searchParams.push.apply(searchParams, extraParams);
+    }
+    var searchParamsObject = searchParams.reduce(function (acc, paramName) {
+        if (Object.keys(params).indexOf(paramName) !== -1) {
+            acc[paramName] = params[paramName];
+        }
+        return acc;
+    }, {});
+    var searchPart = build(searchParamsObject);
+    var path = segments.reduce(function (path, segment) {
+        var segmentPath = segment.parser.build(params, {
+            ignoreSearch: true,
+            queryParams: options.queryParams
         });
-
-        if (match[0].length < str.length) tokens = tokenise(str.substr(match[0].length), tokens);
-        return true;
-    });
-
-    // If no rules matched, throw an error (possible malformed path)
-    if (!matched) {
-        throw new Error('Could not parse path \'' + str + '\'');
+        return segment.absolute ? segmentPath : path + segmentPath;
+    }, '').replace(/\/\/{1,}/g, '/');
+    var finalPath = path;
+    if (options.trailingSlashMode === 'always') {
+        finalPath = /\/$/.test(path) ? path : path + "/";
+    } else if (options.trailingSlashMode === 'never' && path !== '/') {
+        finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
     }
-    // Return tokens
-    return tokens;
+    return finalPath + (searchPart ? '?' + searchPart : '');
+};
+var getPathFromSegments = function getPathFromSegments(segments) {
+    return segments ? segments.map(function (segment) {
+        return segment.path;
+    }).join('') : null;
 };
 
-var optTrailingSlash = function optTrailingSlash(source, trailingSlash) {
-    if (!trailingSlash) return source;
-    return source.replace(/\\\/$/, '') + '(?:\\/)?';
+var getPath = function getPath(path) {
+    return path.split('?')[0];
 };
-
-var upToDelimiter = function upToDelimiter(source, delimiter) {
-    if (!delimiter) return source;
-
-    return (/(\/)$/.test(source) ? source : source + '(\\/|\\?|\\.|;|$)'
-    );
+var getSearch = function getSearch(path) {
+    return path.split('?')[1] || '';
 };
-
-var appendQueryParam = function appendQueryParam(params, param) {
-    var val = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-
-    if (/\[\]$/.test(param)) {
-        param = withoutBrackets(param);
-        val = [val];
+var matchChildren = function matchChildren(nodes, pathSegment, currentMatch, options, consumedBefore) {
+    if (options === void 0) {
+        options = {};
     }
-    var existingVal = params[param];
-
-    if (existingVal === undefined) params[param] = val;else params[param] = Array.isArray(existingVal) ? existingVal.concat(val) : [existingVal, val];
-
-    return params;
-};
-
-var parseQueryParams = function parseQueryParams(path) {
-    var searchPart = getSearch(path);
-    if (!searchPart) return {};
-
-    return toObject(parse(searchPart));
-};
-
-function _serialise(key, val) {
-    if (Array.isArray(val)) {
-        return val.map(function (v) {
-            return _serialise(key, v);
-        }).join('&');
-    }
-
-    if (val === true) {
-        return key;
-    }
-
-    return key + '=' + val;
-}
-
-var Path = function () {
-    createClass(Path, null, [{
-        key: 'createPath',
-        value: function createPath(path) {
-            return new Path(path);
+    var _a = options.queryParamsMode,
+        queryParamsMode = _a === void 0 ? 'default' : _a,
+        _b = options.strictTrailingSlash,
+        strictTrailingSlash = _b === void 0 ? false : _b,
+        _c = options.strongMatching,
+        strongMatching = _c === void 0 ? true : _c;
+    var isRoot = nodes.length === 1 && nodes[0].name === '';
+    var _loop_1 = function _loop_1(child) {
+        // Partially match path
+        var match;
+        var remainingPath = void 0;
+        var segment = pathSegment;
+        if (consumedBefore === '/' && child.path === '/') {
+            // when we encounter repeating slashes we add the slash
+            // back to the URL to make it de facto pathless
+            segment = '/' + pathSegment;
         }
-    }, {
-        key: 'serialise',
-        value: function serialise(key, val) {
-            return _serialise(key, val);
+        if (!child.children.length) {
+            match = child.parser.test(segment, options);
         }
-    }]);
-
-    function Path(path) {
-        classCallCheck(this, Path);
-
-        if (!path) throw new Error('Missing path in Path constructor');
-        this.path = path;
-        this.tokens = tokenise(path);
-
-        this.hasUrlParams = this.tokens.filter(function (t) {
-            return (/^url-parameter/.test(t.type)
-            );
-        }).length > 0;
-        this.hasSpatParam = this.tokens.filter(function (t) {
-            return (/splat$/.test(t.type)
-            );
-        }).length > 0;
-        this.hasMatrixParams = this.tokens.filter(function (t) {
-            return (/matrix$/.test(t.type)
-            );
-        }).length > 0;
-        this.hasQueryParams = this.tokens.filter(function (t) {
-            return (/^query-parameter/.test(t.type)
-            );
-        }).length > 0;
-        // Extract named parameters from tokens
-        this.spatParams = this._getParams('url-parameter-splat');
-        this.urlParams = this._getParams(/^url-parameter/);
-        // Query params
-        this.queryParams = this._getParams('query-parameter');
-        this.queryParamsBr = this._getParams('query-parameter-bracket');
-        // All params
-        this.params = this.urlParams.concat(this.queryParams).concat(this.queryParamsBr);
-        // Check if hasQueryParams
-        // Regular expressions for url part only (full and partial match)
-        this.source = this.tokens.filter(function (t) {
-            return t.regex !== undefined;
-        }).map(function (r) {
-            return r.regex.source;
-        }).join('');
-    }
-
-    createClass(Path, [{
-        key: '_getParams',
-        value: function _getParams(type) {
-            var predicate = type instanceof RegExp ? function (t) {
-                return type.test(t.type);
-            } : function (t) {
-                return t.type === type;
-            };
-
-            return this.tokens.filter(predicate).map(function (t) {
-                return t.val[0];
+        if (!match) {
+            match = child.parser.partialTest(segment, {
+                delimited: strongMatching
             });
         }
-    }, {
-        key: '_isQueryParam',
-        value: function _isQueryParam(name) {
-            return this.queryParams.indexOf(name) !== -1 || this.queryParamsBr.indexOf(name) !== -1;
-        }
-    }, {
-        key: '_urlTest',
-        value: function _urlTest(path, regex) {
-            var _this = this;
-
-            var match = path.match(regex);
-            if (!match) return null;else if (!this.urlParams.length) return {};
-            // Reduce named params to key-value pairs
-            return match.slice(1, this.urlParams.length + 1).reduce(function (params, m, i) {
-                params[_this.urlParams[i]] = decodeURIComponent(m);
-                return params;
-            }, {});
-        }
-    }, {
-        key: 'test',
-        value: function test(path, opts) {
-            var _this2 = this;
-
-            var options = _extends({ trailingSlash: false }, opts);
-            // trailingSlash: falsy => non optional, truthy => optional
-            var source = optTrailingSlash(this.source, options.trailingSlash);
-            // Check if exact match
-            var matched = this._urlTest(path, new RegExp('^' + source + (this.hasQueryParams ? '(\\?.*$|$)' : '$')));
-            // If no match, or no query params, no need to go further
-            if (!matched || !this.hasQueryParams) return matched;
-            // Extract query params
-            var queryParams = parseQueryParams(path);
-            var unexpectedQueryParams = Object.keys(queryParams).filter(function (p) {
-                return _this2.queryParams.concat(_this2.queryParamsBr).indexOf(p) === -1;
+        if (match) {
+            // Remove consumed segment from path
+            var consumedPath = child.parser.build(match, {
+                ignoreSearch: true
             });
-
-            if (unexpectedQueryParams.length === 0) {
-                // Extend url match
-                Object.keys(queryParams).forEach(function (p) {
-                    return matched[p] = queryParams[p];
-                });
-
-                return matched;
+            if (!strictTrailingSlash && !child.children.length) {
+                consumedPath = consumedPath.replace(/\/$/, '');
             }
-
-            return null;
-        }
-    }, {
-        key: 'partialTest',
-        value: function partialTest(path, opts) {
-            var _this3 = this;
-
-            var options = _extends({ delimited: true }, opts);
-            // Check if partial match (start of given path matches regex)
-            // trailingSlash: falsy => non optional, truthy => optional
-            var source = upToDelimiter(this.source, options.delimited);
-            var match = this._urlTest(path, new RegExp('^' + source));
-
-            if (!match) return match;
-
-            if (!this.hasQueryParams) return match;
-
-            var queryParams = parseQueryParams(path);
-
-            Object.keys(queryParams).filter(function (p) {
-                return _this3.queryParams.concat(_this3.queryParamsBr).indexOf(p) >= 0;
-            }).forEach(function (p) {
-                return appendQueryParam(match, p, queryParams[p]);
+            remainingPath = segment.replace(consumedPath, '');
+            if (!strictTrailingSlash && !child.children.length) {
+                remainingPath = remainingPath.replace(/^\/\?/, '?');
+            }
+            var querystring = omit(getSearch(segment.replace(consumedPath, '')), child.parser.queryParams).querystring;
+            remainingPath = getPath(remainingPath) + (querystring ? "?" + querystring : '');
+            if (!strictTrailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                remainingPath = '';
+            }
+            currentMatch.segments.push(child);
+            Object.keys(match).forEach(function (param) {
+                return currentMatch.params[param] = match[param];
             });
-
-            return match;
-        }
-    }, {
-        key: 'build',
-        value: function build$$1() {
-            var _this4 = this;
-
-            var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-            var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var options = _extends({ ignoreConstraints: false, ignoreSearch: false }, opts);
-            var encodedParams = Object.keys(params).reduce(function (acc, key) {
-                if (!exists(params[key])) {
-                    return acc;
-                }
-
-                var val = params[key];
-                var encode = _this4._isQueryParam(key) ? encodeURIComponent : encodeURI;
-
-                if (typeof val === 'boolean') {
-                    acc[key] = val;
-                } else if (Array.isArray(val)) {
-                    acc[key] = val.map(encode);
-                } else {
-                    acc[key] = encode(val);
-                }
-
-                return acc;
-            }, {});
-
-            // Check all params are provided (not search parameters which are optional)
-            if (this.urlParams.some(function (p) {
-                return !exists(encodedParams[p]);
-            })) {
-                var missingParameters = this.urlParams.filter(function (p) {
-                    return !exists(encodedParams[p]);
-                });
-                throw new Error('Cannot build path: \'' + this.path + '\' requires missing parameters { ' + missingParameters.join(', ') + ' }');
+            if (!isRoot && !remainingPath.length) {
+                return { value: currentMatch };
             }
-
-            // Check constraints
-            if (!options.ignoreConstraints) {
-                var constraintsPassed = this.tokens.filter(function (t) {
-                    return (/^url-parameter/.test(t.type) && !/-splat$/.test(t.type)
-                    );
-                }).every(function (t) {
-                    return new RegExp('^' + defaultOrConstrained(t.otherVal[0]) + '$').test(encodedParams[t.val]);
+            if (!isRoot && queryParamsMode !== 'strict' && remainingPath.indexOf('?') === 0) {
+                // unmatched queryParams in non strict mode
+                var remainingQueryParams_1 = parse(remainingPath.slice(1));
+                Object.keys(remainingQueryParams_1).forEach(function (name) {
+                    return currentMatch.params[name] = remainingQueryParams_1[name];
                 });
-
-                if (!constraintsPassed) throw new Error('Some parameters of \'' + this.path + '\' are of invalid format');
+                return { value: currentMatch };
             }
-
-            var base = this.tokens.filter(function (t) {
-                return (/^query-parameter/.test(t.type) === false
-                );
-            }).map(function (t) {
-                if (t.type === 'url-parameter-matrix') return ';' + t.val + '=' + encodedParams[t.val[0]];
-                return (/^url-parameter/.test(t.type) ? encodedParams[t.val[0]] : t.match
-                );
-            }).join('');
-
-            if (options.ignoreSearch) return base;
-
-            var queryParams = this.queryParams.concat(this.queryParamsBr.map(function (p) {
-                return p + '[]';
-            }));
-
-            var searchPart = queryParams.filter(function (p) {
-                return Object.keys(encodedParams).indexOf(withoutBrackets(p)) !== -1;
-            }).map(function (p) {
-                return _serialise(p, encodedParams[withoutBrackets(p)]);
-            }).join('&');
-
-            return base + (searchPart ? '?' + searchPart : '');
+            // Continue matching on non absolute children
+            var children = child.getNonAbsoluteChildren();
+            // If no children to match against but unmatched path left
+            if (!children.length) {
+                return { value: null };
+            }
+            return { value: matchChildren(children, remainingPath, currentMatch, options, consumedPath) };
         }
-    }]);
-    return Path;
-}();
+    };
+    // for (child of node.children) {
+    for (var _i = 0, nodes_1 = nodes; _i < nodes_1.length; _i++) {
+        var child = nodes_1[_i];
+        var state_1 = _loop_1(child);
+        if ((typeof state_1 === 'undefined' ? 'undefined' : _typeof(state_1)) === "object") return state_1.value;
+    }
+    return null;
+};
 
-var noop = function noop() {};
+var sortChildren = function sortChildren(originalChildren) {
+    return function (left, right) {
+        var leftPath = left.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
+        var rightPath = right.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
+        // '/' last
+        if (leftPath === '/') {
+            return 1;
+        }
+        if (rightPath === '/') {
+            return -1;
+        }
+        // Spat params last
+        if (left.parser.hasSpatParam) {
+            return 1;
+        }
+        if (right.parser.hasSpatParam) {
+            return -1;
+        }
+        // No spat, number of segments (less segments last)
+        var leftSegments = (leftPath.match(/\//g) || []).length;
+        var rightSegments = (rightPath.match(/\//g) || []).length;
+        if (leftSegments < rightSegments) {
+            return 1;
+        }
+        if (leftSegments > rightSegments) {
+            return -1;
+        }
+        // Same number of segments, number of URL params ascending
+        var leftParamsCount = left.parser.urlParams.length;
+        var rightParamsCount = right.parser.urlParams.length;
+        if (leftParamsCount < rightParamsCount) {
+            return -1;
+        }
+        if (leftParamsCount > rightParamsCount) {
+            return 1;
+        }
+        // Same number of segments and params, last segment length descending
+        var leftParamLength = (leftPath.split('/').slice(-1)[0] || '').length;
+        var rightParamLength = (rightPath.split('/').slice(-1)[0] || '').length;
+        if (leftParamLength < rightParamLength) {
+            return 1;
+        }
+        if (leftParamLength > rightParamLength) {
+            return -1;
+        }
+        // Same last segment length, preserve definition order. Note that we
+        // cannot just return 0, as sort is not guaranteed to be a stable sort.
+        return originalChildren.indexOf(left) - originalChildren.indexOf(right);
+    };
+};
 
-var RouteNode = function () {
-    function RouteNode() {
-        var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-        var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-        var childRoutes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-        var cb = arguments[3];
-        var parent = arguments[4];
-        classCallCheck(this, RouteNode);
-
+var defaultBuildOptions = {
+    queryParamsMode: 'default',
+    trailingSlashMode: 'default'
+};
+var defaultMatchOptions = __assign({}, defaultBuildOptions, { strongMatching: true });
+var RouteNode = /** @class */function () {
+    function RouteNode(name, path, childRoutes, cb, parent) {
+        if (name === void 0) {
+            name = '';
+        }
+        if (path === void 0) {
+            path = '';
+        }
+        if (childRoutes === void 0) {
+            childRoutes = [];
+        }
         this.name = name;
         this.absolute = /^~/.test(path);
         this.path = this.absolute ? path.slice(1) : path;
         this.parser = this.path ? new Path(this.path) : null;
         this.children = [];
         this.parent = parent;
-
         this.checkParents();
-
         this.add(childRoutes, cb);
-
         return this;
     }
-
-    createClass(RouteNode, [{
-        key: 'checkParents',
-        value: function checkParents() {
-            if (this.absolute && this.hasParentsParams()) {
-                throw new Error('[RouteNode] A RouteNode with an abolute path cannot have parents with route parameters');
-            }
+    RouteNode.prototype.getParentSegments = function (segments) {
+        if (segments === void 0) {
+            segments = [];
         }
-    }, {
-        key: 'hasParentsParams',
-        value: function hasParentsParams() {
-            if (this.parent && this.parent.parser) {
-                var parser = this.parent.parser;
-                var hasParams = parser.hasUrlParams || parser.hasSpatParam || parser.hasMatrixParams || parser.hasQueryParams;
-
-                return hasParams || this.parent.hasParentsParams();
-            }
-
-            return false;
+        return this.parent && this.parent.parser ? this.parent.getParentSegments(segments.concat(this.parent)) : segments.reverse();
+    };
+    RouteNode.prototype.setParent = function (parent) {
+        this.parent = parent;
+        this.checkParents();
+    };
+    RouteNode.prototype.setPath = function (path) {
+        if (path === void 0) {
+            path = '';
         }
-    }, {
-        key: 'getNonAbsoluteChildren',
-        value: function getNonAbsoluteChildren() {
-            return this.children.filter(function (child) {
-                return !child.absolute;
+        this.path = path;
+        this.parser = path ? new Path(path) : null;
+    };
+    RouteNode.prototype.add = function (route, cb) {
+        var _this = this;
+        if (route === undefined || route === null) {
+            return;
+        }
+        if (route instanceof Array) {
+            route.forEach(function (r) {
+                return _this.add(r, cb);
             });
+            return;
         }
-    }, {
-        key: 'findAbsoluteChildren',
-        value: function findAbsoluteChildren() {
-            return this.children.reduce(function (absoluteChildren, child) {
-                return absoluteChildren.concat(child.absolute ? child : []).concat(child.findAbsoluteChildren());
-            }, []);
-        }
-    }, {
-        key: 'findSlashChild',
-        value: function findSlashChild() {
-            var slashChildren = this.getNonAbsoluteChildren().filter(function (child) {
-                return child.parser && /^\/(\?|$)/.test(child.parser.path);
-            });
-
-            return slashChildren[0];
-        }
-    }, {
-        key: 'getParentSegments',
-        value: function getParentSegments() {
-            var segments = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            return this.parent && this.parent.parser ? this.parent.getParentSegments(segments.concat(this.parent)) : segments.reverse();
-        }
-    }, {
-        key: 'setParent',
-        value: function setParent(parent) {
-            this.parent = parent;
-            this.checkParents();
-        }
-    }, {
-        key: 'setPath',
-        value: function setPath() {
-            var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-            this.path = path;
-            this.parser = path ? new Path(path) : null;
-        }
-    }, {
-        key: 'add',
-        value: function add(route) {
-            var _this = this;
-
-            var cb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : noop;
-
-            var originalRoute = void 0;
-            if (route === undefined || route === null) return;
-
-            if (route instanceof Array) {
-                route.forEach(function (r) {
-                    return _this.add(r, cb);
-                });
-                return;
+        if (!(route instanceof RouteNode) && !(route instanceof Object)) {
+            throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.');
+        } else if (route instanceof RouteNode) {
+            route.setParent(this);
+            this.addRouteNode(route);
+        } else {
+            if (!route.name || !route.path) {
+                throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
             }
-
-            if (!(route instanceof RouteNode) && !(route instanceof Object)) {
-                throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.');
-            } else if (route instanceof RouteNode) {
-                route.setParent(this);
-            } else {
-                if (!route.name || !route.path) {
-                    throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
-                }
-                originalRoute = route;
-                route = new RouteNode(route.name, route.path, route.children, cb, this);
-            }
-
-            var names = route.name.split('.');
-
-            if (names.length === 1) {
-                // Check duplicated routes
-                if (this.children.map(function (child) {
-                    return child.name;
-                }).indexOf(route.name) !== -1) {
-                    throw new Error('Alias "' + route.name + '" is already defined in route node');
-                }
-
-                // Check duplicated paths
-                if (this.children.map(function (child) {
-                    return child.path;
-                }).indexOf(route.path) !== -1) {
-                    throw new Error('Path "' + route.path + '" is already defined in route node');
-                }
-
-                this.children.push(route);
-                // Push greedy spats to the bottom of the pile
-
-                var originalChildren = this.children.slice(0);
-
-                this.children.sort(function (left, right) {
-                    var leftPath = left.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
-                    var rightPath = right.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
-                    // '/' last
-                    if (leftPath === '/') return 1;
-                    if (rightPath === '/') return -1;
-                    // Spat params last
-                    if (left.parser.hasSpatParam) return 1;
-                    if (right.parser.hasSpatParam) return -1;
-                    // No spat, number of segments (less segments last)
-                    var leftSegments = (leftPath.match(/\//g) || []).length;
-                    var rightSegments = (rightPath.match(/\//g) || []).length;
-                    if (leftSegments < rightSegments) return 1;
-                    if (leftSegments > rightSegments) return -1;
-                    // Same number of segments, number of URL params ascending
-                    var leftParamsCount = left.parser.urlParams.length;
-                    var rightParamsCount = right.parser.urlParams.length;
-                    if (leftParamsCount < rightParamsCount) return -1;
-                    if (leftParamsCount > rightParamsCount) return 1;
-                    // Same number of segments and params, last segment length descending
-                    var leftParamLength = (leftPath.split('/').slice(-1)[0] || '').length;
-                    var rightParamLength = (rightPath.split('/').slice(-1)[0] || '').length;
-                    if (leftParamLength < rightParamLength) return 1;
-                    if (leftParamLength > rightParamLength) return -1;
-                    // Same last segment length, preserve definition order. Note that we
-                    // cannot just return 0, as sort is not guaranteed to be a stable sort.
-                    return originalChildren.indexOf(left) - originalChildren.indexOf(right);
-                });
-            } else {
-                // Locate parent node
-                var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
-                if (segments) {
-                    route.name = names[names.length - 1];
-                    segments[segments.length - 1].add(route);
-                } else {
-                    throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
-                }
-            }
-
-            if (originalRoute) {
-                var fullName = route.getParentSegments([route]).map(function (_) {
-                    return _.name;
-                }).join('.');
-                cb(_extends({}, originalRoute, {
-                    name: fullName
-                }));
-            }
-
-            return this;
-        }
-    }, {
-        key: 'addNode',
-        value: function addNode(name, params) {
-            this.add(new RouteNode(name, params));
-            return this;
-        }
-    }, {
-        key: 'getSegmentsByName',
-        value: function getSegmentsByName(routeName) {
-            var findSegmentByName = function findSegmentByName(name, routes) {
-                var filteredRoutes = routes.filter(function (r) {
-                    return r.name === name;
-                });
-                return filteredRoutes.length ? filteredRoutes[0] : undefined;
-            };
-            var segments = [];
-            var routes = this.parser ? [this] : this.children;
-            var names = (this.parser ? [''] : []).concat(routeName.split('.'));
-
-            var matched = names.every(function (name) {
-                var segment = findSegmentByName(name, routes);
-                if (segment) {
-                    routes = segment.children;
-                    segments.push(segment);
-                    return true;
-                }
-                return false;
-            });
-
-            return matched ? segments : null;
-        }
-    }, {
-        key: 'getSegmentsMatchingPath',
-        value: function getSegmentsMatchingPath(path, options) {
-            var trailingSlash = options.trailingSlash,
-                strictQueryParams = options.strictQueryParams,
-                strongMatching = options.strongMatching;
-
-            var matchChildren = function matchChildren(nodes, pathSegment, segments, consumedBefore) {
-                var isRoot = nodes.length === 1 && nodes[0].name === '';
-                // for (child of node.children) {
-
-                var _loop = function _loop(i) {
-                    var child = nodes[i];
-
-                    // Partially match path
-                    var match = void 0;
-                    var remainingPath = void 0;
-                    var segment = pathSegment;
-
-                    if (consumedBefore === '/' && child.path === '/') {
-                        // when we encounter repeating slashes we add the slash
-                        // back to the URL to make it de facto pathless
-                        segment = '/' + pathSegment;
-                    }
-
-                    if (!child.children.length) {
-                        match = child.parser.test(segment, { trailingSlash: trailingSlash });
-                    }
-
-                    if (!match) {
-                        match = child.parser.partialTest(segment, { delimiter: strongMatching });
-                    }
-
-                    if (match) {
-                        // Remove consumed segment from path
-                        var consumedPath = child.parser.build(match, { ignoreSearch: true });
-                        if (trailingSlash && !child.children.length) {
-                            consumedPath = consumedPath.replace(/\/$/, '');
-                        }
-
-                        remainingPath = segment.replace(consumedPath, '');
-
-                        if (trailingSlash && !child.children.length) {
-                            remainingPath = remainingPath.replace(/^\/\?/, '?');
-                        }
-
-                        var search = omit(getSearch(segment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
-                        remainingPath = getPath(remainingPath) + (search ? '?' + search : '');
-                        if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
-                            remainingPath = '';
-                        }
-
-                        segments.push(child);
-                        Object.keys(match).forEach(function (param) {
-                            return segments.params[param] = match[param];
-                        });
-
-                        if (!isRoot && !remainingPath.length) {
-                            // fully matched
-                            return {
-                                v: segments
-                            };
-                        }
-                        if (!isRoot && !strictQueryParams && remainingPath.indexOf('?') === 0) {
-                            // unmatched queryParams in non strict mode
-                            var remainingQueryParams = parse(remainingPath.slice(1));
-
-                            remainingQueryParams.forEach(function (_ref) {
-                                var name = _ref.name,
-                                    value = _ref.value;
-                                return segments.params[name] = value;
-                            });
-                            return {
-                                v: segments
-                            };
-                        }
-                        // Continue matching on non absolute children
-                        var children = child.getNonAbsoluteChildren();
-                        // If no children to match against but unmatched path left
-                        if (!children.length) {
-                            return {
-                                v: null
-                            };
-                        }
-                        // Else: remaining path and children
-                        return {
-                            v: matchChildren(children, remainingPath, segments, consumedPath)
-                        };
-                    }
-                };
-
-                for (var i = 0; i < nodes.length; i += 1) {
-                    var _ret = _loop(i);
-
-                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-                }
-
-                return null;
-            };
-
-            var topLevelNodes = this.parser ? [this] : this.children;
-            var startingNodes = topLevelNodes.reduce(function (nodes, node) {
-                return nodes.concat(node, node.findAbsoluteChildren());
-            }, []);
-
-            var segments = [];
-            segments.params = {};
-
-            var matched = matchChildren(startingNodes, path, segments);
-            if (matched && matched.length === 1 && matched[0].name === '') return null;
-            return matched;
-        }
-    }, {
-        key: 'getPathFromSegments',
-        value: function getPathFromSegments(segments) {
-            return segments ? segments.map(function (segment) {
-                return segment.path;
-            }).join('') : null;
-        }
-    }, {
-        key: 'getPath',
-        value: function getPath$$1(routeName) {
-            return this.getPathFromSegments(this.getSegmentsByName(routeName));
-        }
-    }, {
-        key: 'buildPathFromSegments',
-        value: function buildPathFromSegments(segments) {
-            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            if (!segments) return null;
-
-            var searchParams = [];
-            var nonSearchParams = [];
-
-            for (var i = 0; i < segments.length; i += 1) {
-                var parser = segments[i].parser;
-                searchParams.push.apply(searchParams, toConsumableArray(parser.queryParams));
-                searchParams.push.apply(searchParams, toConsumableArray(parser.queryParamsBr));
-                nonSearchParams.push.apply(nonSearchParams, toConsumableArray(parser.urlParams));
-                nonSearchParams.push.apply(nonSearchParams, toConsumableArray(parser.spatParams));
-            }
-
-            if (!options.strictQueryParams) {
-                var extraParams = Object.keys(params).reduce(function (acc, p) {
-                    return searchParams.indexOf(p) === -1 && nonSearchParams.indexOf(p) === -1 ? acc.concat(p) : acc;
-                }, []);
-                searchParams.push.apply(searchParams, toConsumableArray(extraParams));
-            }
-
-            var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
-                if (Object.keys(params).indexOf(withoutBrackets(p)) === -1) {
-                    return false;
-                }
-
-                var val = params[withoutBrackets(p)];
-
-                if (Array.isArray(val)) {
-                    return val.length > 0;
-                }
-
-                return val !== undefined && val !== null;
-            }).map(function (p) {
-                var val = params[withoutBrackets(p)];
-                var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);
-
-                return Path.serialise(p, encodedVal);
-            }).join('&');
-
-            var path = segments.reduce(function (path, segment) {
-                var segmentPath = segment.parser.build(params, { ignoreSearch: true });
-
-                return segment.absolute ? segmentPath : path + segmentPath;
-            }, '')
-            // remove repeated slashes
-            .replace(/\/\/{1,}/g, '/');
-
-            var finalPath = path;
-
-            if (options.trailingSlash === true) {
-                finalPath = /\/$/.test(path) ? path : path + '/';
-            } else if (options.trailingSlash === false && path !== '/') {
-                finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
-            }
-
-            return finalPath + (searchPart ? '?' + searchPart : '');
-        }
-    }, {
-        key: 'getMetaFromSegments',
-        value: function getMetaFromSegments(segments) {
-            var accName = '';
-
-            return segments.reduce(function (meta, segment) {
-                var urlParams = segment.parser.urlParams.reduce(function (params, p) {
-                    params[p] = 'url';
-                    return params;
-                }, {});
-
-                var allParams = segment.parser.queryParams.reduce(function (params, p) {
-                    params[p] = 'query';
-                    return params;
-                }, urlParams);
-
-                if (segment.name !== undefined) {
-                    accName = accName ? accName + '.' + segment.name : segment.name;
-                    meta[accName] = allParams;
-                }
-                return meta;
-            }, {});
-        }
-    }, {
-        key: 'buildPath',
-        value: function buildPath(routeName) {
-            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var opts = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-            var defaultOptions = { strictQueryParams: true };
-            var options = _extends({}, defaultOptions, opts);
-            var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
-
-            return path;
-        }
-    }, {
-        key: 'buildStateFromSegments',
-        value: function buildStateFromSegments(segments) {
-            if (!segments || !segments.length) return null;
-
-            var name = segments.map(function (segment) {
-                return segment.name;
-            }).filter(function (name) {
-                return name;
+            var routeNode = new RouteNode(route.name, route.path, route.children, cb, this);
+            var fullName = routeNode.getParentSegments([routeNode]).map(function (_) {
+                return _.name;
             }).join('.');
-            var params = segments.params;
-
-            return {
-                name: name,
-                params: params,
-                _meta: this.getMetaFromSegments(segments)
-            };
-        }
-    }, {
-        key: 'buildState',
-        value: function buildState(name) {
-            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-            var segments = this.getSegmentsByName(name);
-            if (!segments || !segments.length) return null;
-
-            return {
-                name: name,
-                params: params,
-                _meta: this.getMetaFromSegments(segments)
-            };
-        }
-    }, {
-        key: 'matchPath',
-        value: function matchPath(path, options) {
-            var defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
-            var opts = _extends({}, defaultOptions, options);
-            var matchedSegments = this.getSegmentsMatchingPath(path, opts);
-
-            if (matchedSegments) {
-                if (matchedSegments[0].absolute) {
-                    var firstSegmentParams = matchedSegments[0].getParentSegments();
-
-                    matchedSegments.reverse();
-                    matchedSegments.push.apply(matchedSegments, toConsumableArray(firstSegmentParams));
-                    matchedSegments.reverse();
-                }
-
-                var lastSegment = matchedSegments[matchedSegments.length - 1];
-                var lastSegmentSlashChild = lastSegment.findSlashChild();
-
-                if (lastSegmentSlashChild) {
-                    matchedSegments.push(lastSegmentSlashChild);
-                }
+            if (cb) {
+                cb(__assign({}, route, { name: fullName }));
             }
-
-            return this.buildStateFromSegments(matchedSegments);
+            this.addRouteNode(routeNode);
         }
-    }]);
+        return this;
+    };
+    RouteNode.prototype.addNode = function (name, path) {
+        this.add(new RouteNode(name, path));
+        return this;
+    };
+    RouteNode.prototype.getPath = function (routeName) {
+        return getPathFromSegments(this.getSegmentsByName(routeName));
+    };
+    RouteNode.prototype.getNonAbsoluteChildren = function () {
+        return this.children.filter(function (child) {
+            return !child.absolute;
+        });
+    };
+    RouteNode.prototype.buildPath = function (routeName, params, options) {
+        if (params === void 0) {
+            params = {};
+        }
+        if (options === void 0) {
+            options = {};
+        }
+        var path = buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
+        return path;
+    };
+    RouteNode.prototype.buildState = function (name, params) {
+        if (params === void 0) {
+            params = {};
+        }
+        var segments = this.getSegmentsByName(name);
+        if (!segments || !segments.length) {
+            return null;
+        }
+        return {
+            name: name,
+            params: params,
+            meta: getMetaFromSegments(segments)
+        };
+    };
+    RouteNode.prototype.matchPath = function (path, options) {
+        if (options === void 0) {
+            options = {};
+        }
+        if (path === '' && !options.strictTrailingSlash) {
+            path = '/';
+        }
+        var match = this.getSegmentsMatchingPath(path, options);
+        if (match) {
+            var matchedSegments = match.segments;
+            if (matchedSegments[0].absolute) {
+                var firstSegmentParams = matchedSegments[0].getParentSegments();
+                matchedSegments.reverse();
+                matchedSegments.push.apply(matchedSegments, firstSegmentParams);
+                matchedSegments.reverse();
+            }
+            var lastSegment = matchedSegments[matchedSegments.length - 1];
+            var lastSegmentSlashChild = lastSegment.findSlashChild();
+            if (lastSegmentSlashChild) {
+                matchedSegments.push(lastSegmentSlashChild);
+            }
+        }
+        return buildStateFromMatch(match);
+    };
+    RouteNode.prototype.addRouteNode = function (route, cb) {
+        var names = route.name.split('.');
+        if (names.length === 1) {
+            // Check duplicated routes
+            if (this.children.map(function (child) {
+                return child.name;
+            }).indexOf(route.name) !== -1) {
+                throw new Error("Alias \"" + route.name + "\" is already defined in route node");
+            }
+            // Check duplicated paths
+            if (this.children.map(function (child) {
+                return child.path;
+            }).indexOf(route.path) !== -1) {
+                throw new Error("Path \"" + route.path + "\" is already defined in route node");
+            }
+            this.children.push(route);
+            // Push greedy spats to the bottom of the pile
+            var originalChildren = this.children.slice(0);
+            this.children.sort(sortChildren(originalChildren));
+        } else {
+            // Locate parent node
+            var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
+            if (segments) {
+                route.name = names[names.length - 1];
+                segments[segments.length - 1].add(route);
+            } else {
+                throw new Error("Could not add route named '" + route.name + "', parent is missing.");
+            }
+        }
+        return this;
+    };
+    RouteNode.prototype.checkParents = function () {
+        if (this.absolute && this.hasParentsParams()) {
+            throw new Error('[RouteNode] A RouteNode with an abolute path cannot have parents with route parameters');
+        }
+    };
+    RouteNode.prototype.hasParentsParams = function () {
+        if (this.parent && this.parent.parser) {
+            var parser = this.parent.parser;
+            var hasParams = parser.hasUrlParams || parser.hasSpatParam || parser.hasMatrixParams || parser.hasQueryParams;
+            return hasParams || this.parent.hasParentsParams();
+        }
+        return false;
+    };
+    RouteNode.prototype.findAbsoluteChildren = function () {
+        return this.children.reduce(function (absoluteChildren, child) {
+            return absoluteChildren.concat(child.absolute ? child : []).concat(child.findAbsoluteChildren());
+        }, []);
+    };
+    RouteNode.prototype.findSlashChild = function () {
+        var slashChildren = this.getNonAbsoluteChildren().filter(function (child) {
+            return child.parser && /^\/(\?|$)/.test(child.parser.path);
+        });
+        return slashChildren[0];
+    };
+    RouteNode.prototype.getSegmentsByName = function (routeName) {
+        var findSegmentByName = function findSegmentByName(name, routes) {
+            var filteredRoutes = routes.filter(function (r) {
+                return r.name === name;
+            });
+            return filteredRoutes.length ? filteredRoutes[0] : undefined;
+        };
+        var segments = [];
+        var routes = this.parser ? [this] : this.children;
+        var names = (this.parser ? [''] : []).concat(routeName.split('.'));
+        var matched = names.every(function (name) {
+            var segment = findSegmentByName(name, routes);
+            if (segment) {
+                routes = segment.children;
+                segments.push(segment);
+                return true;
+            }
+            return false;
+        });
+        return matched ? segments : null;
+    };
+    RouteNode.prototype.getSegmentsMatchingPath = function (path, options) {
+        var topLevelNodes = this.parser ? [this] : this.children;
+        var startingNodes = topLevelNodes.reduce(function (nodes, node) {
+            return nodes.concat(node, node.findAbsoluteChildren());
+        }, []);
+        var currentMatch = {
+            segments: [],
+            params: {}
+        };
+        var finalMatch = matchChildren(startingNodes, path, currentMatch, options);
+        if (finalMatch && finalMatch.segments.length === 1 && finalMatch.segments[0].name === '') {
+            return null;
+        }
+        return finalMatch;
+    };
     return RouteNode;
 }();
 
@@ -1125,8 +1130,6 @@ var constants = {
 };
 
 function withUtils(router) {
-    var options = router.getOptions();
-
     router.isActive = isActive;
     router.areStatesEqual = areStatesEqual;
     router.areStatesDescendants = areStatesDescendants;
@@ -1214,14 +1217,17 @@ function withUtils(router) {
             return params.path;
         }
 
-        var useTrailingSlash = options.useTrailingSlash,
-            strictQueryParams = options.strictQueryParams;
+        var _router$getOptions = router.getOptions(),
+            trailingSlashMode = _router$getOptions.trailingSlashMode,
+            queryParamsMode = _router$getOptions.queryParamsMode,
+            queryParams = _router$getOptions.queryParams;
 
         var encodedParams = router.config.encoders[route] ? router.config.encoders[route](params) : params;
 
         return router.rootNode.buildPath(route, encodedParams, {
-            trailingSlash: useTrailingSlash,
-            strictQueryParams: strictQueryParams
+            trailingSlashMode: trailingSlashMode,
+            queryParamsMode: queryParamsMode,
+            queryParams: queryParams
         });
     }
 
@@ -1250,20 +1256,13 @@ function withUtils(router) {
      * @return {Object}          The matched state (null if unmatched)
      */
     function matchPath(path, source) {
-        var trailingSlash = options.trailingSlash,
-            strictQueryParams = options.strictQueryParams,
-            strongMatching = options.strongMatching;
-
-        var match = router.rootNode.matchPath(path, {
-            trailingSlash: trailingSlash,
-            strictQueryParams: strictQueryParams,
-            strongMatching: strongMatching
-        });
+        var options = router.getOptions();
+        var match = router.rootNode.matchPath(path, options);
 
         if (match) {
             var name = match.name,
                 params = match.params,
-                _meta = match._meta;
+                meta = match.meta;
 
             var decodedParams = router.config.decoders[name] ? router.config.decoders[name](params) : params;
 
@@ -1271,9 +1270,12 @@ function withUtils(router) {
                 routeName = _forwardState2.name,
                 routeParams = _forwardState2.params;
 
-            var builtPath = options.useTrailingSlash === undefined ? path : router.buildPath(routeName, routeParams);
+            var builtPath = options.rewritePathOnMatch === false ? path : router.buildPath(routeName, routeParams);
 
-            return router.makeState(routeName, routeParams, builtPath, _meta, source);
+            return router.makeState(routeName, routeParams, builtPath, {
+                params: meta,
+                source: source
+            });
         }
 
         return null;
@@ -1288,11 +1290,10 @@ function withUtils(router) {
     }
 }
 
-var noop$1 = function noop() {};
+var noop = function noop() {};
 
 function withRouterLifecycle(router) {
     var started = false;
-    var options = router.getOptions();
 
     router.isStarted = isStarted;
     router.start = start;
@@ -1315,8 +1316,9 @@ function withRouterLifecycle(router) {
     function start() {
         var _ref;
 
+        var options = router.getOptions();
         var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
-        var done = typeof lastArg === 'function' ? lastArg : noop$1;
+        var done = typeof lastArg === 'function' ? lastArg : noop;
         var startPathOrState = typeof (arguments.length <= 0 ? undefined : arguments[0]) !== 'function' ? arguments.length <= 0 ? undefined : arguments[0] : undefined;
 
         if (started) {
@@ -1357,7 +1359,7 @@ function withRouterLifecycle(router) {
                 return router.navigateToDefault({ replace: true }, done);
             };
             var redirect = function redirect(route) {
-                return router.navigate(route.name, route.params, { replace: true, reload: true }, done);
+                return router.navigate(route.name, route.params, { replace: true, reload: true, redirected: true }, done);
             };
             var transitionToState = function transitionToState(state) {
                 router.transitionToState(state, router.getState(), {}, function (err, state) {
@@ -1372,7 +1374,7 @@ function withRouterLifecycle(router) {
                 // If default, navigate to default
                 navigateToDefault();
             } else if (options.allowNotFound) {
-                transitionToState(router.makeNotFoundState(startPath));
+                transitionToState(router.makeNotFoundState(startPath, { replace: true }));
             } else {
                 // No start match, no default => do nothing
                 cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
@@ -1512,23 +1514,37 @@ function resolve(functions, _ref, callback) {
     var isState = function isState(obj) {
         return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.name !== undefined && obj.params !== undefined && obj.path !== undefined;
     };
-    var hasStateChanged = function hasStateChanged(state) {
-        return state.name !== toState.name || state.params !== toState.params || state.path !== toState.path;
+    var hasStateChanged = function hasStateChanged(toState, fromState) {
+        return fromState.name !== toState.name || fromState.params !== toState.params || fromState.path !== toState.path;
     };
 
-    var processFn = function processFn(done) {
-        if (!remainingFunctions.length) return true;
+    var mergeStates = function mergeStates(toState, fromState) {
+        return _extends({}, fromState, toState, {
+            meta: _extends({}, fromState.meta, toState.meta)
+        });
+    };
 
-        var isMapped = typeof remainingFunctions[0] === 'string';
-        var errBase = errorKey && isMapped ? defineProperty({}, errorKey, remainingFunctions[0]) : {};
-        var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+    var processFn = function processFn(stepFn, errBase, state, _done) {
+        var done = function done(err, newState) {
+            if (err) {
+                _done(err);
+            } else if (newState && newState !== state && isState(newState)) {
+                if (hasStateChanged(newState, state)) {
+                    console.error('[router5][transition] Warning: state values (name, params, path) were changed during transition process.');
+                }
 
-        // const len = stepFn.length;
-        var res = stepFn.call(null, toState, fromState, done);
+                _done(null, mergeStates(newState, state));
+            } else {
+                _done(null, state);
+            }
+        };
+        var res = stepFn.call(null, state, fromState, done);
         if (isCancelled()) {
             done(null);
         } else if (typeof res === 'boolean') {
             done(res ? null : errBase);
+        } else if (isState(res)) {
+            done(null, res);
         } else if (res && typeof res.then === 'function') {
             res.then(function (resVal) {
                 if (resVal instanceof Error) done({ error: resVal }, null);else done(null, resVal);
@@ -1542,35 +1558,29 @@ function resolve(functions, _ref, callback) {
             });
         }
         // else: wait for done to be called
-
-        return false;
     };
 
-    var iterate = function iterate(err, val) {
+    var next = function next(err, state) {
         if (isCancelled()) {
             callback();
         } else if (err) {
             callback(err);
         } else {
-            if (val && isState(val)) {
-                if (hasStateChanged(val)) console.error('[router5][transition] Warning: state values changed during transition process.');
-                toState = val;
+            if (!remainingFunctions.length) {
+                callback(null, state);
+            } else {
+                var isMapped = typeof remainingFunctions[0] === 'string';
+                var errBase = errorKey && isMapped ? defineProperty({}, errorKey, remainingFunctions[0]) : {};
+                var stepFn = isMapped ? functions[remainingFunctions[0]] : remainingFunctions[0];
+
+                remainingFunctions = remainingFunctions.slice(1);
+
+                processFn(stepFn, errBase, state, next);
             }
-            remainingFunctions = remainingFunctions.slice(1);
-            next();
         }
     };
 
-    var next = function next() {
-        if (isCancelled()) {
-            callback();
-        } else {
-            var finished = processFn(iterate);
-            if (finished) callback(null, toState);
-        }
-    };
-
-    next();
+    next(null, toState);
 }
 
 function transition$1(router, toState, fromState, opts, callback) {
@@ -1657,7 +1667,7 @@ function transition$1(router, toState, fromState, opts, callback) {
     return cancel;
 }
 
-var noop$2 = function noop() {};
+var noop$1 = function noop() {};
 
 function withNavigation(router) {
     var cancelCurrentTransition = void 0;
@@ -1707,7 +1717,7 @@ function withNavigation(router) {
 
         var name = arguments.length <= 0 ? undefined : arguments[0];
         var lastArg = (_ref = arguments.length - 1, arguments.length <= _ref ? undefined : arguments[_ref]);
-        var done = typeof lastArg === 'function' ? lastArg : noop$2;
+        var done = typeof lastArg === 'function' ? lastArg : noop$1;
         var params = _typeof(arguments.length <= 1 ? undefined : arguments[1]) === 'object' ? arguments.length <= 1 ? undefined : arguments[1] : {};
         var opts = _typeof(arguments.length <= 2 ? undefined : arguments[2]) === 'object' ? arguments.length <= 2 ? undefined : arguments[2] : {};
 
@@ -1725,7 +1735,7 @@ function withNavigation(router) {
             return;
         }
 
-        var toState = router.makeState(route.name, route.params, router.buildPath(route.name, route.params), route._meta);
+        var toState = router.makeState(route.name, route.params, router.buildPath(route.name, route.params), { params: route.meta, options: opts });
         var sameStates = router.getState() ? router.areStatesEqual(router.getState(), toState, false) : false;
 
         // Do not proceed further if states are the same and no reload
@@ -1741,7 +1751,7 @@ function withNavigation(router) {
 
         if (opts.skipTransition) {
             done(null, toState);
-            return noop$2;
+            return noop$1;
         }
 
         // Transition
@@ -1753,7 +1763,7 @@ function withNavigation(router) {
                         _params = _err$redirect.params;
 
 
-                    navigate(_name, _params, _extends({}, opts, { force: true }), done);
+                    navigate(_name, _params, _extends({}, opts, { force: true, redirected: true }), done);
                 } else {
                     done(err);
                 }
@@ -1772,7 +1782,7 @@ function withNavigation(router) {
      */
     function navigateToDefault() {
         var opts = _typeof(arguments.length <= 0 ? undefined : arguments[0]) === 'object' ? arguments.length <= 0 ? undefined : arguments[0] : {};
-        var done = arguments.length === 2 ? arguments.length <= 1 ? undefined : arguments[1] : typeof (arguments.length <= 0 ? undefined : arguments[0]) === 'function' ? arguments.length <= 0 ? undefined : arguments[0] : noop$2;
+        var done = arguments.length === 2 ? arguments.length <= 1 ? undefined : arguments[1] : typeof (arguments.length <= 0 ? undefined : arguments[0]) === 'function' ? arguments.length <= 0 ? undefined : arguments[0] : noop$1;
         var options = router.getOptions();
 
         if (options.defaultRoute) {
@@ -1784,7 +1794,7 @@ function withNavigation(router) {
 
     function transitionToState(toState, fromState) {
         var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-        var done = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : noop$2;
+        var done = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : noop$1;
 
         cancel();
         router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
@@ -2025,12 +2035,13 @@ function withCloning(router, createRouter) {
 }
 
 var defaultOptions = {
-    trailingSlash: 0,
-    useTrailingSlash: undefined,
+    trailingSlashMode: 'default',
+    queryParamsMode: 'default',
+    strictTrailingSlash: false,
     autoCleanUp: true,
-    strictQueryParams: false,
     allowNotFound: false,
-    strongMatching: true
+    strongMatching: true,
+    rewritePathOnMatch: true
 
     /**
      * Create a router
@@ -2153,12 +2164,11 @@ var defaultOptions = {
      * @param  {String} name         The state name
      * @param  {Object} params       The state params
      * @param  {String} path         The state path
-     * @param  {Object} [metaParams] Description of the state params
-     * @param  {String} [source]     The source of the routing state
+     * @param  {Object} [meta]       The meta object
      * @param  {Number} [forceId]    The ID to use in meta (incremented by default)
      * @return {Object}              The state object
      */
-    function makeState(name, params, path, metaParams, source, forceId) {
+    function makeState(name, params, path, meta, forceId) {
         var state = {};
         var setProp = function setProp(key, value) {
             return Object.defineProperty(state, key, { value: value, enumerable: true });
@@ -2167,7 +2177,7 @@ var defaultOptions = {
         setProp('params', params);
         setProp('path', path);
 
-        if (metaParams || source) {
+        if (meta) {
             var finalStateId = void 0;
 
             if (forceId === undefined) {
@@ -2177,11 +2187,7 @@ var defaultOptions = {
                 finalStateId = forceId;
             }
 
-            var meta = { params: metaParams, id: finalStateId };
-
-            if (source) meta.source = source;
-
-            setProp('meta', meta);
+            setProp('meta', _extends({}, meta, { id: finalStateId }));
         }
 
         return state;
@@ -2189,11 +2195,12 @@ var defaultOptions = {
 
     /**
      * Build a not found state for a given path
-     * @param  {String} path The unmatched path
-     * @return {Object}      The not found state object
+     * @param  {String} path      The unmatched path
+     * @param  {Object} [options] The navigation options
+     * @return {Object}           The not found state object
      */
-    function makeNotFoundState(path) {
-        return makeState(constants.UNKNOWN_ROUTE, { path: path }, path, {});
+    function makeNotFoundState(path, options) {
+        return makeState(constants.UNKNOWN_ROUTE, { path: path }, path, { options: options });
     }
 
     /**
@@ -2231,9 +2238,6 @@ var defaultOptions = {
      * @return {Object}       The router instance
      */
     function setOption(option, value) {
-        if (option === 'useTrailingSlash' && value !== undefined) {
-            options.trailingSlash = true;
-        }
         options[option] = value;
         return router;
     }
@@ -2303,7 +2307,7 @@ var defaultOptions = {
 
 /* istanbul ignore next */
 /*eslint no-console: 0*/
-var noop$3 = function noop() {};
+var noop$2 = function noop() {};
 
 function loggerPlugin() {
     var startGroup = void 0,
@@ -2324,8 +2328,8 @@ function loggerPlugin() {
             return console.groupEnd();
         };
     } else {
-        startGroup = noop$3;
-        endGroup = noop$3;
+        startGroup = noop$2;
+        endGroup = noop$2;
     }
 
     console.info('Router started');

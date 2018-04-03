@@ -97,7 +97,5 @@
     "webpack-dev-server": "~2.4.5",
     "yargs": "~8.0.1"
   },
-  "dependencies": {
-    "rollup-plugin-alias": "~1.4.0"
-  }
+  "dependencies": {}
 }
