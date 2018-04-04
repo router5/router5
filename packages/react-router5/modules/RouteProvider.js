@@ -47,11 +47,24 @@ class RouteProvider extends React.PureComponent {
         this.router.removeListener(this.listener)
     }
 
+    getChildContext() {
+        return { router: this.router }
+    }
+
     render() {
         return (
             <Provider value={this.state.route}>{this.props.children}</Provider>
         )
     }
+}
+
+RouteProvider.childContextTypes = {
+    router: PropTypes.object.isRequired
+}
+
+RouteProvider.propTypes = {
+    router: PropTypes.object.isRequired,
+    children: PropTypes.node.isRequired
 }
 
 class RouteNodeConsumer extends React.Component {
@@ -71,7 +84,7 @@ class RouteNodeConsumer extends React.Component {
 
 RouteNodeConsumer.propTypes = {
     nodeName: PropTypes.string.isRequired,
-    children: PropTypes.function.isRequired
+    children: PropTypes.func.isRequired
 }
 
 function RouteNode(props) {
@@ -82,11 +95,6 @@ function RouteNode(props) {
             )}
         </Route>
     )
-}
-
-RouteProvider.propTypes = {
-    router: PropTypes.object.isRequired,
-    children: PropTypes.node.isRequired
 }
 
 export { RouteProvider, Route, RouteNode }
