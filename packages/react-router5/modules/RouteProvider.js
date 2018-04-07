@@ -7,12 +7,10 @@ const emptyCreateContext = () => ({
     Provider: _ => _,
     Consumer: () => null
 })
+
 const createContext = React.createContext || emptyCreateContext
 
-const { Provider, Consumer: Route } = createContext({
-    route: null,
-    previousRoute: null
-})
+const { Provider, Consumer: Route } = createContext({})
 
 class RouteProvider extends React.PureComponent {
     constructor(props) {
@@ -20,8 +18,11 @@ class RouteProvider extends React.PureComponent {
         const { router } = props
 
         this.state = {
-            route: router.getState()
+            route: router.getState(),
+            previousRoute: null,
+            router
         }
+
         this.listener = this.listener.bind(this)
     }
 
@@ -38,8 +39,6 @@ class RouteProvider extends React.PureComponent {
             '[react-router5][RouteProvider] missing listeners plugin'
         )
 
-        this.listener = (toState, fromState) =>
-            this.setState({ previousRoute: fromState, route: toState })
         this.router.addListener(this.listener)
     }
 
@@ -48,13 +47,11 @@ class RouteProvider extends React.PureComponent {
     }
 
     getChildContext() {
-        return { router: this.router }
+        return { router: this.props.router }
     }
 
     render() {
-        return (
-            <Provider value={this.state.route}>{this.props.children}</Provider>
-        )
+        return <Provider value={this.state}>{this.props.children}</Provider>
     }
 }
 
@@ -67,34 +64,28 @@ RouteProvider.propTypes = {
     children: PropTypes.node.isRequired
 }
 
-class RouteNodeConsumer extends React.Component {
-    shouldComponentUpdate(nextProps) {
+class RouteNode extends React.Component {
+    renderOnRouteNodeChange = routeContext => {
         const { intersection } = transitionPath(
-            nextProps.routeContext.route,
-            nextProps.routeContext.previousRoute
+            routeContext.route,
+            routeContext.previousRoute
         )
 
-        return intersection === nextProps.nodeName
+        if (!this.memoizedResult || intersection === this.props.nodeName) {
+            this.memoizedResult = this.props.children(routeContext)
+        }
+
+        return this.memoizedResult
     }
 
     render() {
-        return this.props.children(this.props.routeContext)
+        return <Route>{this.renderOnRouteNodeChange}</Route>
     }
 }
 
-RouteNodeConsumer.propTypes = {
+RouteNode.propTypes = {
     nodeName: PropTypes.string.isRequired,
     children: PropTypes.func.isRequired
-}
-
-function RouteNode(props) {
-    return (
-        <Route>
-            {routeContext => (
-                <RouteNodeConsumer {...props} routeContext={routeContext} />
-            )}
-        </Route>
-    )
 }
 
 export { RouteProvider, Route, RouteNode }
