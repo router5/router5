@@ -7,10 +7,10 @@
     ],
     "env": {
         "development": {
-            "presets": [ "es2015" ]
+            "presets": [ "env" ]
         },
         "es": {
-            "presets": [[ "es2015", { "modules": false }]]
+            "presets": [[ "env", { "modules": false }]]
         }
     }
 }

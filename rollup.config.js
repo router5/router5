@@ -5,7 +5,7 @@ import common from 'rollup-plugin-commonjs';
 
 const babelOptions = {
     runtimeHelpers: true,
-    presets: [['es2015', { modules: false }], 'react'],
+    presets: [['env', { modules: false }], 'react'],
     plugins: [
         'external-helpers',
         'transform-object-rest-spread',

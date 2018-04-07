@@ -10,7 +10,10 @@ import {
 } from '../modules'
 import { spy } from 'sinon'
 import listenersPlugin from '../../router5/plugins/listeners'
-import { mount } from 'enzyme'
+import { mount, configure } from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
+
+configure({ adapter: new Adapter() })
 
 describe('withRoute hoc', () => {
     let router

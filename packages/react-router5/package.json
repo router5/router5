@@ -31,5 +31,8 @@
     "prop-types": "~15.5.10",
     "router5-transition-path": "^5.0.0"
   },
-  "typings": "./index.d.ts"
+  "typings": "./index.d.ts",
+  "devDependencies": {
+    "enzyme-adapter-react-16": "~1.1.1"
+  }
 }
