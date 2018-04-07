@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 
 const argv = require('yargs').argv
-const app = argv.app || 'react'
+const app = argv.app || 'react-new-context-api'
 const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
         path: path.join(__dirname, 'build'),
         filename: isProd ? 'router5-' + app + '-example.js' : 'app.js'
     },
-    plugins: isProd
+    plugins: !isProd
         ? []
         : [
               new webpack.LoaderOptionsPlugin({

@@ -1171,6 +1171,235 @@ function withRoute(BaseComponent) {
     return ComponentWithRoute;
 }
 
+var _typeof$1 = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {
+    return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+} : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+};
+
+function nameToIDs(name) {
+    return name.split('.').reduce(function (ids, name) {
+        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+    }, []);
+}
+
+function exists(val) {
+    return val !== undefined && val !== null;
+}
+
+function hasMetaParams(state) {
+    return state && state.meta && state.meta.params;
+}
+
+function extractSegmentParams(name, state) {
+    if (!exists(state.meta.params[name])) return {};
+
+    return Object.keys(state.meta.params[name]).reduce(function (params, p) {
+        params[p] = state.params[p];
+        return params;
+    }, {});
+}
+
+function transitionPath(toState, fromState) {
+    var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+    var toStateIds = nameToIDs(toState.name);
+    var maxI = Math.min(fromStateIds.length, toStateIds.length);
+
+    function pointOfDifference() {
+        var i = void 0;
+
+        var _loop = function _loop() {
+            var left = fromStateIds[i];
+            var right = toStateIds[i];
+
+            if (left !== right) return {
+                v: i
+            };
+
+            var leftParams = extractSegmentParams(left, toState);
+            var rightParams = extractSegmentParams(right, fromState);
+
+            if (leftParams.length !== rightParams.length) return {
+                v: i
+            };
+            if (leftParams.length === 0) return 'continue';
+
+            var different = Object.keys(leftParams).some(function (p) {
+                return rightParams[p] !== leftParams[p];
+            });
+            if (different) {
+                return {
+                    v: i
+                };
+            }
+        };
+
+        for (i = 0; i < maxI; i += 1) {
+            var _ret = _loop();
+
+            switch (_ret) {
+                case 'continue':
+                    continue;
+
+                default:
+                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof$1(_ret)) === "object") return _ret.v;
+            }
+        }
+
+        return i;
+    }
+
+    var i = void 0;
+    if (!fromState) {
+        i = 0;
+    } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
+        console.warn('[router5-transition-path] Some states are missing metadata, reloading all segments');
+        i = 0;
+    } else {
+        i = pointOfDifference();
+    }
+
+    var toDeactivate = fromStateIds.slice(i).reverse();
+    var toActivate = toStateIds.slice(i);
+
+    var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
+
+    return {
+        intersection: intersection,
+        toDeactivate: toDeactivate,
+        toActivate: toActivate
+    };
+}
+
+var emptyCreateContext = function emptyCreateContext() {
+    return {
+        Provider: function Provider(_ref) {
+            var children = _ref.children;
+            return children;
+        },
+        Consumer: function Consumer() {
+            return null;
+        }
+    };
+};
+
+var createContext = React__default.createContext || emptyCreateContext;
+
+var _createContext = createContext({});
+var Provider = _createContext.Provider;
+var Route = _createContext.Consumer;
+
+var RouteProvider = function (_React$PureComponent) {
+    inherits(RouteProvider, _React$PureComponent);
+
+    function RouteProvider(props) {
+        classCallCheck(this, RouteProvider);
+
+        var _this = possibleConstructorReturn(this, (RouteProvider.__proto__ || Object.getPrototypeOf(RouteProvider)).call(this, props));
+
+        var router = props.router;
+
+
+        _this.router = router;
+        _this.state = {
+            route: router.getState(),
+            previousRoute: null,
+            router: router
+        };
+
+        _this.listener = _this.listener.bind(_this);
+        return _this;
+    }
+
+    createClass(RouteProvider, [{
+        key: 'listener',
+        value: function listener(toState, fromState) {
+            this.setState({
+                route: toState,
+                previousRoute: fromState
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            ifNot(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][RouteProvider] missing listeners plugin');
+
+            this.router.addListener(this.listener);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            this.router.removeListener(this.listener);
+        }
+    }, {
+        key: 'getChildContext',
+        value: function getChildContext() {
+            return { router: this.props.router };
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return React__default.createElement(
+                Provider,
+                { value: this.state },
+                this.props.children
+            );
+        }
+    }]);
+    return RouteProvider;
+}(React__default.PureComponent);
+
+RouteProvider.childContextTypes = {
+    router: index.object.isRequired
+};
+
+RouteProvider.propTypes = {
+    router: index.object.isRequired,
+    children: index.node.isRequired
+};
+
+var RouteNode = function (_React$Component) {
+    inherits(RouteNode, _React$Component);
+
+    function RouteNode(props, context) {
+        classCallCheck(this, RouteNode);
+
+        var _this2 = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
+
+        _this2.renderOnRouteNodeChange = _this2.renderOnRouteNodeChange.bind(_this2);
+        return _this2;
+    }
+
+    createClass(RouteNode, [{
+        key: 'renderOnRouteNodeChange',
+        value: function renderOnRouteNodeChange(routeContext) {
+            var _transitionPath = transitionPath(routeContext.route, routeContext.previousRoute),
+                intersection = _transitionPath.intersection;
+
+            if (!this.memoizedResult || intersection === this.props.nodeName) {
+                this.memoizedResult = this.props.children(routeContext);
+            }
+
+            return this.memoizedResult;
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return React__default.createElement(
+                Route,
+                null,
+                this.renderOnRouteNodeChange
+            );
+        }
+    }]);
+    return RouteNode;
+}(React__default.Component);
+
+RouteNode.propTypes = {
+    nodeName: index.string.isRequired,
+    children: index.func.isRequired
+};
+
 var Link = withRoute(BaseLink);
 
 exports.BaseLink = BaseLink;
@@ -1178,6 +1407,9 @@ exports.routeNode = routeNode;
 exports.RouterProvider = RouterProvider;
 exports.withRoute = withRoute;
 exports.Link = Link;
+exports.RouteProvider = RouteProvider;
+exports.Route = Route;
+exports.RouteNode = RouteNode;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

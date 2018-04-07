@@ -4,7 +4,7 @@ import transitionPath from 'router5-transition-path'
 import { ifNot } from './utils'
 
 const emptyCreateContext = () => ({
-    Provider: _ => _,
+    Provider: ({ children }) => children,
     Consumer: () => null
 })
 
@@ -17,6 +17,7 @@ class RouteProvider extends React.PureComponent {
         super(props)
         const { router } = props
 
+        this.router = router
         this.state = {
             route: router.getState(),
             previousRoute: null,
@@ -65,7 +66,13 @@ RouteProvider.propTypes = {
 }
 
 class RouteNode extends React.Component {
-    renderOnRouteNodeChange = routeContext => {
+    constructor(props, context) {
+        super(props, context)
+
+        this.renderOnRouteNodeChange = this.renderOnRouteNodeChange.bind(this)
+    }
+
+    renderOnRouteNodeChange(routeContext) {
         const { intersection } = transitionPath(
             routeContext.route,
             routeContext.previousRoute

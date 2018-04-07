@@ -14,7 +14,7 @@ class InboxItem extends Component {
     }
 
     render() {
-        var { mailTitle, mailMessage } = this.props
+        const { mailTitle, mailMessage } = this.props
 
         return (
             <li onClick={this.clickHandler}>

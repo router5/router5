@@ -36,9 +36,9 @@
     "deku-redux": "~1.1.2",
     "deku-router5": "^5.0.1",
     "lodash.find": "~4.6.0",
-    "proptypes": "~1.1.0",
-    "react": "~15.5.4",
-    "react-dom": "~15.5.4",
+    "prop-types": "~15.6.1",
+    "react": "~16.3.0",
+    "react-dom": "~16.3.0",
     "react-redux": "~5.0.0",
     "react-router5": "^5.5.2",
     "redux": "~3.6.0",
@@ -46,6 +46,9 @@
     "redux-thunk": "~2.2.0",
     "reselect": "~3.0.1",
     "router5": "^5.8.3",
-    "virtual-element": "~1.2.0"
+    "virtual-element": "~1.2.0",
+    "webpack": "~2.6.1",
+    "webpack-dev-middleware": "~1.10.2",
+    "webpack-dev-server": "~2.4.5"
   }
 }
