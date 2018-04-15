@@ -10,7 +10,9 @@
     "dev": "NODE_ENV=development webpack-dev-server",
     "bundle": "NODE_ENV=production webpack",
     "start": "node server/index.js",
-    "deploy": "now --npm --public -e NODE_ENV='production' && now alias"
+    "predeploy": "npm run bundle",
+    "deploy": "now --npm --public -e NODE_ENV='production'",
+    "postdeploy": "now alias"
   },
   "now": {
     "alias": "router5"

@@ -14,14 +14,19 @@ function routeNode(nodeName) {
                 }
             }
 
+            nodeListener = (toState, fromState) => {
+                this.setState({
+                    previousRoute: fromState,
+                    route: toState
+                })
+            }
+
             componentDidMount() {
                 ifNot(
                     this.router.hasPlugin('LISTENERS_PLUGIN'),
                     '[react-router5][routeNode] missing listeners plugin'
                 )
 
-                this.nodeListener = (toState, fromState) =>
-                    this.setState({ previousRoute: fromState, route: toState })
                 this.router.addNodeListener(nodeName, this.nodeListener)
             }
 
