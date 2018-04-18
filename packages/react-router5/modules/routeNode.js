@@ -12,9 +12,10 @@ function routeNode(nodeName) {
                     previousRoute: null,
                     route: this.router.getState()
                 }
+                this.nodeListener = this.nodeListener.bind(this)
             }
 
-            nodeListener = (toState, fromState) => {
+            nodeListener(toState, fromState) {
                 this.setState({
                     previousRoute: fromState,
                     route: toState

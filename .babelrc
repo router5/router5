@@ -1,13 +1,16 @@
 {
-    "presets": [ "react", "env" ],
+    "presets": ["react"],
     "plugins": [
         "transform-object-rest-spread",
         "transform-class-properties",
         "transform-export-extensions"
     ],
     "env": {
+        "development": {
+            "presets": ["env"]
+        },
         "es": {
-            "presets": [[ "env", { "modules": false }], "react"]
+            "presets": [["env", { "modules": false }]]
         }
     }
 }
