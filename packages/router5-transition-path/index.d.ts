@@ -9,7 +9,8 @@ declare module 'router5-transition-path' {
         toActivate: string[]
     }
 
-    function transitionPath(toState: State, fromState?: State): TransitionPath
-
-    export default transitionPath
+    export default function transitionPath(
+        toState: State,
+        fromState?: State
+    ): TransitionPath
 }

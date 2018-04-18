@@ -20,7 +20,7 @@
   },
   "homepage": "https://router5.github.io",
   "peerDependencies": {
-    "router5": "^5.0.0"
+    "router5": "^5.0.0 || ^6.0.0"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "~0.2.1"

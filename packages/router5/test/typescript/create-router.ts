@@ -8,7 +8,7 @@ const routes: Route[] = [
     { name: 'users', path: '/users/:id' }
 ]
 
-const options: Options = {
+const options: Partial<Options> = {
     defaultRoute: 'home',
     defaultParams: { lang: 'en' },
     strictTrailingSlash: false,

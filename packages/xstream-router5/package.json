@@ -27,7 +27,7 @@
     "xstream": "^10.0.0"
   },
   "peerDependencies": {
-    "router5": "^5.0.1",
+    "router5": "^5.0.0 || ^6.0.0",
     "xstream": "^10.0.0"
   }
 }
