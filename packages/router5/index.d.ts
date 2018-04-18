@@ -23,10 +23,6 @@ declare module 'router5' {
         ActivationFn,
         ActivationFnFactory
     } from 'router5/core/route-lifecycle'
-    import {
-        ActivationFn as RouterActivationHandler,
-        ActivationFnFactory as RouterActivationHandlerFactory
-    } from 'router5/core/route-lifecycle'
     import loggerPlugin from 'router5/plugins/loggers'
     import transitionPath from 'router5-transition-path'
 
@@ -56,10 +52,7 @@ declare module 'router5' {
         Router,
         RouterOptions,
         State,
-        StateMeta,
-        // compatibility
-        RouterActivationHandler,
-        RouterActivationHandlerFactory
+        StateMeta
     }
 
     export default createRouter
@@ -138,15 +131,15 @@ declare module 'router5/create-router' {
     }
 
     export interface Options {
-        defaultRoute?: string
-        defaultParams?: Params
-        strictTrailingSlash?: boolean
-        trailingSlashMode?: TrailingSlashMode
-        queryParamsMode?: QueryParamsMode
-        autoCleanUp?: boolean
-        allowNotFound?: boolean
-        strongMatching?: boolean
-        rewritePathOnMatch?: boolean
+        defaultRoute: string
+        defaultParams: Params
+        strictTrailingSlash: boolean
+        trailingSlashMode: TrailingSlashMode
+        queryParamsMode: QueryParamsMode
+        autoCleanUp: boolean
+        allowNotFound: boolean
+        strongMatching: boolean
+        rewritePathOnMatch: boolean
         queryParams?: QueryParamsOptions
     }
 
