@@ -9,6 +9,10 @@ declare module 'router5-transition-path' {
         toActivate: string[]
     }
 
+    export function shouldUpdateNode(
+        nodeName: string
+    ): (toState: State, fromState?: State) => Boolean
+
     export default function transitionPath(
         toState: State,
         fromState?: State

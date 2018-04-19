@@ -1,4 +1,4 @@
-import transitionPath from '../modules'
+import transitionPath, { shouldUpdateNode } from '../modules'
 import { expect } from 'chai'
 import tt from 'typescript-definition-tester'
 
@@ -65,6 +65,55 @@ describe('router5-transition-path', function() {
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             ).intersection
         ).to.equal('a.b.c')
+    })
+
+    describe('shouldUpdateNode', () => {
+        const meta = {
+            params: {
+                a: {},
+                'a.b': { p1: 'url' },
+                'a.b.c': { p2: 'url' },
+                'a.b.c.d': { p3: 'url' },
+                'a.b.c.e': { p4: 'url' }
+            }
+        }
+
+        it('should tell intersection node to update', () => {
+            const shouldUpdate = shouldUpdateNode('a')(
+                { name: 'a.b.c.d', params: { p1: 0, p2: 2, p3: 3 }, meta },
+                { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
+            )
+
+            expect(shouldUpdate).to.equal(true)
+        })
+
+        it('should tell node above intersection to not update', () => {
+            const shouldUpdate = shouldUpdateNode('')(
+                { name: 'a.b.c.d', params: { p1: 0, p2: 2, p3: 3 }, meta },
+                { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
+            )
+
+            expect(shouldUpdate).to.equal(false)
+        })
+
+        it('should tell node below intersection to update if not deactivated', () => {
+            const fromState = {
+                name: 'a.b.c.d',
+                params: { p1: 0, p2: 2, p3: 3 },
+                meta
+            }
+            const toState = {
+                name: 'a.b.c.e',
+                params: { p1: 1, p2: 2, p4: 3 },
+                meta
+            }
+
+            expect(shouldUpdateNode('a.b')(toState, fromState)).to.equal(true)
+            expect(shouldUpdateNode('a.b.c')(toState, fromState)).to.equal(true)
+            expect(shouldUpdateNode('a.b.c.e')(toState, fromState)).to.equal(
+                false
+            )
+        })
     })
 
     describe('TypeScript definitions', function() {
