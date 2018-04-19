@@ -92,7 +92,6 @@
       if (!fromState) {
           i = 0;
       } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
-          console.warn('[router5-transition-path] Some states are missing metadata, reloading all segments');
           i = 0;
       } else {
           i = pointOfDifference();
