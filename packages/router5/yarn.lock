@@ -8,16 +8,12 @@ path-parser@4.0.4:
   dependencies:
     search-params "2.1.2"
 
-route-node@3.0.3:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/route-node/-/route-node-3.0.3.tgz#aab468bbefff6ca982904d195bd008c11b3c9461"
+route-node@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-3.1.0.tgz#7ced7ebd01a84cd7d84bd94ca831288200a7a0d4"
   dependencies:
     path-parser "4.0.4"
     search-params "2.1.2"
-
-router5-transition-path@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/router5-transition-path/-/router5-transition-path-5.1.1.tgz#89698deeaedcf0831a5c3393d8ae16c9f06a9744"
 
 search-params@2.1.2:
   version "2.1.2"

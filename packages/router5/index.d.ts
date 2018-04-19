@@ -141,6 +141,7 @@ declare module 'router5/create-router' {
         strongMatching: boolean
         rewritePathOnMatch: boolean
         queryParams?: QueryParamsOptions
+        caseSensitive: boolean
     }
 
     export interface Router {

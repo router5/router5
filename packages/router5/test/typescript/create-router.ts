@@ -16,7 +16,8 @@ const options: Partial<Options> = {
     autoCleanUp: true,
     queryParamsMode: 'default',
     allowNotFound: false,
-    strongMatching: true
+    strongMatching: true,
+    caseSensitive: false
 }
 
 const deps: Dependencies = { store: {} }

@@ -1,12 +1,13 @@
-## router5@6.0.0 (2018-04-18)
+## router5@6.0.0 (2018-04-19)
 
 #### Feature
 * `router5`
   * Navigation options are now added to state objects (in `meta`)
   * You can now specify your custom navigation options: they will be added to state objects and are usable by your custom plugins and middlewares
   * New `queryParams` option to configure how query parameters are built, and how they are parsed
+  * New `caseSensitive` option (default to `false`)
 * `react-router5`
-  * Alternative components using a rendering function have been added in addition to the higher-order components. Those components require a new provider, because they leverage React new context API (React >= 16.3, see https://github.com/router5/router5/tree/master/packages/react-router5). Higher-order components won't be deprecated, and will evolve to use React new context API once deprecated.
+  * Alternative components using a render function have been added in addition to the higher-order components. Those components require a new provider, because they leverage React new context API (React >= 16.3, see https://github.com/router5/router5/tree/master/packages/react-router5). Higher-order components won't be deprecated, and will evolve to use React new context API once deprecated.
 
 #### Bug fix
 * `router5`
@@ -15,6 +16,7 @@
 
 ### Breaking changes
 
+* Path matching used to be case sensitive and it is now case insensitive by default (new `caseSensitive` option)
 * Query parameters in paths can no longer be defined with `[]` (brackets should be removed)
 * Option `trailingSlash` has been renamed to `strictTrailingSlash`: by default it is `false`
 * Option `useTrailingSlash` has been renamed to `trailingSlashMode` with value being `'default'`, `'never'` or `'always'`

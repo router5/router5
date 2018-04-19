@@ -25,7 +25,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "3.0.3",
+    "route-node": "3.1.0",
     "router5-transition-path": "^5.1.1"
   },
   "typings": "./index.d.ts"

@@ -15,7 +15,8 @@ const defaultOptions = {
     autoCleanUp: true,
     allowNotFound: false,
     strongMatching: true,
-    rewritePathOnMatch: true
+    rewritePathOnMatch: true,
+    caseSensitive: false
 }
 
 /**
