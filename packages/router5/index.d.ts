@@ -23,10 +23,6 @@ declare module 'router5' {
         ActivationFn,
         ActivationFnFactory
     } from 'router5/core/route-lifecycle'
-    import {
-        ActivationFn as RouterActivationHandler,
-        ActivationFnFactory as RouterActivationHandlerFactory
-    } from 'router5/core/route-lifecycle'
     import loggerPlugin from 'router5/plugins/loggers'
     import transitionPath from 'router5-transition-path'
 
@@ -56,10 +52,7 @@ declare module 'router5' {
         Router,
         RouterOptions,
         State,
-        StateMeta,
-        // compatibility
-        RouterActivationHandler,
-        RouterActivationHandlerFactory
+        StateMeta
     }
 
     export default createRouter
@@ -96,6 +89,12 @@ declare module 'router5/constants' {
 
 declare module 'router5/create-router' {
     import { ActivationFnFactory } from 'router5/core/route-lifecycle'
+    import { Options as NavigationOptions } from 'router5/core/navigation'
+    import {
+        TrailingSlashMode,
+        QueryParamsMode,
+        QueryParamsOptions
+    } from 'route-node'
 
     export interface Dependencies {
         [key: string]: any
@@ -119,6 +118,8 @@ declare module 'router5/create-router' {
     export interface StateMeta {
         id: number
         params: Params
+        options: NavigationOptions
+        redirected: Boolean
         source?: string
     }
 
@@ -132,12 +133,15 @@ declare module 'router5/create-router' {
     export interface Options {
         defaultRoute: string
         defaultParams: Params
-        trailingSlash: boolean
-        useTrailingSlash: boolean
+        strictTrailingSlash: boolean
+        trailingSlashMode: TrailingSlashMode
+        queryParamsMode: QueryParamsMode
         autoCleanUp: boolean
-        strictQueryParams: boolean
         allowNotFound: boolean
         strongMatching: boolean
+        rewritePathOnMatch: boolean
+        queryParams?: QueryParamsOptions
+        caseSensitive: boolean
     }
 
     export interface Router {
@@ -215,6 +219,7 @@ declare module 'router5/core/navigation' {
         reload?: boolean
         skipTransition?: boolean
         force?: boolean
+        [key: string]: any
     }
 
     type NavigationOptions = Options

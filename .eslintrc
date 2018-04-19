@@ -1,7 +1,12 @@
 {
-    "extends": "eslint:recommended",
+    "extends": [
+        "eslint:recommended"
+    ],
     // Parser
     "parser": "babel-eslint",
+    "plugins": [
+        "react"
+    ],
     // ECMA Features
     "parserOptions": {
         "ecmaVersion": 6,
@@ -14,7 +19,8 @@
             "destructuring": true,
             "modules": true,
             "objectLiteralComputedProperties": true,
-            "templateStrings": true
+            "templateStrings": true,
+            "jsx": true
         }
     },
     "rules": {
@@ -50,6 +56,10 @@
         "no-var": 2,
         "no-this-before-super": 2,
         "object-shorthand": 2,
+		// React
+		"react/jsx-uses-react": 2,
+		"react/jsx-uses-vars": 2,
+		"react/react-in-jsx-scope": 2
     },
     "env": {
         "node": true,

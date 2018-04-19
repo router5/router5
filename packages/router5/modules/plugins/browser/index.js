@@ -56,11 +56,12 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                 options.mergeState === true
                     ? { ...browser.getState(), ...trimmedState }
                     : trimmedState
+
             if (replace) browser.replaceState(finalState, '', url)
             else browser.pushState(finalState, '', url)
         }
 
-        function onPopState(evt) {
+        function onPopState(evt = {}) {
             const routerState = router.getState()
             // Do nothing if no state or if last know state is poped state (it should never happen)
             const newState = !evt.state || !evt.state.name
@@ -70,8 +71,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                       evt.state.name,
                       evt.state.params,
                       evt.state.path,
-                      evt.state.meta.params,
-                      source,
+                      { ...evt.state.meta, source },
                       evt.state.meta.id
                   )
             const { defaultRoute, defaultParams } = routerOptions
@@ -106,7 +106,8 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                             router.navigate(name, params, {
                                 ...transitionOptions,
                                 replace: true,
-                                force: true
+                                force: true,
+                                redirected: true
                             })
                         } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
                             const url = router.buildUrl(

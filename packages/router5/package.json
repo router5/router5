@@ -5,9 +5,6 @@
   "main": "index.js",
   "jsnext:main": "dist/es/index.js",
   "module": "dist/es/index.js",
-  "scripts": {
-    "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive --require ./test/_helpers.js 'test/**/*.js'"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
@@ -28,7 +25,7 @@
   },
   "homepage": "http://router5.github.io",
   "dependencies": {
-    "route-node": "2.0.3",
+    "route-node": "3.1.0",
     "router5-transition-path": "^5.1.1"
   },
   "typings": "./index.d.ts"

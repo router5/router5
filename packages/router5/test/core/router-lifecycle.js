@@ -20,7 +20,7 @@ describe('core/router-lifecycle', function() {
         expect(router.getState()).to.equal(null)
         expect(router.isActive('home')).to.equal(false)
 
-        router.start('', function() {
+        router.start('/not-existing', function() {
             expect(router.isStarted()).to.equal(true)
             expect(omitMeta(router.getState())).to.eql({
                 name: 'home',
@@ -55,14 +55,14 @@ describe('core/router-lifecycle', function() {
 
     it('should start with the start route if matched', function(done) {
         router.stop()
-        router.start('/section123/query?param1[]=1__1&param1[]=2__2', function(
+        router.start('/section123/query?param1=1__1&param1=2__2', function(
             err,
             state
         ) {
             expect(omitMeta(state)).to.eql({
                 name: 'section.query',
                 params: { section: 'section123', param1: ['1__1', '2__2'] },
-                path: '/section123/query?param1[]=1__1&param1[]=2__2'
+                path: '/section123/query?param1=1__1&param1=2__2'
             })
             done()
         })
@@ -117,31 +117,31 @@ describe('core/router-lifecycle', function() {
     it('should start with a not found error if no matched start state and no default route', function(done) {
         router.stop()
         router.setOption('defaultRoute', null)
-        router.start('', function(err) {
+        router.start('/not-existing', function(err) {
             expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
             done()
         })
     })
 
     it('should not match an URL with extra trailing slashes', function(done) {
+        router.setOption('strictTrailingSlash', true)
         router.stop()
         router.start('/users/list/', function(err, state) {
             expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
             expect(state).to.equal(null)
+            router.setOption('strictTrailingSlash', false)
             done()
         })
     })
 
     it('should match an URL with extra trailing slashes', function(done) {
-        router.setOption('trailingSlash', 1)
         router.stop()
         router.start('/users/list/', function(err, state) {
             expect(omitMeta(state)).to.eql({
                 name: 'users.list',
                 params: {},
-                path: '/users/list/'
+                path: '/users/list'
             })
-            router.setOption('trailingSlash', 0)
             done()
         })
     })
@@ -170,7 +170,7 @@ describe('core/router-lifecycle', function() {
         router.stop()
         router.setOption('defaultRoute', 'fake.route')
 
-        router.start('', function(err, state) {
+        router.start('/not-existing', function(err, state) {
             expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
             done()
         })

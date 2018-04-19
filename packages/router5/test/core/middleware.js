@@ -103,4 +103,26 @@ describe('core/middleware', () => {
             })
         })
     })
+
+    it('should pass state from middleware to middleware', () => {
+        const m1 = () => (toState, fromState, done) => {
+            done(null, { ...toState, m1: true })
+        }
+        const m2 = () => toState =>
+            Promise.resolve({ ...toState, m2: toState.m1 })
+
+        const m3 = () => (toState, fromState, done) => {
+            done(null, { ...toState, m3: toState.m3 })
+        }
+        router.clearMiddleware()
+        router.useMiddleware(m1, m2, m3)
+
+        router.start('', () => {
+            router.navigate('users', function(err, state) {
+                expect(state.m1).to.equal(true)
+                expect(state.m2).to.equal(true)
+                expect(state.m3).to.equal(true)
+            })
+        })
+    })
 })

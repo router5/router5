@@ -18,9 +18,9 @@
   "bugs": {
     "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "https://router5.github.io",
+  "homepage": "https://github.com/router5/router5/tree/master/packages/router5-transition-path",
   "peerDependencies": {
-    "router5": "^5.0.0"
+    "router5": "^5.0.0 || ^6.0.0"
   },
   "devDependencies": {
     "babel-plugin-add-module-exports": "~0.2.1"

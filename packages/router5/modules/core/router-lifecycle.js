@@ -4,7 +4,6 @@ const noop = function() {}
 
 export default function withRouterLifecycle(router) {
     let started = false
-    const options = router.getOptions()
 
     router.isStarted = isStarted
     router.start = start
@@ -25,6 +24,7 @@ export default function withRouterLifecycle(router) {
      * @return {Object}                         The router instance
      */
     function start(...args) {
+        const options = router.getOptions()
         const lastArg = args[args.length - 1]
         const done = typeof lastArg === 'function' ? lastArg : noop
         const startPathOrState =
@@ -80,7 +80,7 @@ export default function withRouterLifecycle(router) {
                 router.navigate(
                     route.name,
                     route.params,
-                    { replace: true, reload: true },
+                    { replace: true, reload: true, redirected: true },
                     done
                 )
             const transitionToState = state => {
@@ -104,7 +104,9 @@ export default function withRouterLifecycle(router) {
                 // If default, navigate to default
                 navigateToDefault()
             } else if (options.allowNotFound) {
-                transitionToState(router.makeNotFoundState(startPath))
+                transitionToState(
+                    router.makeNotFoundState(startPath, { replace: true })
+                )
             } else {
                 // No start match, no default => do nothing
                 cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null)

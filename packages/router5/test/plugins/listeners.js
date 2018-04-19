@@ -30,7 +30,11 @@ describe('listenersPlugin', function() {
 
         router.start(function(err, state) {
             expect(state).to.eql({
-                meta: { id: 1, params: { home: {} } },
+                meta: {
+                    id: 1,
+                    options: { replace: true },
+                    params: { home: {} }
+                },
                 name: 'home',
                 path: '/home',
                 params: {}

@@ -1,5 +1,5 @@
 {
-    "presets": [ "react" ],
+    "presets": ["react"],
     "plugins": [
         "transform-object-rest-spread",
         "transform-class-properties",
@@ -7,10 +7,10 @@
     ],
     "env": {
         "development": {
-            "presets": [ "es2015" ]
+            "presets": ["env"]
         },
         "es": {
-            "presets": [[ "es2015", { "modules": false }]]
+            "presets": [["env", { "modules": false }]]
         }
     }
 }

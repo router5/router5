@@ -9,12 +9,14 @@ import withCloning from './core/clone'
 import constants from './constants'
 
 const defaultOptions = {
-    trailingSlash: 0,
-    useTrailingSlash: undefined,
+    trailingSlashMode: 'default',
+    queryParamsMode: 'default',
+    strictTrailingSlash: false,
     autoCleanUp: true,
-    strictQueryParams: false,
     allowNotFound: false,
-    strongMatching: true
+    strongMatching: true,
+    rewritePathOnMatch: true,
+    caseSensitive: false
 }
 
 /**
@@ -130,12 +132,11 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {String} name         The state name
      * @param  {Object} params       The state params
      * @param  {String} path         The state path
-     * @param  {Object} [metaParams] Description of the state params
-     * @param  {String} [source]     The source of the routing state
+     * @param  {Object} [meta]       The meta object
      * @param  {Number} [forceId]    The ID to use in meta (incremented by default)
      * @return {Object}              The state object
      */
-    function makeState(name, params, path, metaParams, source, forceId) {
+    function makeState(name, params, path, meta, forceId) {
         const state = {}
         const setProp = (key, value) =>
             Object.defineProperty(state, key, { value, enumerable: true })
@@ -143,7 +144,7 @@ function createRouter(routes, opts = {}, deps = {}) {
         setProp('params', params)
         setProp('path', path)
 
-        if (metaParams || source) {
+        if (meta) {
             let finalStateId
 
             if (forceId === undefined) {
@@ -153,11 +154,7 @@ function createRouter(routes, opts = {}, deps = {}) {
                 finalStateId = forceId
             }
 
-            const meta = { params: metaParams, id: finalStateId }
-
-            if (source) meta.source = source
-
-            setProp('meta', meta)
+            setProp('meta', { ...meta, id: finalStateId })
         }
 
         return state
@@ -165,11 +162,12 @@ function createRouter(routes, opts = {}, deps = {}) {
 
     /**
      * Build a not found state for a given path
-     * @param  {String} path The unmatched path
-     * @return {Object}      The not found state object
+     * @param  {String} path      The unmatched path
+     * @param  {Object} [options] The navigation options
+     * @return {Object}           The not found state object
      */
-    function makeNotFoundState(path) {
-        return makeState(constants.UNKNOWN_ROUTE, { path }, path, {})
+    function makeNotFoundState(path, options) {
+        return makeState(constants.UNKNOWN_ROUTE, { path }, path, { options })
     }
 
     /**
@@ -207,9 +205,6 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @return {Object}       The router instance
      */
     function setOption(option, value) {
-        if (option === 'useTrailingSlash' && value !== undefined) {
-            options.trailingSlash = true
-        }
         options[option] = value
         return router
     }

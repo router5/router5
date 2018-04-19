@@ -21,13 +21,13 @@ packages.forEach(pkg => {
     console.log(`Building ${pkg}`);
 
     execSync(
-        `babel packages/${pkg}/modules --out-dir packages/${pkg}/${cjsDir}`
+        `BABEL_ENV=development ./node_modules/.bin/babel packages/${pkg}/modules --out-dir packages/${pkg}/${cjsDir}`
     );
 
     console.log('✓ CommonJS');
 
     execSync(
-        `BABEL_ENV=es babel packages/${pkg}/modules --out-dir packages/${pkg}/dist/es`
+        `BABEL_ENV=es ./node_modules/.bin/babel packages/${pkg}/modules --out-dir packages/${pkg}/dist/es`
     );
 
     console.log('✓ ES');

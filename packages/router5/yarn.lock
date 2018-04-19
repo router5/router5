@@ -2,19 +2,19 @@
 # yarn lockfile v1
 
 
-path-parser@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-3.0.1.tgz#90abf7d98af74b1f7da6d312786591a51c887619"
+path-parser@4.0.4:
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-4.0.4.tgz#ba9cb1d9b38d924a640bec2d93b403050d060fe6"
   dependencies:
-    search-params "~1.3.0"
+    search-params "2.1.2"
 
-route-node@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/route-node/-/route-node-2.0.3.tgz#f1da1fb058313820994086df984aa6103abdbc9e"
+route-node@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-3.1.0.tgz#7ced7ebd01a84cd7d84bd94ca831288200a7a0d4"
   dependencies:
-    path-parser "3.0.1"
-    search-params "~1.3.0"
+    path-parser "4.0.4"
+    search-params "2.1.2"
 
-search-params@~1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/search-params/-/search-params-1.3.0.tgz#ba1e1c01dcbd8a2e41a25236f602f2cbf710d688"
+search-params@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/search-params/-/search-params-2.1.2.tgz#e0107b7e6f2e973d7991b8fbffc8b6664bc96edd"

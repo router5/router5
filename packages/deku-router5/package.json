@@ -20,10 +20,10 @@
   "bugs": {
     "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "http://router5.github.com",
+  "homepage": "https://github.com/router5/router5/tree/master/packages/deku-router5",
   "peerDependencies": {
     "deku": "~0.5.0 || ^1.0.0",
-    "router5": "^5.0.0"
+    "router5": "^5.0.0 || ^6.0.0"
   },
   "dependencies": {
     "is-equal-shallow": "^0.1.3"

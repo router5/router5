@@ -9,14 +9,18 @@ const base = window.location.pathname
 let router
 const hashPrefix = '!'
 
+let currentHistoryState
 const mockedBrowser = {
     ...browser,
     getBase: () => base,
-    pushState: spy(),
-    replaceState: spy(),
+    pushState: state => (currentHistoryState = state),
+    replaceState: state => (currentHistoryState = state),
     addPopstateListener: spy(),
-    removePopstateListener: spy()
+    removePopstateListener: spy(),
+    getState: () => currentHistoryState
 }
+spy(mockedBrowser, 'pushState')
+spy(mockedBrowser, 'replaceState')
 
 function withoutMeta(state) {
     if (!state.meta.id) {
@@ -46,9 +50,8 @@ function test(useHash) {
 
     describe(useHash ? 'With hash' : 'Without hash', function() {
         before(function() {
-            // window.history.replaceState({}, '', base);
-            if (router) router.stop()
             router = createTestRouter()
+            currentHistoryState = undefined
             router.usePlugin(
                 browserPlugin({ base, useHash, hashPrefix }, mockedBrowser)
             )

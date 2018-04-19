@@ -22,13 +22,13 @@
   "bugs": {
     "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "http://router5.github.io",
+  "homepage": "https://github.com/router5/router5/tree/master/packages/rxjs-router5",
   "dependencies": {
     "router5-transition-path": "^5.1.1",
     "rxjs": "~5.4.3"
   },
   "peerDependencies": {
-    "router5": "^5.0.0",
+    "router5": "^5.0.0 || ^6.0.0",
     "rxjs": "^5.0.0"
   },
   "typings": "./index.d.ts"
