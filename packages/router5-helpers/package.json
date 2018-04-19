@@ -18,6 +18,6 @@
   "bugs": {
     "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "https://router5.github.io",
+  "homepage": "https://github.com/router5/router5/tree/master/packages/router5-helpers",
   "typings": "./index.d.ts"
 }
