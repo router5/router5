@@ -1,4 +1,4 @@
-import transitionPath from 'router5-transition-path'
+import { shouldUpdateNode } from 'router5-transition-path'
 
 function routeNodeSelector(routeNode, reducerKey = 'router') {
     const routerStateSelector = state =>
@@ -7,15 +7,15 @@ function routeNodeSelector(routeNode, reducerKey = 'router') {
 
     return function(state) {
         const { route, previousRoute } = routerStateSelector(state)
-        const intersection = route
-            ? transitionPath(route, previousRoute).intersection
-            : ''
+        const shouldUpdate = !route
+            ? true
+            : shouldUpdateNode(routeNode)(route, previousRoute)
 
         if (!lastReturnedValue) {
             lastReturnedValue = { route, previousRoute }
         } else if (
             !previousRoute ||
-            (previousRoute !== route && intersection === routeNode)
+            (previousRoute !== route && shouldUpdate)
         ) {
             lastReturnedValue = { route, previousRoute }
         }
