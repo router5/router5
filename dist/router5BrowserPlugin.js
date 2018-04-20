@@ -47,7 +47,7 @@
      * Browser functions needed by router5
      */
     var getBase = function getBase() {
-        return window.location.pathname.replace(/\/$/, '');
+        return window.location.pathname;
     };
 
     var supportsPopStateOnHashChange = function supportsPopStateOnHashChange() {

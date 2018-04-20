@@ -1013,189 +1013,6 @@
 	    return component.displayName || component.name || 'Component';
 	};
 
-	var ifNot = function ifNot(condition, errorMessage) {
-	    if (!condition) throw new Error(errorMessage);
-	};
-
-	function routeNode(nodeName) {
-	    return function routeNodeWrapper(RouteSegment) {
-	        var RouteNode = function (_Component) {
-	            inherits(RouteNode, _Component);
-
-	            function RouteNode(props, context) {
-	                classCallCheck(this, RouteNode);
-
-	                var _this = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
-
-	                _this.router = context.router;
-	                _this.state = {
-	                    previousRoute: null,
-	                    route: _this.router.getState()
-	                };
-	                _this.nodeListener = _this.nodeListener.bind(_this);
-	                return _this;
-	            }
-
-	            createClass(RouteNode, [{
-	                key: 'nodeListener',
-	                value: function nodeListener(toState, fromState) {
-	                    this.setState({
-	                        previousRoute: fromState,
-	                        route: toState
-	                    });
-	                }
-	            }, {
-	                key: 'componentDidMount',
-	                value: function componentDidMount() {
-	                    ifNot(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][routeNode] missing listeners plugin');
-
-	                    this.router.addNodeListener(nodeName, this.nodeListener);
-	                }
-	            }, {
-	                key: 'componentWillUnmount',
-	                value: function componentWillUnmount() {
-	                    this.router.removeNodeListener(nodeName, this.nodeListener);
-	                }
-	            }, {
-	                key: 'render',
-	                value: function render() {
-	                    var props = this.props,
-	                        router = this.router;
-	                    var _state = this.state,
-	                        previousRoute = _state.previousRoute,
-	                        route = _state.route;
-
-	                    var component = React.createElement(RouteSegment, _extends({}, props, {
-	                        router: router,
-	                        previousRoute: previousRoute,
-	                        route: route
-	                    }));
-
-	                    return component;
-	                }
-	            }]);
-	            return RouteNode;
-	        }(React.Component);
-
-	        RouteNode.contextTypes = {
-	            router: propTypes.object.isRequired
-	        };
-
-	        RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';
-
-	        return RouteNode;
-	    };
-	}
-
-	var RouterProvider = function (_Component) {
-	    inherits(RouterProvider, _Component);
-
-	    function RouterProvider(props, context) {
-	        classCallCheck(this, RouterProvider);
-
-	        var _this = possibleConstructorReturn(this, (RouterProvider.__proto__ || Object.getPrototypeOf(RouterProvider)).call(this, props, context));
-
-	        _this.router = props.router;
-	        return _this;
-	    }
-
-	    createClass(RouterProvider, [{
-	        key: 'getChildContext',
-	        value: function getChildContext() {
-	            return { router: this.router };
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            if (this.props.router !== nextProps.router) {
-	                console.error('[react-router5][RouterProvider] does not support changing the router object.');
-	            }
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var children = this.props.children;
-
-	            return React.Children.only(children);
-	        }
-	    }]);
-	    return RouterProvider;
-	}(React.Component);
-
-	RouterProvider.propTypes = {
-	    router: propTypes.object.isRequired,
-	    children: propTypes.element.isRequired
-	};
-
-	RouterProvider.childContextTypes = {
-	    router: propTypes.object.isRequired
-	};
-
-	function withRoute(BaseComponent) {
-	    var ComponentWithRoute = function (_Component) {
-	        inherits(ComponentWithRoute, _Component);
-
-	        function ComponentWithRoute(props, context) {
-	            classCallCheck(this, ComponentWithRoute);
-
-	            var _this = possibleConstructorReturn(this, (ComponentWithRoute.__proto__ || Object.getPrototypeOf(ComponentWithRoute)).call(this, props, context));
-
-	            _this.router = context.router;
-	            _this.state = {
-	                previousRoute: null,
-	                route: _this.router.getState()
-	            };
-	            _this.listener = _this.listener.bind(_this);
-	            return _this;
-	        }
-
-	        createClass(ComponentWithRoute, [{
-	            key: 'componentDidMount',
-	            value: function componentDidMount() {
-	                var _this2 = this;
-
-	                ifNot(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][withRoute] missing listeners plugin');
-
-	                this.listener = function (toState, fromState) {
-	                    return _this2.setState({ previousRoute: fromState, route: toState });
-	                };
-	                this.router.addListener(this.listener);
-	            }
-	        }, {
-	            key: 'componentWillUnmount',
-	            value: function componentWillUnmount() {
-	                this.router.removeListener(this.listener);
-	            }
-	        }, {
-	            key: 'listener',
-	            value: function listener(toState, fromState) {
-	                this.setState({
-	                    previousRoute: fromState,
-	                    route: toState
-	                });
-	            }
-	        }, {
-	            key: 'render',
-	            value: function render() {
-	                ifNot(!this.props.router && !this.props.route && !this.props.previousRoute, '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.');
-
-	                return React.createElement(BaseComponent, _extends({}, this.props, this.state, {
-	                    router: this.router
-	                }));
-	            }
-	        }]);
-	        return ComponentWithRoute;
-	    }(React.Component);
-
-	    ComponentWithRoute.contextTypes = {
-	        router: propTypes.object.isRequired
-	    };
-
-	    ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';
-
-	    return ComponentWithRoute;
-	}
-
 	var _typeof$1 = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {
 	    return typeof obj === "undefined" ? "undefined" : _typeof(obj);
 	} : function (obj) {
@@ -1295,6 +1112,226 @@
 	    };
 	}
 
+	function _toConsumableArray(arr) {
+	    if (Array.isArray(arr)) {
+	        for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+	            arr2[i] = arr[i];
+	        }return arr2;
+	    } else {
+	        return Array.from(arr);
+	    }
+	}
+
+	function shouldUpdateNode(nodeName) {
+	    return function (toState, fromSate) {
+	        var _transitionPath = transitionPath(toState, fromSate),
+	            intersection = _transitionPath.intersection,
+	            toActivate = _transitionPath.toActivate,
+	            toDeactivateReversed = _transitionPath.toDeactivate;
+
+	        var toDeactivate = [].concat(_toConsumableArray(toDeactivateReversed)).reverse();
+
+	        if (nodeName === intersection) {
+	            return true;
+	        }
+
+	        if (toActivate.indexOf(nodeName) === -1) {
+	            return false;
+	        }
+
+	        var matching = true;
+
+	        for (var i = 0; i < toActivate.length; i += 1) {
+	            var activatedSegment = toActivate[i];
+	            var sameLevelDeactivatedSegment = toDeactivate[i];
+
+	            matching = activatedSegment === sameLevelDeactivatedSegment;
+
+	            if (matching && activatedSegment === nodeName) {
+	                return true;
+	            }
+
+	            if (!matching) {
+	                return false;
+	            }
+	        }
+
+	        // Should never be reached
+	        return false;
+	    };
+	}
+
+	function routeNode(nodeName) {
+	    return function routeNodeWrapper(RouteSegment) {
+	        var RouteNode = function (_Component) {
+	            inherits(RouteNode, _Component);
+
+	            function RouteNode(props, context) {
+	                classCallCheck(this, RouteNode);
+
+	                var _this = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
+
+	                _this.router = context.router;
+	                _this.state = {
+	                    previousRoute: null,
+	                    route: _this.router.getState()
+	                };
+	                return _this;
+	            }
+
+	            createClass(RouteNode, [{
+	                key: 'componentDidMount',
+	                value: function componentDidMount() {
+	                    var _this2 = this;
+
+	                    var listener = function listener(_ref) {
+	                        var route = _ref.route,
+	                            previousRoute = _ref.previousRoute;
+
+	                        if (shouldUpdateNode(nodeName)(route, previousRoute)) {
+	                            _this2.setState({
+	                                previousRoute: previousRoute,
+	                                route: route
+	                            });
+	                        }
+	                    };
+	                    this.unsubscribe = this.router.subscribe(listener);
+	                }
+	            }, {
+	                key: 'componentWillUnmount',
+	                value: function componentWillUnmount() {
+	                    this.unsubscribe();
+	                }
+	            }, {
+	                key: 'render',
+	                value: function render() {
+	                    var props = this.props,
+	                        router = this.router;
+	                    var _state = this.state,
+	                        previousRoute = _state.previousRoute,
+	                        route = _state.route;
+
+	                    var component = React.createElement(RouteSegment, _extends({}, props, {
+	                        router: router,
+	                        previousRoute: previousRoute,
+	                        route: route
+	                    }));
+
+	                    return component;
+	                }
+	            }]);
+	            return RouteNode;
+	        }(React.Component);
+
+	        RouteNode.contextTypes = {
+	            router: propTypes.object.isRequired
+	        };
+
+	        RouteNode.displayName = 'RouteNode[' + getDisplayName(RouteSegment) + ']';
+
+	        return RouteNode;
+	    };
+	}
+
+	var RouterProvider = function (_Component) {
+	    inherits(RouterProvider, _Component);
+
+	    function RouterProvider(props, context) {
+	        classCallCheck(this, RouterProvider);
+
+	        var _this = possibleConstructorReturn(this, (RouterProvider.__proto__ || Object.getPrototypeOf(RouterProvider)).call(this, props, context));
+
+	        _this.router = props.router;
+	        return _this;
+	    }
+
+	    createClass(RouterProvider, [{
+	        key: 'getChildContext',
+	        value: function getChildContext() {
+	            return { router: this.router };
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            if (this.props.router !== nextProps.router) {
+	                console.error('[react-router5][RouterProvider] does not support changing the router object.');
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var children = this.props.children;
+
+	            return React.Children.only(children);
+	        }
+	    }]);
+	    return RouterProvider;
+	}(React.Component);
+
+	RouterProvider.propTypes = {
+	    router: propTypes.object.isRequired,
+	    children: propTypes.element.isRequired
+	};
+
+	RouterProvider.childContextTypes = {
+	    router: propTypes.object.isRequired
+	};
+
+	function withRoute(BaseComponent) {
+	    var ComponentWithRoute = function (_Component) {
+	        inherits(ComponentWithRoute, _Component);
+
+	        function ComponentWithRoute(props, context) {
+	            classCallCheck(this, ComponentWithRoute);
+
+	            var _this = possibleConstructorReturn(this, (ComponentWithRoute.__proto__ || Object.getPrototypeOf(ComponentWithRoute)).call(this, props, context));
+
+	            _this.router = context.router;
+	            _this.state = {
+	                previousRoute: null,
+	                route: _this.router.getState()
+	            };
+	            return _this;
+	        }
+
+	        createClass(ComponentWithRoute, [{
+	            key: 'componentDidMount',
+	            value: function componentDidMount() {
+	                var _this2 = this;
+
+	                var listener = function listener(_ref) {
+	                    var route = _ref.route,
+	                        previousRoute = _ref.previousRoute;
+
+	                    _this2.setState({ route: route, previousRoute: previousRoute });
+	                };
+	                this.unsubscribe = this.router.subscribe(listener);
+	            }
+	        }, {
+	            key: 'componentWillUnmount',
+	            value: function componentWillUnmount() {
+	                this.unsubscribe();
+	            }
+	        }, {
+	            key: 'render',
+	            value: function render() {
+	                return React.createElement(BaseComponent, _extends({}, this.props, this.state, {
+	                    router: this.router
+	                }));
+	            }
+	        }]);
+	        return ComponentWithRoute;
+	    }(React.Component);
+
+	    ComponentWithRoute.contextTypes = {
+	        router: propTypes.object.isRequired
+	    };
+
+	    ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';
+
+	    return ComponentWithRoute;
+	}
+
 	var emptyCreateContext = function emptyCreateContext() {
 	    return {
 	        Provider: function Provider(_ref) {
@@ -1330,30 +1367,26 @@
 	            previousRoute: null,
 	            router: router
 	        };
-
-	        _this.listener = _this.listener.bind(_this);
 	        return _this;
 	    }
 
 	    createClass(RouteProvider, [{
-	        key: 'listener',
-	        value: function listener(toState, fromState) {
-	            this.setState({
-	                route: toState,
-	                previousRoute: fromState
-	            });
-	        }
-	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            ifNot(this.router.hasPlugin('LISTENERS_PLUGIN'), '[react-router5][RouteProvider] missing listeners plugin');
+	            var _this2 = this;
 
-	            this.router.addListener(this.listener);
+	            var listener = function listener(toState, fromState) {
+	                _this2.setState({
+	                    route: toState,
+	                    previousRoute: fromState
+	                });
+	            };
+	            this.unsubscribe = this.router.subscribe(listener);
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.router.removeListener(this.listener);
+	            this.unsubscribe();
 	        }
 	    }, {
 	        key: 'getChildContext',
@@ -1388,19 +1421,18 @@
 	    function RouteNode(props, context) {
 	        classCallCheck(this, RouteNode);
 
-	        var _this2 = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
+	        var _this3 = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
 
-	        _this2.renderOnRouteNodeChange = _this2.renderOnRouteNodeChange.bind(_this2);
-	        return _this2;
+	        _this3.renderOnRouteNodeChange = _this3.renderOnRouteNodeChange.bind(_this3);
+	        return _this3;
 	    }
 
 	    createClass(RouteNode, [{
 	        key: 'renderOnRouteNodeChange',
 	        value: function renderOnRouteNodeChange(routeContext) {
-	            var _transitionPath = transitionPath(routeContext.route, routeContext.previousRoute),
-	                intersection = _transitionPath.intersection;
+	            var shouldUpdate = shouldUpdateNode(this.props.nodeName)(routeContext.route, routeContext.previousRoute);
 
-	            if (!this.memoizedResult || intersection === this.props.nodeName) {
+	            if (!this.memoizedResult || shouldUpdate) {
 	                this.memoizedResult = this.props.children(routeContext);
 	            }
 

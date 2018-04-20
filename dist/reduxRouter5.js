@@ -328,6 +328,55 @@
         };
     }
 
+    function _toConsumableArray(arr) {
+        if (Array.isArray(arr)) {
+            for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
+                arr2[i] = arr[i];
+            }return arr2;
+        } else {
+            return Array.from(arr);
+        }
+    }
+
+    function shouldUpdateNode(nodeName) {
+        return function (toState, fromSate) {
+            var _transitionPath = transitionPath(toState, fromSate),
+                intersection = _transitionPath.intersection,
+                toActivate = _transitionPath.toActivate,
+                toDeactivateReversed = _transitionPath.toDeactivate;
+
+            var toDeactivate = [].concat(_toConsumableArray(toDeactivateReversed)).reverse();
+
+            if (nodeName === intersection) {
+                return true;
+            }
+
+            if (toActivate.indexOf(nodeName) === -1) {
+                return false;
+            }
+
+            var matching = true;
+
+            for (var i = 0; i < toActivate.length; i += 1) {
+                var activatedSegment = toActivate[i];
+                var sameLevelDeactivatedSegment = toDeactivate[i];
+
+                matching = activatedSegment === sameLevelDeactivatedSegment;
+
+                if (matching && activatedSegment === nodeName) {
+                    return true;
+                }
+
+                if (!matching) {
+                    return false;
+                }
+            }
+
+            // Should never be reached
+            return false;
+        };
+    }
+
     function routeNodeSelector(routeNode) {
         var reducerKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'router';
 
@@ -341,11 +390,11 @@
                 route = _routerStateSelector.route,
                 previousRoute = _routerStateSelector.previousRoute;
 
-            var intersection = route ? transitionPath(route, previousRoute).intersection : '';
+            var shouldUpdate = !route ? true : shouldUpdateNode(routeNode)(route, previousRoute);
 
             if (!lastReturnedValue) {
                 lastReturnedValue = { route: route, previousRoute: previousRoute };
-            } else if (!previousRoute || previousRoute !== route && intersection === routeNode) {
+            } else if (!previousRoute || previousRoute !== route && shouldUpdate) {
                 lastReturnedValue = { route: route, previousRoute: previousRoute };
             }
 

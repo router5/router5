@@ -10,14 +10,13 @@
 router5 is a **framework and view library agnostic router**.
 
 * **view / state separation**: router5 processes routing **instructions** and outputs **state** updates.
-* **univseral**: works client-side and server-side
+* **universal**: works client-side and server-side
 * **simple**: define your routes, start to listen to route changes
 * **flexible**: you have control over transitions and what happens on transitions
 
 ```js
 import createRouter from 'router5'
 import browserPlugin from 'router5/plugins/browser'
-import listenersPlugin from 'router5/plugins/listeners'
 
 const routes = [
     { name: 'home', path: '/' },
@@ -26,7 +25,6 @@ const routes = [
 
 const router = createRouter(routes)
     .usePlugin(browserPlugin())
-    .userPlugin(listenersPlugin())
 
 router.start()
 ```
@@ -58,6 +56,18 @@ ReactDOM.render(
     </RouteProvider>,
     document.getElementById('root')
 )
+```
+
+**With observables**
+
+Your router instance is compatible with most observable libraries.
+
+```js
+import { from } from 'rxjs/observable/from'
+
+from(router).map(({ route }) => {
+    /* happy routing */
+})
 ```
 
 

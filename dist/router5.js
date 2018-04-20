@@ -1824,6 +1824,102 @@
         }
     }
 
+    function symbolObservablePonyfill(root) {
+    	var result;
+    	var _Symbol = root.Symbol;
+
+    	if (typeof _Symbol === 'function') {
+    		if (_Symbol.observable) {
+    			result = _Symbol.observable;
+    		} else {
+    			result = _Symbol('observable');
+    			_Symbol.observable = result;
+    		}
+    	} else {
+    		result = '@@observable';
+    	}
+
+    	return result;
+    }
+
+    /* global window */
+
+    var root;
+
+    if (typeof self !== 'undefined') {
+      root = self;
+    } else if (typeof window !== 'undefined') {
+      root = window;
+    } else if (typeof global !== 'undefined') {
+      root = global;
+    } else if (typeof module !== 'undefined') {
+      root = module;
+    } else {
+      root = Function('return this')();
+    }
+
+    var result = symbolObservablePonyfill(root);
+
+    function observerPlugin(router) {
+        var listeners = [];
+
+        function unsubscribe(listener) {
+            if (listener) {
+                listeners = listeners.filter(function (l) {
+                    return l !== listener;
+                });
+            }
+        }
+
+        function _subscribe(listener) {
+            listeners.concat(listener);
+
+            return unsubscribe(listener);
+        }
+
+        function observable() {
+            return defineProperty({
+                subscribe: function subscribe(observer) {
+                    if ((typeof observer === 'undefined' ? 'undefined' : _typeof(observer)) !== 'object' || observer === null) {
+                        throw new TypeError('Expected the observer to be an object.');
+                    }
+
+                    function listener() {
+                        if (observer.next) {
+                            observer.next(router.getState());
+                        }
+                    }
+
+                    listener();
+                    var unsubscribe = _subscribe(listener);
+                    return { unsubscribe: unsubscribe };
+                }
+            }, result, function () {
+                return this;
+            });
+        }
+
+        router.subscribe = _subscribe;
+        router[result] = observable;
+
+        return {
+            onTransitionSuccess: function onTransitionSuccess(toState, fromState) {
+                listeners.forEach(function (listener) {
+                    return listener({
+                        route: toState,
+                        previousRoute: fromState
+                    });
+                });
+            }
+        };
+    }
+
+    observerPlugin.pluginName = 'OBSERVABLE_PLUGIN';
+
+    function withObservablePlugin(router) {
+        router.usePlugin(observerPlugin);
+    }
+
     var pluginMethods = ['onStart', 'onStop', 'onTransitionSuccess', 'onTransitionStart', 'onTransitionError', 'onTransitionCancel'];
 
     function withPlugins(router) {
@@ -2091,6 +2187,7 @@
         withUtils(router);
         withPlugins(router);
         withMiddleware(router);
+        withObservablePlugin(router);
         withRouteLifecycle(router);
         withRouterLifecycle(router);
         withNavigation(router);

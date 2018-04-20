@@ -1,3 +1,30 @@
+## router5@6.1.0 (2018-04-20)
+
+#### Bug fix
+* `router5`
+  * [#271](https://github.com/router5/router5/pull/271) Don't remove trailing slash from pathname when using hash (browser plugin). ([@troch](https://github.com/troch))
+
+#### Feature
+* `react-router5`
+  * [#270](https://github.com/router5/router5/pull/270) Remove need to use listeners plugin with React + smarter route node updates. ([@troch](https://github.com/troch))
+* `router5`
+  * [#269](https://github.com/router5/router5/pull/269) Add subscribe function and observable compatibility. ([@troch](https://github.com/troch))
+
+#### Enhancement
+* `redux-router5`
+  * [#272](https://github.com/router5/router5/pull/272) Smarter route node selector updates. ([@troch](https://github.com/troch))
+* `router5-transition-path`
+  * [#268](https://github.com/router5/router5/pull/268) Add shouldUpdateNode function. ([@troch](https://github.com/troch))
+
+#### Breaking Changes
+
+* react-router5@6.0.0 needs router5@6.1.0 and above
+
+
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
 ## router5@6.0.0 (2018-04-19)
 
 #### Feature
