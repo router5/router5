@@ -1,6 +1,7 @@
 import { Component, createElement } from 'react'
-import { getDisplayName, ifNot } from './utils'
+import { getDisplayName } from './utils'
 import PropTypes from 'prop-types'
+import { shouldUpdateNode } from 'router5-transition-path'
 
 function routeNode(nodeName) {
     return function routeNodeWrapper(RouteSegment) {
@@ -12,27 +13,22 @@ function routeNode(nodeName) {
                     previousRoute: null,
                     route: this.router.getState()
                 }
-                this.nodeListener = this.nodeListener.bind(this)
-            }
-
-            nodeListener(toState, fromState) {
-                this.setState({
-                    previousRoute: fromState,
-                    route: toState
-                })
             }
 
             componentDidMount() {
-                ifNot(
-                    this.router.hasPlugin('LISTENERS_PLUGIN'),
-                    '[react-router5][routeNode] missing listeners plugin'
-                )
-
-                this.router.addNodeListener(nodeName, this.nodeListener)
+                const listener = ({ route, previousRoute }) => {
+                    if (shouldUpdateNode(nodeName)(route, previousRoute)) {
+                        this.setState({
+                            previousRoute,
+                            route
+                        })
+                    }
+                }
+                this.unsubscribe = this.router.subscribe(listener)
             }
 
             componentWillUnmount() {
-                this.router.removeNodeListener(nodeName, this.nodeListener)
+                this.unsubscribe()
             }
 
             render() {
