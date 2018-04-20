@@ -1,5 +1,5 @@
 import { Component, createElement } from 'react'
-import { ifNot, getDisplayName } from './utils'
+import { getDisplayName } from './utils'
 import PropTypes from 'prop-types'
 
 function withRoute(BaseComponent) {
@@ -11,39 +11,20 @@ function withRoute(BaseComponent) {
                 previousRoute: null,
                 route: this.router.getState()
             }
-            this.listener = this.listener.bind(this)
         }
 
         componentDidMount() {
-            ifNot(
-                this.router.hasPlugin('LISTENERS_PLUGIN'),
-                '[react-router5][withRoute] missing listeners plugin'
-            )
-
-            this.listener = (toState, fromState) =>
-                this.setState({ previousRoute: fromState, route: toState })
-            this.router.addListener(this.listener)
+            const listener = ({ route, previousRoute }) => {
+                this.setState({ route, previousRoute })
+            }
+            this.unsubscribe = this.router.subscribe(listener)
         }
 
         componentWillUnmount() {
-            this.router.removeListener(this.listener)
-        }
-
-        listener(toState, fromState) {
-            this.setState({
-                previousRoute: fromState,
-                route: toState
-            })
+            this.unsubscribe()
         }
 
         render() {
-            ifNot(
-                !this.props.router &&
-                    !this.props.route &&
-                    !this.props.previousRoute,
-                '[react-router5] prop names `router`, `route` and `previousRoute` are reserved.'
-            )
-
             return createElement(BaseComponent, {
                 ...this.props,
                 ...this.state,
