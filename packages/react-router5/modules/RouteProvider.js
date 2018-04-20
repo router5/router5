@@ -25,10 +25,10 @@ class RouteProvider extends React.PureComponent {
     }
 
     componentDidMount() {
-        const listener = (toState, fromState) => {
+        const listener = ({ route, previousRoute }) => {
             this.setState({
-                route: toState,
-                previousRoute: fromState
+                route,
+                previousRoute
             })
         }
         this.unsubscribe = this.router.subscribe(listener)

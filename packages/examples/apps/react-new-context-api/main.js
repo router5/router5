@@ -4,7 +4,7 @@ import App from './components/App'
 import { RouteProvider } from 'react-router5'
 import createRouter from '../create-router'
 
-const router = createRouter(true)
+const router = createRouter(false)
 const app = (
     <RouteProvider router={router}>
         <App />

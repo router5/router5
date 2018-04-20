@@ -1872,9 +1872,11 @@
         }
 
         function _subscribe(listener) {
-            listeners.concat(listener);
+            listeners = listeners.concat(listener);
 
-            return unsubscribe(listener);
+            return function () {
+                return unsubscribe(listener);
+            };
         }
 
         function observable() {

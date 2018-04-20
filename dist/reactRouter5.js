@@ -1375,10 +1375,13 @@
 	        value: function componentDidMount() {
 	            var _this2 = this;
 
-	            var listener = function listener(toState, fromState) {
+	            var listener = function listener(_ref2) {
+	                var route = _ref2.route,
+	                    previousRoute = _ref2.previousRoute;
+
 	                _this2.setState({
-	                    route: toState,
-	                    previousRoute: fromState
+	                    route: route,
+	                    previousRoute: previousRoute
 	                });
 	            };
 	            this.unsubscribe = this.router.subscribe(listener);

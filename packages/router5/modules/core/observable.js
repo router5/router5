@@ -10,9 +10,9 @@ function observerPlugin(router) {
     }
 
     function subscribe(listener) {
-        listeners.concat(listener)
+        listeners = listeners.concat(listener)
 
-        return unsubscribe(listener)
+        return () => unsubscribe(listener)
     }
 
     function observable() {
