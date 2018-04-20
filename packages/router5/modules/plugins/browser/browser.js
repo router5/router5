@@ -14,7 +14,7 @@ const isBrowser = typeof window !== 'undefined' && window.history
 /**
  * Browser functions needed by router5
  */
-const getBase = () => window.location.pathname.replace(/\/$/, '')
+const getBase = () => window.location.pathname
 
 const supportsPopStateOnHashChange = () =>
     window.navigator.userAgent.indexOf('Trident') === -1
