@@ -15,6 +15,14 @@ route-node@3.1.0:
     path-parser "4.0.4"
     search-params "2.1.2"
 
+router5-transition-path@^5.1.1:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/router5-transition-path/-/router5-transition-path-5.2.0.tgz#25ae7f75a12a17044f7766a180eb7377f372493c"
+
 search-params@2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/search-params/-/search-params-2.1.2.tgz#e0107b7e6f2e973d7991b8fbffc8b6664bc96edd"
+
+symbol-observable@~1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
