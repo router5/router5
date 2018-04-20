@@ -44,7 +44,7 @@ const AppWithRouter = (
 )
 ```
 
-* **withRoute(BaseComponent)**: HoC injecting your router instance (from context) and the current route to the wrapped component. Any route change will trigger a re-render, and requires the use of the listeners plugin.
+* **withRoute(BaseComponent)**: HoC injecting your router instance (from context) and the current route to the wrapped component. Any route change will trigger a re-render
 * **routeNode(nodeName)(BaseComponent)**: like above, expect it only re-renders when the given route node is the transition node. When using `routeNode` components, make sure to key the ones which can render the same components but with different route params.
 
 ```javascript

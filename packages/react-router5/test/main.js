@@ -22,14 +22,6 @@ describe('withRoute hoc', () => {
         router = createTestRouter()
     })
 
-    it('should throw an error if router5-plugin-listeners plugin is not used', () => {
-        const renderTree = () =>
-            renderWithRouter(router)(withRoute(() => <div />))
-        expect(renderTree).to.throw(
-            '[react-router5][withRoute] missing listeners plugin'
-        )
-    })
-
     it('should inject the router in the wrapped component props', () => {
         const ChildSpy = spy(FnChild)
         router.usePlugin(listenersPlugin())
@@ -48,13 +40,6 @@ describe('routeNode hoc', () => {
 
     before(() => {
         router = createTestRouter()
-    })
-
-    it('should throw an error if router5-plugin-listeners plugin is not used', () => {
-        const renderTree = () => renderWithRouter(router)(routeNode('')(Child))
-        expect(renderTree).to.throw(
-            '[react-router5][routeNode] missing listeners plugin'
-        )
     })
 
     it('should inject the router in the wrapped component props', () => {
