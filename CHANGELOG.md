@@ -1,3 +1,11 @@
+### router5@6.1.1 (2018-04-20)
+
+#### Bug fix
+* `router5`
+  * fix observable plugin listener registration
+* `react-router5`
+  * fix RouteProvider (new context API)
+
 ## router5@6.1.0 (2018-04-20)
 
 #### Bug fix
