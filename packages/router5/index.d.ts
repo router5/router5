@@ -17,6 +17,7 @@ declare module 'router5' {
         CancelFn,
         Options as NavigationOptions
     } from 'router5/core/navigation'
+    import { SubscribeFn, SubscribeState } from 'router5/core/observable'
     import { Middleware, MiddlewareFactory } from 'router5/core/middleware'
     import { Plugin, PluginFactory } from 'router5/core/plugins'
     import {
@@ -52,7 +53,9 @@ declare module 'router5' {
         Router,
         RouterOptions,
         State,
-        StateMeta
+        StateMeta,
+        SubscribeFn,
+        SubscribeState
     }
 
     export default createRouter
@@ -242,6 +245,22 @@ declare module 'router5/core/navigation' {
             navigate(routeName: string, done?: DoneFn): CancelFn
             navigateToDefault(opts: NavigationOptions, done?: DoneFn): CancelFn
             navigateToDefault(done?: DoneFn): CancelFn
+        }
+    }
+}
+
+declare module 'router5/core/observable' {
+    import { State } from 'router5'
+
+    export interface SubscribeState {
+        route: State
+        previousRoute: State
+    }
+    export type SubscribeFn = (state: SubscribeState) => void
+
+    module 'router5/create-router' {
+        interface Router {
+            subscribe(cb: SubscribeFn): void
         }
     }
 }
