@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/xstream-router5",
   "dependencies": {
-    "router5-transition-path": "^5.1.1",
+    "router5-transition-path": "5.2.0",
     "xstream": "^10.0.0"
   },
   "peerDependencies": {
