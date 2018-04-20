@@ -1,6 +1,6 @@
 {
   "name": "deku-router5",
-  "version": "5.0.1",
+  "version": "5.1.0",
   "description": "router5 helpers for Deku",
   "main": "dist/commonjs/index.js",
   "repository": {
