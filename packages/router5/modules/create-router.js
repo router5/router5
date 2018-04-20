@@ -3,6 +3,7 @@ import withUtils from './core/utils'
 import withRouterLifecycle from './core/router-lifecycle'
 import withNavigation from './core/navigation'
 import withMiddleware from './core/middleware'
+import withObservable from './core/observable'
 import withPlugins from './core/plugins'
 import withRouteLifecycle from './core/route-lifecycle'
 import withCloning from './core/clone'
@@ -98,6 +99,7 @@ function createRouter(routes, opts = {}, deps = {}) {
     withUtils(router)
     withPlugins(router)
     withMiddleware(router)
+    withObservable(router)
     withRouteLifecycle(router)
     withRouterLifecycle(router)
     withNavigation(router)
