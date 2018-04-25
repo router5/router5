@@ -1,3 +1,14 @@
+### router5@6.1.2 (2018-04-20)
+
+#### Bug fix
+* `router5`
+  * [#275](https://github.com/router5/router5/pull/275) Replace addEventListeners calls with addEventListener. ([@kelkes](https://github.com/kelkes))
+
+#### Committers: 1
+- David Wippel ([kelkes](https://github.com/kelkes))
+
+
+
 ### router5@6.1.1 (2018-04-20)
 
 #### Bug fix
