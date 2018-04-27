@@ -5802,7 +5802,7 @@ and limitations under the License.
                       },
                       addPopstateListener: function(e) {
                           window.addEventListener('popstate', e),
-                              a() || window.addEventListeners('hashchange', e)
+                              a() || window.addEventListener('hashchange', e)
                       },
                       removePopstateListener: function(e) {
                           window.removeEventListener('popstate', e),
