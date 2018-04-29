@@ -34,7 +34,7 @@ npm install --save react-router5
 
 ### Available components
 
-* **RouterProvier**: adds your router instance in context.
+* **RouterProvider**: adds your router instance in context.
 
 ```javascript
 const AppWithRouter = (
