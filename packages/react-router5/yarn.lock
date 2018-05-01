@@ -226,9 +226,9 @@ react-test-renderer@^16.0.0-0:
     prop-types "^15.6.0"
     react-is "^16.3.1"
 
-router5-transition-path@^5.0.0:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/router5-transition-path/-/router5-transition-path-5.1.1.tgz#89698deeaedcf0831a5c3393d8ae16c9f06a9744"
+router5-transition-path@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/router5-transition-path/-/router5-transition-path-5.3.0.tgz#113f7e09dffee5e22c7275c20fe25969c0bc1599"
 
 setimmediate@^1.0.5:
   version "1.0.5"
