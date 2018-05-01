@@ -25,19 +25,22 @@ const pushState = (state, title, path) =>
 const replaceState = (state, title, path) =>
     window.history.replaceState(state, title, path)
 
-const addPopstateListener = fn => {
+const addPopstateListener = (fn, opts) => {
+    const shouldAddHashChangeListener =
+        opts.useHash && !supportsPopStateOnHashChange()
+
     window.addEventListener('popstate', fn)
 
-    if (!supportsPopStateOnHashChange()) {
+    if (shouldAddHashChangeListener) {
         window.addEventListener('hashchange', fn)
     }
-}
 
-const removePopstateListener = fn => {
-    window.removeEventListener('popstate', fn)
+    return () => {
+        window.removeEventListener('popstate', fn)
 
-    if (!supportsPopStateOnHashChange()) {
-        window.removeEventListener('hashchange', fn)
+        if (shouldAddHashChangeListener) {
+            window.removeEventListener('hashchange', fn)
+        }
     }
 }
 
@@ -62,7 +65,6 @@ if (isBrowser) {
         pushState,
         replaceState,
         addPopstateListener,
-        removePopstateListener,
         getLocation,
         getState,
         getHash
@@ -74,7 +76,6 @@ if (isBrowser) {
         pushState: noop,
         replaceState: noop,
         addPopstateListener: noop,
-        removePopstateListener: noop,
         getLocation: identity(''),
         getState: identity(null),
         getHash: identity('')
