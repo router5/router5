@@ -1,3 +1,21 @@
+### router5@6.1.3 (2018-05-01)
+
+#### Bug fix
+* `react-router5`
+  * [#280](https://github.com/router5/router5/pull/280) Upgrade router5-transition-path in yarn lock file. ([@troch](https://github.com/troch))
+* `router5`
+  * [#279](https://github.com/router5/router5/pull/279) Properly apply query parameters options when building and matching. ([@troch](https://github.com/troch))
+
+#### Enhancement
+* `redux-router5`
+  * [#273](https://github.com/router5/router5/pull/273) Add redux 4 as peer dependency. ([@ematipico](https://github.com/ematipico))
+
+#### Committers: 2
+- Emanuele ([ematipico](https://github.com/ematipico))
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.1.2 (2018-04-20)
 
 #### Bug fix
