@@ -8,21 +8,17 @@ path-parser@4.0.4:
   dependencies:
     search-params "2.1.2"
 
-route-node@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/route-node/-/route-node-3.1.0.tgz#7ced7ebd01a84cd7d84bd94ca831288200a7a0d4"
+route-node@3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-3.1.1.tgz#c7b33c9a9044918f131b9c31a7afc48de375044d"
   dependencies:
     path-parser "4.0.4"
     search-params "2.1.2"
-
-router5-transition-path@^5.1.1:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/router5-transition-path/-/router5-transition-path-5.2.0.tgz#25ae7f75a12a17044f7766a180eb7377f372493c"
 
 search-params@2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/search-params/-/search-params-2.1.2.tgz#e0107b7e6f2e973d7991b8fbffc8b6664bc96edd"
 
-symbol-observable@~1.2.0:
+symbol-observable@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
