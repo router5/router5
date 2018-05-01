@@ -1,6 +1,6 @@
 {
   "name": "redux-router5",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "description": "Router5 integration with redux",
   "main": "index.js",
   "module": "dist/es/index.js",
