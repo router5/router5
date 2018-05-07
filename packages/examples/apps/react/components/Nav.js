@@ -19,6 +19,13 @@ function Nav(props) {
             <BaseLink router={router} routeName="contacts">
                 Contacts
             </BaseLink>
+            <BaseLink
+                router={router}
+                routeName="firefox"
+                routeParams={{ query: 'red|blue' }}
+            >
+                Firefox red|blue
+            </BaseLink>
         </nav>
     )
 }
