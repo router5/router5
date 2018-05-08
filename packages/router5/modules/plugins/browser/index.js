@@ -19,6 +19,7 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
         forceDeactivate: options.forceDeactivate,
         source
     }
+    let removePopStateListener
 
     function browserPlugin(router) {
         const routerOptions = router.getOptions()
@@ -147,11 +148,16 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
                 options.base = browser.getBase()
             }
 
-            browser.addPopstateListener(onPopState)
+            removePopStateListener = browser.addPopstateListener(
+                onPopState,
+                options
+            )
         }
 
         function onStop() {
-            browser.removePopstateListener(onPopState)
+            if (removePopStateListener) {
+                removePopStateListener()
+            }
         }
 
         function onTransitionSuccess(toState, fromState, opts) {

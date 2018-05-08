@@ -66,7 +66,7 @@
         window.addEventListener('popstate', fn);
 
         if (!supportsPopStateOnHashChange()) {
-            window.addEventListeners('hashchange', fn);
+            window.addEventListener('hashchange', fn);
         }
     };
 
