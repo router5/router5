@@ -11,7 +11,9 @@ function observerPlugin(router) {
 
     function subscribe(listener) {
         const finalListener =
-            typeof listener === 'object' ? listener.next : listener
+            typeof listener === 'object'
+                ? listener.next.bind(listener)
+                : listener
 
         listeners = listeners.concat(finalListener)
 
@@ -26,15 +28,8 @@ function observerPlugin(router) {
                         'Expected the observer to be an object.'
                     )
                 }
+                const unsubscribe = subscribe(observer)
 
-                function listener() {
-                    if (observer.next) {
-                        observer.next(router.getState())
-                    }
-                }
-
-                listener()
-                const unsubscribe = subscribe(listener)
                 return { unsubscribe }
             },
 
