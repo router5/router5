@@ -10,9 +10,12 @@ function observerPlugin(router) {
     }
 
     function subscribe(listener) {
-        listeners = listeners.concat(listener)
+        const finalListener =
+            typeof listener === 'object' ? listener.next : listener
 
-        return () => unsubscribe(listener)
+        listeners = listeners.concat(finalListener)
+
+        return () => unsubscribe(finalListener)
     }
 
     function observable() {
