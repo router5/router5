@@ -1,3 +1,14 @@
+## router5@6.1.4 (2018-05-12)
+
+#### Enhancement
+* `router5`
+  * [#283](https://github.com/router5/router5/pull/283) Improve observable interoperability. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.1.3 (2018-05-01)
 
 #### Bug fix

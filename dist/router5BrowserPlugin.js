@@ -62,20 +62,22 @@
         return window.history.replaceState(state, title, path);
     };
 
-    var addPopstateListener = function addPopstateListener(fn) {
+    var addPopstateListener = function addPopstateListener(fn, opts) {
+        var shouldAddHashChangeListener = opts.useHash && !supportsPopStateOnHashChange();
+
         window.addEventListener('popstate', fn);
 
-        if (!supportsPopStateOnHashChange()) {
+        if (shouldAddHashChangeListener) {
             window.addEventListener('hashchange', fn);
         }
-    };
 
-    var removePopstateListener = function removePopstateListener(fn) {
-        window.removeEventListener('popstate', fn);
+        return function () {
+            window.removeEventListener('popstate', fn);
 
-        if (!supportsPopStateOnHashChange()) {
-            window.removeEventListener('hashchange', fn);
-        }
+            if (shouldAddHashChangeListener) {
+                window.removeEventListener('hashchange', fn);
+            }
+        };
     };
 
     var getLocation = function getLocation(opts) {
@@ -101,7 +103,6 @@
             pushState: pushState,
             replaceState: replaceState,
             addPopstateListener: addPopstateListener,
-            removePopstateListener: removePopstateListener,
             getLocation: getLocation,
             getState: getState,
             getHash: getHash
@@ -113,7 +114,6 @@
             pushState: noop,
             replaceState: noop,
             addPopstateListener: noop,
-            removePopstateListener: noop,
             getLocation: identity(''),
             getState: identity(null),
             getHash: identity('')
@@ -191,6 +191,7 @@
             forceDeactivate: options.forceDeactivate,
             source: source
         };
+        var removePopStateListener = void 0;
 
         function browserPlugin(router) {
             var routerOptions = router.getOptions();
@@ -297,11 +298,13 @@
                     options.base = browser.getBase();
                 }
 
-                browser.addPopstateListener(onPopState);
+                removePopStateListener = browser.addPopstateListener(onPopState, options);
             }
 
             function onStop() {
-                browser.removePopstateListener(onPopState);
+                if (removePopStateListener) {
+                    removePopStateListener();
+                }
             }
 
             function onTransitionSuccess(toState, fromState, opts) {

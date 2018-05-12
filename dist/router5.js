@@ -1872,10 +1872,12 @@
         }
 
         function _subscribe(listener) {
-            listeners = listeners.concat(listener);
+            var finalListener = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object' ? listener.next : listener;
+
+            listeners = listeners.concat(finalListener);
 
             return function () {
-                return unsubscribe(listener);
+                return unsubscribe(finalListener);
             };
         }
 
