@@ -1,7 +1,8 @@
 ## router5@6.1.5 (2018-05-12)
+
 #### Enhancement
 * `router5`
-  * Improve observable interoperability
+  * [#284](https://github.com/router5/router5/pull/284) Enhance stream libraries compatibility. ([@troch](https://github.com/troch))
 
 #### Committers: 1
 - Thomas Roch ([troch](https://github.com/troch))

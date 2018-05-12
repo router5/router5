@@ -1872,13 +1872,16 @@
         }
 
         function _subscribe(listener) {
-            var finalListener = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object' ? listener.next.bind(listener) : listener;
+            var isObject = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object';
+            var finalListener = isObject ? listener.next.bind(listener) : listener;
 
             listeners = listeners.concat(finalListener);
 
-            return function () {
+            var unsubscribeHandler = function unsubscribeHandler() {
                 return unsubscribe(finalListener);
             };
+
+            return isObject ? { unsubscribe: unsubscribeHandler } : unsubscribeHandler;
         }
 
         function observable() {
@@ -1887,9 +1890,7 @@
                     if ((typeof observer === 'undefined' ? 'undefined' : _typeof(observer)) !== 'object' || observer === null) {
                         throw new TypeError('Expected the observer to be an object.');
                     }
-                    var unsubscribe = _subscribe(observer);
-
-                    return { unsubscribe: unsubscribe };
+                    return _subscribe(observer);
                 }
             }, result, function () {
                 return this;
