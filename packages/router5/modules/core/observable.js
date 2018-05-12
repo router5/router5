@@ -15,7 +15,7 @@ function observerPlugin(router) {
 
         listeners = listeners.concat(finalListener)
 
-        const unsubscribeHandler = unsubscribe(finalListener)
+        const unsubscribeHandler = () => unsubscribe(finalListener)
 
         return isObject
             ? { unsubscribe: unsubscribeHandler }

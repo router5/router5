@@ -15,6 +15,20 @@ describe('core/observable', function() {
     )
     after(() => router.stop())
 
+    it('should accept a listener function', () => {
+        const unsubscribe = router.subscribe(() => {})
+
+        expect(typeof unsubscribe).to.equal('function')
+    })
+
+    it('should accept a listener object', () => {
+        const subscription = router.subscribe({
+            next: () => {}
+        })
+
+        expect(typeof subscription.unsubscribe).to.equal('function')
+    })
+
     it('should be compatible with rxjs', function() {
         const observable = from(router)
 
