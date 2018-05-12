@@ -1,3 +1,13 @@
+## router5@6.1.5 (2018-05-12)
+#### Enhancement
+* `router5`
+  * Improve observable interoperability
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@6.1.4 (2018-05-12)
 
 #### Enhancement

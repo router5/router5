@@ -1872,7 +1872,7 @@
         }
 
         function _subscribe(listener) {
-            var finalListener = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object' ? listener.next : listener;
+            var finalListener = (typeof listener === 'undefined' ? 'undefined' : _typeof(listener)) === 'object' ? listener.next.bind(listener) : listener;
 
             listeners = listeners.concat(finalListener);
 
@@ -1887,15 +1887,8 @@
                     if ((typeof observer === 'undefined' ? 'undefined' : _typeof(observer)) !== 'object' || observer === null) {
                         throw new TypeError('Expected the observer to be an object.');
                     }
+                    var unsubscribe = _subscribe(observer);
 
-                    function listener() {
-                        if (observer.next) {
-                            observer.next(router.getState());
-                        }
-                    }
-
-                    listener();
-                    var unsubscribe = _subscribe(listener);
                     return { unsubscribe: unsubscribe };
                 }
             }, result, function () {
