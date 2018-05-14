@@ -6,7 +6,7 @@ import routes from './routes'
 
 export default function configureRouter(useListenersPlugin = false) {
     const router = createRouter(routes, {
-        defaultRoute: 'inbox'
+        allowNotFound: true
     })
         // Plugins
         .usePlugin(loggerPlugin)
