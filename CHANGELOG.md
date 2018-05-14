@@ -1,4 +1,19 @@
-## router5@6.1.5 (2018-05-12)
+## router5@6.2.0 (2018-05-14)
+
+#### Bug fix
+* `router5`
+  * [#285](https://github.com/router5/router5/pull/285) Make sure pipe characters are encoded (Firefox issue). ([@troch](https://github.com/troch))
+
+#### Enhancement
+* `router5`
+  * [#286](https://github.com/router5/router5/pull/286) Update route-node to latest patch (support `=` and `+` sign in path parameters). ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
+### router5@6.1.5 (2018-05-12)
 
 #### Enhancement
 * `router5`
@@ -9,7 +24,7 @@
 
 
 
-## router5@6.1.4 (2018-05-12)
+### router5@6.1.4 (2018-05-12)
 
 #### Enhancement
 * `router5`

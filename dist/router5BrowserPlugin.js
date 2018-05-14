@@ -82,7 +82,11 @@
 
     var getLocation = function getLocation(opts) {
         var path = opts.useHash ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + opts.base), '');
-        return (path || '/') + window.location.search;
+
+        // Fix Frefox issue with non encoded pipe characters
+        var correctedPath = path.replace(/\|/g, '%7C');
+
+        return (correctedPath || '/') + window.location.search;
     };
 
     var getState = function getState() {
