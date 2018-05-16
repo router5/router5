@@ -400,6 +400,18 @@ declare module 'router5/plugins/browser/utils' {
 
 declare module 'router5/plugins/listeners' {
     import { PluginFactory } from 'router5/core/plugins'
+    
+    module "router5/create-router" {
+        type Callback = (toState?: State, fromState?: State) => void;
+
+        interface Router {
+          addListener(cb: Callback): this;
+          addNodeListener(name: string, cb: Callback): this;
+          removeListener(name: string, cb: Callback): this;
+          addRouteListener(name: string, cb: Callback): this;
+          removeRouteListener(name: string, cb: Callback): this;
+        }
+    }
 
     export interface Options {
         autoCleanUp?: boolean
