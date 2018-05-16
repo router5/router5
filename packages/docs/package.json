@@ -1,6 +1,6 @@
 {
   "name": "router5-docs",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "router5 documentation site",
   "main": "index.js",
   "author": "Thomas Roch <thomas.c.roch@gmail.com>",
@@ -27,7 +27,7 @@
     "react-dom": "~16.3.1",
     "react-fela": "~7.2.0",
     "react-router5": "^6.0.1",
-    "router5": "^6.2.0",
+    "router5": "^6.2.1",
     "webpack": "~4.5.0",
     "webpack-cli": "~2.0.14",
     "webpack-dev-server": "~3.1.3"
