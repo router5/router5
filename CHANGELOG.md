@@ -1,3 +1,14 @@
+### router5@6.2.1 (2018-05-16)
+
+#### Bug fix
+* `router5`
+  * [#289](https://github.com/router5/router5/pull/289) Fix subscribe method type. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@6.2.0 (2018-05-14)
 
 #### Bug fix
