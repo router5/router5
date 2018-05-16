@@ -17,7 +17,11 @@ declare module 'router5' {
         CancelFn,
         Options as NavigationOptions
     } from 'router5/core/navigation'
-    import { SubscribeFn, SubscribeState } from 'router5/core/observable'
+    import {
+        SubscribeFn,
+        UnsubscribeFn,
+        SubscribeState
+    } from 'router5/core/observable'
     import { Middleware, MiddlewareFactory } from 'router5/core/middleware'
     import { Plugin, PluginFactory } from 'router5/core/plugins'
     import {
@@ -55,6 +59,7 @@ declare module 'router5' {
         State,
         StateMeta,
         SubscribeFn,
+        UnsubscribeFn,
         SubscribeState
     }
 
@@ -257,10 +262,11 @@ declare module 'router5/core/observable' {
         previousRoute: State
     }
     export type SubscribeFn = (state: SubscribeState) => void
+    export type UnsubscribeFn = () => void
 
     module 'router5/create-router' {
         interface Router {
-            subscribe(cb: SubscribeFn): void
+            subscribe(cb: SubscribeFn): UnsubscribeFn
         }
     }
 }
