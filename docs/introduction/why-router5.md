@@ -4,6 +4,8 @@
 
 "Traditional" routing has been heavily influenced by server-side routing, which is stateless, while client-side routing is stateful. Watch my talk at ReactiveConf 2016: "Past and future of client-side routing", it gives a great overview of what routing is, and what router5 does:
 
+{% youtube %}
 https://www.youtube.com/watch?v=hblXdstrAg0
+{% endyoutube %}
 
 For more in-depth description of router5, look at [Understanding router5](/docs/understanding-router5.html).
