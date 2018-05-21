@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-> Official website: [router5.js.org](router5.js.org)
+> Official website: [router5.js.org](https://router5.js.org)
 
 # router5
 

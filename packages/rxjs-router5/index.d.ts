@@ -8,7 +8,6 @@ declare module 'rxjs-router5' {
         /**
          * @param nodeName the name of a node
          * @returns an observable of route updates for the specified node.
-         * See understanding router5: http://router5.github.io/docs/understanding-router5.html.
          */
         routeNode: (nodeName: string) => Rx.Observable<State>
 

@@ -2,7 +2,7 @@
 
 # xstream-router5
 
-[xstream](http://staltz.com/xstream/) integration with [router5](http://router5.github.io)
+[xstream](http://staltz.com/xstream/) integration with [router5](https://router5.js.org)
 
 ```sh
 npm install --save xstream-router5
@@ -39,7 +39,7 @@ route$.map((route) => { /* ... */ })
 - `route$`: an observable of your application route
 - `transitionRoute$`: an observable of the currently transitioning route
 - `transitionError$`: an observable of transition errors
-- `routeNode(nodeName = '')`: a function returning an observable of route updates for the specified node. See [understanding router5](http://router5.github.io/docs/understanding-router5.html).
+- `routeNode(nodeName = '')`: a function returning an observable of route updates for the specified node
 
 ### Related
 
