@@ -18,7 +18,6 @@ var router = createRouter([], {
         strictTrailingSlash: false,
         caseSensitive: false
     })
-    .setOption('strictQueryParams', false)
 ```
 
 ### Default route
