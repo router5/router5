@@ -20,6 +20,7 @@
   * [Middleware](advanced/middleware.md)
   * [Preventing navigation](advanced/preventing-navigation.md)
   * [Errors and redirections](advanced/errors-redirections.md)
+  * [Dependency injection](advanced/dependency-injection.md)
   * [Loading async data](advanced/async-data.md)
   * [Universal routing](advanced/universal-routing.md)
 * Migration
