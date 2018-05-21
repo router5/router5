@@ -1,4 +1,4 @@
-# Observability
+# Observing state
 
 
 From router5@6.1.0 and onwards, your router instance is compatible with most observable libraries.
