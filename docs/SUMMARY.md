@@ -15,6 +15,9 @@
   * [Navigating](guides/navigating.md)
   * [In the browser](guides/browser.md)
   * [Observing state](guides/observability.md)
+* Advanced
+  * [Preventing navigation](advanced/preventing-navigation.md)
+  * [Errors and redirections](advanced/errors-redirections.md)
 * Migration
   * [Migrating from 5.x to 6.x](migration/to-v6.md)
   * [Migrating from 4.x to 5.x](migration/to-v5.md)
