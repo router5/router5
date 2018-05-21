@@ -1,4 +1,4 @@
-# Why router5?
+# Why router5
 
 `router5` is part of a new generation of routers: instead of rendering "views" or "pages", router5 outputs its state. The main idea behind router5 is to treat routing state like any other application data or state.
 
