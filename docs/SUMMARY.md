@@ -5,9 +5,8 @@
   * [Why router5?](introduction/why-router5.md)
   * [Getting Started](introduction/getting-started.md)
   * [Ecosystem](introduction/ecosystem.md)
-* Overview
-  * [Core concepts](overview/core-concepts.md)
-  * [Transition phase](overview/transition.md)
+  * [Core concepts](introduction/core-concepts.md)
+  * [Transition phase](introduction/transition.md)
 * Guides
   * [Defining routes](guides/defining-routes.md)
   * [Path Syntax](guides/path-syntax.md)
