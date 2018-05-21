@@ -20,7 +20,7 @@ Router5 doesn't provide an opinionated way of handling async data, instead this 
 > You can use your router state objects as a container for route-specific data.
 
 You can use a middleware if you want your router to wait for data updates and/or prevent a route transition to happen if data loading fails.
-When doing so, you can use `toState` state object as a container for your route-specific data: the listeners plugin will pass it to your view (with the data you attached to it). You shouldn't mutate `toState` if you don't explicitly ask the router to wait by either calling a `done` callback or by returning a promise.
+When doing so, you can use `toState` state object as a container for your route-specific data: your router will emit the mutated state.
 
 First, we need to define what data need to be loaded for which route segment:
 

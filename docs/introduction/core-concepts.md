@@ -72,18 +72,7 @@ The current route is `admin.users`. If we were to navigate to `home`, `Main` wou
 
 > The __transition node__ (as explained above), _is_ the node to re-render your view from.
 
-The __listeners plugin__ makes possible to register those three types of listeners: _"any change"_ listener, route listener and node listener. Note that `listenersPlugin` has a limit of one node listener per node (_listenersPlugin_ uses [router5-transition-path](https://github.com/router5/router5/tree/master/packages/router5-transition-path) to compute the transition path between two router5 states).
 
 ![Relation between router and view](./router-view.png)
 
 In slightly more complicated cases, you might have other parts of your screen to re-render. For example, you might have a header, a main menu or a side panel to update on a route change: in that case you can listen to any route change or a specific route change, and re-render that specific portion of a screen. Keep transition nodes for your "main" content update.
-
-
-## What is router5 best suited for?
-
-Router 5 is best suited for trees of components, where components can easily be composed together. It works best with React, deku, cyclejs, etc...
-
-It also works very well with state containers like [Redux](http://redux.js.org/): your state container is placed between your view and your router, and your view subscribes to state updates (rather than directly subscribing to route updates). In that case you don't need to use the listeners plugin.
-
-- [react-router5](https://github.com/router5/router5/tree/master/packages/react-router5) and [deku-router5](https://github.com/router5/router5/tree/master/packages/deku-router5) both provide a `routeNode(nodeName)(BaseComponent)` higher-order component for re-rendering from a node down when the given node is the transition node.
-- [redux-router5](https://github.com/router5/router5/tree/master/packages/redux-router5) provides a selector `routeNode(nodeName)` which will release the new router state object when the specified node is the transition node. When combined with react or deku, you use it with `connect` from [react-redux](https://github.com/rackt/react-redux) or [deku-redux](https://github.com/troch/deku-redux).

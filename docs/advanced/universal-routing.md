@@ -12,7 +12,6 @@ You can use the same code for configuring your router on both client and server 
 
 ```js
 const createRouter = require( 'router5' ).default;
-const listenersPlugin = require( 'router5/plugins/listeners' );
 const browserPlugin = require( 'router5/plugins/browser' );
 
 function createRouter() {

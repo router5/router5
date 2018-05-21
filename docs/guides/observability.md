@@ -7,7 +7,6 @@ From router5@6.1.0 and onwards, your router instance is compatible with most obs
 ## Subscribing to state changes
 
 You can subscribe to route changes using `router.subscribe()`, and will receive an object containing `route` and `previousRoute`.
-Alternatively, you can use the listeners plugin.
 
 
 ## Observing state changes
