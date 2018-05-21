@@ -16,6 +16,8 @@
   * [In the browser](guides/browser.md)
   * [Observing state](guides/observability.md)
 * Advanced
+  * [Plugins](advanced/plugins.md)
+  * [Middleware](advanced/middleware.md)
   * [Preventing navigation](advanced/preventing-navigation.md)
   * [Errors and redirections](advanced/errors-redirections.md)
   * [Loading async data](advanced/async-data.md)
