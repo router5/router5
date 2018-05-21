@@ -15,6 +15,8 @@
   * [Navigating](guides/navigating.md)
   * [In the browser](guides/browser.md)
   * [Observing state](guides/observability.md)
+  * [With React](guides/with-react.md)
+  * [With Redux](guides/with-redux.md)
 * Advanced
   * [Plugins](advanced/plugins.md)
   * [Middleware](advanced/middleware.md)
