@@ -4,24 +4,23 @@ There are a few ways to add routes to your router. You can specify your routes w
 
 ## With plain objects
 
-You can define your routes as a flat array or nested array of routes. When using a flat array of routes, nested route names need to have their full name specified.
+You can define your routes using plain objects:
+- `name`: the route name
+- `path`: the route path, relative to its parent
 
 Route objects optionally accept the following properties:
 - `canActivate`: a method to control whether or not the route node can be activated (see [Preventing navigation](./preventing-navigation.html))
 - `forwardTo`: if specified, the router will transition to the forwarded route instead. It is useful for defaulting to a child route
 - `defaultParams`: an object of default params to extend when navigating and when matching a path
 - `encodeParams(stateParams)`: a function of state params returning path params. Used when building a path given a route name and params (typically on start and navigation).
-- `encodeParams(pathParams)`: a function of path params returning params. Used when matching a path to map path params to state params.
+- `decodeParams(pathParams)`: a function of path params returning params. Used when matching a path to map path params to state params.
 
 Note on `encodeParams` and `decodeParams`: one can't be used without another, and applying one after another should be equivalent to an identity function.
 
-__encodeParams(stateParams: Object): Object__
 
-A function taking state params and returning path params.
+### Flat route list
 
-__decodedParams
-
-__Flat array of routes__
+You can define your routes using a flat list, in which case route names must be specified in full.
 
 ```javascript
 const routes = [
@@ -31,8 +30,9 @@ const routes = [
 ];
 ```
 
-__Nested arrays of routes__
+### Tree of routes
 
+You can define your routes using a tree (making use of `children`), in which case route names are relative to their parent.
 
 ```javascript
 const routes = [
@@ -44,21 +44,19 @@ const routes = [
 ```
 
 
-__Nested arrays of routes__
-
 ## Adding routes
 
 You can add all your routes at once using `createRouter` or `router.add`.
 
-__createRouter(routes, options)__
+### When creating your router
 
 ```javascript
 const router = createRouter(routes, options);
 ```
 
-__add(routes)__
+### After creating your router
 
-`.add()` accepts single nodes, flat or nested arrays.
+`.add()` accepts single or multiple nodes, flat or nested.
 
 ```javascript
 myRouter.add({ name: 'about', path: '/about' });
@@ -69,16 +67,6 @@ myRouter.add([
 ]);
 ```
 
-__addNode(name, path[, canActivate])__
-
-You can add routes node by node, specifying a node name and its segment path.
-
-```javascript
-var router = createRouter()
-    .addNode('users',      '/users')
-    .addNode('users.view', '/view/:id')
-    .addNode('users.list', '/list');
-```
 
 ## Configuring the root node path
 

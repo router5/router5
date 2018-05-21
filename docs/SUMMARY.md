@@ -10,6 +10,7 @@
   * [Transition phase](overview/transition.md)
 * Guides
   * [Defining routes](guides/defining-routes.md)
+  * [Path Syntax](guides/path-syntax.md)
   * [Router options](guides/router-options.md)
 * Migration
   * [Migrating from 5.x to 6.x](migration/to-v6.md)
