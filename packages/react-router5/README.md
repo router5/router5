@@ -2,37 +2,24 @@
 
 # react-router5
 
-> Higher-order components and components for React when using [router5](https://github.com/router5/router5).
 
-### Installation
+## Demos and examples
+
+* Higher-order components: [https://stackblitz.com/edit/react-router5-new-context-api](https://stackblitz.com/edit/react-router5)
+* New context API: [https://stackblitz.com/edit/react-router5-new-context-api](https://stackblitz.com/edit/react-router5-new-context-api)
+
+
+## Installation
+
+Install module `react-router5:
 
 ```sh
+yarn add react-router5
+# or
 npm install --save react-router5
 ```
 
-### Examples
-
-* [Example project](../examples/apps/react)
-* [Demo](https://router5.github.io/docs/with-react.html#/inbox)
-
-### Requirements
-
-* react >= **0.14.0**
-* router5 >= **2.0.0**
-
-### What does this package export?
-
-* `RouterProvider`: component
-* `Link`: component
-* `routeNode`: higher-order component
-* `BaseLink`: component
-* `withRoute`: higher-order component
-
-### How it works
-
-![With React](https://cdn.rawgit.com/router5/router5.github.io/master/img/router-view.png)
-
-### Available components
+## Higher-order components
 
 * **RouterProvider**: adds your router instance in context.
 
@@ -68,9 +55,9 @@ function Users(props) {
 export default routeNode('users')(Users)
 ```
 
-**The `Link`component is `BaseLink` and `withRoute` composed together**
+## Link components
 
-* **Link**: a component to render hyperlinks. For a full list of supported props, check the source!
+* **Link**: a component to render hyperlinks. For a full list of supported props, check the source! `Link` is `withRoute` and `Link` composed together
 * **BaseLink**: same as `Link`, except it won't re-render on a route change.
 
 ```javascript
@@ -90,9 +77,11 @@ function Menu(props) {
 export default Menu
 ```
 
-### New React context components (React >= 16.3.0)
+## New React context API
 
-Three new components have been published to leverage React's new context API. Those components are still in development and won't replace existing ones: instead `react-router5` will offer higher-order components and components acception render functions.
+For using the new React context API, you need React version 16.3 or above.
+
+> Three new components have been published to leverage React's new context API. Those components won't replace existing ones: instead `react-router5` will keep offering higher-order components and components accepting render functions.
 
 * `RouteProvider`
 * `Route`
