@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-> Official website: [router5.github.io](http://router5.github.io)
+> Official website: [router5.js.org](https://router5.js.org)
 
 # router5
 
@@ -71,27 +71,38 @@ from(router).map(({ route }) => {
 ```
 
 
-### Guides
+## Examples
 
-[!["Past and future of client-side routing" @ ReactiveConf 2016](https://cloud.githubusercontent.com/assets/1777517/21482220/e9889d74-cb68-11e6-8077-ea2b3c9d6fb1.png)](https://www.youtube.com/watch?v=hblXdstrAg0)
+* [With React](https://stackblitz.com/edit/react-router5)
+* [With React (new context API)](https://stackblitz.com/edit/react-router5-new-context-api)
+* [With Redux](https://stackblitz.com/edit/react-redux-router5)
 
-* [Configuring routes](http://router5.github.io/docs/configuring-routes.html)
-* [Router options](http://router5.github.io/docs/router-options.html)
-* [Path syntax](http://router5.github.io/docs/path-syntax.html)
-* [Navigation](http://router5.github.io/docs/navigation.html)
-* [Preventing navigation](http://router5.github.io/docs/preventing-navigation.html)
-* [Custom errors and redirections](http://router5.github.io/docs/custom-errors.html)
-* [Middleware functions](http://router5.github.io/docs/middleware.html)
-* [Transition](http://router5.github.io/docs/transition.html)
-* [Using plugins](http://router5.github.io/docs/plugins.html)
-* [Universal applications](http://router5.github.io/docs/universal-applications.html)
-* [Async data](http://router5.github.io/docs/async-data.html)
 
-### Integrations
+### Docs
 
-* [react-router5](./packages/react-router5)
-* [redux-router5](./packages/redux-router5)
-
-### API
-
-* [API Reference](http://router5.github.io/docs/api-reference.html)
+* Introduction
+  * [Why router5?](https://router5.js.org/introduction/why-router5)
+  * [Getting Started](https://router5.js.org/introduction/getting-started)
+  * [Ecosystem](https://router5.js.org/introduction/ecosystem)
+  * [Core concepts](https://router5.js.org/introduction/core-concepts)
+  * [Transition phase](https://router5.js.org/introduction/transition-phase)
+* Guides
+  * [Defining routes](https://router5.js.org/guides/defining-routes)
+  * [Path Syntax](https://router5.js.org/guides/path-syntax)
+  * [Router options](https://router5.js.org/guides/router-options)
+  * [Navigating](https://router5.js.org/guides/navigating)
+  * [In the browser](https://router5.js.org/guides/in-the-browser)
+  * [Observing state](https://router5.js.org/guides/observing-state)
+* Integration
+  * [With React](https://router5.js.org/integration/with-react)
+  * [With Redux](https://router5.js.org/integration/with-redux)
+* Advanced
+  * [Plugins](https://router5.js.org/advanced/plugins)
+  * [Middleware](https://router5.js.org/advanced/middleware)
+  * [Preventing navigation](https://router5.js.org/advanced/preventing-navigation)
+  * [Errors and redirections](https://router5.js.org/advanced/errors-and-redirections)
+  * [Dependency injection](https://router5.js.org/advanced/dependency-injection)
+  * [Loading async data](https://router5.js.org/advanced/loading-async-data)
+  * [Universal routing](https://router5.js.org/advanced/universal-routing)
+  * [Listeners plugin](https://router5.js.org/advanced/listeners-plugin)
+* [API Reference](https://router5.js.org/api-reference)

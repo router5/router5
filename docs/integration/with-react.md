@@ -1,13 +1,9 @@
-[![npm version](https://badge.fury.io/js/react-router5.svg)](https://badge.fury.io/js/react-router5)
-
-# react-router5
-
+# With React
 
 ## Demos and examples
 
 * Higher-order components: [https://stackblitz.com/edit/react-router5-new-context-api](https://stackblitz.com/edit/react-router5)
 * New context API: [https://stackblitz.com/edit/react-router5-new-context-api](https://stackblitz.com/edit/react-router5-new-context-api)
-
 
 ## Installation
 
@@ -81,7 +77,9 @@ export default Menu
 
 For using the new React context API, you need React version 16.3 or above.
 
-> Three new components have been published to leverage React's new context API. Those components won't replace existing ones: instead `react-router5` will keep offering higher-order components and components accepting render functions.
+{% hint %}
+Three new components have been published to leverage React's new context API. Those components won't replace existing ones: instead `react-router5` will keep offering higher-order components and components accepting render functions.
+{% endhint %}
 
 * `RouteProvider`
 * `Route`

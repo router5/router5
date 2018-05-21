@@ -1,6 +1,4 @@
-[![npm version](https://badge.fury.io/js/redux-router5.svg)](https://badge.fury.io/js/redux-router5)
-
-# redux-router5
+# With Redux
 
 
 ## Demo and example with Redux
@@ -76,7 +74,9 @@ const reducers = combineReducers({
 
 ## Route node selector
 
-> In order to use routeNodeSelector efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.__
+{% hint %}
+In order to use routeNodeSelector efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.__
+{% endhint %}
 
 `routeNodeSelector` is a selector creator designed to be used on a route node and works with `connect` higher-order component from `react-redux`.
 
