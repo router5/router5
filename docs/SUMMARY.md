@@ -13,6 +13,7 @@
   * [Path Syntax](guides/path-syntax.md)
   * [Router options](guides/router-options.md)
   * [Navigating](guides/navigating.md)
+  * [Observability](guides/observability.md)
 * Migration
   * [Migrating from 5.x to 6.x](migration/to-v6.md)
   * [Migrating from 4.x to 5.x](migration/to-v5.md)
