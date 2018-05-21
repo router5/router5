@@ -25,6 +25,7 @@
   * [Dependency injection](advanced/dependency-injection.md)
   * [Loading async data](advanced/async-data.md)
   * [Universal routing](advanced/universal-routing.md)
+* [API Reference](./api-reference.md)
 * Migration
   * [Migrating from 5.x to 6.x](migration/to-v6.md)
   * [Migrating from 4.x to 5.x](migration/to-v5.md)
