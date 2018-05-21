@@ -1,10 +1,12 @@
 # Table of Contents
 
-* [Read Me](../README.md)
 * Introduction
   * [Why router5?](introduction/why-router5.md)
   * [Getting Started](introduction/getting-started.md)
   * [Ecosystem](introduction/ecosystem.md)
+* Overview
+  * [Core concepts](overview/core-concepts.md)
+  * [Transition phase](overview/transition.md)
 * Migration
   * [Migrating from 5.x to 6.x](migration/to-v6.md)
   * [Migrating from 4.x to 5.x](migration/to-v5.md)
