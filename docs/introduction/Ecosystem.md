@@ -1,6 +1,6 @@
 # Ecosystem
 
-> A list of repositories and links related to router5. If you want to add an item to the list, raise an issue [https://github.com/router5/router5.github.io/issues](https://github.com/router5/router5/issues)
+A list of repositories and links related to router5. If you want to add an item to the list, raise an issue [https://github.com/router5/router5.github.io/issues](https://github.com/router5/router5/issues)
 
 
 ## Middleware, plugins, bindings, components, etc...

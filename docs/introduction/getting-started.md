@@ -1,8 +1,6 @@
 # Getting started
 
-> _router5_ is available in all major formats: __ES6__, __CommonJS__, and __UMD__.
-
-It can be installed using __npm__ or __yarn__. Alternatively, you can download a specific version
+_router5_ is available in all major formats: __ES6__, __CommonJS__, and __UMD__. It can be installed using __npm__ or __yarn__. Alternatively, you can download a specific version
 from [github](https://github.com/router5/router5/releases).
 
 

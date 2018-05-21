@@ -8,4 +8,4 @@
 https://www.youtube.com/watch?v=hblXdstrAg0
 {% endyoutube %}
 
-For more in-depth description of router5, look at [Understanding router5](/docs/understanding-router5.html).
+For more in-depth description of router5, look at [Understanding router5](../docs/understanding-router5.html).
