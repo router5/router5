@@ -5,7 +5,7 @@
 
 > Official website: [router5.js.org](https://router5.js.org)
 
-# router5
+# Router5
 
 router5 is a **framework and view library agnostic router**.
 
@@ -78,7 +78,7 @@ from(router).map(({ route }) => {
 * [With Redux](https://stackblitz.com/edit/react-redux-router5)
 
 
-### Docs
+## Docs
 
 * Introduction
   * [Why router5?](https://router5.js.org/introduction/why-router5)
