@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import createTestRouter from '../_create-router'
 import { omitMeta } from '../_helpers'
+import createRouter from '../../modules'
 
 describe('core/utils', () => {
     let router
@@ -94,6 +95,53 @@ describe('core/utils', () => {
                     username: 'thomas'
                 })
             ).to.equal('/users/view/123?username=thomas')
+        })
+    })
+
+    context('with non default query params format', () => {
+        before(() => {
+            router = createRouter(
+                [
+                    {
+                        name: 'query',
+                        path: '/query?param1&param2'
+                    }
+                ],
+                {
+                    queryParamsMode: 'loose',
+                    queryParams: {
+                        booleanFormat: 'unicode'
+                    }
+                }
+            )
+        })
+        after(() => router.stop())
+
+        it('should build paths', () => {
+            expect(
+                router.buildPath('query', {
+                    param1: true,
+                    param2: false
+                })
+            ).to.equal('/query?param1=✓&param2=✗')
+        })
+
+        it('should match paths', () => {
+            const match = router.matchPath('/query?param1=✓&param2=✗')
+
+            expect(match.params).to.eql({
+                param1: true,
+                param2: false
+            })
+        })
+
+        it('should match on start', () => {
+            router.start('/query?param1=✓&param2=✗', (err, state) => {
+                expect(state.params).to.eql({
+                    param1: true,
+                    param2: false
+                })
+            })
         })
     })
 })
