@@ -17,10 +17,9 @@ declare module 'redux-router5' {
         dispatch: Dispatch<TState>
     ): PluginFactory
 
-    export function routeNodeSelector<TState extends { router: RouterState }>(
-        routeNode: string,
-        reducerKey?: string
-    ): (state: TState) => RouterState
+    export function createRouteNodeSelector<
+        TState extends { router: RouterState }
+    >(routeNode: string, reducerKey?: string): (state: TState) => RouterState
 
     // #region actions
 

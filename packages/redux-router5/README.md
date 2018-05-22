@@ -76,16 +76,16 @@ const reducers = combineReducers({
 
 ## Route node selector
 
-> In order to use routeNodeSelector efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.__
+> __routeNodeSelector__ has been renamed to __createRouteNodeSelector__. In order to use createRouteNodeSelector efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.__
 
-`routeNodeSelector` is a selector creator designed to be used on a route node and works with `connect` higher-order component from `react-redux`.
+`createRouteNodeSelector` is a selector creator designed to be used on a route node and works with `connect` higher-order component from `react-redux`.
 
-If your routes are nested, you'll have a few route nodes in your application. On each route change, not all components need to be re-rendered. `routeNodeSelector` will only output a new state value if the provided node is concerned by a route change.
+If your routes are nested, you'll have a few route nodes in your application. On each route change, not all components need to be re-rendered. `createRouteNodeSelector` will only output a new state value if the provided node is concerned by a route change.
 
 
 ```javascript
 import { connect } from 'react-redux';
-import { routeNodeSelector } from 'redux-router5';
+import { createRouteNodeSelector } from 'redux-router5';
 import { Home, About, Contact } from './components';
 import { startsWithSegment } from 'router5-helpers';
 
@@ -104,19 +104,19 @@ function Root({ route }) {
     return null
 }
 
-export default connect(routeNodeSelector(''))(Root);
+export default connect(createRouteNodeSelector(''))(Root);
 ```
 
-Using `routeNodeSelector` with other connect properties:
+Using `createRouteNodeSelector` with other connect properties:
 
 ```js
 export default connect(state => {
-    const selector = routeNodeSelector('');
+    const routeNodeSelector = createRouteNodeSelector('');
 
     return (state) => ({
         a: state.a,
         b: state.b,
-        ...selector(state)
+        ...routeNodeSelector(state)
     })
 )(Root);
 ```
