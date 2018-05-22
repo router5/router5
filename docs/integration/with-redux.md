@@ -75,7 +75,7 @@ const reducers = combineReducers({
 ## Route node selector
 
 {% hint %}
-__`routeNodeSelector` has been renamed to `createRouteNodeSelector`__. In order to use it efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.__
+__In version 6.0.0, `routeNodeSelector` has been renamed to `createRouteNodeSelector`__. In order to use it efficiently, you need react-redux >= 4.4.0 to be able to perform per component instance memoization.
 {% endhint %}
 
 `createRouteNodeSelector` is a selector creator designed to be used on a route node and works with `connect` higher-order component from `react-redux`.
