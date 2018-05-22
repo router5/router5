@@ -1,3 +1,14 @@
+## redux-router5@6.0.0 (2018-05-22)
+
+#### BREAKING CHANGES
+* `redux-router5`
+  * [#292](https://github.com/router5/router5/pull/292) Rename `routeNodeSelector` to `createRouteNodeSelector`. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.2.1 (2018-05-16)
 
 #### Bug fix

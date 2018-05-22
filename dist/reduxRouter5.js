@@ -377,7 +377,7 @@
         };
     }
 
-    function routeNodeSelector(routeNode) {
+    function createRouteNodeSelector(routeNode) {
         var reducerKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'router';
 
         var routerStateSelector = function routerStateSelector(state) {
@@ -406,7 +406,7 @@
     exports.router5Reducer = router5Reducer;
     exports.actions = actions;
     exports.actionTypes = actionTypes;
-    exports.routeNodeSelector = routeNodeSelector;
+    exports.createRouteNodeSelector = createRouteNodeSelector;
     exports.reduxPlugin = reduxPluginFactory;
 
     Object.defineProperty(exports, '__esModule', { value: true });
