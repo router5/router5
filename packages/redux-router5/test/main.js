@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import {
-    routeNodeSelector,
+    createRouteNodeSelector,
     router5Reducer,
     actions,
     actionTypes
@@ -112,10 +112,10 @@ describe('redux-router5', () => {
         })
     })
 
-    describe('routeNodeSelector', () => {
+    describe('createRouteNodeSelector', () => {
         it('should memoize routes', () => {
-            const rootSelector = routeNodeSelector('')
-            const aSelector = routeNodeSelector('a')
+            const rootSelector = createRouteNodeSelector('')
+            const aSelector = createRouteNodeSelector('a')
 
             let router = {
                 route: route1,
@@ -140,10 +140,10 @@ describe('redux-router5', () => {
         })
     })
 
-    describe('routeNodeSelector using immutable state', () => {
+    describe('createRouteNodeSelector using immutable state', () => {
         it('should memoize routes', () => {
-            const rootSelector = routeNodeSelector('')
-            const aSelector = routeNodeSelector('a')
+            const rootSelector = createRouteNodeSelector('')
+            const aSelector = createRouteNodeSelector('a')
 
             let router = new State({
                 route: route1,
