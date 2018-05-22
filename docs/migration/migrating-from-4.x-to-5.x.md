@@ -1,7 +1,6 @@
 # Migrating from 4.x to 5.x
 
-
-With version 5.0.0, `router5` is now a monorepo: all repos have been imported into https://github.com/router5/router5. This will make maintenance and release of new versions easier.
+With version 5.0.0, `router5` is now a monorepo: all repos have been imported into [https://github.com/router5/router5](https://github.com/router5/router5). This will make maintenance and release of new versions easier.
 
 ## Bug fixes
 
@@ -16,3 +15,4 @@ Not found state is now passed to middleware functions on start: if you use `allo
 
 * `router5.helpers` package has been renamed to `router5-helpers`
 * `router5.transition-path` package has been renamed to `router5-transition-path`
+

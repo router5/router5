@@ -7,11 +7,11 @@
 
 ## Installation
 
-Install module `react-router5:
+Install module \`react-router5:
 
-```sh
+```bash
 yarn add react-router5
-# or
+# or
 npm install --save react-router5
 ```
 
@@ -27,8 +27,8 @@ const AppWithRouter = (
 )
 ```
 
-* **withRoute(BaseComponent)**: HoC injecting your router instance (from context) and the current route to the wrapped component. Any route change will trigger a re-render
-* **routeNode(nodeName)(BaseComponent)**: like above, expect it only re-renders when the given route node is the transition node. When using `routeNode` components, make sure to key the ones which can render the same components but with different route params.
+* **withRoute\(BaseComponent\)**: HoC injecting your router instance \(from context\) and the current route to the wrapped component. Any route change will trigger a re-render
+* **routeNode\(nodeName\)\(BaseComponent\)**: like above, expect it only re-renders when the given route node is the transition node. When using `routeNode` components, make sure to key the ones which can render the same components but with different route params.
 
 ```javascript
 import React from 'react'
@@ -77,7 +77,7 @@ export default Menu
 
 For using the new React context API, you need React version 16.3 or above.
 
-{% hint %}
+{% hint style="info" %}
 Three new components have been published to leverage React's new context API. Those components won't replace existing ones: instead `react-router5` will keep offering higher-order components and components accepting render functions.
 {% endhint %}
 
@@ -87,7 +87,7 @@ Three new components have been published to leverage React's new context API. Th
 
 Both `Route` and `RouteNode` pass to their chilren an object containing `route`, `previousRoute` and `router`.
 
-```js
+```javascript
 const App = (
     <RouteProvider router={router}>
         <RouteNode nodeName="">
@@ -96,3 +96,4 @@ const App = (
     </RouteProvider>
 )
 ```
+

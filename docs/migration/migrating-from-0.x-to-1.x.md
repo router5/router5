@@ -1,14 +1,12 @@
-# Getting started
+# Migrating from 0.x to 1.x
 
-> _router5_ is available in all major formats: __ES6__, __CommonJS__, and __UMD__.
+> _router5_ is available in all major formats: **ES6**, **CommonJS**, and **UMD**.
 
-It can be installed using __npm__ or __yarn__. Alternatively, you can download a specific version
-from [github](https://github.com/router5/router5/releases).
-
+It can be installed using **npm** or **yarn**. Alternatively, you can download a specific version from [github](https://github.com/router5/router5/releases).
 
 ## Installation
 
-```sh
+```bash
 # yarn
 yarn add router5
 # npm
@@ -17,8 +15,7 @@ npm install router5
 
 ## Include _router5_ in your application
 
-__CommonJS__
-
+**CommonJS**
 
 ```javascript
 // ES2015+
@@ -44,12 +41,15 @@ var listenersPlugin = require('router5/plugins/listeners');
 var persistentParamsPlugin = require('router5/plugins/persistentParams');
 ```
 
-__UMD__
+**UMD**
 
-A UMD bundle is available in `/dist/umd`, and it should be used for AMD or globals. The bundle contains all _router5_ dependencies (_route-node_ and _path-parser_), but doesn't contain plugins.
+A UMD bundle is available in `/dist/umd`, and it should be used for AMD or globals. The bundle contains all _router5_ dependencies \(_route-node_ and _path-parser_\), but doesn't contain plugins.
 
 Plugins are packaged separately and available in `/dist/umd`:
-- `browserPlugin` UMD module is named `router5BrowserPlugin`
-- `listenersPlugin` UMD module is named `router5ListenersPlugin`
-- `persistentParamsPlugin` UMD module is named `router5PersistentParamsPlugin`
-bundle is named `router5ListenersPlugin`.
+
+* `browserPlugin` UMD module is named `router5BrowserPlugin`
+* `listenersPlugin` UMD module is named `router5ListenersPlugin`
+* `persistentParamsPlugin` UMD module is named `router5PersistentParamsPlugin`
+
+  bundle is named `router5ListenersPlugin`.
+

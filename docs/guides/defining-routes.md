@@ -5,18 +5,19 @@ There are a few ways to add routes to your router. You can specify your routes w
 ## With plain objects
 
 You can define your routes using plain objects:
-- `name`: the route name
-- `path`: the route path, relative to its parent
+
+* `name`: the route name
+* `path`: the route path, relative to its parent
 
 Route objects optionally accept the following properties:
-- `canActivate`: a method to control whether or not the route node can be activated (see [Preventing navigation](./preventing-navigation.html))
-- `forwardTo`: if specified, the router will transition to the forwarded route instead. It is useful for defaulting to a child route
-- `defaultParams`: an object of default params to extend when navigating and when matching a path
-- `encodeParams(stateParams)`: a function of state params returning path params. Used when building a path given a route name and params (typically on start and navigation).
-- `decodeParams(pathParams)`: a function of path params returning params. Used when matching a path to map path params to state params.
+
+* `canActivate`: a method to control whether or not the route node can be activated \(see [Preventing navigation](https://github.com/router5/router5/tree/1cc1c6969a96918deb28e45b8c5b2d6aa19d0a19/docs/guides/preventing-navigation.html)\)
+* `forwardTo`: if specified, the router will transition to the forwarded route instead. It is useful for defaulting to a child route
+* `defaultParams`: an object of default params to extend when navigating and when matching a path
+* `encodeParams(stateParams)`: a function of state params returning path params. Used when building a path given a route name and params \(typically on start and navigation\).
+* `decodeParams(pathParams)`: a function of path params returning params. Used when matching a path to map path params to state params.
 
 Note on `encodeParams` and `decodeParams`: one can't be used without another, and applying one after another should be equivalent to an identity function.
-
 
 ### Flat route list
 
@@ -32,7 +33,7 @@ const routes = [
 
 ### Tree of routes
 
-You can define your routes using a tree (making use of `children`), in which case route names are relative to their parent.
+You can define your routes using a tree \(making use of `children`\), in which case route names are relative to their parent.
 
 ```javascript
 const routes = [
@@ -42,7 +43,6 @@ const routes = [
     ]}
 ];
 ```
-
 
 ## Adding routes
 
@@ -67,7 +67,7 @@ myRouter.add([
 ]);
 ```
 
-
 ## Configuring the root node path
 
-At the top of your tree of routes, there is an unamed node called the root node. Its path is empty and can be configured using `router.setRootPath(path)`. It can be used for example to list a number of allowed query parameters for all routes in strict query parameters mode (`router.setRootPath('?param1&param2')`).
+At the top of your tree of routes, there is an unamed node called the root node. Its path is empty and can be configured using `router.setRootPath(path)`. It can be used for example to list a number of allowed query parameters for all routes in strict query parameters mode \(`router.setRootPath('?param1&param2')`\).
+

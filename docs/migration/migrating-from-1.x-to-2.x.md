@@ -1,6 +1,5 @@
 # Migrating from 1.x to 2.x
 
-
 ## New features
 
 * You can now pass to `router.add()` objects containing `canActivate` functions and those functions will be registered. No need to call for each route `addNode` or `canActivate`.
@@ -12,13 +11,13 @@
 * Additional arguments now apply to middleware functions.
 * Context has been removed from middleware functions.
 * Middleware functions are now a function taking a router instance and returning a function called on each transition.
-* Plugins, like middleware functions, are now a function taking a router instance and returning an object of methods (which doesn't contain an `init` function anymore).
+* Plugins, like middleware functions, are now a function taking a router instance and returning an object of methods \(which doesn't contain an `init` function anymore\).
 * `autoCleanUp` is no longer shared with _router5-listeners_. If you need to turn off automatic deregistration of node listeners, pass `{ autoCleanUp: false }` to the listeners plugin.
 * `router5` package now exports `Router5` as default, and `RouteNode`, `loggerPlugin`, `errCodes` and `transitionPath` as named exports
 
 ## Code example
 
-__ES2015+__
+**ES2015+**
 
 ```javascript
 import Router5, { loggerPlugin } from 'router5';
@@ -37,7 +36,7 @@ const router = new Router5()
     .start();
 ```
 
-__ES5__
+**ES5**
 
 ```javascript
 var router5 = require('router5');
@@ -58,3 +57,4 @@ var router = new Router5()
     .usePlugin(loggerPlugin())
     .start();
 ```
+

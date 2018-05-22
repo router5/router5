@@ -1,9 +1,8 @@
 # Migrating from 2.x to 3.x
 
-
 ## New features
 
-* When a transition fails (either in a `canActivate`, `canDeactivate` or middleware function), a custom error can be returned containing a `redirect` property.
+* When a transition fails \(either in a `canActivate`, `canDeactivate` or middleware function\), a custom error can be returned containing a `redirect` property.
 * Persistent parameters plugin now available.
 
 ## Breaking change
@@ -32,3 +31,4 @@ router.canActivate(
     }
 );
 ```
+
