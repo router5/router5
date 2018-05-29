@@ -17,7 +17,7 @@ declare module 'redux-router5' {
         type: string
         payload?: {
             route: State
-            previousState?: State
+            previousRoute?: State
             transitionError?: any
         }
     }
