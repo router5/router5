@@ -13,7 +13,7 @@ declare module 'redux-router5' {
 
     export const router5Reducer: Reducer<RouterState>
 
-    export function reduxPlugin<TState extends { router: RouterState, type: string }>(
+    export function reduxPlugin<TState extends { payload: RouterState | null, type: string }>(
         dispatch: Dispatch<TState>
     ): PluginFactory
 
