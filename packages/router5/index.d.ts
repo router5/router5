@@ -28,7 +28,7 @@ declare module 'router5' {
         ActivationFn,
         ActivationFnFactory
     } from 'router5/core/route-lifecycle'
-    import loggerPlugin from 'router5/plugins/loggers'
+    import loggerPlugin from 'router5/plugins/logger'
     import transitionPath from 'router5-transition-path'
 
     type DoneFn = (err?: any, state?: State) => void
@@ -413,7 +413,7 @@ declare module 'router5/plugins/listeners' {
     export default listenersPluginFactory
 }
 
-declare module 'router5/plugins/loggers' {
+declare module 'router5/plugins/logger' {
     import { PluginFactory } from 'router5/core/plugins'
     const loggerPlugin: PluginFactory
     export default loggerPlugin
