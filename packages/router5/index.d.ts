@@ -202,7 +202,7 @@ declare module 'router5/core/middleware' {
         toState: State,
         fromState: State,
         done: DoneFn
-    ) => boolean | Promise<boolean> | void
+    ) => boolean | Promise<any> | void
 
     export type MiddlewareFactory = (
         router: Router,
