@@ -1,4 +1,4 @@
-### router5@6.2.2 (2018-06-02)
+### router5@6.2.3 (2018-06-02)
 
 #### Enhancement
 * `router5`
