@@ -47,6 +47,11 @@
 
 	var emptyFunction_1 = emptyFunction;
 
+	var emptyFunction$1 = /*#__PURE__*/Object.freeze({
+		default: emptyFunction_1,
+		__moduleExports: emptyFunction_1
+	});
+
 	/**
 	 * Copyright (c) 2013-present, Facebook, Inc.
 	 * All rights reserved.
@@ -101,6 +106,13 @@
 
 	var invariant_1 = invariant;
 
+	var invariant$1 = /*#__PURE__*/Object.freeze({
+		default: invariant_1,
+		__moduleExports: invariant_1
+	});
+
+	var emptyFunction$2 = ( emptyFunction$1 && emptyFunction_1 ) || emptyFunction$1;
+
 	/**
 	 * Similar to invariant but only logs a warning if the condition is not met.
 	 * This can be used to log issues in development environments in critical
@@ -108,7 +120,7 @@
 	 * same logic and follow the same code paths.
 	 */
 
-	var warning = emptyFunction_1;
+	var warning = emptyFunction$2;
 
 	if (process.env.NODE_ENV !== 'production') {
 	  (function () {
@@ -154,6 +166,11 @@
 
 	var warning_1 = warning;
 
+	var warning$1 = /*#__PURE__*/Object.freeze({
+		default: warning_1,
+		__moduleExports: warning_1
+	});
+
 	/**
 	 * Copyright 2013-present, Facebook, Inc.
 	 * All rights reserved.
@@ -166,6 +183,17 @@
 	var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 	var ReactPropTypesSecret_1 = ReactPropTypesSecret;
+
+	var ReactPropTypesSecret$1 = /*#__PURE__*/Object.freeze({
+		default: ReactPropTypesSecret_1,
+		__moduleExports: ReactPropTypesSecret_1
+	});
+
+	var require$$0 = ( invariant$1 && invariant_1 ) || invariant$1;
+
+	var require$$1 = ( warning$1 && warning_1 ) || warning$1;
+
+	var require$$2 = ( ReactPropTypesSecret$1 && ReactPropTypesSecret_1 ) || ReactPropTypesSecret$1;
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
 	  return typeof obj;
@@ -248,9 +276,9 @@
 	};
 
 	if (process.env.NODE_ENV !== 'production') {
-	  var invariant$1 = invariant_1;
-	  var warning$1 = warning_1;
-	  var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
+	  var invariant$2 = require$$0;
+	  var warning$2 = require$$1;
+	  var ReactPropTypesSecret$2 = require$$2;
 	  var loggedTypeFailures = {};
 	}
 
@@ -276,12 +304,12 @@
 	        try {
 	          // This is intentionally an invariant that gets caught. It's the same
 	          // behavior as without this statement except with a better message.
-	          invariant$1(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
-	          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$1);
+	          invariant$2(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+	          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$2);
 	        } catch (ex) {
 	          error = ex;
 	        }
-	        warning$1(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error === 'undefined' ? 'undefined' : _typeof(error));
+	        warning$2(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error === 'undefined' ? 'undefined' : _typeof(error));
 	        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
 	          // Only monitor this failure once because there tends to be a lot of the
 	          // same error.
@@ -289,7 +317,7 @@
 
 	          var stack = getStack ? getStack() : '';
 
-	          warning$1(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+	          warning$2(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
 	        }
 	      }
 	    }
@@ -297,6 +325,13 @@
 	}
 
 	var checkPropTypes_1 = checkPropTypes;
+
+	var checkPropTypes$1 = /*#__PURE__*/Object.freeze({
+		default: checkPropTypes_1,
+		__moduleExports: checkPropTypes_1
+	});
+
+	var checkPropTypes$2 = ( checkPropTypes$1 && checkPropTypes_1 ) || checkPropTypes$1;
 
 	var factoryWithTypeCheckers = function factoryWithTypeCheckers(isValidElement, throwOnDirectAccess) {
 	  /* global Symbol */
@@ -436,17 +471,17 @@
 	      componentName = componentName || ANONYMOUS;
 	      propFullName = propFullName || propName;
 
-	      if (secret !== ReactPropTypesSecret_1) {
+	      if (secret !== require$$2) {
 	        if (throwOnDirectAccess) {
 	          // New behavior only for users of `prop-types` package
-	          invariant_1(false, 'Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+	          require$$0(false, 'Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use `PropTypes.checkPropTypes()` to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
 	        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
 	          // Old behavior for people using React.PropTypes
 	          var cacheKey = componentName + ':' + propName;
 	          if (!manualPropTypeCallCache[cacheKey] &&
 	          // Avoid spamming the console because they are often not actionable except for lib authors
 	          manualPropTypeWarningCount < 3) {
-	            warning_1(false, 'You are manually calling a React.PropTypes validation ' + 'function for the `%s` prop on `%s`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.', propFullName, componentName);
+	            require$$1(false, 'You are manually calling a React.PropTypes validation ' + 'function for the `%s` prop on `%s`. This is deprecated ' + 'and will throw in the standalone `prop-types` package. ' + 'You may be seeing this warning due to a third-party PropTypes ' + 'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.', propFullName, componentName);
 	            manualPropTypeCallCache[cacheKey] = true;
 	            manualPropTypeWarningCount++;
 	          }
@@ -489,7 +524,7 @@
 	  }
 
 	  function createAnyTypeChecker() {
-	    return createChainableTypeChecker(emptyFunction_1.thatReturnsNull);
+	    return createChainableTypeChecker(emptyFunction$2.thatReturnsNull);
 	  }
 
 	  function createArrayOfTypeChecker(typeChecker) {
@@ -503,7 +538,7 @@
 	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
 	      }
 	      for (var i = 0; i < propValue.length; i++) {
-	        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret_1);
+	        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', require$$2);
 	        if (error instanceof Error) {
 	          return error;
 	        }
@@ -539,8 +574,8 @@
 
 	  function createEnumTypeChecker(expectedValues) {
 	    if (!Array.isArray(expectedValues)) {
-	      process.env.NODE_ENV !== 'production' ? warning_1(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
-	      return emptyFunction_1.thatReturnsNull;
+	      process.env.NODE_ENV !== 'production' ? require$$1(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
+	      return emptyFunction$2.thatReturnsNull;
 	    }
 
 	    function validate(props, propName, componentName, location, propFullName) {
@@ -569,7 +604,7 @@
 	      }
 	      for (var key in propValue) {
 	        if (propValue.hasOwnProperty(key)) {
-	          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+	          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, require$$2);
 	          if (error instanceof Error) {
 	            return error;
 	          }
@@ -582,22 +617,22 @@
 
 	  function createUnionTypeChecker(arrayOfTypeCheckers) {
 	    if (!Array.isArray(arrayOfTypeCheckers)) {
-	      process.env.NODE_ENV !== 'production' ? warning_1(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
-	      return emptyFunction_1.thatReturnsNull;
+	      process.env.NODE_ENV !== 'production' ? require$$1(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+	      return emptyFunction$2.thatReturnsNull;
 	    }
 
 	    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
 	      var checker = arrayOfTypeCheckers[i];
 	      if (typeof checker !== 'function') {
-	        warning_1(false, 'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' + 'received %s at index %s.', getPostfixForTypeWarning(checker), i);
-	        return emptyFunction_1.thatReturnsNull;
+	        require$$1(false, 'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' + 'received %s at index %s.', getPostfixForTypeWarning(checker), i);
+	        return emptyFunction$2.thatReturnsNull;
 	      }
 	    }
 
 	    function validate(props, propName, componentName, location, propFullName) {
 	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
 	        var checker = arrayOfTypeCheckers[i];
-	        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret_1) == null) {
+	        if (checker(props, propName, componentName, location, propFullName, require$$2) == null) {
 	          return null;
 	        }
 	      }
@@ -629,7 +664,7 @@
 	        if (!checker) {
 	          continue;
 	        }
-	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, require$$2);
 	        if (error) {
 	          return error;
 	        }
@@ -765,19 +800,24 @@
 	    return propValue.constructor.name;
 	  }
 
-	  ReactPropTypes.checkPropTypes = checkPropTypes_1;
+	  ReactPropTypes.checkPropTypes = checkPropTypes$2;
 	  ReactPropTypes.PropTypes = ReactPropTypes;
 
 	  return ReactPropTypes;
 	};
 
+	var factoryWithTypeCheckers$1 = /*#__PURE__*/Object.freeze({
+		default: factoryWithTypeCheckers,
+		__moduleExports: factoryWithTypeCheckers
+	});
+
 	var factoryWithThrowingShims = function factoryWithThrowingShims() {
 	  function shim(props, propName, componentName, location, propFullName, secret) {
-	    if (secret === ReactPropTypesSecret_1) {
+	    if (secret === require$$2) {
 	      // It is still safe when called from React.
 	      return;
 	    }
-	    invariant_1(false, 'Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use PropTypes.checkPropTypes() to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
+	    require$$0(false, 'Calling PropTypes validators directly is not supported by the `prop-types` package. ' + 'Use PropTypes.checkPropTypes() to call them. ' + 'Read more at http://fb.me/use-check-prop-types');
 	  }  shim.isRequired = shim;
 	  function getShim() {
 	    return shim;
@@ -803,11 +843,20 @@
 	    shape: getShim
 	  };
 
-	  ReactPropTypes.checkPropTypes = emptyFunction_1;
+	  ReactPropTypes.checkPropTypes = emptyFunction$2;
 	  ReactPropTypes.PropTypes = ReactPropTypes;
 
 	  return ReactPropTypes;
 	};
+
+	var factoryWithThrowingShims$1 = /*#__PURE__*/Object.freeze({
+		default: factoryWithThrowingShims,
+		__moduleExports: factoryWithThrowingShims
+	});
+
+	var require$$0$1 = ( factoryWithTypeCheckers$1 && factoryWithTypeCheckers ) || factoryWithTypeCheckers$1;
+
+	var require$$1$1 = ( factoryWithThrowingShims$1 && factoryWithThrowingShims ) || factoryWithThrowingShims$1;
 
 	var propTypes = createCommonjsModule(function (module) {
 	  /**
@@ -829,11 +878,11 @@
 	    // By explicitly using `prop-types` you are opting into new development behavior.
 	    // http://fb.me/prop-types-in-prod
 	    var throwOnDirectAccess = true;
-	    module.exports = factoryWithTypeCheckers(isValidElement, throwOnDirectAccess);
+	    module.exports = require$$0$1(isValidElement, throwOnDirectAccess);
 	  } else {
 	    // By explicitly using `prop-types` you are opting into new production behavior.
 	    // http://fb.me/prop-types-in-prod
-	    module.exports = factoryWithThrowingShims();
+	    module.exports = require$$1$1();
 	  }
 	});
 

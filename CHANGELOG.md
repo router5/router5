@@ -1,3 +1,21 @@
+### router5@6.2.2 (2018-06-02)
+
+#### Enhancement
+* `router5`
+  * [#305](https://github.com/router5/router5/pull/305) Improve middleware TypeScript definition. ([@troch](https://github.com/troch))
+  * [#302](https://github.com/router5/router5/pull/302) Fix logger path in TypeScript definitions. ([@vaurelios](https://github.com/vaurelios))
+* `react-router5`
+  * [#304](https://github.com/router5/router5/pull/304) Fix type error when upgrading to TypeScript 2.9.1. ([@nervestaple](https://github.com/nervestaple))
+* `redux-router5`
+  * [#301](https://github.com/router5/router5/pull/301) Fix redux plugin type definition. ([@eatonphil](https://github.com/eatonphil))
+
+#### Committers: 5
+- Jim McGee ([nervestaple](https://github.com/nervestaple))
+- Phil Eaton ([eatonphil](https://github.com/eatonphil))
+- Thomas Roch ([troch](https://github.com/troch))
+- Victor Aurélio Santos ([vaurelios](https://github.com/vaurelios))
+
+
 ## redux-router5@6.0.0 (2018-05-22)
 
 #### BREAKING CHANGES
