@@ -7,8 +7,10 @@ declare module 'react-router5' {
     } from 'react'
     import { Router, Route, State } from 'router5'
 
-    type Diff<T extends string, U extends string> = ({ [P in T]: P } &
-        { [P in U]: never } & { [x: string]: never })[T]
+    type Diff<
+        T extends string | number | symbol,
+        U extends string | number | symbol
+    > = ({ [P in T]: P } & { [P in U]: never } & { [x: string]: never })[T];
 
     type Omit<InputObject, Keys extends keyof InputObject> = Pick<
         InputObject,
