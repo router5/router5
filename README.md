@@ -1,7 +1,9 @@
 # Read Me
 
-[![npm version](https://badge.fury.io/js/router5.svg)](http://badge.fury.io/js/router5) [![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5) [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frouter5%2Frouter5.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Frouter5%2Frouter5?ref=badge_shield)
+[![npm version](https://badge.fury.io/js/router5.svg)](http://badge.fury.io/js/router5)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5) [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+
 
 > Official website: [router5.js.org](https://router5.js.org)
 
@@ -104,8 +106,3 @@ from(router).map(({ route }) => {
   * [Universal routing](https://router5.js.org/advanced/universal-routing)
   * [Listeners plugin](https://router5.js.org/advanced/listeners-plugin)
 * [API Reference](https://router5.js.org/api-reference)
-
-
-
-## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Frouter5%2Frouter5.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Frouter5%2Frouter5?ref=badge_large)
