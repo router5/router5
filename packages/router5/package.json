@@ -25,7 +25,7 @@
   },
   "homepage": "https://router5.js.org",
   "dependencies": {
-    "route-node": "3.2.0",
+    "route-node": "3.2.1",
     "router5-transition-path": "^5.3.0",
     "symbol-observable": "1.2.0"
   },
