@@ -1,3 +1,14 @@
+### router5@6.2.4 (2018-06-05)
+
+#### Bug fix
+* `router5`
+  * [#306](https://github.com/router5/router5/pull/306) Update route-node to correctly account for query params options. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.2.3 (2018-06-02)
 
 #### Enhancement
