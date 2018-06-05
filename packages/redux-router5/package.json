@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/router5/router5/issues"
   },
-  "homepage": "http://router5.github.com",
+  "homepage": "https://router5.js.org",
   "devDependencies": {
     "immutable": "~3.0.0"
   },
