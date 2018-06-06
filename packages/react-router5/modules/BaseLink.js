@@ -91,8 +91,8 @@ class BaseLink extends Component {
 
         const active = this.isActive()
         const href = this.buildUrl(routeName, routeParams)
-        const linkclassName = (className ? className.split(' ') : [])
-            .concat(active ? [activeClassName] : [])
+        const linkclassName = (active ? [activeClassName] : [])
+            .concat(className ? className.split(' ') : [])
             .join(' ')
 
         return React.createElement(
