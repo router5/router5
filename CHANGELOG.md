@@ -1,3 +1,14 @@
+## react-router5@6.0.4 (2018-06-06)
+
+#### Enhancement
+* `react-router5`
+  * [#308](https://github.com/router5/router5/pull/308) Ensure activeClassName has higher specificity. ([@roryf](https://github.com/roryf))
+
+#### Committers: 1
+- Rory Fitzpatrick ([roryf](https://github.com/roryf))
+
+
+
 ### router5@6.2.4 (2018-06-05)
 
 #### Bug fix
