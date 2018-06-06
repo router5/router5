@@ -974,7 +974,7 @@
 
 	            var active = this.isActive();
 	            var href = this.buildUrl(routeName, routeParams);
-	            var linkclassName = (className ? className.split(' ') : []).concat(active ? [activeClassName] : []).join(' ');
+	            var linkclassName = (active ? [activeClassName] : []).concat(className ? className.split(' ') : []).join(' ');
 
 	            return React__default.createElement('a', _extends({}, linkProps, {
 	                href: href,
