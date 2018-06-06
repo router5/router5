@@ -1,6 +1,6 @@
 {
   "name": "react-router5",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "router5 helpers for React",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
