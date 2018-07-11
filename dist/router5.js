@@ -205,7 +205,7 @@
     };
 
     var defaultOrConstrained = function defaultOrConstrained(match) {
-        return '(' + (match ? match.replace(/(^<|>$)/g, '') : "[a-zA-Z0-9-_.~%':|=+]+") + ')';
+        return '(' + (match ? match.replace(/(^<|>$)/g, '') : "[a-zA-Z0-9-_.~%':|=+\\*@]+") + ')';
     };
     var rules = [{
         name: 'url-parameter',
