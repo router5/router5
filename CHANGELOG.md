@@ -1,3 +1,14 @@
+### router5@6.3.0 (2018-07-11)
+
+#### Bug fix
+* `router5`
+  * [#306](https://github.com/router5/router5/pull/319) Update route node to v3.3.0. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## react-router5@6.0.4 (2018-06-06)
 
 #### Enhancement
