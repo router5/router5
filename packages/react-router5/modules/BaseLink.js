@@ -32,7 +32,8 @@ class BaseLink extends Component {
         return this.router.isActive(
             this.props.routeName,
             this.props.routeParams,
-            this.props.activeStrict
+            this.props.activeStrict,
+            this.props.ignoreQueryParams
         )
     }
 
@@ -78,6 +79,7 @@ class BaseLink extends Component {
             className,
             activeClassName,
             activeStrict,
+            ignoreQueryParams,
             route,
             previousRoute,
             router,
@@ -118,6 +120,7 @@ BaseLink.propTypes = {
     routeOptions: PropTypes.object,
     activeClassName: PropTypes.string,
     activeStrict: PropTypes.bool,
+    ignoreQueryParams: PropTypes.bool,
     onClick: PropTypes.func,
     onMouseOver: PropTypes.func,
     successCallback: PropTypes.func,
@@ -127,6 +130,7 @@ BaseLink.propTypes = {
 BaseLink.defaultProps = {
     activeClassName: 'active',
     activeStrict: false,
+    ignoreQueryParams: true,
     routeParams: {},
     routeOptions: {}
 }
