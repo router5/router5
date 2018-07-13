@@ -9,7 +9,7 @@ class BaseLink extends Component {
 
         if (!this.router.hasPlugin('BROWSER_PLUGIN')) {
             console.error(
-                '[react-router5][BaseLink] missing browser plugin, href might be build incorrectly'
+                '[react-router5][BaseLink] missing browser plugin, href might be built incorrectly'
             )
         }
 
