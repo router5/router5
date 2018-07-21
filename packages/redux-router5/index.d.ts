@@ -5,10 +5,10 @@ declare module 'redux-router5' {
     export function router5Middleware(router: Router): Middleware
 
     export interface RouterState {
-        route: State | null
-        previousRoute: State | null
-        transitionRoute: State | null
-        transitionError: any | null
+        route?: State
+        previousRoute?: State
+        transitionRoute?: State
+        transitionError?: any
     }
 
     export const router5Reducer: Reducer<RouterState>
