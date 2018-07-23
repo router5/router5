@@ -1,3 +1,14 @@
+## react-router5@6.1.0 (2018-07-23)
+
+#### Enhancement
+* `react-router5`
+  * [#323](https://github.com/router5/router5/pull/323) Add `ignoreQueryParams` prop in link component. ([@azangru](https://github.com/azangru))
+
+#### Committers: 1
+- Andrey Azov ([azangru](https://github.com/azangru))
+
+
+
 ### router5@6.3.0 (2018-07-11)
 
 #### Bug fix

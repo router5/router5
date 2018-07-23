@@ -1,11 +1,13 @@
+# Read Me
+
 [![npm version](https://badge.fury.io/js/router5.svg)](http://badge.fury.io/js/router5)
-[![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5)
-[![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/router5/router5.svg)](https://travis-ci.org/router5/router5) [![Join the chat at https://gitter.im/router5/router5](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/router5/router5?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+
 
 > Official website: [router5.js.org](https://router5.js.org)
 
-# router5
+## Router5
 
 router5 is a **framework and view library agnostic router**.
 
@@ -14,7 +16,7 @@ router5 is a **framework and view library agnostic router**.
 * **simple**: define your routes, start to listen to route changes
 * **flexible**: you have control over transitions and what happens on transitions
 
-```js
+```javascript
 import createRouter from 'router5'
 import browserPlugin from 'router5/plugins/browser'
 
@@ -29,9 +31,9 @@ const router = createRouter(routes)
 router.start()
 ```
 
-**With React (new context API)**
+**With React \(new context API\)**
 
-```js
+```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { RouteProvider, Route } from 'react-router5'
@@ -62,7 +64,7 @@ ReactDOM.render(
 
 Your router instance is compatible with most observable libraries.
 
-```js
+```javascript
 import { from } from 'rxjs/observable/from'
 
 from(router).map(({ route }) => {
@@ -70,13 +72,11 @@ from(router).map(({ route }) => {
 })
 ```
 
-
-## Examples
+### Examples
 
 * [With React](https://stackblitz.com/edit/react-router5)
-* [With React (new context API)](https://stackblitz.com/edit/react-router5-new-context-api)
+* [With React \(new context API\)](https://stackblitz.com/edit/react-router5-new-context-api)
 * [With Redux](https://stackblitz.com/edit/react-redux-router5)
-
 
 ### Docs
 
