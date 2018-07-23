@@ -897,7 +897,7 @@
 	        _this.router = context.router;
 
 	        if (!_this.router.hasPlugin('BROWSER_PLUGIN')) {
-	            console.error('[react-router5][BaseLink] missing browser plugin, href might be build incorrectly');
+	            console.error('[react-router5][BaseLink] missing browser plugin, href might be built incorrectly');
 	        }
 
 	        _this.isActive = _this.isActive.bind(_this);
@@ -920,7 +920,7 @@
 	    }, {
 	        key: 'isActive',
 	        value: function isActive() {
-	            return this.router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict);
+	            return this.router.isActive(this.props.routeName, this.props.routeParams, this.props.activeStrict, this.props.ignoreQueryParams);
 	        }
 	    }, {
 	        key: 'callback',
@@ -962,6 +962,7 @@
 	                className = _props.className,
 	                activeClassName = _props.activeClassName,
 	                activeStrict = _props.activeStrict,
+	                ignoreQueryParams = _props.ignoreQueryParams,
 	                route = _props.route,
 	                previousRoute = _props.previousRoute,
 	                router = _props.router,
@@ -969,7 +970,7 @@
 	                onClick = _props.onClick,
 	                successCallback = _props.successCallback,
 	                errorCallback = _props.errorCallback,
-	                linkProps = objectWithoutProperties(_props, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'route', 'previousRoute', 'router', 'children', 'onClick', 'successCallback', 'errorCallback']);
+	                linkProps = objectWithoutProperties(_props, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'ignoreQueryParams', 'route', 'previousRoute', 'router', 'children', 'onClick', 'successCallback', 'errorCallback']);
 	            /* eslint-enable */
 
 	            var active = this.isActive();
@@ -996,6 +997,7 @@
 	    routeOptions: propTypes.object,
 	    activeClassName: propTypes.string,
 	    activeStrict: propTypes.bool,
+	    ignoreQueryParams: propTypes.bool,
 	    onClick: propTypes.func,
 	    onMouseOver: propTypes.func,
 	    successCallback: propTypes.func,
@@ -1005,6 +1007,7 @@
 	BaseLink.defaultProps = {
 	    activeClassName: 'active',
 	    activeStrict: false,
+	    ignoreQueryParams: true,
 	    routeParams: {},
 	    routeOptions: {}
 	};
