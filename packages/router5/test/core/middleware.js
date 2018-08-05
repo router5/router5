@@ -104,7 +104,7 @@ describe('core/middleware', () => {
         })
     })
 
-    it('should pass state from middleware to middleware', () => {
+    it('should pass state from middleware to middleware', done => {
         const m1 = () => (toState, fromState, done) => {
             done(null, { ...toState, m1: true })
         }
@@ -112,7 +112,7 @@ describe('core/middleware', () => {
             Promise.resolve({ ...toState, m2: toState.m1 })
 
         const m3 = () => (toState, fromState, done) => {
-            done(null, { ...toState, m3: toState.m3 })
+            done(null, { ...toState, m3: toState.m2 })
         }
         router.clearMiddleware()
         router.useMiddleware(m1, m2, m3)
@@ -122,6 +122,8 @@ describe('core/middleware', () => {
                 expect(state.m1).to.equal(true)
                 expect(state.m2).to.equal(true)
                 expect(state.m3).to.equal(true)
+
+                done()
             })
         })
     })
