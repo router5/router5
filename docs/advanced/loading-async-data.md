@@ -47,7 +47,7 @@ const routes = [
 Then we create a middleware function which will invoke data for the activated segments on a route change. In this example, data are loaded in parallel using `Promise.all`. You can proceed differently by loading data in series, or by implementing dependencies between your `onActivate` handlers.
 
 ```javascript
-import transitionPath from 'router5.transition-path';
+import transitionPath from 'router5-transition-path';
 
 const dataMiddlewareFactory = (routes) => (router) => (toState, fromState) => {
     const { toActivate } = transitionPath(toState, fromState);
@@ -120,7 +120,7 @@ Then we create a router5 middleware for data which will load data on a transitio
 
 ```javascript
 import { actionTypes } from 'redux-router5';
-import transitionPath from 'router5.transition-path';
+import transitionPath from 'router5-transition-path';
 
 const onRouteActivateMiddleware = (routes) => (router, dependencies) => (toState, fromState, done) => {
     const { toActivate } = transitionPath(toState, fromState);

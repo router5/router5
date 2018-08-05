@@ -33,13 +33,6 @@ describe('core/navigation', function() {
         })
     })
 
-    it('should return an error if trying to navigate to an unknown route', function(done) {
-        router.navigate('fake.route', function(err, state) {
-            expect(err.code).to.equal(errorCodes.ROUTE_NOT_FOUND)
-            done()
-        })
-    })
-
     it('should navigate to same state if reload is set to true', function(done) {
         router.navigate('orders.pending', function(err, state) {
             router.navigate('orders.pending', function(err, state) {
