@@ -1,3 +1,14 @@
+### router5@6.4.0 (2018-08-06)
+
+#### Enhancement
+* `router5`
+  * [#3331](https://github.com/router5/router5/pull/331) Improve performance of adding routes ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## react-router5@6.1.0 (2018-07-23)
 
 #### Enhancement

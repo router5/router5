@@ -786,7 +786,11 @@
         return null;
     };
 
-    var sortChildren = function sortChildren(originalChildren) {
+    function sortChildren(children) {
+        var originalChildren = children.slice(0);
+        return children.sort(sortPredicate(originalChildren));
+    }
+    var sortPredicate = function sortPredicate(originalChildren) {
         return function (left, right) {
             var leftPath = left.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
             var rightPath = right.path.replace(/<.*?>/g, '').split('?')[0].replace(/(.+)\/$/, '$1');
@@ -843,7 +847,7 @@
     };
     var defaultMatchOptions = __assign$1({}, defaultBuildOptions, { strongMatching: true });
     var RouteNode = /** @class */function () {
-        function RouteNode(name, path, childRoutes, cb, parent) {
+        function RouteNode(name, path, childRoutes, cb, parent, finalSort, sort) {
             if (name === void 0) {
                 name = '';
             }
@@ -853,6 +857,9 @@
             if (childRoutes === void 0) {
                 childRoutes = [];
             }
+            if (finalSort === void 0) {
+                finalSort = true;
+            }
             this.name = name;
             this.absolute = /^~/.test(path);
             this.path = this.absolute ? path.slice(1) : path;
@@ -860,7 +867,10 @@
             this.children = [];
             this.parent = parent;
             this.checkParents();
-            this.add(childRoutes, cb);
+            this.add(childRoutes, cb, finalSort ? false : sort !== false);
+            if (finalSort) {
+                this.sortDescendants();
+            }
             return this;
         }
         RouteNode.prototype.getParentSegments = function (segments) {
@@ -880,14 +890,17 @@
             this.path = path;
             this.parser = path ? new Path(path) : null;
         };
-        RouteNode.prototype.add = function (route, cb) {
+        RouteNode.prototype.add = function (route, cb, sort) {
             var _this = this;
+            if (sort === void 0) {
+                sort = true;
+            }
             if (route === undefined || route === null) {
                 return;
             }
             if (route instanceof Array) {
                 route.forEach(function (r) {
-                    return _this.add(r, cb);
+                    return _this.add(r, cb, sort);
                 });
                 return;
             }
@@ -895,19 +908,19 @@
                 throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.');
             } else if (route instanceof RouteNode) {
                 route.setParent(this);
-                this.addRouteNode(route);
+                this.addRouteNode(route, sort);
             } else {
                 if (!route.name || !route.path) {
                     throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                 }
-                var routeNode = new RouteNode(route.name, route.path, route.children, cb, this);
+                var routeNode = new RouteNode(route.name, route.path, route.children, cb, this, false, sort);
                 var fullName = routeNode.getParentSegments([routeNode]).map(function (_) {
                     return _.name;
                 }).join('.');
                 if (cb) {
                     cb(__assign$1({}, route, { name: fullName }));
                 }
-                this.addRouteNode(routeNode);
+                this.addRouteNode(routeNode, sort);
             }
             return this;
         };
@@ -921,6 +934,17 @@
         RouteNode.prototype.getNonAbsoluteChildren = function () {
             return this.children.filter(function (child) {
                 return !child.absolute;
+            });
+        };
+        RouteNode.prototype.sortChildren = function () {
+            if (this.children.length) {
+                sortChildren(this.children);
+            }
+        };
+        RouteNode.prototype.sortDescendants = function () {
+            this.sortChildren();
+            this.children.forEach(function (child) {
+                return child.sortDescendants();
             });
         };
         RouteNode.prototype.buildPath = function (routeName, params, options) {
@@ -971,7 +995,10 @@
             }
             return buildStateFromMatch(match);
         };
-        RouteNode.prototype.addRouteNode = function (route, cb) {
+        RouteNode.prototype.addRouteNode = function (route, sort) {
+            if (sort === void 0) {
+                sort = true;
+            }
             var names = route.name.split('.');
             if (names.length === 1) {
                 // Check duplicated routes
@@ -987,9 +1014,9 @@
                     throw new Error("Path \"" + route.path + "\" is already defined in route node");
                 }
                 this.children.push(route);
-                // Push greedy spats to the bottom of the pile
-                var originalChildren = this.children.slice(0);
-                this.children.sort(sortChildren(originalChildren));
+                if (sort) {
+                    this.sortChildren();
+                }
             } else {
                 // Locate parent node
                 var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
