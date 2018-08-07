@@ -256,8 +256,11 @@ function createRouter(routes, opts = {}, deps = {}) {
      * @param  {Array} routes A list of routes to add
      * @return {Object}       The router instance
      */
-    function add(routes) {
-        rootNode.add(routes, onRouteAdded)
+    function add(routes, finalSort = true) {
+        rootNode.add(routes, onRouteAdded, !finalSort)
+        if (finalSort) {
+            rootNode.sortDescendants()
+        }
         return router
     }
 
