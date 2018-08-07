@@ -2367,7 +2367,12 @@
          * @return {Object}       The router instance
          */
         function add(routes) {
-            rootNode.add(routes, onRouteAdded);
+            var finalSort = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+            rootNode.add(routes, onRouteAdded, !finalSort);
+            if (finalSort) {
+                rootNode.sortDescendants();
+            }
             return router;
         }
 

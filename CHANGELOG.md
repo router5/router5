@@ -1,8 +1,19 @@
+### router5@6.4.1 (2018-08-07)
+
+#### Enhancement
+* `router5`
+  * [#336](https://github.com/router5/router5/pull/336) Improve performance of adding a large number of routes when using `.add` ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.4.0 (2018-08-06)
 
 #### Enhancement
 * `router5`
-  * [#3331](https://github.com/router5/router5/pull/331) Improve performance of adding routes ([@troch](https://github.com/troch))
+  * [#331](https://github.com/router5/router5/pull/331) Improve performance of adding routes ([@troch](https://github.com/troch))
 
 #### Committers: 1
 - Thomas Roch ([troch](https://github.com/troch))
