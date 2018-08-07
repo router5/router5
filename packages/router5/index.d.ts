@@ -169,7 +169,7 @@ declare module 'router5/create-router' {
         setDependency(dependencyName: string, dependency: any): Router
         setDependencies(deps: Dependencies): Router
         getDependencies(): Dependencies
-        add(routes: Route[] | Route): Router
+        add(routes: Route[] | Route, finalSort?: boolean): Router
         addNode(
             name: string,
             path: string,
