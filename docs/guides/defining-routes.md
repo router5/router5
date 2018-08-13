@@ -11,7 +11,7 @@ You can define your routes using plain objects:
 
 Route objects optionally accept the following properties:
 
-* `canActivate`: a method to control whether or not the route node can be activated \(see [Preventing navigation](https://github.com/router5/router5/tree/1cc1c6969a96918deb28e45b8c5b2d6aa19d0a19/docs/guides/preventing-navigation.html)\)
+* `canActivate`: a method to control whether or not the route node can be activated \(see [Preventing navigation](https://router5.js.org/advanced/preventing-navigation)\)
 * `forwardTo`: if specified, the router will transition to the forwarded route instead. It is useful for defaulting to a child route
 * `defaultParams`: an object of default params to extend when navigating and when matching a path
 * `encodeParams(stateParams)`: a function of state params returning path params. Used when building a path given a route name and params \(typically on start and navigation\).
