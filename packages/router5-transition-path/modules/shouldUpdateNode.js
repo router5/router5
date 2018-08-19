@@ -10,6 +10,10 @@ export default function shouldUpdateNode(nodeName) {
 
         const toDeactivate = [...toDeactivateReversed].reverse()
 
+        if (toState.meta.options && toState.meta.options.reload) {
+            return true
+        }
+
         if (nodeName === intersection) {
             return true
         }
