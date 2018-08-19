@@ -347,6 +347,10 @@
 
             var toDeactivate = [].concat(_toConsumableArray(toDeactivateReversed)).reverse();
 
+            if (toState.meta.options && toState.meta.options.reload) {
+                return true;
+            }
+
             if (nodeName === intersection) {
                 return true;
             }
