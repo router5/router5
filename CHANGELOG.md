@@ -1,3 +1,16 @@
+
+## react-router5@6.2.0 (2018-07-23)
+
+#### Enhancement
+* `react-router5`
+  * [#344](https://github.com/router5/router5/pull/344) Move route change subscription to constructor (new context). ([troch](https://github.com/troch))
+  * [#345](https://github.com/router5/router5/pull/345) Move route change subscription to constructor (old context). ([troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.4.2 (2018-08-19)
 
 * `router5`, `react-router5`, `redux-router5`, `router5-transition-path`, `rxjs-router5`, `xstream-router5`:
