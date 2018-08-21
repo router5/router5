@@ -1183,31 +1183,30 @@
 	                    previousRoute: null,
 	                    route: _this.router.getState()
 	                };
-	                return _this;
-	            }
 
-	            createClass(RouteNode, [{
-	                key: 'componentDidMount',
-	                value: function componentDidMount() {
-	                    var _this2 = this;
-
+	                if (typeof window === 'undefined') {
 	                    var listener = function listener(_ref) {
 	                        var route = _ref.route,
 	                            previousRoute = _ref.previousRoute;
 
 	                        if (shouldUpdateNode(nodeName)(route, previousRoute)) {
-	                            _this2.setState({
+	                            _this.setState({
 	                                previousRoute: previousRoute,
 	                                route: route
 	                            });
 	                        }
 	                    };
-	                    this.unsubscribe = this.router.subscribe(listener);
+	                    _this.unsubscribe = _this.router.subscribe(listener);
 	                }
-	            }, {
+	                return _this;
+	            }
+
+	            createClass(RouteNode, [{
 	                key: 'componentWillUnmount',
 	                value: function componentWillUnmount() {
-	                    this.unsubscribe();
+	                    if (this.unsubscribe) {
+	                        this.unsubscribe();
+	                    }
 	                }
 	            }, {
 	                key: 'render',
@@ -1298,26 +1297,25 @@
 	                previousRoute: null,
 	                route: _this.router.getState()
 	            };
-	            return _this;
-	        }
 
-	        createClass(ComponentWithRoute, [{
-	            key: 'componentDidMount',
-	            value: function componentDidMount() {
-	                var _this2 = this;
-
+	            if (typeof window === 'undefined') {
 	                var listener = function listener(_ref) {
 	                    var route = _ref.route,
 	                        previousRoute = _ref.previousRoute;
 
-	                    _this2.setState({ route: route, previousRoute: previousRoute });
+	                    _this.setState({ route: route, previousRoute: previousRoute });
 	                };
-	                this.unsubscribe = this.router.subscribe(listener);
+	                _this.unsubscribe = _this.router.subscribe(listener);
 	            }
-	        }, {
+	            return _this;
+	        }
+
+	        createClass(ComponentWithRoute, [{
 	            key: 'componentWillUnmount',
 	            value: function componentWillUnmount() {
-	                this.unsubscribe();
+	                if (this.unsubscribe) {
+	                    this.unsubscribe();
+	                }
 	            }
 	        }, {
 	            key: 'render',
@@ -1374,29 +1372,28 @@
 	            previousRoute: null,
 	            router: router
 	        };
-	        return _this;
-	    }
 
-	    createClass(RouteProvider, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _this2 = this;
-
+	        if (typeof window !== 'undefined') {
 	            var listener = function listener(_ref2) {
 	                var route = _ref2.route,
 	                    previousRoute = _ref2.previousRoute;
 
-	                _this2.setState({
+	                _this.setState({
 	                    route: route,
 	                    previousRoute: previousRoute
 	                });
 	            };
-	            this.unsubscribe = this.router.subscribe(listener);
+	            _this.unsubscribe = _this.router.subscribe(listener);
 	        }
-	    }, {
+	        return _this;
+	    }
+
+	    createClass(RouteProvider, [{
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
-	            this.unsubscribe();
+	            if (this.unsubscribe) {
+	                this.unsubscribe();
+	            }
 	        }
 	    }, {
 	        key: 'getChildContext',
@@ -1431,10 +1428,10 @@
 	    function RouteNode(props, context) {
 	        classCallCheck(this, RouteNode);
 
-	        var _this3 = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
+	        var _this2 = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
 
-	        _this3.renderOnRouteNodeChange = _this3.renderOnRouteNodeChange.bind(_this3);
-	        return _this3;
+	        _this2.renderOnRouteNodeChange = _this2.renderOnRouteNodeChange.bind(_this2);
+	        return _this2;
 	    }
 
 	    createClass(RouteNode, [{
