@@ -11,17 +11,19 @@ function withRoute(BaseComponent) {
                 previousRoute: null,
                 route: this.router.getState()
             }
-        }
 
-        componentDidMount() {
-            const listener = ({ route, previousRoute }) => {
-                this.setState({ route, previousRoute })
+            if (typeof window === 'undefined') {
+                const listener = ({ route, previousRoute }) => {
+                    this.setState({ route, previousRoute })
+                }
+                this.unsubscribe = this.router.subscribe(listener)
             }
-            this.unsubscribe = this.router.subscribe(listener)
         }
 
         componentWillUnmount() {
-            this.unsubscribe()
+            if (this.unsubscribe) {
+                this.unsubscribe()
+            }
         }
 
         render() {
