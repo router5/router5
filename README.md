@@ -74,9 +74,9 @@ from(router).map(({ route }) => {
 
 ### Examples
 
-* [With React](https://stackblitz.com/edit/react-router5)
-* [With React \(new context API\)](https://stackblitz.com/edit/react-router5-new-context-api)
-* [With Redux](https://stackblitz.com/edit/react-redux-router5)
+* With React: [`code`](./examples/react) | [`live`](https://codesandbox.io/s/github/router5/router5/tree/master/examples/react)
+* With React new context API: [`code`](./examples/react-new-context-api) | [`live`](https://codesandbox.io/s/github/router5/router5/tree/master/examples/react--new-context-api)
+* With Redux (and React): [`code`](./examples/react-redux) | [`live`](https://codesandbox.io/s/github/router5/router5/tree/master/examples/react-redux)
 
 ### Docs
 
