@@ -1,5 +1,16 @@
+## react-router5@6.3.0 (2018-08-22)
 
-## react-router5@6.2.0 (2018-07-23)
+#### Bug fix
+* `react-router5`
+  * [#346](https://github.com/router5/router5/pull/346) fix listeners not registering. ([troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
+
+## react-router5@6.2.0 (2018-08-21)
 
 #### Enhancement
 * `react-router5`

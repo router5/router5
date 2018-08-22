@@ -1184,7 +1184,7 @@
 	                    route: _this.router.getState()
 	                };
 
-	                if (typeof window === 'undefined') {
+	                if (typeof window !== 'undefined') {
 	                    var listener = function listener(_ref) {
 	                        var route = _ref.route,
 	                            previousRoute = _ref.previousRoute;
@@ -1298,7 +1298,7 @@
 	                route: _this.router.getState()
 	            };
 
-	            if (typeof window === 'undefined') {
+	            if (typeof window !== 'undefined') {
 	                var listener = function listener(_ref) {
 	                    var route = _ref.route,
 	                        previousRoute = _ref.previousRoute;
