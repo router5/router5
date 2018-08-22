@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { routeNodeSelector } from 'redux-router5'
+import { createRouteNodeSelector } from 'redux-router5'
 import Inbox from './Inbox'
 import Compose from './Compose'
 import NotFound from './NotFound'
@@ -19,4 +19,4 @@ function Main({ route, emails }) {
     return <NotFound />
 }
 
-export default connect(routeNodeSelector(''))(Main)
+export default connect(createRouteNodeSelector(''))(Main)

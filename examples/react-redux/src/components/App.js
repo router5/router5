@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Nav from './Nav'
 import Main from './Main'
 
-export default function App({ emails }) {
+export function App({ emails }) {
     return (
         <div className="mail-client">
             <aside>
