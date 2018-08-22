@@ -12,7 +12,7 @@ function withRoute(BaseComponent) {
                 route: this.router.getState()
             }
 
-            if (typeof window === 'undefined') {
+            if (typeof window !== 'undefined') {
                 const listener = ({ route, previousRoute }) => {
                     this.setState({ route, previousRoute })
                 }
