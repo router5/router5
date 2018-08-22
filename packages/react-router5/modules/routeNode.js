@@ -14,7 +14,7 @@ function routeNode(nodeName) {
                     route: this.router.getState()
                 }
 
-                if (typeof window === 'undefined') {
+                if (typeof window !== 'undefined') {
                     const listener = ({ route, previousRoute }) => {
                         if (shouldUpdateNode(nodeName)(route, previousRoute)) {
                             this.setState({
