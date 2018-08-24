@@ -17,10 +17,6 @@ function routeNode(nodeName) {
             }
 
             componentDidMount() {
-                this.setState({
-                    mounted: true
-                })
-
                 const listener = ({ route, previousRoute }) => {
                     if (shouldUpdateNode(nodeName)(route, previousRoute)) {
                         this.setState({
@@ -30,6 +26,9 @@ function routeNode(nodeName) {
                     }
                 }
                 this.unsubscribe = this.router.subscribe(listener)
+                this.setState({
+                    mounted: true
+                })
             }
 
             componentWillUnmount() {

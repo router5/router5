@@ -15,13 +15,13 @@ function withRoute(BaseComponent) {
         }
 
         componentDidMount() {
-            this.setState({
-                mounted: true
-            })
             const listener = ({ route, previousRoute }) => {
                 this.setState({ route, previousRoute })
             }
             this.unsubscribe = this.router.subscribe(listener)
+            this.setState({
+                mounted: true
+            })
         }
 
         componentWillUnmount() {
