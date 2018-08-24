@@ -29,11 +29,12 @@ function withRoute(BaseComponent) {
         }
 
         render() {
+            const { mounted, ...state } = this.state
             return (
-                this.state.mounted &&
+                mounted &&
                 createElement(BaseComponent, {
                     ...this.props,
-                    ...this.state,
+                    ...state,
                     router: this.router
                 })
             )
