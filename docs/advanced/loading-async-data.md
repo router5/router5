@@ -57,7 +57,7 @@ const dataMiddlewareFactory = (routes) => (router) => (toState, fromState) => {
             .filter(Boolean)
 
     return Promise
-        .all(onActivateHandlers)
+        .all(onActivateHandlers.map(callback => callback()))
         .then(data => {
             const routeData = data.reduce((accData, rData) => Object.assign(accData, rData), {});
             return { ...toState, data: routeData };
