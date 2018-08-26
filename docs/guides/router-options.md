@@ -81,7 +81,7 @@ Option `trailingSlashMode` can take the following values:
 
 ## Strict trailing slash
 
-By default, the router is not in "strict match" mode. If you want trailing slashes to not be optional, you can set `strictTailingSlash` to \`true\`\`.
+By default, the router is not in "strict match" mode. If you want trailing slashes to not be optional, you can set `strictTrailingSlash` to \`true\`\`.
 
 ## Automatic clean up
 
