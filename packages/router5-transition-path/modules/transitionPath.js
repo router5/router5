@@ -13,7 +13,7 @@ function hasMetaParams(state) {
 }
 
 function extractSegmentParams(name, state) {
-    if (!exists(state.meta.params[name])) return {}
+    if (!hasMetaParams(state) || !exists(state.meta.params[name])) return {}
 
     return Object.keys(state.meta.params[name]).reduce((params, p) => {
         params[p] = state.params[p]
