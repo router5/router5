@@ -38,7 +38,13 @@ function browserPluginFactory(opts = {}, browser = safeBrowser) {
         }
 
         router.replaceHistoryState = function(name, params = {}) {
-            const state = router.buildState(name, params)
+            const route = router.buildState(name, params)
+            const state = router.makeState(
+                route.name,
+                route.params,
+                router.buildPath(route.name, route.params),
+                { params: route.meta }
+            )
             const url = router.buildUrl(name, params)
             router.lastKnownState = state
             browser.replaceState(state, '', url)
