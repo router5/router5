@@ -28,7 +28,7 @@
     "router5": ">= 6.1.0 < 7.0.0"
   },
   "dependencies": {
-    "prop-types": "~15.5.10",
+    "prop-types": "^15.6.0",
     "router5-transition-path": "^5.3.1"
   },
   "typings": "./index.d.ts",
