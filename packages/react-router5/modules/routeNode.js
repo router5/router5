@@ -11,39 +11,43 @@ function routeNode(nodeName) {
                 this.router = context.router
                 this.state = {
                     previousRoute: null,
-                    route: this.router.getState()
-                }
-
-                if (typeof window !== 'undefined') {
-                    const listener = ({ route, previousRoute }) => {
-                        if (shouldUpdateNode(nodeName)(route, previousRoute)) {
-                            this.setState({
-                                previousRoute,
-                                route
-                            })
-                        }
-                    }
-                    this.unsubscribe = this.router.subscribe(listener)
+                    route: this.router.getState(),
+                    mounted: false
                 }
             }
 
-            componentWillUnmount() {
-                if (this.unsubscribe) {
-                    this.unsubscribe()
+            componentDidMount() {
+                const listener = ({ route, previousRoute }) => {
+                    if (shouldUpdateNode(nodeName)(route, previousRoute)) {
+                        this.setState({
+                            previousRoute,
+                            route
+                        })
+                    }
                 }
+                this.unsubscribe = this.router.subscribe(listener)
+                this.setState({
+                    mounted: true
+                })
+            }
+
+            componentWillUnmount() {
+                this.unsubscribe()
             }
 
             render() {
                 const { props, router } = this
                 const { previousRoute, route } = this.state
-                const component = createElement(RouteSegment, {
-                    ...props,
-                    router,
-                    previousRoute,
-                    route
-                })
 
-                return component
+                return (
+                    this.state.mounted &&
+                    createElement(RouteSegment, {
+                        ...props,
+                        router,
+                        previousRoute,
+                        route
+                    })
+                )
             }
         }
 

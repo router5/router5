@@ -9,29 +9,35 @@ function withRoute(BaseComponent) {
             this.router = context.router
             this.state = {
                 previousRoute: null,
-                route: this.router.getState()
+                route: this.router.getState(),
+                mounted: false
             }
+        }
 
-            if (typeof window !== 'undefined') {
-                const listener = ({ route, previousRoute }) => {
-                    this.setState({ route, previousRoute })
-                }
-                this.unsubscribe = this.router.subscribe(listener)
+        componentDidMount() {
+            const listener = ({ route, previousRoute }) => {
+                this.setState({ route, previousRoute })
             }
+            this.unsubscribe = this.router.subscribe(listener)
+            this.setState({
+                mounted: true
+            })
         }
 
         componentWillUnmount() {
-            if (this.unsubscribe) {
-                this.unsubscribe()
-            }
+            this.unsubscribe()
         }
 
         render() {
-            return createElement(BaseComponent, {
-                ...this.props,
-                ...this.state,
-                router: this.router
-            })
+            const { mounted, ...state } = this.state
+            return (
+                mounted &&
+                createElement(BaseComponent, {
+                    ...this.props,
+                    ...state,
+                    router: this.router
+                })
+            )
         }
     }
 
