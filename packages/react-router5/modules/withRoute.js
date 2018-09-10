@@ -17,8 +17,11 @@ function withRoute(BaseComponent) {
 
             if (typeof window !== 'undefined') {
                 const listener = ({ route, previousRoute }) => {
-                    this.routeState({ route, previousRoute })
-                    if (state.mounted) {
+                    this.routeState = {
+                        route,
+                        previousRoute
+                    }
+                    if (this.state.mounted) {
                         this.forceUpdate()
                     }
                 }
