@@ -83,6 +83,22 @@ describe('BaseLink component', () => {
         expect(output.find('a')).to.have.className('active')
     })
 
+    it('should not call router’s navigate method when used with target="_blank"', () => {
+        router.start()
+        const output = mount(
+            <RouterProvider router={router}>
+                <Link routeName="home" title="Hello" target="_blank" />
+            </RouterProvider>
+        )
+        const a = output.find('a')
+        const navSpy = spy(router, 'navigate')
+
+        a.simulate('click')
+
+        expect(a).to.have.attr('target')
+        expect(navSpy).not.to.have.been.called
+    })
+
     it('should spread other props to its link', () => {
         router.usePlugin(listenersPlugin())
         router.start()

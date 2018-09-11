@@ -48,8 +48,10 @@ class BaseLink extends Component {
     }
 
     clickHandler(evt) {
-        if (this.props.onClick) {
-            this.props.onClick(evt)
+        const { onClick, target } = this.props
+
+        if (onClick) {
+            onClick(evt)
 
             if (evt.defaultPrevented) {
                 return
@@ -59,7 +61,7 @@ class BaseLink extends Component {
         const comboKey =
             evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey
 
-        if (evt.button === 0 && !comboKey) {
+        if (evt.button === 0 && !comboKey && target !== '_blank') {
             evt.preventDefault()
             this.router.navigate(
                 this.props.routeName,
