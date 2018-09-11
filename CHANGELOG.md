@@ -1,3 +1,22 @@
+## react-router5@6.4.0 (2018-09-11)
+
+#### Enhancement
+* `react-router5`
+  * [#361](https://github.com/router5/router5/pull/361) Support target="_blank" in BaseLink. ([@Panya](https://github.com/Panya))
+* `router5`
+  * [#354](https://github.com/router5/router5/pull/354) Fix state set in router.replaceHistoryState. ([@rlebosse](https://github.com/rlebosse))
+* `router5-transition-path`
+  * [#352](https://github.com/router5/router5/pull/352) Check if state has meta params before extracting segment params. ([@rlebosse](https://github.com/rlebosse))
+
+#### Committers: 5
+- Ilya Lebedev ([Bacher](https://github.com/Bacher))
+- Mikhail Korepanov ([Panya](https://github.com/Panya))
+- Nishchal Gautam ([cyberhck](https://github.com/cyberhck))
+- Pirasis Leelatanon ([1pete](https://github.com/1pete))
+- [rlebosse](https://github.com/rlebosse)
+
+
+
 ## react-router5@6.3.0 (2018-08-22)
 
 #### Bug fix

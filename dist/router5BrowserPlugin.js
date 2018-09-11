@@ -220,7 +220,8 @@
             router.replaceHistoryState = function (name) {
                 var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-                var state = router.buildState(name, params);
+                var route = router.buildState(name, params);
+                var state = router.makeState(route.name, route.params, router.buildPath(route.name, route.params), { params: route.meta });
                 var url = router.buildUrl(name, params);
                 router.lastKnownState = state;
                 browser.replaceState(state, '', url);

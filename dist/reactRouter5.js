@@ -936,8 +936,13 @@
 	    }, {
 	        key: 'clickHandler',
 	        value: function clickHandler(evt) {
-	            if (this.props.onClick) {
-	                this.props.onClick(evt);
+	            var _props = this.props,
+	                onClick = _props.onClick,
+	                target = _props.target;
+
+
+	            if (onClick) {
+	                onClick(evt);
 
 	                if (evt.defaultPrevented) {
 	                    return;
@@ -946,7 +951,7 @@
 
 	            var comboKey = evt.metaKey || evt.altKey || evt.ctrlKey || evt.shiftKey;
 
-	            if (evt.button === 0 && !comboKey) {
+	            if (evt.button === 0 && !comboKey && target !== '_blank') {
 	                evt.preventDefault();
 	                this.router.navigate(this.props.routeName, this.props.routeParams, this.props.routeOptions, this.callback);
 	            }
@@ -955,22 +960,22 @@
 	        key: 'render',
 	        value: function render() {
 	            /* eslint-disable */
-	            var _props = this.props,
-	                routeName = _props.routeName,
-	                routeParams = _props.routeParams,
-	                routeOptions = _props.routeOptions,
-	                className = _props.className,
-	                activeClassName = _props.activeClassName,
-	                activeStrict = _props.activeStrict,
-	                ignoreQueryParams = _props.ignoreQueryParams,
-	                route = _props.route,
-	                previousRoute = _props.previousRoute,
-	                router = _props.router,
-	                children = _props.children,
-	                onClick = _props.onClick,
-	                successCallback = _props.successCallback,
-	                errorCallback = _props.errorCallback,
-	                linkProps = objectWithoutProperties(_props, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'ignoreQueryParams', 'route', 'previousRoute', 'router', 'children', 'onClick', 'successCallback', 'errorCallback']);
+	            var _props2 = this.props,
+	                routeName = _props2.routeName,
+	                routeParams = _props2.routeParams,
+	                routeOptions = _props2.routeOptions,
+	                className = _props2.className,
+	                activeClassName = _props2.activeClassName,
+	                activeStrict = _props2.activeStrict,
+	                ignoreQueryParams = _props2.ignoreQueryParams,
+	                route = _props2.route,
+	                previousRoute = _props2.previousRoute,
+	                router = _props2.router,
+	                children = _props2.children,
+	                onClick = _props2.onClick,
+	                successCallback = _props2.successCallback,
+	                errorCallback = _props2.errorCallback,
+	                linkProps = objectWithoutProperties(_props2, ['routeName', 'routeParams', 'routeOptions', 'className', 'activeClassName', 'activeStrict', 'ignoreQueryParams', 'route', 'previousRoute', 'router', 'children', 'onClick', 'successCallback', 'errorCallback']);
 	            /* eslint-enable */
 
 	            var active = this.isActive();
@@ -1037,7 +1042,7 @@
 	}
 
 	function extractSegmentParams(name, state) {
-	    if (!exists(state.meta.params[name])) return {};
+	    if (!hasMetaParams(state) || !exists(state.meta.params[name])) return {};
 
 	    return Object.keys(state.meta.params[name]).reduce(function (params, p) {
 	        params[p] = state.params[p];
