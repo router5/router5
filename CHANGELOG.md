@@ -1,4 +1,4 @@
-## react-router5@6.4.0 (2018-09-11)
+## react-router5@6.5.0 (2018-09-11)
 
 #### Enhancement
 * `react-router5`
