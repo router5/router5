@@ -1,6 +1,6 @@
 {
   "name": "redux-router5",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "Router5 integration with redux",
   "main": "index.js",
   "module": "dist/es/index.js",
@@ -34,7 +34,7 @@
     "immutable": "^3.0.0"
   },
   "dependencies": {
-    "router5-transition-path": "^5.3.1"
+    "router5-transition-path": "^5.4.0"
   },
   "typings": "./index.d.ts"
 }
