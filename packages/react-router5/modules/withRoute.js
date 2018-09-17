@@ -11,9 +11,7 @@ function withRoute(BaseComponent) {
                 previousRoute: null,
                 route: this.router.getState()
             }
-            this.state = {
-                mounted: false
-            }
+            this.mounted = false
 
             if (typeof window !== 'undefined') {
                 const listener = ({ route, previousRoute }) => {
@@ -21,7 +19,7 @@ function withRoute(BaseComponent) {
                         route,
                         previousRoute
                     }
-                    if (this.state.mounted) {
+                    if (this.mounted) {
                         this.forceUpdate()
                     }
                 }
@@ -30,7 +28,7 @@ function withRoute(BaseComponent) {
         }
 
         componentDidMount() {
-            this.setState({ mounted: true })
+            this.mounted = true
         }
 
         componentWillUnmount() {

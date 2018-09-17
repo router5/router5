@@ -15,14 +15,11 @@ class RouteProvider extends React.PureComponent {
     constructor(props) {
         super(props)
         const { router } = props
-
-        state = {
-            mounted: false
-        }
+        this.mounted = false
         this.router = router
         this.routeState = {
             route: router.getState(),
-            previousRoute: null,
+            previousRoute: null
         }
 
         if (typeof window !== 'undefined') {
@@ -31,7 +28,7 @@ class RouteProvider extends React.PureComponent {
                     route,
                     previousRoute
                 }
-                if (this.state.mounted) {
+                if (this.mounted) {
                     this.forceUpdate()
                 }
             }
@@ -40,7 +37,7 @@ class RouteProvider extends React.PureComponent {
     }
 
     componentDidMount() {
-        this.setState({ mounted: true })
+        this.mounted = true
     }
 
     componentWillUnmount() {
