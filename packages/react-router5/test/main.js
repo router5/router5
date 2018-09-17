@@ -4,6 +4,7 @@ import { Child, createTestRouter, FnChild, renderWithRouter } from './utils'
 import {
     RouterProvider,
     withRoute,
+    withRouter,
     routeNode,
     BaseLink,
     Link
@@ -31,6 +32,25 @@ describe('withRoute hoc', () => {
             router,
             route: null,
             previousRoute: null
+        })
+    })
+})
+
+describe('withRouter hoc', () => {
+    let router
+
+    before(() => {
+        router = createTestRouter()
+    })
+
+    it('should inject the router on the wrapped component props', () => {
+        const ChildSpy = spy(FnChild)
+        router.usePlugin(listenersPlugin())
+
+        renderWithRouter(router)(withRouter(ChildSpy))
+
+        expect(ChildSpy).to.have.been.calledWith({
+            router
         })
     })
 })
