@@ -9,22 +9,30 @@ function routeNode(nodeName) {
             constructor(props, context) {
                 super(props, context)
                 this.router = context.router
-                this.state = {
+                this.routeState = {
                     previousRoute: null,
                     route: this.router.getState()
                 }
+                this.mounted = false
 
                 if (typeof window !== 'undefined') {
                     const listener = ({ route, previousRoute }) => {
                         if (shouldUpdateNode(nodeName)(route, previousRoute)) {
-                            this.setState({
+                            this.routeState = {
                                 previousRoute,
                                 route
-                            })
+                            }
+                            if (this.mounted) {
+                                this.forceUpdate()
+                            }
                         }
                     }
                     this.unsubscribe = this.router.subscribe(listener)
                 }
+            }
+
+            componentDidMount() {
+                this.mounted = true
             }
 
             componentWillUnmount() {
@@ -35,7 +43,7 @@ function routeNode(nodeName) {
 
             render() {
                 const { props, router } = this
-                const { previousRoute, route } = this.state
+                const { previousRoute, route } = this.routeState
                 const component = createElement(RouteSegment, {
                     ...props,
                     router,
