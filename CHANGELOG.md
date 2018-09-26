@@ -1,4 +1,23 @@
-## react-router5@6.5.0 (2018-09-11)
+### router5@6.5.1, react-router@6.5.0 (2018-09-26)
+
+#### Feature
+* `react-router5`
+  * [#364](https://github.com/router5/router5/pull/364) Don't set state on not mounted component. ([@titouancreach](https://github.com/titouancreach))
+  * [#365](https://github.com/router5/router5/pull/365) Add a withRouter component. ([@titouancreach](https://github.com/titouancreach))
+
+#### Enhancement
+* `react-router5`
+  * [#364](https://github.com/router5/router5/pull/364) Don't set state on not mounted component. ([@titouancreach](https://github.com/titouancreach))
+* `router5`
+  * [#363](https://github.com/router5/router5/pull/363) Add title as 3rd parameter of router.replaceHistoryState. ([@rlebosse](https://github.com/rlebosse))
+
+#### Committers: 2
+- Titouan CREACH ([titouancreach](https://github.com/titouancreach))
+- [rlebosse](https://github.com/rlebosse)
+
+
+
+## router5@6.5.0 (2018-09-11)
 
 #### Enhancement
 * `react-router5`

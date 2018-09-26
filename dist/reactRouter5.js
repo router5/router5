@@ -1184,10 +1184,11 @@
 	                var _this = possibleConstructorReturn(this, (RouteNode.__proto__ || Object.getPrototypeOf(RouteNode)).call(this, props, context));
 
 	                _this.router = context.router;
-	                _this.state = {
+	                _this.routeState = {
 	                    previousRoute: null,
 	                    route: _this.router.getState()
 	                };
+	                _this.mounted = false;
 
 	                if (typeof window !== 'undefined') {
 	                    var listener = function listener(_ref) {
@@ -1195,10 +1196,13 @@
 	                            previousRoute = _ref.previousRoute;
 
 	                        if (shouldUpdateNode(nodeName)(route, previousRoute)) {
-	                            _this.setState({
+	                            _this.routeState = {
 	                                previousRoute: previousRoute,
 	                                route: route
-	                            });
+	                            };
+	                            if (_this.mounted) {
+	                                _this.forceUpdate();
+	                            }
 	                        }
 	                    };
 	                    _this.unsubscribe = _this.router.subscribe(listener);
@@ -1207,6 +1211,11 @@
 	            }
 
 	            createClass(RouteNode, [{
+	                key: 'componentDidMount',
+	                value: function componentDidMount() {
+	                    this.mounted = true;
+	                }
+	            }, {
 	                key: 'componentWillUnmount',
 	                value: function componentWillUnmount() {
 	                    if (this.unsubscribe) {
@@ -1218,9 +1227,9 @@
 	                value: function render() {
 	                    var props = this.props,
 	                        router = this.router;
-	                    var _state = this.state,
-	                        previousRoute = _state.previousRoute,
-	                        route = _state.route;
+	                    var _routeState = this.routeState,
+	                        previousRoute = _routeState.previousRoute,
+	                        route = _routeState.route;
 
 	                    var component = React.createElement(RouteSegment, _extends({}, props, {
 	                        router: router,
@@ -1298,17 +1307,24 @@
 	            var _this = possibleConstructorReturn(this, (ComponentWithRoute.__proto__ || Object.getPrototypeOf(ComponentWithRoute)).call(this, props, context));
 
 	            _this.router = context.router;
-	            _this.state = {
+	            _this.routeState = {
 	                previousRoute: null,
 	                route: _this.router.getState()
 	            };
+	            _this.mounted = false;
 
 	            if (typeof window !== 'undefined') {
 	                var listener = function listener(_ref) {
 	                    var route = _ref.route,
 	                        previousRoute = _ref.previousRoute;
 
-	                    _this.setState({ route: route, previousRoute: previousRoute });
+	                    _this.routeState = {
+	                        route: route,
+	                        previousRoute: previousRoute
+	                    };
+	                    if (_this.mounted) {
+	                        _this.forceUpdate();
+	                    }
 	                };
 	                _this.unsubscribe = _this.router.subscribe(listener);
 	            }
@@ -1316,6 +1332,11 @@
 	        }
 
 	        createClass(ComponentWithRoute, [{
+	            key: 'componentDidMount',
+	            value: function componentDidMount() {
+	                this.mounted = true;
+	            }
+	        }, {
 	            key: 'componentWillUnmount',
 	            value: function componentWillUnmount() {
 	                if (this.unsubscribe) {
@@ -1325,7 +1346,7 @@
 	        }, {
 	            key: 'render',
 	            value: function render() {
-	                return React.createElement(BaseComponent, _extends({}, this.props, this.state, {
+	                return React.createElement(BaseComponent, _extends({}, this.props, this.routeState, {
 	                    router: this.router
 	                }));
 	            }
@@ -1340,6 +1361,39 @@
 	    ComponentWithRoute.displayName = 'WithRoute[' + getDisplayName(BaseComponent) + ']';
 
 	    return ComponentWithRoute;
+	}
+
+	function withRouter(BaseComponent) {
+	    var ComponentWithRouter = function (_Component) {
+	        inherits(ComponentWithRouter, _Component);
+
+	        function ComponentWithRouter(props, context) {
+	            classCallCheck(this, ComponentWithRouter);
+
+	            var _this = possibleConstructorReturn(this, (ComponentWithRouter.__proto__ || Object.getPrototypeOf(ComponentWithRouter)).call(this, props, context));
+
+	            _this.router = context.router;
+	            return _this;
+	        }
+
+	        createClass(ComponentWithRouter, [{
+	            key: 'render',
+	            value: function render() {
+	                return React.createElement(BaseComponent, _extends({}, this.props, {
+	                    router: this.router
+	                }));
+	            }
+	        }]);
+	        return ComponentWithRouter;
+	    }(React.Component);
+
+	    ComponentWithRouter.contextTypes = {
+	        router: propTypes.object.isRequired
+	    };
+
+	    ComponentWithRouter.displayerName = 'WithRouter[' + getDisplayName(BaseComponent) + ']';
+
+	    return ComponentWithRouter;
 	}
 
 	var emptyCreateContext = function emptyCreateContext() {
@@ -1370,12 +1424,11 @@
 
 	        var router = props.router;
 
-
+	        _this.mounted = false;
 	        _this.router = router;
-	        _this.state = {
+	        _this.routeState = {
 	            route: router.getState(),
-	            previousRoute: null,
-	            router: router
+	            previousRoute: null
 	        };
 
 	        if (typeof window !== 'undefined') {
@@ -1383,10 +1436,13 @@
 	                var route = _ref2.route,
 	                    previousRoute = _ref2.previousRoute;
 
-	                _this.setState({
+	                _this.routeState = {
 	                    route: route,
 	                    previousRoute: previousRoute
-	                });
+	                };
+	                if (_this.mounted) {
+	                    _this.forceUpdate();
+	                }
 	            };
 	            _this.unsubscribe = _this.router.subscribe(listener);
 	        }
@@ -1394,6 +1450,11 @@
 	    }
 
 	    createClass(RouteProvider, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.mounted = true;
+	        }
+	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
 	            if (this.unsubscribe) {
@@ -1408,9 +1469,12 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var value = _extends({
+	                router: this.props.router
+	            }, this.routeState);
 	            return React__default.createElement(
 	                Provider,
-	                { value: this.state },
+	                { value: value },
 	                this.props.children
 	            );
 	        }
@@ -1474,6 +1538,7 @@
 	exports.routeNode = routeNode;
 	exports.RouterProvider = RouterProvider;
 	exports.withRoute = withRoute;
+	exports.withRouter = withRouter;
 	exports.Link = Link;
 	exports.RouteProvider = RouteProvider;
 	exports.Route = Route;
