@@ -10,7 +10,7 @@ declare module 'react-router5' {
     type Diff<
         T extends string | number | symbol,
         U extends string | number | symbol
-    > = ({ [P in T]: P } & { [P in U]: never } & { [x: string]: never })[T];
+    > = ({ [P in T]: P } & { [P in U]: never } & { [x: string]: never })[T]
 
     type Omit<InputObject, Keys extends keyof InputObject> = Pick<
         InputObject,
@@ -62,4 +62,13 @@ declare module 'react-router5' {
     ): (
         RouteSegment: ComponentType<TProps>
     ) => ComponentClass<Omit<TProps, keyof InjectedRouterNode>>
+
+    export type RenderCallback = (args: InjectedRouterNode) => JSX.Element
+
+    export const RouteNode: ComponentClass<
+        Partial<{
+            nodeName?: string
+            children: RenderCallback
+        }>
+    >
 }
