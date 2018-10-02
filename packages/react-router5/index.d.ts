@@ -65,10 +65,17 @@ declare module 'react-router5' {
 
     export type RenderCallback = (args: InjectedRouterNode) => JSX.Element
 
-    export const RouteNode: ComponentClass<
-        Partial<{
-            nodeName?: string
-            children: RenderCallback
-        }>
-    >
+    export const RouteNode: ComponentClass<{
+        nodeName: string
+        children: RenderCallback
+    }>
+
+    export const RouteProvider: ComponentClass<{
+        children?: React.ReactNode
+        router: Router
+    }>
+
+    export const Route: ComponentClass<{
+        children: (value: T) => React.ReactNode
+    }>
 }
