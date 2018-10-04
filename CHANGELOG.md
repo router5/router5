@@ -1,3 +1,16 @@
+## router5@6.6.0 (2018-10-04)
+
+#### Enhancement
+* `react-router5`, `redux-router5`, `rxjs-router5`, `xstream-router5`
+  * [#371](https://github.com/router5/router5/pull/371) Lock router5-transition-path versions. ([@troch](https://github.com/troch))
+* `react-router5`, `router5`
+  * [#370](https://github.com/router5/router5/pull/370) Update route-node and lock router5-transition-path version. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.5.1, react-router@6.5.0 (2018-09-26)
 
 #### Feature
