@@ -25,8 +25,8 @@
   },
   "homepage": "https://router5.js.org",
   "dependencies": {
-    "route-node": "3.4.0",
-    "router5-transition-path": "^5.4.0",
+    "route-node": "3.4.1",
+    "router5-transition-path": "5.4.0",
     "symbol-observable": "1.2.0"
   },
   "typings": "./index.d.ts"
