@@ -1,6 +1,6 @@
 {
   "name": "xstream-router5",
-  "version": "5.2.3",
+  "version": "5.2.4",
   "description": "xstream plugin for router5",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",

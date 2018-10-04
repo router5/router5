@@ -1,6 +1,6 @@
 {
   "name": "rxjs-router5",
-  "version": "5.3.4",
+  "version": "5.3.5",
   "description": "RxJS 5+ plugin for router5",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",
