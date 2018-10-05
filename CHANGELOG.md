@@ -1,3 +1,14 @@
+### router5@6.5.2 (2018-10-05)
+
+#### Enhancement
+* `react-router5`
+  * [#367](https://github.com/router5/router5/pull/367) Add typings for Route and RouteNode component. ([@vire](https://github.com/vire))
+
+#### Committers: 1
+- Viliam Elischer ([vire](https://github.com/vire))
+
+
+
 ## router5@6.6.0 (2018-10-04)
 
 #### Enhancement
