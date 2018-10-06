@@ -1,3 +1,14 @@
+## router5@6.5.3 (2018-10-06)
+
+#### Bug fix
+* `react-router5`
+  * [#373](https://github.com/router5/router5/pull/373) Fix Route type definition. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ### router5@6.5.2 (2018-10-05)
 
 #### Enhancement
