@@ -76,6 +76,6 @@ declare module 'react-router5' {
     }>
 
     export const Route: ComponentClass<{
-        children: (value: T) => React.ReactNode
+        children: (value: InjectedRouterNode) => React.ReactNode
     }>
 }
