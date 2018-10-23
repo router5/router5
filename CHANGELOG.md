@@ -1,3 +1,14 @@
+## router5@6.6.2 (2018-10-23)
+
+#### Bug fix
+* `router5`
+  * [#379](https://github.com/router5/router5/pull/379) Properly handle default params when building paths and states. ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([troch](https://github.com/troch))
+
+
+
 ## router5@6.6.1 (2018-10-16)
 
 #### Bug fix

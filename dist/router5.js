@@ -1208,12 +1208,14 @@
                 return params.path;
             }
 
+            var paramsWithDefault = _extends({}, router.config.defaultParams[route], params);
+
             var _router$getOptions = router.getOptions(),
                 trailingSlashMode = _router$getOptions.trailingSlashMode,
                 queryParamsMode = _router$getOptions.queryParamsMode,
                 queryParams = _router$getOptions.queryParams;
 
-            var encodedParams = router.config.encoders[route] ? router.config.encoders[route](params) : params;
+            var encodedParams = router.config.encoders[route] ? router.config.encoders[route](paramsWithDefault) : paramsWithDefault;
 
             return router.rootNode.buildPath(route, encodedParams, {
                 trailingSlashMode: trailingSlashMode,
@@ -2259,7 +2261,7 @@
                 return Object.defineProperty(state, key, { value: value, enumerable: true });
             };
             setProp('name', name);
-            setProp('params', params);
+            setProp('params', _extends({}, router.config.defaultParams[name], params));
             setProp('path', path);
 
             if (meta) {
