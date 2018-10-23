@@ -94,14 +94,19 @@ export default function withUtils(router) {
             return params.path
         }
 
+        const paramsWithDefault = {
+            ...router.config.defaultParams[route],
+            ...params
+        }
+
         const {
             trailingSlashMode,
             queryParamsMode,
             queryParams
         } = router.getOptions()
         const encodedParams = router.config.encoders[route]
-            ? router.config.encoders[route](params)
-            : params
+            ? router.config.encoders[route](paramsWithDefault)
+            : paramsWithDefault
 
         return router.rootNode.buildPath(route, encodedParams, {
             trailingSlashMode,
