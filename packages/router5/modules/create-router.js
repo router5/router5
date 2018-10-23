@@ -143,7 +143,10 @@ function createRouter(routes, opts = {}, deps = {}) {
         const setProp = (key, value) =>
             Object.defineProperty(state, key, { value, enumerable: true })
         setProp('name', name)
-        setProp('params', params)
+        setProp('params', {
+            ...router.config.defaultParams[name],
+            ...params
+        })
         setProp('path', path)
 
         if (meta) {

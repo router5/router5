@@ -144,4 +144,15 @@ describe('core/utils', () => {
             })
         })
     })
+
+    it('should build path with default parameters', () => {
+        const router = createRouter({
+            name: 'withDefaults',
+            defaultParams: { id: '1' },
+            path: '/with-defaults/:id'
+        })
+
+        expect(router.buildPath('withDefaults')).to.equal('/with-defaults/1')
+        expect(router.makeState('withDefaults').params).to.eql({ id: '1' })
+    })
 })
