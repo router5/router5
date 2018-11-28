@@ -2454,13 +2454,462 @@
 
     loggerPlugin.pluginName = 'LOGGER_PLUGIN';
 
+    /**
+     * Dumb functions
+     */
+    // istanbul ignore next
+    var identity$1 = function identity(arg) {
+        return function () {
+            return arg;
+        };
+    };
+    // istanbul ignore next
+    var noop$3 = function noop() {};
+
+    /**
+     * Browser detection
+     */
+    var isBrowser = typeof window !== 'undefined' && window.history;
+
+    /**
+     * Browser functions needed by router5
+     */
+    var getBase = function getBase() {
+        return window.location.pathname;
+    };
+
+    var supportsPopStateOnHashChange = function supportsPopStateOnHashChange() {
+        return window.navigator.userAgent.indexOf('Trident') === -1;
+    };
+
+    var pushState = function pushState(state, title, path) {
+        return window.history.pushState(state, title, path);
+    };
+
+    var replaceState = function replaceState(state, title, path) {
+        return window.history.replaceState(state, title, path);
+    };
+
+    var addPopstateListener = function addPopstateListener(fn, opts) {
+        var shouldAddHashChangeListener = opts.useHash && !supportsPopStateOnHashChange();
+
+        window.addEventListener('popstate', fn);
+
+        if (shouldAddHashChangeListener) {
+            window.addEventListener('hashchange', fn);
+        }
+
+        return function () {
+            window.removeEventListener('popstate', fn);
+
+            if (shouldAddHashChangeListener) {
+                window.removeEventListener('hashchange', fn);
+            }
+        };
+    };
+
+    var getLocation = function getLocation(opts) {
+        var path = opts.useHash ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '') : window.location.pathname.replace(new RegExp('^' + opts.base), '');
+
+        // Fix Frefox issue with non encoded pipe characters
+        var correctedPath = path.replace(/\|/g, '%7C');
+
+        return (correctedPath || '/') + window.location.search;
+    };
+
+    var getState = function getState() {
+        return window.history.state;
+    };
+
+    var getHash = function getHash() {
+        return window.location.hash;
+    };
+
+    /**
+     * Export browser object
+     */
+    var browser = {};
+    if (isBrowser) {
+        browser = {
+            getBase: getBase,
+            pushState: pushState,
+            replaceState: replaceState,
+            addPopstateListener: addPopstateListener,
+            getLocation: getLocation,
+            getState: getState,
+            getHash: getHash
+        };
+    } else {
+        // istanbul ignore next
+        browser = {
+            getBase: identity$1(''),
+            pushState: noop$3,
+            replaceState: noop$3,
+            addPopstateListener: noop$3,
+            getLocation: identity$1(''),
+            getState: identity$1(null),
+            getHash: identity$1('')
+        };
+    }
+
+    var safeBrowser = browser;
+
+    function withUtils$1(router, options) {
+        router.urlToPath = urlToPath;
+        router.buildUrl = buildUrl;
+        router.matchUrl = matchUrl;
+
+        function buildUrl(route, params) {
+            var base = options.base || '';
+            var prefix = options.useHash ? '#' + options.hashPrefix : '';
+            var path = router.buildPath(route, params);
+
+            if (path === null) return null;
+
+            return base + prefix + path;
+        }
+
+        function urlToPath(url) {
+            var match = url.match(/^(?:http|https):\/\/(?:[0-9a-z_\-.:]+?)(?=\/)(.*)$/);
+            var path = match ? match[1] : url;
+
+            var pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/);
+
+            if (!pathParts) throw new Error('[router5] Could not parse url ' + url);
+
+            var pathname = pathParts[1];
+            var hash = pathParts[2] || '';
+            var search = pathParts[3] || '';
+
+            return (options.useHash ? hash.replace(new RegExp('^#' + options.hashPrefix), '') : options.base ? pathname.replace(new RegExp('^' + options.base), '') : pathname) + search;
+        }
+
+        function matchUrl(url) {
+            return router.matchPath(urlToPath(url));
+        }
+    }
+
+    var defaultOptions$1 = {
+        forceDeactivate: true,
+        useHash: false,
+        hashPrefix: '',
+        base: false,
+        mergeState: false,
+        preserveHash: true
+    };
+
+    var source = 'popstate';
+
+    function browserPluginFactory() {
+        var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var browser = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : safeBrowser;
+
+        var options = _extends({}, defaultOptions$1, opts);
+        var transitionOptions = {
+            forceDeactivate: options.forceDeactivate,
+            source: source
+        };
+        var removePopStateListener = void 0;
+
+        function browserPlugin(router) {
+            var routerOptions = router.getOptions();
+            var routerStart = router.start;
+
+            withUtils$1(router, options);
+
+            router.start = function () {
+                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                    args[_key] = arguments[_key];
+                }
+
+                if (args.length === 0 || typeof args[0] === 'function') {
+                    routerStart.apply(undefined, [browser.getLocation(options)].concat(args));
+                } else {
+                    routerStart.apply(undefined, args);
+                }
+
+                return router;
+            };
+
+            router.replaceHistoryState = function (name) {
+                var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+                var title = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
+                var route = router.buildState(name, params);
+                var state = router.makeState(route.name, route.params, router.buildPath(route.name, route.params), { params: route.meta });
+                var url = router.buildUrl(name, params);
+                router.lastKnownState = state;
+                browser.replaceState(state, title, url);
+            };
+
+            function updateBrowserState(state, url, replace) {
+                var trimmedState = state ? {
+                    meta: state.meta,
+                    name: state.name,
+                    params: state.params,
+                    path: state.path
+                } : state;
+                var finalState = options.mergeState === true ? _extends({}, browser.getState(), trimmedState) : trimmedState;
+
+                if (replace) browser.replaceState(finalState, '', url);else browser.pushState(finalState, '', url);
+            }
+
+            function onPopState() {
+                var evt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+                var routerState = router.getState();
+                // Do nothing if no state or if last know state is poped state (it should never happen)
+                var newState = !evt.state || !evt.state.name;
+                var state = newState ? router.matchPath(browser.getLocation(options), source) : router.makeState(evt.state.name, evt.state.params, evt.state.path, _extends({}, evt.state.meta, { source: source }), evt.state.meta.id);
+                var defaultRoute = routerOptions.defaultRoute,
+                    defaultParams = routerOptions.defaultParams;
+
+
+                if (!state) {
+                    // If current state is already the default route, we will have a double entry
+                    // Navigating back and forth will emit SAME_STATES error
+                    defaultRoute && router.navigateToDefault(_extends({}, transitionOptions, {
+                        reload: true,
+                        replace: true
+                    }));
+                    return;
+                }
+                if (routerState && router.areStatesEqual(state, routerState, false)) {
+                    return;
+                }
+
+                router.transitionToState(state, routerState, transitionOptions, function (err, toState) {
+                    if (err) {
+                        if (err.redirect) {
+                            var _err$redirect = err.redirect,
+                                name = _err$redirect.name,
+                                params = _err$redirect.params;
+
+
+                            router.navigate(name, params, _extends({}, transitionOptions, {
+                                replace: true,
+                                force: true,
+                                redirected: true
+                            }));
+                        } else if (err.code === errorCodes.CANNOT_DEACTIVATE) {
+                            var url = router.buildUrl(routerState.name, routerState.params);
+                            if (!newState) {
+                                // Keep history state unchanged but use current URL
+                                updateBrowserState(state, url, true);
+                            }
+                            // else do nothing or history will be messed up
+                            // TODO: history.back()?
+                        } else {
+                            // Force navigation to default state
+                            defaultRoute && router.navigate(defaultRoute, defaultParams, _extends({}, transitionOptions, {
+                                reload: true,
+                                replace: true
+                            }));
+                        }
+                    } else {
+                        router.invokeEventListeners(constants.TRANSITION_SUCCESS, toState, routerState, { replace: true });
+                    }
+                });
+            }
+
+            function onStart() {
+                if (options.useHash && !options.base) {
+                    // Guess base
+                    options.base = browser.getBase();
+                }
+
+                removePopStateListener = browser.addPopstateListener(onPopState, options);
+            }
+
+            function onStop() {
+                if (removePopStateListener) {
+                    removePopStateListener();
+                }
+            }
+
+            function onTransitionSuccess(toState, fromState, opts) {
+                var historyState = browser.getState();
+                var hasState = historyState && historyState.meta && historyState.name && historyState.params;
+                var statesAreEqual = fromState && router.areStatesEqual(fromState, toState, false);
+                var replace = opts.replace || !hasState || statesAreEqual;
+                var url = router.buildUrl(toState.name, toState.params);
+                if (fromState === null && options.useHash === false && options.preserveHash === true) {
+                    url += browser.getHash();
+                }
+                updateBrowserState(toState, url, replace);
+            }
+
+            return { onStart: onStart, onStop: onStop, onTransitionSuccess: onTransitionSuccess, onPopState: onPopState };
+        }
+
+        browserPlugin.pluginName = 'BROWSER_PLUGIN';
+
+        return browserPlugin;
+    }
+
+    var defaultOptions$2 = {
+        autoCleanUp: true
+    };
+
+    function listenersPluginFactory() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultOptions$2;
+
+        function listenersPlugin(router) {
+            var listeners = {};
+
+            function removeListener(name, cb) {
+                if (cb) {
+                    if (listeners[name]) listeners[name] = listeners[name].filter(function (callback) {
+                        return callback !== cb;
+                    });
+                } else {
+                    listeners[name] = [];
+                }
+                return router;
+            }
+
+            function addListener(name, cb, replace) {
+                var normalizedName = name.replace(/^(\*|\^|=)/, '');
+
+                if (normalizedName && !/^\$/.test(name)) {
+                    var segments = router.rootNode.getSegmentsByName(normalizedName);
+                    if (!segments) console.warn('No route found for ' + normalizedName + ', listener might never be called!');
+                }
+
+                if (!listeners[name]) listeners[name] = [];
+                listeners[name] = (replace ? [] : listeners[name]).concat(cb);
+
+                return router;
+            }
+
+            router.getListeners = function () {
+                return listeners;
+            };
+
+            router.addListener = function (cb) {
+                return addListener('*', cb);
+            };
+            router.removeListener = function (cb) {
+                return removeListener('*', cb);
+            };
+
+            router.addNodeListener = function (name, cb) {
+                return addListener('^' + name, cb, true);
+            };
+            router.removeNodeListener = function (name, cb) {
+                return removeListener('^' + name, cb);
+            };
+
+            router.addRouteListener = function (name, cb) {
+                return addListener('=' + name, cb);
+            };
+            router.removeRouteListener = function (name, cb) {
+                return removeListener('=' + name, cb);
+            };
+
+            function invokeListeners(name, toState, fromState) {
+    (listeners[name] || []).forEach(function (cb) {
+                    if (listeners[name].indexOf(cb) !== -1) {
+                        cb(toState, fromState);
+                    }
+                });
+            }
+
+            function onTransitionSuccess(toState, fromState, opts) {
+                var _transitionPath = transitionPath(toState, fromState),
+                    intersection = _transitionPath.intersection,
+                    toDeactivate = _transitionPath.toDeactivate;
+
+                var intersectionNode = opts.reload ? '' : intersection;
+                var name = toState.name;
+
+
+                if (options.autoCleanUp) {
+                    toDeactivate.forEach(function (name) {
+                        return removeListener('^' + name);
+                    });
+                }
+
+                invokeListeners('^' + intersectionNode, toState, fromState);
+                invokeListeners('=' + name, toState, fromState);
+                invokeListeners('*', toState, fromState);
+            }
+
+            return { onTransitionSuccess: onTransitionSuccess };
+        }
+
+        listenersPlugin.pluginName = 'LISTENERS_PLUGIN';
+
+        return listenersPlugin;
+    }
+
+    var getDefinedParams = function getDefinedParams(params) {
+        return Object.keys(params).filter(function (param) {
+            return params[param] !== undefined;
+        }).reduce(function (acc, param) {
+            return _extends({}, acc, defineProperty({}, param, params[param]));
+        }, {});
+    };
+
+    function persistentParamsPluginFactory() {
+        var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        function persistentParamsPlugin(router) {
+            // Persistent parameters
+            var persistentParams = Array.isArray(params) ? params.reduce(function (acc, param) {
+                return _extends({}, acc, defineProperty({}, param, undefined));
+            }, {}) : params;
+
+            var paramNames = Object.keys(persistentParams);
+            var hasQueryParams = router.rootNode.path.indexOf('?') !== -1;
+            var queryParams = paramNames.join('&');
+            var search = queryParams ? '' + (hasQueryParams ? '&' : '?') + queryParams : '';
+
+            // Root node path
+            var path = router.rootNode.path.split('?')[0] + search;
+            router.setRootPath(path);
+
+            var buildPath = router.buildPath,
+                buildState = router.buildState;
+
+            // Decorators
+
+            router.buildPath = function (route, params) {
+                var routeParams = _extends({}, getDefinedParams(persistentParams), params);
+                return buildPath.call(router, route, routeParams);
+            };
+
+            router.buildState = function (route, params) {
+                var routeParams = _extends({}, getDefinedParams(persistentParams), params);
+                return buildState.call(router, route, routeParams);
+            };
+
+            return {
+                onTransitionSuccess: function onTransitionSuccess(toState) {
+                    Object.keys(toState.params).filter(function (p) {
+                        return paramNames.indexOf(p) !== -1;
+                    }).forEach(function (p) {
+                        return persistentParams[p] = toState.params[p];
+                    });
+                }
+            };
+        }
+
+        persistentParamsPlugin.pluginName = 'PERSISTENT_PARAMS_PLUGIN';
+
+        return persistentParamsPlugin;
+    }
+
     exports.default = createRouter;
     exports.createRouter = createRouter;
     exports.RouteNode = RouteNode;
-    exports.loggerPlugin = loggerPlugin;
     exports.errorCodes = errorCodes;
     exports.transitionPath = transitionPath;
     exports.constants = constants;
+    exports.loggerPlugin = loggerPlugin;
+    exports.browserPlugin = browserPluginFactory;
+    exports.listenersPlugin = listenersPluginFactory;
+    exports.persistentParamsPlugin = persistentParamsPluginFactory;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

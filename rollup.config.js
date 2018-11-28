@@ -16,21 +16,12 @@ const babelOptions = {
 }
 
 const modules = {
-    router5: 'packages/router5/modules/index.js',
-    router5BrowserPlugin: 'packages/router5/modules/plugins/browser/index.js',
-    router5ListenersPlugin:
-        'packages/router5/modules/plugins/listeners/index.js',
-    persistentParamsPlugin:
-        'packages/router5/modules/plugins/persistentParams/index.js',
-    reactRouter5: 'packages/react-router5/modules/index.js',
-    reduxRouter5: 'packages/redux-router5/modules/index.js',
-    router5Helpers: 'packages/router5-helpers/modules/index.js'
+    router5: 'packages/router5/modules/index.js'
 }
 
 const modulesToBuild = Object.keys(modules).reduce((acc, moduleName) => {
     const base = {
-        input: modules[moduleName],
-        external: ['react']
+        input: modules[moduleName]
     }
     const packageDir = modules[moduleName].match(/^packages\/([\w-]+)\//)[1]
     const plugins = [

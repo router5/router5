@@ -14,14 +14,8 @@ const packages = [
 ];
 
 packages.forEach(pkg => {
-    const cjsDir = pkg === 'router5' || pkg === 'redux-router5'
-        ? ''
-        : 'dist/commonjs';
-
-    console.log(`Building ${pkg}`);
-
     execSync(
-        `BABEL_ENV=development ./node_modules/.bin/babel packages/${pkg}/modules --out-dir packages/${pkg}/${cjsDir}`
+        `BABEL_ENV=development ./node_modules/.bin/babel packages/${pkg}/modules --out-dir packages/${pkg}/dist/commonjs`
     );
 
     console.log('✓ CommonJS');
