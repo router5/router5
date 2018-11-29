@@ -80,7 +80,7 @@ export default function withState(router: Router): Router {
     }
 
     router.buildState = (routeName, routeParams) => {
-        const { name, params } = forwardState(routeName, routeParams)
+        const { name, params } = router.forwardState(routeName, routeParams)
 
         return router.rootNode.buildState(name, params)
     }

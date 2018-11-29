@@ -1,25 +1,13 @@
-import babel from 'rollup-plugin-babel'
+import typescript from 'rollup-plugin-typescript2'
 import uglify from 'rollup-plugin-uglify'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import common from 'rollup-plugin-commonjs'
 
-const babelOptions = {
-    runtimeHelpers: true,
-    presets: [['env', { modules: false }], 'react'],
-    plugins: [
-        'external-helpers',
-        'transform-object-rest-spread',
-        'transform-class-properties',
-        'transform-export-extensions'
-    ],
-    babelrc: false
-}
-
 const modules = {
-    router5: 'packages/router5/modules/index.js'
+    router5: 'packages/router5/modulests/index.ts'
 }
 
-const modulesToBuild = Object.keys(modules).reduce((acc, moduleName) => {
+const makeConfig = ({ moduleName, declaration = false, format, external, uglify = false, file }) => {
     const base = {
         input: modules[moduleName]
     }
@@ -27,27 +15,53 @@ const modulesToBuild = Object.keys(modules).reduce((acc, moduleName) => {
     const plugins = [
         nodeResolve({ jsnext: true, module: true }),
         common({ include: `packages/${packageDir}/node_modules/**` }),
-        babel(babelOptions)
-    ]
-
-    return acc.concat([
-        Object.assign({}, base, {
-            output: {
-                file: `dist/${moduleName}.js`,
-                name: moduleName,
-                format: 'umd'
-            },
-            plugins
+        typescript({
+            tsconfig: `./packages/router5/tsconfig.json`,
+            useTsconfigDeclarationDir: true,
+            clean: true,
+            tsconfigOverride: { compilerOptions: { declaration } }
         }),
-        Object.assign({}, base, {
-            output: {
-                file: `dist/${moduleName}.min.js`,
-                name: moduleName,
-                format: 'umd'
-            },
-            plugins: plugins.concat(uglify())
-        })
-    ])
-}, [])
+        uglify && uglify()
+    ].filter(Boolean)
 
-export default modulesToBuild
+    return {
+        input: modules[moduleName],
+        output: {
+            file,
+            name: moduleName,
+            format
+        },
+        plugins
+    }
+}
+
+const router5Package = require('./packages/router5/package.json')
+
+const config = [
+    makeConfig({
+        moduleName: 'router5',
+        declaration: true,
+        file: 'dist/router5.min.js',
+        format: 'umd'
+    }),
+    makeConfig({
+        moduleName: 'router5',
+        file: 'dist/router5.js',
+        format: 'umd'
+    }),
+    makeConfig({
+        moduleName: 'router5',
+        file: 'packages/router5/dist/index.js',
+        format: 'cjs',
+        external: router5Package.dependencies
+    }),
+    makeConfig({
+        moduleName: 'router5',
+        file: 'packages/router5/dist/index.es.js',
+        format: 'es',
+        external: router5Package.dependencies
+    }),
+
+]
+
+export default config

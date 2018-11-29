@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "lib": ["es2015", "es2015.symbol", "es2015.symbol.wellknown", "dom"],
+        "declaration": true,
+        "declarationDir": "./types",
+        "outDir": "./dist"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "modulests"
+    ]
+}

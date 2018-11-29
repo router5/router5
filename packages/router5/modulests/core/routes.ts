@@ -1,5 +1,6 @@
+import RouteNode from 'route-node'
+import { constants } from '../constants'
 import { Router, Route } from '../types/router'
-import { RouteNode } from '..'
 
 export default function withRoutes(routes: Route[] | RouteNode) {
     return (router: Router): Router => {
@@ -98,10 +99,10 @@ export default function withRoutes(routes: Route[] | RouteNode) {
                 const decodedParams = router.config.decoders[name]
                     ? router.config.decoders[name](params)
                     : params
-                const { name: routeName, params: routeParams } = forwardState(
-                    name,
-                    decodedParams
-                )
+                const {
+                    name: routeName,
+                    params: routeParams
+                } = router.forwardState(name, decodedParams)
                 const builtPath =
                     options.rewritePathOnMatch === false
                         ? path
