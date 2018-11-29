@@ -1258,94 +1258,66 @@
         return router;
     }
 
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-    function nameToIDs(name) {
-        return name.split('.').reduce(function (ids, name) {
+    var nameToIDs = function (name) {
+        return name
+            .split('.')
+            .reduce(function (ids, name) {
             return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
         }, []);
-    }
-
-    function exists$1(val) {
-        return val !== undefined && val !== null;
-    }
-
-    function hasMetaParams(state) {
-        return state && state.meta && state.meta.params;
-    }
-
-    function extractSegmentParams(name, state) {
-        if (!hasMetaParams(state) || !exists$1(state.meta.params[name])) return {};
-
+    };
+    var exists$1 = function (val) { return val !== undefined && val !== null; };
+    var hasMetaParams = function (state) { return state && state.meta && state.meta.params; };
+    var extractSegmentParams = function (name, state) {
+        if (!hasMetaParams(state) || !exists$1(state.meta.params[name]))
+            return {};
         return Object.keys(state.meta.params[name]).reduce(function (params, p) {
             params[p] = state.params[p];
             return params;
         }, {});
-    }
-
+    };
     function transitionPath(toState, fromState) {
         var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
         var toStateIds = nameToIDs(toState.name);
         var maxI = Math.min(fromStateIds.length, toStateIds.length);
-
         function pointOfDifference() {
-            var i = void 0;
-
-            var _loop = function _loop() {
+            var i;
+            var _loop_1 = function () {
                 var left = fromStateIds[i];
                 var right = toStateIds[i];
-
-                if (left !== right) return {
-                        v: i
-                    };
-
+                if (left !== right)
+                    return { value: i };
                 var leftParams = extractSegmentParams(left, toState);
                 var rightParams = extractSegmentParams(right, fromState);
-
-                if (leftParams.length !== rightParams.length) return {
-                        v: i
-                    };
-                if (leftParams.length === 0) return 'continue';
-
-                var different = Object.keys(leftParams).some(function (p) {
-                    return rightParams[p] !== leftParams[p];
-                });
+                if (Object.keys(leftParams).length !==
+                    Object.keys(rightParams).length)
+                    return { value: i };
+                if (Object.keys(leftParams).length === 0)
+                    return "continue";
+                var different = Object.keys(leftParams).some(function (p) { return rightParams[p] !== leftParams[p]; });
                 if (different) {
-                    return {
-                        v: i
-                    };
+                    return { value: i };
                 }
             };
-
             for (i = 0; i < maxI; i += 1) {
-                var _ret = _loop();
-
-                switch (_ret) {
-                    case 'continue':
-                        continue;
-
-                    default:
-                        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-                }
+                var state_1 = _loop_1();
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
-
             return i;
         }
-
-        var i = void 0;
+        var i;
         if (!fromState) {
             i = 0;
-        } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
+        }
+        else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
             i = 0;
-        } else {
+        }
+        else {
             i = pointOfDifference();
         }
-
         var toDeactivate = fromStateIds.slice(i).reverse();
         var toActivate = toStateIds.slice(i);
-
         var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
-
         return {
             intersection: intersection,
             toDeactivate: toDeactivate,
@@ -1892,13 +1864,13 @@
         return clonedRouter;
     }
 
-    exports.default = createRouter;
     exports.createRouter = createRouter;
     exports.cloneRouter = cloneRouter;
     exports.RouteNode = RouteNode;
     exports.transitionPath = transitionPath;
     exports.constants = constants;
     exports.errorCodes = errorCodes;
+    exports.default = createRouter;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

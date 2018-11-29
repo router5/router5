@@ -76,6 +76,15 @@ const config = [
     makeConfig({
         packageName: 'router5-transition-path',
         format: 'es'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-browser',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-browser',
+        format: 'es'
     })
 ]
 
