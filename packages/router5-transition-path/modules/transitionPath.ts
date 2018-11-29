@@ -1,18 +1,45 @@
-export function nameToIDs(name) {
-    return name.split('.').reduce(function(ids, name) {
-        return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name)
-    }, [])
+export interface SegementParams {
+    [key: string]: string
 }
 
-function exists(val) {
-    return val !== undefined && val !== null
+export interface State {
+    name: string
+    params?: {
+        [key: string]: any
+    }
+    meta?: {
+        options?: {
+            [key: string]: boolean
+        }
+        params?: {
+            [key: string]: SegementParams
+        }
+    }
+    [key: string]: any
 }
 
-function hasMetaParams(state) {
-    return state && state.meta && state.meta.params
+export interface TransitionPath {
+    intersection: string
+    toDeactivate: string[]
+    toActivate: string[]
 }
 
-function extractSegmentParams(name, state) {
+export const nameToIDs = (name: string): string[] =>
+    name
+        .split('.')
+        .reduce(
+            (ids: string[], name: string) =>
+                ids.concat(
+                    ids.length ? ids[ids.length - 1] + '.' + name : name
+                ),
+            []
+        )
+
+const exists = val => val !== undefined && val !== null
+
+const hasMetaParams = state => state && state.meta && state.meta.params
+
+const extractSegmentParams = (name: string, state: State): SegementParams => {
     if (!hasMetaParams(state) || !exists(state.meta.params[name])) return {}
 
     return Object.keys(state.meta.params[name]).reduce((params, p) => {
@@ -21,7 +48,10 @@ function extractSegmentParams(name, state) {
     }, {})
 }
 
-export default function transitionPath(toState, fromState) {
+export default function transitionPath(
+    toState: State,
+    fromState: State | null
+): TransitionPath {
     const fromStateIds = fromState ? nameToIDs(fromState.name) : []
     const toStateIds = nameToIDs(toState.name)
     const maxI = Math.min(fromStateIds.length, toStateIds.length)
@@ -37,8 +67,12 @@ export default function transitionPath(toState, fromState) {
             const leftParams = extractSegmentParams(left, toState)
             const rightParams = extractSegmentParams(right, fromState)
 
-            if (leftParams.length !== rightParams.length) return i
-            if (leftParams.length === 0) continue
+            if (
+                Object.keys(leftParams).length !==
+                Object.keys(rightParams).length
+            )
+                return i
+            if (Object.keys(leftParams).length === 0) continue
 
             const different = Object.keys(leftParams).some(
                 p => rightParams[p] !== leftParams[p]

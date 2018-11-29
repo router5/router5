@@ -1,19 +1,17 @@
-import transitionPath, { shouldUpdateNode } from '../modules'
-import { expect } from 'chai'
-import tt from 'typescript-definition-tester'
+import transitionPath, { shouldUpdateNode } from '../'
 
-describe('router5-transition-path', function() {
-    it('should return a transition path with from null state', function() {
+describe('router5-transition-path', () => {
+    it('should return a transition path with from null state', () => {
         expect(
             transitionPath({ name: 'a.b.c', params: {}, meta: {} }, null)
-        ).to.eql({
+        ).toEqual({
             intersection: '',
             toActivate: ['a', 'a.b', 'a.b.c'],
             toDeactivate: []
         })
     })
 
-    it('should return transition path between two states', function() {
+    it('should return transition path between two states', () => {
         const meta = {
             params: {
                 a: {},
@@ -28,14 +26,14 @@ describe('router5-transition-path', function() {
                 { name: 'a.b.c.d', params: {}, meta },
                 { name: 'a.b.e.f', params: {}, meta }
             )
-        ).to.eql({
+        ).toEqual({
             intersection: 'a.b',
             toActivate: ['a.b.c', 'a.b.c.d'],
             toDeactivate: ['a.b.e.f', 'a.b.e']
         })
     })
 
-    it('should return transition path two states with same name but different params', function() {
+    it('should return transition path two states with same name but different params', () => {
         const meta = {
             params: {
                 a: {},
@@ -50,21 +48,21 @@ describe('router5-transition-path', function() {
                 { name: 'a.b.c.d', params: { p1: 0, p2: 2, p3: 3 }, meta },
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             ).intersection
-        ).to.equal('a')
+        ).toBe('a')
 
         expect(
             transitionPath(
                 { name: 'a.b.c.d', params: { p1: 1, p2: 0, p3: 3 }, meta },
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             ).intersection
-        ).to.equal('a.b')
+        ).toBe('a.b')
 
         expect(
             transitionPath(
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 0 }, meta },
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             ).intersection
-        ).to.equal('a.b.c')
+        ).toBe('a.b.c')
     })
 
     describe('shouldUpdateNode', () => {
@@ -84,7 +82,7 @@ describe('router5-transition-path', function() {
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             )
 
-            expect(shouldUpdate).to.equal(true)
+            expect(shouldUpdate).toBe(true)
         })
 
         it('should tell node above intersection to not update', () => {
@@ -93,7 +91,7 @@ describe('router5-transition-path', function() {
                 { name: 'a.b.c.d', params: { p1: 1, p2: 2, p3: 3 }, meta }
             )
 
-            expect(shouldUpdate).to.equal(false)
+            expect(shouldUpdate).toBe(false)
         })
 
         it('should tell node below intersection to update if not deactivated', () => {
@@ -108,24 +106,9 @@ describe('router5-transition-path', function() {
                 meta
             }
 
-            expect(shouldUpdateNode('a.b')(toState, fromState)).to.equal(true)
-            expect(shouldUpdateNode('a.b.c')(toState, fromState)).to.equal(true)
-            expect(shouldUpdateNode('a.b.c.e')(toState, fromState)).to.equal(
-                false
-            )
-        })
-    })
-
-    describe('TypeScript definitions', function() {
-        it('should compile examples against index.d.ts', function(done) {
-            this.timeout(10000)
-
-            tt.compileDirectory(
-                `${__dirname}/typescript`,
-                filename => filename.match(/\.ts$/),
-                { lib: ['lib.es2015.d.ts'] },
-                () => done()
-            )
+            expect(shouldUpdateNode('a.b')(toState, fromState)).toBe(true)
+            expect(shouldUpdateNode('a.b.c')(toState, fromState)).toBe(true)
+            expect(shouldUpdateNode('a.b.c.e')(toState, fromState)).toBe(false)
         })
     })
 })

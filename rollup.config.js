@@ -67,6 +67,15 @@ const config = [
     makeConfig({
         packageName: 'router5-Helpers',
         format: 'es'
+    }),
+    makeConfig({
+        packageName: 'router5-transition-path',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'router5-transition-path',
+        format: 'es'
     })
 ]
 
