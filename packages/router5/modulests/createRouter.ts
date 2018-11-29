@@ -7,6 +7,11 @@ import withCloning from './core/clone'
 import withState from './core/state'
 import withPlugins from './core/plugins'
 import withMiddleware from './core/middleware'
+import withNavigation from './core/navigation'
+import withObservable from './core/observable'
+import withRouterLifecycle from './core/routerLifecycle'
+import withRouteLifecycle from './core/routeLifecycle'
+import withEvents from './core/events'
 
 type Enhancer = (router: Router) => Router
 const pipe = (...fns: Array<Enhancer>) => (arg: Router): Router =>
@@ -22,6 +27,11 @@ const createRouter: CreateRouter = (
         withRoutes(routes),
         withDependencies(dependencies),
         withState,
+        withEvents,
+        withRouterLifecycle,
+        withRouteLifecycle,
+        withNavigation,
+        withObservable,
         withPlugins,
         withMiddleware,
         withCloning(createRouter)

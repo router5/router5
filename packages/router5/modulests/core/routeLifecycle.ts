@@ -1,6 +1,8 @@
+import { Router } from '../types/router'
+
 const toFunction = val => (typeof val === 'function' ? val : () => () => val)
 
-export default function withRouteLifecycle(router) {
+export default function withRouteLifecycle(router: Router): Router {
     let canDeactivateFactories = {}
     let canActivateFactories = {}
     let canDeactivateFunctions = {}
@@ -38,4 +40,6 @@ export default function withRouteLifecycle(router) {
 
         return router
     }
+
+    return router
 }

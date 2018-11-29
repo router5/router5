@@ -7,21 +7,18 @@ const modules = {
     router5: 'packages/router5/modulests/index.ts'
 }
 
-const makeConfig = ({ moduleName, declaration = false, format, external, uglify = false, file }) => {
-    const base = {
-        input: modules[moduleName]
-    }
+const makeConfig = ({ moduleName, declaration = false, format, external, compress = false, file }) => {
     const packageDir = modules[moduleName].match(/^packages\/([\w-]+)\//)[1]
     const plugins = [
         nodeResolve({ jsnext: true, module: true }),
         common({ include: `packages/${packageDir}/node_modules/**` }),
         typescript({
-            tsconfig: `./packages/router5/tsconfig.json`,
+            tsconfig: `./packages/router5/tsconfig.build.json`,
             useTsconfigDeclarationDir: true,
             clean: true,
             tsconfigOverride: { compilerOptions: { declaration } }
         }),
-        uglify && uglify()
+        compress && uglify()
     ].filter(Boolean)
 
     return {
@@ -31,6 +28,7 @@ const makeConfig = ({ moduleName, declaration = false, format, external, uglify 
             name: moduleName,
             format
         },
+        external,
         plugins
     }
 }
@@ -42,7 +40,8 @@ const config = [
         moduleName: 'router5',
         declaration: true,
         file: 'dist/router5.min.js',
-        format: 'umd'
+        format: 'umd',
+        compress: true
     }),
     makeConfig({
         moduleName: 'router5',
@@ -53,13 +52,13 @@ const config = [
         moduleName: 'router5',
         file: 'packages/router5/dist/index.js',
         format: 'cjs',
-        external: router5Package.dependencies
+        external: Object.keys(router5Package.dependencies)
     }),
     makeConfig({
         moduleName: 'router5',
         file: 'packages/router5/dist/index.es.js',
         format: 'es',
-        external: router5Package.dependencies
+        external: Object.keys(router5Package.dependencies)
     }),
 
 ]

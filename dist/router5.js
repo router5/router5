@@ -1,10 +1,10 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('router5-transition-path')) :
     typeof define === 'function' && define.amd ? define(['exports', 'router5-transition-path'], factory) :
-    (factory((global.router5 = {}),global.router5TransitionPath));
-}(this, (function (exports,router5TransitionPath) { 'use strict';
+    (factory((global.router5 = {}),global.transitionPath));
+}(this, (function (exports,transitionPath) { 'use strict';
 
-    router5TransitionPath = router5TransitionPath && router5TransitionPath.hasOwnProperty('default') ? router5TransitionPath['default'] : router5TransitionPath;
+    var transitionPath__default = 'default' in transitionPath ? transitionPath['default'] : transitionPath;
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1130,19 +1130,16 @@
             router.clone = function (dependencies) {
                 var clonedDependencies = __assign({}, router.getDependencies(), dependencies);
                 var clonedRouter = createRouter(router.rootNode, router.getOptions(), clonedDependencies);
-                // clonedRouter.useMiddleware(...router.getMiddlewareFactories())
-                // clonedRouter.usePlugin(...router.getPlugins())
-                // clonedRouter.config = router.config
-                // const [
-                //     canDeactivateFactories,
-                //     canActivateFactories
-                // ] = router.getLifecycleFactories()
-                // Object.keys(canDeactivateFactories).forEach(name =>
-                //     clonedRouter.canDeactivate(name, canDeactivateFactories[name])
-                // )
-                // Object.keys(canActivateFactories).forEach(name =>
-                //     clonedRouter.canActivate(name, canActivateFactories[name])
-                // )
+                clonedRouter.useMiddleware.apply(clonedRouter, router.getMiddlewareFactories());
+                clonedRouter.usePlugin.apply(clonedRouter, router.getPlugins());
+                clonedRouter.config = router.config;
+                var _a = router.getLifecycleFactories(), canDeactivateFactories = _a[0], canActivateFactories = _a[1];
+                Object.keys(canDeactivateFactories).forEach(function (name) {
+                    return clonedRouter.canDeactivate(name, canDeactivateFactories[name]);
+                });
+                Object.keys(canActivateFactories).forEach(function (name) {
+                    return clonedRouter.canActivate(name, canActivateFactories[name]);
+                });
                 return clonedRouter;
             };
             return router;
@@ -1277,6 +1274,516 @@
         return router;
     }
 
+    function resolve(functions, _a, callback) {
+        var isCancelled = _a.isCancelled, toState = _a.toState, fromState = _a.fromState, _b = _a.errorKey, errorKey = _b === void 0 ? undefined : _b;
+        var remainingFunctions = Array.isArray(functions)
+            ? functions
+            : Object.keys(functions);
+        var isState = function (obj) {
+            return typeof obj === 'object' &&
+                obj.name !== undefined &&
+                obj.params !== undefined &&
+                obj.path !== undefined;
+        };
+        var hasStateChanged = function (toState, fromState) {
+            return fromState.name !== toState.name ||
+                fromState.params !== toState.params ||
+                fromState.path !== toState.path;
+        };
+        var mergeStates = function (toState, fromState) { return (__assign({}, fromState, toState, { meta: __assign({}, fromState.meta, toState.meta) })); };
+        var processFn = function (stepFn, errBase, state, _done) {
+            var done = function (err, newState) {
+                if (err) {
+                    _done(err);
+                }
+                else if (newState && newState !== state && isState(newState)) {
+                    if (hasStateChanged(newState, state)) {
+                        console.error('[router5][transition] Warning: state values (name, params, path) were changed during transition process.');
+                    }
+                    _done(null, mergeStates(newState, state));
+                }
+                else {
+                    _done(null, state);
+                }
+            };
+            var res = stepFn.call(null, state, fromState, done);
+            if (isCancelled()) {
+                done(null);
+            }
+            else if (typeof res === 'boolean') {
+                done(res ? null : errBase);
+            }
+            else if (isState(res)) {
+                done(null, res);
+            }
+            else if (res && typeof res.then === 'function') {
+                res.then(function (resVal) {
+                    if (resVal instanceof Error)
+                        done({ error: resVal }, null);
+                    else
+                        done(null, resVal);
+                }, function (err) {
+                    if (err instanceof Error) {
+                        console.error(err.stack || err);
+                        done(__assign({}, errBase, { promiseError: err }), null);
+                    }
+                    else {
+                        done(typeof err === 'object'
+                            ? __assign({}, errBase, err) : errBase, null);
+                    }
+                });
+            }
+            // else: wait for done to be called
+        };
+        var next = function (err, state) {
+            var _a;
+            if (isCancelled()) {
+                callback();
+            }
+            else if (err) {
+                callback(err);
+            }
+            else {
+                if (!remainingFunctions.length) {
+                    callback(null, state);
+                }
+                else {
+                    var isMapped = typeof remainingFunctions[0] === 'string';
+                    var errBase = errorKey && isMapped
+                        ? (_a = {}, _a[errorKey] = remainingFunctions[0], _a) : {};
+                    var stepFn = isMapped
+                        ? functions[remainingFunctions[0]]
+                        : remainingFunctions[0];
+                    remainingFunctions = remainingFunctions.slice(1);
+                    processFn(stepFn, errBase, state, next);
+                }
+            }
+        };
+        next(null, toState);
+    }
+
+    function transition(router, toState, fromState, opts, callback) {
+        var cancelled = false;
+        var completed = false;
+        var options = router.getOptions();
+        var _a = router.getLifecycleFunctions(), canDeactivateFunctions = _a[0], canActivateFunctions = _a[1];
+        var middlewareFunctions = router.getMiddlewareFunctions();
+        var isCancelled = function () { return cancelled; };
+        var cancel = function () {
+            if (!cancelled && !completed) {
+                cancelled = true;
+                callback({ code: errorCodes.TRANSITION_CANCELLED }, null);
+            }
+        };
+        var done = function (err, state) {
+            completed = true;
+            if (isCancelled()) {
+                return;
+            }
+            if (!err && options.autoCleanUp) {
+                var activeSegments_1 = transitionPath.nameToIDs(toState.name);
+                Object.keys(canDeactivateFunctions).forEach(function (name) {
+                    if (activeSegments_1.indexOf(name) === -1)
+                        router.clearCanDeactivate(name);
+                });
+            }
+            callback(err, state || toState);
+        };
+        var makeError = function (base, err) { return (__assign({}, base, (err instanceof Object ? err : { error: err }))); };
+        var isUnknownRoute = toState.name === constants.UNKNOWN_ROUTE;
+        var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
+        var _b = transitionPath__default(toState, fromState), toDeactivate = _b.toDeactivate, toActivate = _b.toActivate;
+        var canDeactivate = !fromState || opts.forceDeactivate
+            ? []
+            : function (toState, fromState, cb) {
+                var canDeactivateFunctionMap = toDeactivate
+                    .filter(function (name) { return canDeactivateFunctions[name]; })
+                    .reduce(function (fnMap, name) {
+                    var _a;
+                    return (__assign({}, fnMap, (_a = {}, _a[name] = canDeactivateFunctions[name], _a)));
+                }, {});
+                resolve(canDeactivateFunctionMap, __assign({}, asyncBase, { errorKey: 'segment' }), function (err) {
+                    return cb(err
+                        ? makeError({ code: errorCodes.CANNOT_DEACTIVATE }, err)
+                        : null);
+                });
+            };
+        var canActivate = isUnknownRoute
+            ? []
+            : function (toState, fromState, cb) {
+                var canActivateFunctionMap = toActivate
+                    .filter(function (name) { return canActivateFunctions[name]; })
+                    .reduce(function (fnMap, name) {
+                    var _a;
+                    return (__assign({}, fnMap, (_a = {}, _a[name] = canActivateFunctions[name], _a)));
+                }, {});
+                resolve(canActivateFunctionMap, __assign({}, asyncBase, { errorKey: 'segment' }), function (err) {
+                    return cb(err
+                        ? makeError({ code: errorCodes.CANNOT_ACTIVATE }, err)
+                        : null);
+                });
+            };
+        var middleware = !middlewareFunctions.length
+            ? []
+            : function (toState, fromState, cb) {
+                return resolve(middlewareFunctions, __assign({}, asyncBase), function (err, state) {
+                    return cb(err
+                        ? makeError({ code: errorCodes.TRANSITION_ERR }, err)
+                        : null, state || toState);
+                });
+            };
+        var pipeline = []
+            .concat(canDeactivate)
+            .concat(canActivate)
+            .concat(middleware);
+        resolve(pipeline, asyncBase, done);
+        return cancel;
+    }
+
+    var noop = function (err, state) { };
+    function withNavigation(router) {
+        var cancelCurrentTransition;
+        router.config.forwardMap = {};
+        router.navigate = navigate;
+        router.cancel = cancel;
+        router.transitionToState = transitionToState;
+        router.navigate = navigate;
+        router.navigateToDefault = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var opts = typeof args[0] === 'object' ? args[0] : {};
+            var done = args.length === 2
+                ? args[1]
+                : typeof args[0] === 'function' ? args[0] : noop;
+            var options = router.getOptions();
+            if (options.defaultRoute) {
+                return navigate(options.defaultRoute, options.defaultParams, opts, done);
+            }
+            return function () { };
+        };
+        function cancel() {
+            if (cancelCurrentTransition) {
+                cancelCurrentTransition('navigate');
+                cancelCurrentTransition = null;
+            }
+            return router;
+        }
+        router.forward = function (fromRoute, toRoute) {
+            router.config.forwardMap[fromRoute] = toRoute;
+            return router;
+        };
+        function navigate() {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var name = args[0];
+            var lastArg = args[args.length - 1];
+            var done = typeof lastArg === 'function' ? lastArg : noop;
+            var params = typeof args[1] === 'object' ? args[1] : {};
+            var opts = typeof args[2] === 'object' ? args[2] : {};
+            if (!router.isStarted()) {
+                done({ code: errorCodes.ROUTER_NOT_STARTED });
+                return;
+            }
+            var route = router.buildState(name, params);
+            if (!route) {
+                var err = { code: errorCodes.ROUTE_NOT_FOUND };
+                done(err);
+                router.invokeEventListeners(constants.TRANSITION_ERROR, null, router.getState(), err);
+                return;
+            }
+            var toState = router.makeState(route.name, route.params, router.buildPath(route.name, route.params), { params: route.meta, options: opts });
+            var sameStates = router.getState()
+                ? router.areStatesEqual(router.getState(), toState, false)
+                : false;
+            // Do not proceed further if states are the same and no reload
+            // (no deactivation and no callbacks)
+            if (sameStates && !opts.reload && !opts.force) {
+                var err = { code: errorCodes.SAME_STATES };
+                done(err);
+                router.invokeEventListeners(constants.TRANSITION_ERROR, toState, router.getState(), err);
+                return;
+            }
+            var fromState = sameStates || opts.reload ? null : router.getState();
+            if (opts.skipTransition) {
+                done(null, toState);
+                return noop;
+            }
+            // Transition
+            return transitionToState(toState, fromState, opts, function (err, state) {
+                if (err) {
+                    if (err.redirect) {
+                        var _a = err.redirect, name_1 = _a.name, params_1 = _a.params;
+                        navigate(name_1, params_1, __assign({}, opts, { force: true, redirected: true }), done);
+                    }
+                    else {
+                        done(err);
+                    }
+                }
+                else {
+                    router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, fromState, opts);
+                    done(null, state);
+                }
+            });
+        }
+        function transitionToState(toState, fromState, options, done) {
+            if (options === void 0) { options = {}; }
+            if (done === void 0) { done = noop; }
+            cancel();
+            router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
+            cancelCurrentTransition = transition(router, toState, fromState, options, function (err, state) {
+                cancelCurrentTransition = null;
+                state = state || toState;
+                if (err) {
+                    if (err.code === errorCodes.TRANSITION_CANCELLED) {
+                        router.invokeEventListeners(constants.TRANSITION_CANCEL, toState, fromState);
+                    }
+                    else {
+                        router.invokeEventListeners(constants.TRANSITION_ERROR, toState, fromState, err);
+                    }
+                    done(err);
+                }
+                else {
+                    router.setState(state);
+                    done(null, state);
+                }
+            });
+            return cancelCurrentTransition;
+        }
+        return router;
+    }
+
+    function symbolObservablePonyfill(root) {
+    	var result;
+    	var Symbol = root.Symbol;
+
+    	if (typeof Symbol === 'function') {
+    		if (Symbol.observable) {
+    			result = Symbol.observable;
+    		} else {
+    			result = Symbol('observable');
+    			Symbol.observable = result;
+    		}
+    	} else {
+    		result = '@@observable';
+    	}
+
+    	return result;
+    }
+
+    /* global window */
+
+    var root;
+
+    if (typeof self !== 'undefined') {
+      root = self;
+    } else if (typeof window !== 'undefined') {
+      root = window;
+    } else if (typeof global !== 'undefined') {
+      root = global;
+    } else if (typeof module !== 'undefined') {
+      root = module;
+    } else {
+      root = Function('return this')();
+    }
+
+    var result = symbolObservablePonyfill(root);
+
+    function withObservable(router) {
+        var listeners = [];
+        function unsubscribe(listener) {
+            if (listener) {
+                listeners = listeners.filter(function (l) { return l !== listener; });
+            }
+        }
+        function subscribe(listener) {
+            var isObject = typeof listener === 'object';
+            var finalListener = isObject ? listener.next.bind(listener) : listener;
+            listeners = listeners.concat(finalListener);
+            var unsubscribeHandler = function () { return unsubscribe(finalListener); };
+            return isObject
+                ? { unsubscribe: unsubscribeHandler }
+                : unsubscribeHandler;
+        }
+        function observable() {
+            var _a;
+            return _a = {
+                    subscribe: function (observer) {
+                        if (typeof observer !== 'object' || observer === null) {
+                            throw new TypeError('Expected the observer to be an object.');
+                        }
+                        return subscribe(observer);
+                    }
+                },
+                _a[result] = function () {
+                    return this;
+                },
+                _a;
+        }
+        router.subscribe = subscribe;
+        //@ts-ignore
+        router[result] = observable;
+        router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
+            listeners.forEach(function (listener) {
+                return listener({
+                    route: toState,
+                    previousRoute: fromState
+                });
+            });
+        });
+        return router;
+    }
+
+    var noop$1 = function () { };
+    function withRouterLifecycle(router) {
+        var started = false;
+        router.isStarted = function () { return started; };
+        //@ts-ignore
+        router.start = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var options = router.getOptions();
+            var lastArg = args[args.length - 1];
+            var done = typeof lastArg === 'function' ? lastArg : noop$1;
+            var startPathOrState = typeof args[0] !== 'function' ? args[0] : undefined;
+            if (started) {
+                done({ code: errorCodes.ROUTER_ALREADY_STARTED });
+                return router;
+            }
+            var startPath, startState;
+            started = true;
+            router.invokeEventListeners(constants.ROUTER_START);
+            // callback
+            var cb = function (err, state, invokeErrCb) {
+                if (invokeErrCb === void 0) { invokeErrCb = true; }
+                if (!err)
+                    router.invokeEventListeners(constants.TRANSITION_SUCCESS, state, null, { replace: true });
+                if (err && invokeErrCb)
+                    router.invokeEventListeners(constants.TRANSITION_ERROR, state, null, err);
+                done(err, state);
+            };
+            if (startPathOrState === undefined && !options.defaultRoute) {
+                return cb({ code: errorCodes.NO_START_PATH_OR_STATE });
+            }
+            if (typeof startPathOrState === 'string') {
+                startPath = startPathOrState;
+            }
+            else if (typeof startPathOrState === 'object') {
+                startState = startPathOrState;
+            }
+            if (!startState) {
+                // If no supplied start state, get start state
+                startState =
+                    startPath === undefined ? null : router.matchPath(startPath);
+                // Navigate to default function
+                var navigateToDefault_1 = function () {
+                    return router.navigateToDefault({ replace: true }, done);
+                };
+                var redirect_1 = function (route) {
+                    return router.navigate(route.name, route.params, { replace: true, reload: true, redirected: true }, done);
+                };
+                var transitionToState = function (state) {
+                    router.transitionToState(state, router.getState(), {}, function (err, state) {
+                        if (!err)
+                            cb(null, state);
+                        else if (err.redirect)
+                            redirect_1(err.redirect);
+                        else if (options.defaultRoute)
+                            navigateToDefault_1();
+                        else
+                            cb(err, null, false);
+                    });
+                };
+                // If matched start path
+                if (startState) {
+                    transitionToState(startState);
+                }
+                else if (options.defaultRoute) {
+                    // If default, navigate to default
+                    router.navigateToDefault();
+                }
+                else if (options.allowNotFound) {
+                    transitionToState(router.makeNotFoundState(startPath, { replace: true }));
+                }
+                else {
+                    // No start match, no default => do nothing
+                    cb({ code: errorCodes.ROUTE_NOT_FOUND, path: startPath }, null);
+                }
+            }
+            else {
+                // Initialise router with provided start state
+                router.setState(startState);
+                cb(null, startState);
+            }
+            return router;
+        };
+        router.stop = function () {
+            if (started) {
+                router.setState(null);
+                started = false;
+                router.invokeEventListeners(constants.ROUTER_STOP);
+            }
+            return router;
+        };
+        return router;
+    }
+
+    var toFunction = function (val) { return (typeof val === 'function' ? val : function () { return function () { return val; }; }); };
+    function withRouteLifecycle(router) {
+        var canDeactivateFactories = {};
+        var canActivateFactories = {};
+        var canDeactivateFunctions = {};
+        var canActivateFunctions = {};
+        router.getLifecycleFactories = function () {
+            return [canDeactivateFactories, canActivateFactories];
+        };
+        router.getLifecycleFunctions = function () {
+            return [canDeactivateFunctions, canActivateFunctions];
+        };
+        router.canDeactivate = function (name, canDeactivateHandler) {
+            var factory = toFunction(canDeactivateHandler);
+            canDeactivateFactories[name] = factory;
+            canDeactivateFunctions[name] = router.executeFactory(factory);
+            return router;
+        };
+        router.clearCanDeactivate = function (name) {
+            canDeactivateFactories[name] = undefined;
+            canDeactivateFunctions[name] = undefined;
+            return router;
+        };
+        router.canActivate = function (name, canActivateHandler) {
+            var factory = toFunction(canActivateHandler);
+            canActivateFactories[name] = factory;
+            canActivateFunctions[name] = router.executeFactory(factory);
+            return router;
+        };
+        return router;
+    }
+
+    function withEvents(router) {
+        var callbacks = {};
+        router.invokeEventListeners = function (eventName) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            (callbacks[eventName] || []).forEach(function (cb) { return cb.apply(void 0, args); });
+        };
+        router.removeEventListener = function (eventName, cb) {
+            callbacks[eventName] = callbacks[eventName].filter(function (_cb) { return _cb !== cb; });
+        };
+        router.addEventListener = function (eventName, cb) {
+            callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
+            return function () { return removeEventListener(eventName, cb); };
+        };
+        return router;
+    }
+
     var pipe = function () {
         var fns = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -1287,10 +1794,10 @@
         };
     };
     var createRouter = function (routes, options, dependencies) {
-        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withState, withPlugins, withMiddleware, withCloning(createRouter))({});
+        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withState, withEvents, withRouterLifecycle, withRouteLifecycle, withNavigation, withObservable, withPlugins, withMiddleware, withCloning(createRouter))({});
     };
 
-    exports.transitionPath = router5TransitionPath;
+    exports.transitionPath = transitionPath__default;
     exports.default = createRouter;
     exports.createRouter = createRouter;
     exports.RouteNode = RouteNode;

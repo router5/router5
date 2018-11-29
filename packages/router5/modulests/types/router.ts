@@ -64,7 +64,7 @@ export interface BaseRouter {
 }
 
 export interface RouterWithCloning {
-    clone(dependencies: Dependencies): Router
+    clone(dependencies?: Dependencies): Router
 }
 
 export interface RouterWithRoutes {
@@ -129,15 +129,21 @@ export interface RouterWithRouteLifecycle {
         name: string,
         canActivateHandler: ActivationFnFactory | boolean
     ): Router
-    getLifecycleFactories(): [ActivationFnFactory[], ActivationFnFactory[]]
-    getLifecycleFunctions(): [ActivationFn[], ActivationFn[]]
+    getLifecycleFactories(): [
+        { [key: string]: ActivationFnFactory },
+        { [key: string]: ActivationFnFactory }
+    ]
+    getLifecycleFunctions(): [
+        { [key: string]: ActivationFn },
+        { [key: string]: ActivationFn }
+    ]
 }
 
 export interface RouterWithPlugins {
     usePlugin(...plugins: PluginFactory[]): Router
     hasPlugin(pluginName: string): boolean
     addPlugin(plugin: Plugin): Router
-    getPlugins(): Plugin[]
+    getPlugins(): PluginFactory[]
 }
 
 export interface RouterWithMiddleware {

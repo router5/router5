@@ -37,6 +37,7 @@ describe('TypeScript definitions', function() {
 
         tt.compileDirectory(
             `${__dirname}/typescript`,
+            //@ts-ignore
             filename => filename.match(/\.ts$/),
             { lib: ['lib.es2015.d.ts'] },
             () => done()

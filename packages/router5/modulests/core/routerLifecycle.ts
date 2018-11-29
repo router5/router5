@@ -8,6 +8,7 @@ export default function withRouterLifecycle(router: Router): Router {
 
     router.isStarted = () => started
 
+    //@ts-ignore
     router.start = (...args) => {
         const options = router.getOptions()
         const lastArg = args[args.length - 1]
