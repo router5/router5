@@ -15,7 +15,7 @@ import {
 } from './base'
 
 export type CreateRouter = (
-    routes: Route[] | RouteNode,
+    routes?: Route[] | RouteNode,
     options?: Partial<Options>,
     dependencies?: Dependencies
 ) => Router
@@ -59,12 +59,15 @@ export interface Dependencies {
     [key: string]: any
 }
 
-export interface BaseRouter {
-    config: any
+export interface Config {
+    decoders: { [key: string]: any }
+    encoders: { [key: string]: any }
+    defaultParams: { [key: string]: any }
+    forwardMap: { [key: string]: any }
 }
 
-export interface RouterWithCloning {
-    clone(dependencies?: Dependencies): Router
+export interface BaseRouter {
+    config: Config
 }
 
 export interface RouterWithRoutes {
@@ -94,7 +97,7 @@ export interface RouterWithOptions {
 export interface RouterWithState {
     makeState(
         name: string,
-        params: Params,
+        params?: Params,
         path?: string,
         meta?: any,
         forceId?: number
@@ -199,7 +202,6 @@ export type Router = BaseRouter &
     RouterWithOptions &
     RouterWithDependencies &
     RouterWithEvents &
-    RouterWithCloning &
     RouterWithPlugins &
     RouterWithMiddleware &
     RouterWithState &

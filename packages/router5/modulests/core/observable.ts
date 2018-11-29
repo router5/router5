@@ -44,6 +44,8 @@ export default function withObservable(router: Router) {
     router.subscribe = subscribe
     //@ts-ignore
     router[$$observable] = observable
+    //@ts-ignore
+    router['@@observable'] = observable
 
     router.addEventListener(
         constants.TRANSITION_SUCCESS,

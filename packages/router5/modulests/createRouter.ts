@@ -3,7 +3,6 @@ import { Router, CreateRouter } from './types/router'
 import withOptions from './core/options'
 import withRoutes from './core/routes'
 import withDependencies from './core/dependencies'
-import withCloning from './core/clone'
 import withState from './core/state'
 import withPlugins from './core/plugins'
 import withMiddleware from './core/middleware'
@@ -18,10 +17,17 @@ const pipe = (...fns: Array<Enhancer>) => (arg: Router): Router =>
     fns.reduce((prev: Router, fn) => fn(prev), arg)
 
 const createRouter: CreateRouter = (
-    routes,
+    routes?,
     options?,
     dependencies?
 ): Router => {
+    const config = {
+        decoders: {},
+        encoders: {},
+        defaultParams: {},
+        forwardMap: {}
+    }
+
     return pipe(
         withOptions(options),
         withRoutes(routes),
@@ -33,9 +39,8 @@ const createRouter: CreateRouter = (
         withNavigation,
         withObservable,
         withPlugins,
-        withMiddleware,
-        withCloning(createRouter)
-    )({} as Router)
+        withMiddleware
+    )({ config } as Router)
 }
 
 export default createRouter

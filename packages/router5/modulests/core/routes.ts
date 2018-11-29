@@ -4,15 +4,22 @@ import { Router, Route } from '../types/router'
 
 export default function withRoutes(routes: Route[] | RouteNode) {
     return (router: Router): Router => {
+        router.forward = (fromRoute, toRoute) => {
+            router.config.forwardMap[fromRoute] = toRoute
+
+            return router
+        }
+
         const rootNode =
             routes instanceof RouteNode
                 ? routes
                 : new RouteNode('', '', routes, onRouteAdded)
 
         function onRouteAdded(route) {
-            // if (route.canActivate) router.canActivate(route.name, route.canActivate)
+            if (route.canActivate)
+                router.canActivate(route.name, route.canActivate)
 
-            // if (route.forwardTo) router.forward(route.name, route.forwardTo)
+            if (route.forwardTo) router.forward(route.name, route.forwardTo)
 
             if (route.decodeParams)
                 router.config.decoders[route.name] = route.decodeParams
@@ -36,7 +43,7 @@ export default function withRoutes(routes: Route[] | RouteNode) {
 
         router.addNode = (name, path, canActivateHandler?): Router => {
             rootNode.addNode(name, path)
-            // if (canActivateHandler) router.canActivate(name, canActivateHandler)
+            if (canActivateHandler) router.canActivate(name, canActivateHandler)
             return router
         }
 

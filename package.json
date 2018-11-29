@@ -11,6 +11,7 @@
     "build:router5": "rollup -c rollup.config.js",
     "postbuild": "prettier --write 'packages/*/types/**/*.ts'",
     "test": "mocha --compilers js:babel-core/register --require test-helper.js --recursive 'packages/*/test/**/*.js'",
+    "test:router": "jest --config packages/router5/jest.config.js",
     "lint": "eslint packages/*/modules",
     "lint:check-conflicts": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "format": "prettier 'packages/**/*.{js,ts}'",
@@ -47,6 +48,7 @@
   },
   "homepage": "https://router5.js.org",
   "devDependencies": {
+    "@types/jest": "~23.3.10",
     "babel-cli": "~6.26.0",
     "babel-core": "~6.26.0",
     "babel-eslint": "~7.2.3",
@@ -86,7 +88,7 @@
     "rollup-plugin-node-resolve": "~3.4.0",
     "rollup-plugin-typescript2": "~0.18.0",
     "rollup-plugin-uglify": "~6.0.0",
-    "rxjs": "~6.1.0",
+    "rxjs": "~6.3.3",
     "sinon": "~2.3.4",
     "sinon-chai": "~2.11.0",
     "ts-jest": "~23.10.5",
@@ -96,7 +98,7 @@
     "webpack": "~4.5.0",
     "webpack-dev-middleware": "~3.1.2",
     "webpack-dev-server": "~3.1.3",
-    "xstream": "~11.2.0",
+    "xstream": "~11.7.0",
     "yargs": "~11.1.0"
   }
 }

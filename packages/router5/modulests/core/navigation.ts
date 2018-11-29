@@ -7,10 +7,7 @@ const noop = function(err, state?) {}
 export default function withNavigation(router: Router): Router {
     let cancelCurrentTransition
 
-    router.config.forwardMap = {}
     router.navigate = navigate
-    router.cancel = cancel
-    router.transitionToState = transitionToState
     router.navigate = navigate
 
     router.navigateToDefault = (...args) => {
@@ -33,17 +30,11 @@ export default function withNavigation(router: Router): Router {
         return () => {}
     }
 
-    function cancel() {
+    router.cancel = () => {
         if (cancelCurrentTransition) {
             cancelCurrentTransition('navigate')
             cancelCurrentTransition = null
         }
-
-        return router
-    }
-
-    router.forward = (fromRoute, toRoute) => {
-        router.config.forwardMap[fromRoute] = toRoute
 
         return router
     }
@@ -106,34 +97,44 @@ export default function withNavigation(router: Router): Router {
         }
 
         // Transition
-        return transitionToState(toState, fromState, opts, (err, state) => {
-            if (err) {
-                if (err.redirect) {
-                    const { name, params } = err.redirect
+        return router.transitionToState(
+            toState,
+            fromState,
+            opts,
+            (err, state) => {
+                if (err) {
+                    if (err.redirect) {
+                        const { name, params } = err.redirect
 
-                    navigate(
-                        name,
-                        params,
-                        { ...opts, force: true, redirected: true },
-                        done
-                    )
+                        navigate(
+                            name,
+                            params,
+                            { ...opts, force: true, redirected: true },
+                            done
+                        )
+                    } else {
+                        done(err)
+                    }
                 } else {
-                    done(err)
+                    router.invokeEventListeners(
+                        constants.TRANSITION_SUCCESS,
+                        state,
+                        fromState,
+                        opts
+                    )
+                    done(null, state)
                 }
-            } else {
-                router.invokeEventListeners(
-                    constants.TRANSITION_SUCCESS,
-                    state,
-                    fromState,
-                    opts
-                )
-                done(null, state)
             }
-        })
+        )
     }
 
-    function transitionToState(toState, fromState, options = {}, done = noop) {
-        cancel()
+    router.transitionToState = (
+        toState,
+        fromState,
+        options = {},
+        done = noop
+    ) => {
+        router.cancel()
         router.invokeEventListeners(
             constants.TRANSITION_START,
             toState,

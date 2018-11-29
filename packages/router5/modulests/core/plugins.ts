@@ -1,5 +1,5 @@
 import { constants } from '../constants'
-import { Router } from '../types/router'
+import { Router, PluginFactory } from '../types/router'
 
 const eventsMap = {
     onStart: constants.ROUTER_START,
@@ -11,23 +11,24 @@ const eventsMap = {
 }
 
 export default function withPlugins(router: Router): Router {
-    const plugins = []
+    const routerPlugins: PluginFactory[] = []
     let removePluginListeners = []
 
-    router.getPlugins = () => plugins
+    router.getPlugins = () => routerPlugins
 
     router.usePlugin = (...plugins) => {
         plugins.forEach(plugin => {
             if (!router.hasPlugin(plugin.pluginName)) {
-                plugins.push(plugin)
+                routerPlugins.push(plugin)
                 startPlugin(plugin)
             }
         })
+
         return router
     }
 
     router.hasPlugin = pluginName =>
-        plugins.filter(
+        routerPlugins.filter(
             p => p.pluginName === pluginName || p.name === pluginName
         ).length > 0
 

@@ -69,6 +69,7 @@ export default function withRouterLifecycle(router: Router): Router {
                     { replace: true, reload: true, redirected: true },
                     done
                 )
+
             const transitionToState = state => {
                 router.transitionToState(
                     state,
@@ -82,13 +83,12 @@ export default function withRouterLifecycle(router: Router): Router {
                     }
                 )
             }
-
             // If matched start path
             if (startState) {
                 transitionToState(startState)
             } else if (options.defaultRoute) {
                 // If default, navigate to default
-                router.navigateToDefault()
+                navigateToDefault()
             } else if (options.allowNotFound) {
                 transitionToState(
                     router.makeNotFoundState(startPath, { replace: true })

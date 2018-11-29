@@ -1,8 +1,16 @@
 import transitionPath, { nameToIDs } from 'router5-transition-path'
 import resolve from './resolve'
 import { constants, errorCodes } from '../constants'
+import { Router } from '../types/router'
+import { State, NavigationOptions, DoneFn } from '../types/base'
 
-export default function transition(router, toState, fromState, opts, callback) {
+export default function transition(
+    router: Router,
+    toState: State,
+    fromState: State | null,
+    opts: NavigationOptions,
+    callback: DoneFn
+) {
     let cancelled = false
     let completed = false
     const options = router.getOptions()
