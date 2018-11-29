@@ -9,10 +9,10 @@ const defaultOptions: ListenersPluginOptions = {
     autoCleanUp: true
 }
 
-const listenersPluginFactory: PluginFactory = (
+const listenersPluginFactory = (
     options: ListenersPluginOptions = defaultOptions
 ) => {
-    function listenersPlugin(router: Router) {
+    function listenersPlugin(router: Router): PluginFactory {
         let listeners = {}
 
         function removeListener(name, cb?) {

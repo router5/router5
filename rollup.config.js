@@ -113,6 +113,15 @@ const config = [
     makeConfig({
         packageName: 'router5-plugin-listeners',
         format: 'es'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-persistent-params',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-persistent-params',
+        format: 'es'
     })
 ]
 
