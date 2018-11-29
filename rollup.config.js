@@ -4,7 +4,7 @@ const nodeResolve = require('rollup-plugin-node-resolve')
 const common = require('rollup-plugin-commonjs')
 
 const modules = {
-    router5: 'packages/router5/modulests/index.ts'
+    router5: 'packages/router5/modules/index.ts'
 }
 
 const makeConfig = ({ moduleName, declaration = false, format, external, compress = false, file }) => {

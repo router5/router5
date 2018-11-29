@@ -5,6 +5,6 @@
         "esModuleInterop": true,
         "lib": ["es2015", "es2015.promise", "es2015.symbol", "es2015.symbol.wellknown", "dom"]
     },
-    "exclude": ["node_modules", "modulests/__tests__"],
-    "include": ["modulests"]
+    "exclude": ["node_modules", "modules/__tests__"],
+    "include": ["modules"]
 }

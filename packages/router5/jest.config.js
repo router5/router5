@@ -4,7 +4,7 @@ module.exports = {
     },
     moduleFileExtensions: ['ts', 'js'],
     preset: 'ts-jest',
-    testPathIgnorePatterns: ['<rootDir>/modulests/__tests__/helpers/.*\\.ts$'],
+    testPathIgnorePatterns: ['<rootDir>/modules/__tests__/helpers/.*\\.ts$'],
     testEnvironment: 'node',
     globals: {
         'ts-jest': {
