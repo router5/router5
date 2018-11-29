@@ -14,7 +14,7 @@ import {
     CancelFn
 } from './base'
 export declare type CreateRouter = (
-    routes: Route[] | RouteNode,
+    routes?: Route[] | RouteNode,
     options?: Partial<Options>,
     dependencies?: Dependencies
 ) => Router
@@ -53,11 +53,22 @@ export declare type ActivationFnFactory = (
 export interface Dependencies {
     [key: string]: any
 }
-export interface BaseRouter {
-    config: any
+export interface Config {
+    decoders: {
+        [key: string]: any
+    }
+    encoders: {
+        [key: string]: any
+    }
+    defaultParams: {
+        [key: string]: any
+    }
+    forwardMap: {
+        [key: string]: any
+    }
 }
-export interface RouterWithCloning {
-    clone(dependencies: Dependencies): Router
+export interface BaseRouter {
+    config: Config
 }
 export interface RouterWithRoutes {
     rootNode: RouteNode
@@ -117,14 +128,28 @@ export interface RouterWithRouteLifecycle {
         name: string,
         canActivateHandler: ActivationFnFactory | boolean
     ): Router
-    getLifecycleFactories(): [ActivationFnFactory[], ActivationFnFactory[]]
-    getLifecycleFunctions(): [ActivationFn[], ActivationFn[]]
+    getLifecycleFactories(): [
+        {
+            [key: string]: ActivationFnFactory
+        },
+        {
+            [key: string]: ActivationFnFactory
+        }
+    ]
+    getLifecycleFunctions(): [
+        {
+            [key: string]: ActivationFn
+        },
+        {
+            [key: string]: ActivationFn
+        }
+    ]
 }
 export interface RouterWithPlugins {
     usePlugin(...plugins: PluginFactory[]): Router
     hasPlugin(pluginName: string): boolean
     addPlugin(plugin: Plugin): Router
-    getPlugins(): Plugin[]
+    getPlugins(): PluginFactory[]
 }
 export interface RouterWithMiddleware {
     useMiddleware(...middlewares: MiddlewareFactory[]): Router
@@ -174,7 +199,6 @@ export declare type Router = BaseRouter &
     RouterWithOptions &
     RouterWithDependencies &
     RouterWithEvents &
-    RouterWithCloning &
     RouterWithPlugins &
     RouterWithMiddleware &
     RouterWithState &

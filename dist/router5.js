@@ -1,10 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('router5-transition-path')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'router5-transition-path'], factory) :
-    (factory((global.router5 = {}),global.transitionPath));
-}(this, (function (exports,transitionPath) { 'use strict';
-
-    var transitionPath__default = 'default' in transitionPath ? transitionPath['default'] : transitionPath;
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (factory((global.router5 = {})));
+}(this, (function (exports) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1024,12 +1022,18 @@
 
     function withRoutes(routes) {
         return function (router) {
+            router.forward = function (fromRoute, toRoute) {
+                router.config.forwardMap[fromRoute] = toRoute;
+                return router;
+            };
             var rootNode = routes instanceof RouteNode
                 ? routes
                 : new RouteNode('', '', routes, onRouteAdded);
             function onRouteAdded(route) {
-                // if (route.canActivate) router.canActivate(route.name, route.canActivate)
-                // if (route.forwardTo) router.forward(route.name, route.forwardTo)
+                if (route.canActivate)
+                    router.canActivate(route.name, route.canActivate);
+                if (route.forwardTo)
+                    router.forward(route.name, route.forwardTo);
                 if (route.decodeParams)
                     router.config.decoders[route.name] = route.decodeParams;
                 if (route.encodeParams)
@@ -1047,7 +1051,8 @@
             };
             router.addNode = function (name, path, canActivateHandler) {
                 rootNode.addNode(name, path);
-                // if (canActivateHandler) router.canActivate(name, canActivateHandler)
+                if (canActivateHandler)
+                    router.canActivate(name, canActivateHandler);
                 return router;
             };
             router.isActive = function (name, params, strictEquality, ignoreQueryParams) {
@@ -1125,27 +1130,6 @@
         };
     }
 
-    function withCloning(createRouter) {
-        return function (router) {
-            router.clone = function (dependencies) {
-                var clonedDependencies = __assign({}, router.getDependencies(), dependencies);
-                var clonedRouter = createRouter(router.rootNode, router.getOptions(), clonedDependencies);
-                clonedRouter.useMiddleware.apply(clonedRouter, router.getMiddlewareFactories());
-                clonedRouter.usePlugin.apply(clonedRouter, router.getPlugins());
-                clonedRouter.config = router.config;
-                var _a = router.getLifecycleFactories(), canDeactivateFactories = _a[0], canActivateFactories = _a[1];
-                Object.keys(canDeactivateFactories).forEach(function (name) {
-                    return clonedRouter.canDeactivate(name, canDeactivateFactories[name]);
-                });
-                Object.keys(canActivateFactories).forEach(function (name) {
-                    return clonedRouter.canActivate(name, canActivateFactories[name]);
-                });
-                return clonedRouter;
-            };
-            return router;
-        };
-    }
-
     function withState(router) {
         var stateId = 0;
         var routerState = null;
@@ -1217,9 +1201,9 @@
         onTransitionCancel: constants.TRANSITION_CANCEL
     };
     function withPlugins(router) {
-        var plugins = [];
+        var routerPlugins = [];
         var removePluginListeners = [];
-        router.getPlugins = function () { return plugins; };
+        router.getPlugins = function () { return routerPlugins; };
         router.usePlugin = function () {
             var plugins = [];
             for (var _i = 0; _i < arguments.length; _i++) {
@@ -1227,14 +1211,14 @@
             }
             plugins.forEach(function (plugin) {
                 if (!router.hasPlugin(plugin.pluginName)) {
-                    plugins.push(plugin);
+                    routerPlugins.push(plugin);
                     startPlugin(plugin);
                 }
             });
             return router;
         };
         router.hasPlugin = function (pluginName) {
-            return plugins.filter(function (p) { return p.pluginName === pluginName || p.name === pluginName; }).length > 0;
+            return routerPlugins.filter(function (p) { return p.pluginName === pluginName || p.name === pluginName; }).length > 0;
         };
         function startPlugin(plugin) {
             var appliedPlugin = router.executeFactory(plugin);
@@ -1272,6 +1256,101 @@
         router.getMiddlewareFactories = function () { return middlewareFactories; };
         router.getMiddlewareFunctions = function () { return middlewareFunctions; };
         return router;
+    }
+
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+    function nameToIDs(name) {
+        return name.split('.').reduce(function (ids, name) {
+            return ids.concat(ids.length ? ids[ids.length - 1] + '.' + name : name);
+        }, []);
+    }
+
+    function exists$1(val) {
+        return val !== undefined && val !== null;
+    }
+
+    function hasMetaParams(state) {
+        return state && state.meta && state.meta.params;
+    }
+
+    function extractSegmentParams(name, state) {
+        if (!hasMetaParams(state) || !exists$1(state.meta.params[name])) return {};
+
+        return Object.keys(state.meta.params[name]).reduce(function (params, p) {
+            params[p] = state.params[p];
+            return params;
+        }, {});
+    }
+
+    function transitionPath(toState, fromState) {
+        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+        var toStateIds = nameToIDs(toState.name);
+        var maxI = Math.min(fromStateIds.length, toStateIds.length);
+
+        function pointOfDifference() {
+            var i = void 0;
+
+            var _loop = function _loop() {
+                var left = fromStateIds[i];
+                var right = toStateIds[i];
+
+                if (left !== right) return {
+                        v: i
+                    };
+
+                var leftParams = extractSegmentParams(left, toState);
+                var rightParams = extractSegmentParams(right, fromState);
+
+                if (leftParams.length !== rightParams.length) return {
+                        v: i
+                    };
+                if (leftParams.length === 0) return 'continue';
+
+                var different = Object.keys(leftParams).some(function (p) {
+                    return rightParams[p] !== leftParams[p];
+                });
+                if (different) {
+                    return {
+                        v: i
+                    };
+                }
+            };
+
+            for (i = 0; i < maxI; i += 1) {
+                var _ret = _loop();
+
+                switch (_ret) {
+                    case 'continue':
+                        continue;
+
+                    default:
+                        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+                }
+            }
+
+            return i;
+        }
+
+        var i = void 0;
+        if (!fromState) {
+            i = 0;
+        } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
+            i = 0;
+        } else {
+            i = pointOfDifference();
+        }
+
+        var toDeactivate = fromStateIds.slice(i).reverse();
+        var toActivate = toStateIds.slice(i);
+
+        var intersection = fromState && i > 0 ? fromStateIds[i - 1] : '';
+
+        return {
+            intersection: intersection,
+            toDeactivate: toDeactivate,
+            toActivate: toActivate
+        };
     }
 
     function resolve(functions, _a, callback) {
@@ -1381,7 +1460,7 @@
                 return;
             }
             if (!err && options.autoCleanUp) {
-                var activeSegments_1 = transitionPath.nameToIDs(toState.name);
+                var activeSegments_1 = nameToIDs(toState.name);
                 Object.keys(canDeactivateFunctions).forEach(function (name) {
                     if (activeSegments_1.indexOf(name) === -1)
                         router.clearCanDeactivate(name);
@@ -1392,7 +1471,7 @@
         var makeError = function (base, err) { return (__assign({}, base, (err instanceof Object ? err : { error: err }))); };
         var isUnknownRoute = toState.name === constants.UNKNOWN_ROUTE;
         var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
-        var _b = transitionPath__default(toState, fromState), toDeactivate = _b.toDeactivate, toActivate = _b.toActivate;
+        var _b = transitionPath(toState, fromState), toDeactivate = _b.toDeactivate, toActivate = _b.toActivate;
         var canDeactivate = !fromState || opts.forceDeactivate
             ? []
             : function (toState, fromState, cb) {
@@ -1443,7 +1522,6 @@
     var noop = function (err, state) { };
     function withNavigation(router) {
         var cancelCurrentTransition;
-        router.config.forwardMap = {};
         router.navigate = navigate;
         router.cancel = cancel;
         router.transitionToState = transitionToState;
@@ -1470,10 +1548,6 @@
             }
             return router;
         }
-        router.forward = function (fromRoute, toRoute) {
-            router.config.forwardMap[fromRoute] = toRoute;
-            return router;
-        };
         function navigate() {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
@@ -1626,6 +1700,7 @@
         router.subscribe = subscribe;
         //@ts-ignore
         router[result] = observable;
+        console.log(router[result], result);
         router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
             listeners.forEach(function (listener) {
                 return listener({
@@ -1794,13 +1869,35 @@
         };
     };
     var createRouter = function (routes, options, dependencies) {
-        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withState, withEvents, withRouterLifecycle, withRouteLifecycle, withNavigation, withObservable, withPlugins, withMiddleware, withCloning(createRouter))({});
+        var config = {
+            decoders: {},
+            encoders: {},
+            defaultParams: {},
+            forwardMap: {}
+        };
+        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withState, withEvents, withRouterLifecycle, withRouteLifecycle, withNavigation, withObservable, withPlugins, withMiddleware)({ config: config });
     };
 
-    exports.transitionPath = transitionPath__default;
+    function cloneRouter(router, dependencies) {
+        var clonedRouter = createRouter(router.rootNode, router.getOptions(), dependencies);
+        clonedRouter.useMiddleware.apply(clonedRouter, router.getMiddlewareFactories());
+        clonedRouter.usePlugin.apply(clonedRouter, router.getPlugins());
+        clonedRouter.config = router.config;
+        var _a = router.getLifecycleFactories(), canDeactivateFactories = _a[0], canActivateFactories = _a[1];
+        Object.keys(canDeactivateFactories).forEach(function (name) {
+            return clonedRouter.canDeactivate(name, canDeactivateFactories[name]);
+        });
+        Object.keys(canActivateFactories).forEach(function (name) {
+            return clonedRouter.canActivate(name, canActivateFactories[name]);
+        });
+        return clonedRouter;
+    }
+
     exports.default = createRouter;
     exports.createRouter = createRouter;
+    exports.cloneRouter = cloneRouter;
     exports.RouteNode = RouteNode;
+    exports.transitionPath = transitionPath;
     exports.constants = constants;
     exports.errorCodes = errorCodes;
 
