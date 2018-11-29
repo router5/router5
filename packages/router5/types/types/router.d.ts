@@ -232,7 +232,7 @@ export declare type MiddlewareFactory = (
 ) => Middleware
 export interface PluginFactory {
     pluginName: string
-    (router: Router, dependencies?: Dependencies): Plugin
+    (router?: Router, dependencies?: Dependencies): Plugin
 }
 export interface SubscribeState {
     route: State

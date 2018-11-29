@@ -60,12 +60,12 @@ const config = [
         external: router5Dependencies
     }),
     makeConfig({
-        packageName: 'router5-Helpers',
+        packageName: 'router5-helpers',
         declaration: true,
         format: 'cjs'
     }),
     makeConfig({
-        packageName: 'router5-Helpers',
+        packageName: 'router5-helpers',
         format: 'es'
     }),
     makeConfig({
@@ -84,6 +84,15 @@ const config = [
     }),
     makeConfig({
         packageName: 'router5-plugin-browser',
+        format: 'es'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-logger',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-logger',
         format: 'es'
     })
 ]
