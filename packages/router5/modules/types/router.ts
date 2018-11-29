@@ -50,6 +50,7 @@ export type ActivationFn = (
     fromState: State,
     done: DoneFn
 ) => boolean | Promise<boolean> | void
+
 export type ActivationFnFactory = (
     router: Router,
     dependencies?: Dependencies

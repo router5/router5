@@ -1523,8 +1523,6 @@
     function withNavigation(router) {
         var cancelCurrentTransition;
         router.navigate = navigate;
-        router.cancel = cancel;
-        router.transitionToState = transitionToState;
         router.navigate = navigate;
         router.navigateToDefault = function () {
             var args = [];
@@ -1541,13 +1539,13 @@
             }
             return function () { };
         };
-        function cancel() {
+        router.cancel = function () {
             if (cancelCurrentTransition) {
                 cancelCurrentTransition('navigate');
                 cancelCurrentTransition = null;
             }
             return router;
-        }
+        };
         function navigate() {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
@@ -1587,7 +1585,7 @@
                 return noop;
             }
             // Transition
-            return transitionToState(toState, fromState, opts, function (err, state) {
+            return router.transitionToState(toState, fromState, opts, function (err, state) {
                 if (err) {
                     if (err.redirect) {
                         var _a = err.redirect, name_1 = _a.name, params_1 = _a.params;
@@ -1603,10 +1601,10 @@
                 }
             });
         }
-        function transitionToState(toState, fromState, options, done) {
+        router.transitionToState = function (toState, fromState, options, done) {
             if (options === void 0) { options = {}; }
             if (done === void 0) { done = noop; }
-            cancel();
+            router.cancel();
             router.invokeEventListeners(constants.TRANSITION_START, toState, fromState);
             cancelCurrentTransition = transition(router, toState, fromState, options, function (err, state) {
                 cancelCurrentTransition = null;
@@ -1626,7 +1624,7 @@
                 }
             });
             return cancelCurrentTransition;
-        }
+        };
         return router;
     }
 
@@ -1700,7 +1698,8 @@
         router.subscribe = subscribe;
         //@ts-ignore
         router[result] = observable;
-        console.log(router[result], result);
+        //@ts-ignore
+        router['@@observable'] = observable;
         router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
             listeners.forEach(function (listener) {
                 return listener({
@@ -1780,7 +1779,7 @@
                 }
                 else if (options.defaultRoute) {
                     // If default, navigate to default
-                    router.navigateToDefault();
+                    navigateToDefault_1();
                 }
                 else if (options.allowNotFound) {
                     transitionToState(router.makeNotFoundState(startPath, { replace: true }));

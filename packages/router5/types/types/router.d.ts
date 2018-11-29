@@ -95,7 +95,7 @@ export interface RouterWithOptions {
 export interface RouterWithState {
     makeState(
         name: string,
-        params: Params,
+        params?: Params,
         path?: string,
         meta?: any,
         forceId?: number

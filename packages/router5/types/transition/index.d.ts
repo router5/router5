@@ -1,7 +1,9 @@
+import { Router } from '../types/router'
+import { State, NavigationOptions, DoneFn } from '../types/base'
 export default function transition(
-    router: any,
-    toState: any,
-    fromState: any,
-    opts: any,
-    callback: any
+    router: Router,
+    toState: State,
+    fromState: State | null,
+    opts: NavigationOptions,
+    callback: DoneFn
 ): () => void
