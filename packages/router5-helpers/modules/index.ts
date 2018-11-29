@@ -1,7 +1,7 @@
 const dotOrEnd = '(\\..+$|$)'
 const dotOrStart = '(^.+\\.|^)'
 
-interface State {
+export interface State {
     name: string
     params?: {
         [key: string]: any
@@ -40,7 +40,7 @@ const testRouteWithSegment = (start, end) => {
     }
 }
 
-interface SegmentTestFunction {
+export interface SegmentTestFunction {
     (route: string | State, segment: string): boolean
     (route: string | State): (segment: string) => boolean
 }

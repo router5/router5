@@ -39,7 +39,6 @@ const router5Dependencies = Object.keys(require('./packages/router5/package.json
 const config = [
     makeConfig({
         packageName: 'router5',
-        declaration: true,
         file: 'dist/router5.min.js',
         format: 'umd',
         compress: true
@@ -51,6 +50,7 @@ const config = [
     }),
     makeConfig({
         packageName: 'router5',
+        declaration: true,
         format: 'cjs',
         external: router5Dependencies
     }),
@@ -61,6 +61,7 @@ const config = [
     }),
     makeConfig({
         packageName: 'router5-Helpers',
+        declaration: true,
         format: 'cjs'
     }),
     makeConfig({
