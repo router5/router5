@@ -1,5 +1,5 @@
 const typescript = require('rollup-plugin-typescript2')
-const {uglify} = require('rollup-plugin-uglify')
+const { uglify } = require('rollup-plugin-uglify')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const common = require('rollup-plugin-commonjs')
 
@@ -8,8 +8,16 @@ const formatSuffix = {
     cjs: ''
 }
 
-const makeConfig = ({ packageName, declaration = false, format, external, compress = false, file }) => {
-    const outputFile = file || `packages/${packageName}/dist/index${formatSuffix[format]}.js`
+const makeConfig = ({
+    packageName,
+    declaration = false,
+    format,
+    external,
+    compress = false,
+    file
+}) => {
+    const outputFile =
+        file || `packages/${packageName}/dist/index${formatSuffix[format]}.js`
     const plugins = [
         nodeResolve({ jsnext: true, module: true }),
         common({ include: `packages/${packageName}/node_modules/**` }),
@@ -29,12 +37,16 @@ const makeConfig = ({ packageName, declaration = false, format, external, compre
             name: packageName,
             format
         },
-        external,
+        external:
+            format === 'es' || format === 'cjs'
+                ? Object.keys(
+                      require(`./packages/${packageName}/package.json`)
+                          .dependencies || {}
+                  )
+                : [],
         plugins
     }
 }
-
-const router5Dependencies = Object.keys(require('./packages/router5/package.json').dependencies)
 
 const config = [
     makeConfig({
@@ -51,13 +63,11 @@ const config = [
     makeConfig({
         packageName: 'router5',
         declaration: true,
-        format: 'cjs',
-        external: router5Dependencies
+        format: 'cjs'
     }),
     makeConfig({
         packageName: 'router5',
-        format: 'es',
-        external: router5Dependencies
+        format: 'es'
     }),
     makeConfig({
         packageName: 'router5-helpers',
@@ -93,6 +103,15 @@ const config = [
     }),
     makeConfig({
         packageName: 'router5-plugin-logger',
+        format: 'es'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-listeners',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'router5-plugin-listeners',
         format: 'es'
     })
 ]
