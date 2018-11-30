@@ -1,9 +1,17 @@
-import { Component, createElement } from 'react'
-import { getDisplayName } from './utils'
+import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
+import { Router } from 'router5'
+import { RouterState } from './types'
 
-function withRoute(BaseComponent) {
-    class ComponentWithRoute extends Component {
+function withRoute<P>(
+    BaseComponent: React.ComponentType<P & RouterState>
+): ComponentClass<P> {
+    class WithRoute extends Component<P> {
+        private router: Router
+        private routeState: RouterState
+        private mounted: boolean
+        private unsubscribe: () => void
+
         constructor(props, context) {
             super(props, context)
             this.router = context.router
@@ -39,6 +47,7 @@ function withRoute(BaseComponent) {
 
         render() {
             return createElement(BaseComponent, {
+                //@ts-ignore
                 ...this.props,
                 ...this.routeState,
                 router: this.router
@@ -46,14 +55,11 @@ function withRoute(BaseComponent) {
         }
     }
 
-    ComponentWithRoute.contextTypes = {
+    WithRoute.contextTypes = {
         router: PropTypes.object.isRequired
     }
 
-    ComponentWithRoute.displayName =
-        'WithRoute[' + getDisplayName(BaseComponent) + ']'
-
-    return ComponentWithRoute
+    return WithRoute
 }
 
 export default withRoute

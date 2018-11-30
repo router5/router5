@@ -1,6 +1,5 @@
-import React from 'react'
-import { expect } from 'chai'
-import { Child, createTestRouter, FnChild, renderWithRouter } from './utils'
+import React, { SFC } from 'react'
+import { Child, createTestRouter, FnChild, renderWithRouter } from './helpers'
 import {
     RouterProvider,
     withRoute,
@@ -8,76 +7,74 @@ import {
     routeNode,
     BaseLink,
     Link
-} from '../modules'
-import { spy } from 'sinon'
-import listenersPlugin from '../../router5/plugins/listeners'
+} from '..'
 import { mount, configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
+//@ts-ignore
 configure({ adapter: new Adapter() })
 
 describe('withRoute hoc', () => {
     let router
 
-    before(() => {
+    beforeAll(() => {
         router = createTestRouter()
     })
 
     it('should inject the router in the wrapped component props', () => {
-        const ChildSpy = spy(FnChild)
-        router.usePlugin(listenersPlugin())
+        const ChildSpy = jest.fn(FnChild)
 
-        const tree = renderWithRouter(router)(withRoute(ChildSpy))
-        expect(ChildSpy).to.have.been.calledWith({
+        renderWithRouter(router)(withRoute(ChildSpy))
+        expect(ChildSpy).toHaveBeenCalledWith({
             router,
             route: null,
             previousRoute: null
-        })
+        }, {})
     })
 })
 
 describe('withRouter hoc', () => {
     let router
 
-    before(() => {
+    beforeAll(() => {
         router = createTestRouter()
     })
 
     it('should inject the router on the wrapped component props', () => {
-        const ChildSpy = spy(FnChild)
-        router.usePlugin(listenersPlugin())
+        const ChildSpy = jest.fn(FnChild)
 
+        //@ts-ignore
         renderWithRouter(router)(withRouter(ChildSpy))
 
-        expect(ChildSpy).to.have.been.calledWith({
+        expect(ChildSpy).toHaveBeenCalledWith({
             router
-        })
+        }, {})
     })
 })
 
 describe('routeNode hoc', () => {
     let router
 
-    before(() => {
+    beforeAll(() => {
         router = createTestRouter()
     })
 
     it('should inject the router in the wrapped component props', () => {
-        const ChildSpy = spy(FnChild)
-        router.usePlugin(listenersPlugin())
-        const tree = renderWithRouter(router)(withRoute(ChildSpy))
-        expect(ChildSpy).to.have.been.calledWith({
+        const ChildSpy = jest.fn(FnChild)
+
+        renderWithRouter(router)(withRoute(ChildSpy))
+        expect(ChildSpy).toHaveBeenCalledWith({
             router,
             route: null,
             previousRoute: null
-        })
+        }, {})
     })
 })
 
 describe('BaseLink component', () => {
     let router
 
-    before(() => {
+    beforeAll(() => {
         router = createTestRouter()
     })
 
@@ -88,8 +85,8 @@ describe('BaseLink component', () => {
                 <BaseLink routeName={'home'} />
             </RouterProvider>
         )
-        expect(output.find('a')).to.have.attr('href', '/home')
-        expect(output.find('a')).not.to.have.className('active')
+        expect(output.find('a').prop('href')).toBe('/home')
+        expect(output.find('a').prop('className')).not.toContain('active')
     })
 
     it('should have an active class if associated route is active', () => {
@@ -100,7 +97,7 @@ describe('BaseLink component', () => {
                 <BaseLink routeName={'home'} />
             </RouterProvider>
         )
-        expect(output.find('a')).to.have.className('active')
+        expect(output.find('a').prop('className')).toContain('active')
     })
 
     it('should not call router’s navigate method when used with target="_blank"', () => {
@@ -111,16 +108,15 @@ describe('BaseLink component', () => {
             </RouterProvider>
         )
         const a = output.find('a')
-        const navSpy = spy(router, 'navigate')
+        const navSpy = jest.spyOn(router, 'navigate')
 
         a.simulate('click')
 
-        expect(a).to.have.attr('target')
-        expect(navSpy).not.to.have.been.called
+        expect(a.prop('target')).toBeDefined()
+        expect(navSpy).not.toHaveBeenCalled()
     })
 
     it('should spread other props to its link', () => {
-        router.usePlugin(listenersPlugin())
         router.start()
         const onMouseLeave = () => {}
         const output = mount(
@@ -136,7 +132,7 @@ describe('BaseLink component', () => {
 
         const props = output.find('a').props()
 
-        expect(props).to.eql({
+        expect(props).toEqual({
             href: '/home',
             className: 'active',
             onClick: props.onClick,

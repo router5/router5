@@ -1,17 +1,30 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import PropTypes from 'prop-types'
 import { shouldUpdateNode } from 'router5-transition-path'
+import { State, Router } from 'router5'
+import { RouterContext, RouterState } from './types';
 
 const emptyCreateContext = () => ({
     Provider: ({ children }) => children,
     Consumer: () => null
 })
 
+
 const createContext = React.createContext || emptyCreateContext
+//@ts-ignore
+const { Provider, Consumer: Route } = createContext<RouterContext>({})
 
-const { Provider, Consumer: Route } = createContext({})
+export interface RouteProviderProps {
+    router: Router
+    children: ReactNode
+}
 
-class RouteProvider extends React.PureComponent {
+class RouteProvider extends React.PureComponent<RouteProviderProps> {
+    private mounted: boolean
+    private router: Router
+    private routeState: RouterState
+    private unsubscribe: () => void
+
     constructor(props) {
         super(props)
         const { router } = props
@@ -63,12 +76,14 @@ RouteProvider.childContextTypes = {
     router: PropTypes.object.isRequired
 }
 
-RouteProvider.propTypes = {
-    router: PropTypes.object.isRequired,
-    children: PropTypes.node.isRequired
+export interface RouteNodeProps {
+    nodeName: string
+    children: (routeContext: RouterContext) => ReactNode
 }
 
-class RouteNode extends React.Component {
+class RouteNode extends React.Component<RouteNodeProps> {
+    private memoizedResult: ReactNode
+
     constructor(props, context) {
         super(props, context)
 
@@ -91,11 +106,6 @@ class RouteNode extends React.Component {
     render() {
         return <Route>{this.renderOnRouteNodeChange}</Route>
     }
-}
-
-RouteNode.propTypes = {
-    nodeName: PropTypes.string.isRequired,
-    children: PropTypes.func.isRequired
 }
 
 export { RouteProvider, Route, RouteNode }

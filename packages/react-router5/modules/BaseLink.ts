@@ -1,7 +1,31 @@
-import React, { Component } from 'react'
+import { NavigationOptions, State, Router } from 'router5'
+import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
 import PropTypes from 'prop-types'
 
-class BaseLink extends Component {
+export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
+    routeName: string
+    routeParams?: { [key: string]: any }
+    routeOptions?: NavigationOptions
+    className?: string
+    activeClassName?: string
+    activeStrict?: boolean
+    ignoreQueryParams?: boolean
+    onClick?: MouseEventHandler<HTMLAnchorElement>
+    onMouseOver?: MouseEventHandler<HTMLAnchorElement>
+    successCallback?(state?: State): void
+    errorCallback?(error?: any): void
+    target?: string
+    route?: State
+    previousRoute?: State
+    router?: Router
+}
+
+export interface BaseLinkState {
+    active: boolean
+}
+
+class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
+    public router: Router
     constructor(props, context) {
         super(props, context)
 
@@ -29,11 +53,18 @@ class BaseLink extends Component {
     }
 
     isActive() {
+        const {
+            routeName,
+            routeParams = {},
+            activeStrict = false,
+            ignoreQueryParams = true
+        } = this.props
+
         return this.router.isActive(
-            this.props.routeName,
-            this.props.routeParams,
-            this.props.activeStrict,
-            this.props.ignoreQueryParams
+            routeName,
+            routeParams,
+            activeStrict,
+            ignoreQueryParams
         )
     }
 
@@ -65,8 +96,8 @@ class BaseLink extends Component {
             evt.preventDefault()
             this.router.navigate(
                 this.props.routeName,
-                this.props.routeParams,
-                this.props.routeOptions,
+                this.props.routeParams || {},
+                this.props.routeOptions || {},
                 this.callback
             )
         }
@@ -79,7 +110,7 @@ class BaseLink extends Component {
             routeParams,
             routeOptions,
             className,
-            activeClassName,
+            activeClassName = 'active',
             activeStrict,
             ignoreQueryParams,
             route,
@@ -114,27 +145,6 @@ class BaseLink extends Component {
 
 BaseLink.contextTypes = {
     router: PropTypes.object.isRequired
-}
-
-BaseLink.propTypes = {
-    routeName: PropTypes.string.isRequired,
-    routeParams: PropTypes.object,
-    routeOptions: PropTypes.object,
-    activeClassName: PropTypes.string,
-    activeStrict: PropTypes.bool,
-    ignoreQueryParams: PropTypes.bool,
-    onClick: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    successCallback: PropTypes.func,
-    errorCallback: PropTypes.func
-}
-
-BaseLink.defaultProps = {
-    activeClassName: 'active',
-    activeStrict: false,
-    ignoreQueryParams: true,
-    routeParams: {},
-    routeOptions: {}
 }
 
 export default BaseLink

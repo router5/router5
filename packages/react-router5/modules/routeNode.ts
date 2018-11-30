@@ -1,11 +1,19 @@
-import { Component, createElement } from 'react'
-import { getDisplayName } from './utils'
+import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
 import { shouldUpdateNode } from 'router5-transition-path'
+import { RouterState, RouterContext } from './types'
+import { Router } from 'router5'
 
-function routeNode(nodeName) {
-    return function routeNodeWrapper(RouteSegment) {
-        class RouteNode extends Component {
+function routeNode<P>(nodeName: string) {
+    return function routeNodeWrapper(
+        RouteSegment: React.ComponentType<P & RouterContext>
+    ): ComponentClass<P> {
+        class RouteNode extends Component<P> {
+            private router: Router
+            private routeState: RouterState
+            private mounted: boolean
+            private unsubscribe: () => void
+
             constructor(props, context) {
                 super(props, context)
                 this.router = context.router
@@ -45,6 +53,7 @@ function routeNode(nodeName) {
                 const { props, router } = this
                 const { previousRoute, route } = this.routeState
                 const component = createElement(RouteSegment, {
+                    //@ts-ignore
                     ...props,
                     router,
                     previousRoute,
@@ -58,9 +67,6 @@ function routeNode(nodeName) {
         RouteNode.contextTypes = {
             router: PropTypes.object.isRequired
         }
-
-        RouteNode.displayName =
-            'RouteNode[' + getDisplayName(RouteSegment) + ']'
 
         return RouteNode
     }

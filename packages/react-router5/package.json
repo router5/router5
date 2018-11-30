@@ -23,16 +23,21 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://router5.js.org",
+  "devDependencies": {
+    "@types/react": "~16.7.10",
+    "enzyme-adapter-react-16": "~1.7.0",
+    "router5": "^6.6.2"
+  },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
     "router5": ">= 6.1.0 < 7.0.0"
   },
   "dependencies": {
-    "prop-types": "^15.6.0",
+    "prop-types": "~15.6.2",
     "router5-transition-path": "5.4.0"
   },
   "typings": "./index.d.ts",
-  "devDependencies": {
-    "enzyme-adapter-react-16": "~1.1.1"
+  "scripts": {
+    "test": "jest"
   }
 }

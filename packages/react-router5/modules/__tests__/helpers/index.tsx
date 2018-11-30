@@ -1,9 +1,9 @@
-import createRouter from '../../router5'
+import createRouter from 'router5'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { RouterProvider } from '../modules'
-import browserPlugin from '../../router5/plugins/browser'
+import { RouterProvider } from '../../'
 import { mount } from 'enzyme'
+import browserPlugin from '../../../../router5-plugin-browser'
 
 export class Child extends Component {
     render() {
@@ -17,7 +17,7 @@ Child.contextTypes = {
 
 export const FnChild = props => <div />
 
-export const createTestRouter = () => createRouter().usePlugin(browserPlugin())
+export const createTestRouter = () => createRouter([]).usePlugin(browserPlugin())
 
 export const renderWithRouter = router => BaseComponent =>
     mount(

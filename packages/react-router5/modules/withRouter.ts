@@ -1,9 +1,13 @@
-import { Component, createElement } from 'react'
-import { getDisplayName } from './utils'
+import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
+import { Router } from 'router5'
 
-function withRouter(BaseComponent) {
-    class ComponentWithRouter extends Component {
+function withRouter<P>(
+    BaseComponent: ComponentClass<P, { router: Router }>
+): ComponentClass<P> {
+    class WithRouter extends Component<P> {
+        private router: Router
+
         constructor(props, context) {
             super(props, context)
             this.router = context.router
@@ -11,20 +15,18 @@ function withRouter(BaseComponent) {
 
         render() {
             return createElement(BaseComponent, {
+                //@ts-ignore
                 ...this.props,
                 router: this.router
             })
         }
     }
 
-    ComponentWithRouter.contextTypes = {
+    WithRouter.contextTypes = {
         router: PropTypes.object.isRequired
     }
 
-    ComponentWithRouter.displayerName =
-        'WithRouter[' + getDisplayName(BaseComponent) + ']'
-
-    return ComponentWithRouter
+    return WithRouter
 }
 
 export default withRouter
