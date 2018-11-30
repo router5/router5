@@ -49,7 +49,10 @@ const makeConfig = ({
                 ? Object.keys(
                       require(`./packages/${packageName}/package.json`)
                           .dependencies || {}
-                  )
+                  ).concat(Object.keys(
+                    require(`./packages/${packageName}/package.json`)
+                        .peerDependencies || {}
+                ))
                 : [],
         plugins
     }
@@ -88,6 +91,7 @@ module.exports = [
     ...makePackageConfig('router5-plugin-persistent-params'),
     ...makePackageConfig('rxjs-router5'),
     ...makePackageConfig('xstream-router5'),
+    ...makePackageConfig('react-router5'),
     ...makePackageConfig('redux-router5'),
     ...makePackageConfig('redux-router5-immutable'),
 ]

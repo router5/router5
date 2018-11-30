@@ -1,7 +1,7 @@
 import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
 import { Router } from 'router5'
-import { RouterState } from './types'
+import { RouterState, UnsubscribeFn } from './types'
 
 function withRoute<P>(
     BaseComponent: React.ComponentType<P & RouterState>
@@ -10,7 +10,7 @@ function withRoute<P>(
         private router: Router
         private routeState: RouterState
         private mounted: boolean
-        private unsubscribe: () => void
+        private unsubscribe: UnsubscribeFn
 
         constructor(props, context) {
             super(props, context)
@@ -31,7 +31,9 @@ function withRoute<P>(
                         this.forceUpdate()
                     }
                 }
-                this.unsubscribe = this.router.subscribe(listener)
+                this.unsubscribe = this.router.subscribe(
+                    listener
+                ) as UnsubscribeFn
             }
         }
 

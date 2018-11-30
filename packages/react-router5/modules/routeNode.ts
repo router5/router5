@@ -1,7 +1,7 @@
 import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
 import { shouldUpdateNode } from 'router5-transition-path'
-import { RouterState, RouterContext } from './types'
+import { RouterState, RouterContext, UnsubscribeFn } from './types'
 import { Router } from 'router5'
 
 function routeNode<P>(nodeName: string) {
@@ -12,7 +12,7 @@ function routeNode<P>(nodeName: string) {
             private router: Router
             private routeState: RouterState
             private mounted: boolean
-            private unsubscribe: () => void
+            private unsubscribe: UnsubscribeFn
 
             constructor(props, context) {
                 super(props, context)
@@ -35,7 +35,9 @@ function routeNode<P>(nodeName: string) {
                             }
                         }
                     }
-                    this.unsubscribe = this.router.subscribe(listener)
+                    this.unsubscribe = this.router.subscribe(
+                        listener
+                    ) as UnsubscribeFn
                 }
             }
 

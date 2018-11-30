@@ -45,7 +45,9 @@ class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
     }
 
     buildUrl(routeName, routeParams) {
+        //@ts-ignore
         if (this.router.buildUrl) {
+            //@ts-ignore
             return this.router.buildUrl(routeName, routeParams)
         }
 

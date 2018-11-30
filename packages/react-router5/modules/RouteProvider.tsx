@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import PropTypes from 'prop-types'
 import { shouldUpdateNode } from 'router5-transition-path'
 import { State, Router } from 'router5'
-import { RouterContext, RouterState } from './types';
+import { RouterContext, RouterState, UnsubscribeFn } from './types';
 
 const emptyCreateContext = () => ({
     Provider: ({ children }) => children,
@@ -23,7 +23,7 @@ class RouteProvider extends React.PureComponent<RouteProviderProps> {
     private mounted: boolean
     private router: Router
     private routeState: RouterState
-    private unsubscribe: () => void
+    private unsubscribe: UnsubscribeFn
 
     constructor(props) {
         super(props)
@@ -45,7 +45,7 @@ class RouteProvider extends React.PureComponent<RouteProviderProps> {
                     this.forceUpdate()
                 }
             }
-            this.unsubscribe = this.router.subscribe(listener)
+            this.unsubscribe = this.router.subscribe(listener) as UnsubscribeFn
         }
     }
 
