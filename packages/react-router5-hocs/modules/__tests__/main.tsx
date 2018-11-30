@@ -1,5 +1,5 @@
-import React, { SFC } from 'react'
-import { Child, createTestRouter, FnChild, renderWithRouter } from './helpers'
+import React from 'react'
+import { createTestRouter, FnChild, renderWithRouter } from './helpers'
 import {
     RouterProvider,
     withRoute,
@@ -62,7 +62,7 @@ describe('routeNode hoc', () => {
     it('should inject the router in the wrapped component props', () => {
         const ChildSpy = jest.fn(FnChild)
 
-        renderWithRouter(router)(withRoute(ChildSpy))
+        renderWithRouter(router)(routeNode('')(ChildSpy))
         expect(ChildSpy).toHaveBeenCalledWith({
             router,
             route: null,
