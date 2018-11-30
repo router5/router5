@@ -1,9 +1,9 @@
 import createRouter from './createRouter'
 import RouteNode from 'route-node'
 import transitionPath from 'router5-transition-path'
-import { constants, errorCodes } from './constants'
+import { constants, errorCodes, ErrorCodes, Constants } from './constants'
 import cloneRouter from './clone'
-export { Route, ActivationFn, Router } from './types/router'
+export { Route, ActivationFn, Router, PluginFactory } from './types/router'
 export { State } from './types/base'
 export {
     createRouter,
@@ -11,6 +11,8 @@ export {
     RouteNode,
     transitionPath,
     constants,
-    errorCodes
+    errorCodes,
+    ErrorCodes,
+    Constants
 }
 export default createRouter

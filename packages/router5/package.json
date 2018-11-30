@@ -30,7 +30,7 @@
     "router5-transition-path": "5.4.0",
     "symbol-observable": "1.2.0"
   },
-  "typings": "./index.d.ts",
+  "typings": "./types/index.d.ts",
   "scripts": {
       "test": "jest"
   }
