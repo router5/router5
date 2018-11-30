@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { UnsubscribeFn, RouterState } from './types'
+import { UnsubscribeFn, RouteState } from './types'
 import { Router } from 'router5'
 import { routerContext, routeContext } from './context'
 
@@ -10,7 +10,7 @@ export interface RouteProviderProps {
 
 class RouterProvider extends React.PureComponent<RouteProviderProps> {
     private mounted: boolean
-    private routeState: RouterState
+    private routeState: RouteState
     private unsubscribe: UnsubscribeFn
 
     constructor(props) {

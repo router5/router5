@@ -23,7 +23,6 @@ export interface BaseLinkState {
     active: boolean
 }
 declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
-    static contextType: React.Context<Router>
     router: Router
     constructor(props: any, context: any)
     buildUrl(routeName: any, routeParams: any): any

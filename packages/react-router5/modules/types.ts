@@ -2,9 +2,9 @@ import { Router, State } from 'router5'
 
 export type RouteContext = {
     router: Router
-} & RouterState
+} & RouteState
 
-export interface RouterState {
+export interface RouteState {
     route: State
     previousRoute: State | null
 }
