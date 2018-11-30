@@ -1,7 +1,6 @@
 import { NavigationOptions, State, Router } from 'router5'
 import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
 import PropTypes from 'prop-types'
-import { routerContext } from './context'
 
 export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     routeName: string
@@ -26,13 +25,11 @@ export interface BaseLinkState {
 }
 
 class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
-    static contextType = routerContext
     public router: Router
-
     constructor(props, context) {
         super(props, context)
 
-        this.router = context
+        this.router = context.router
 
         if (!this.router.hasPlugin('BROWSER_PLUGIN')) {
             console.error(
@@ -146,6 +143,10 @@ class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             children
         )
     }
+}
+
+BaseLink.contextTypes = {
+    router: PropTypes.object.isRequired
 }
 
 export default BaseLink

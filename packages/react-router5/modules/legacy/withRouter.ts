@@ -1,9 +1,9 @@
-import { Component, createElement, ComponentClass } from 'react'
+import { Component, createElement, ComponentClass, ComponentType } from 'react'
 import PropTypes from 'prop-types'
 import { Router } from 'router5'
 
 function withRouter<P>(
-    BaseComponent: ComponentClass<P, { router: Router }>
+    BaseComponent: ComponentType<P & { router: Router }>
 ): ComponentClass<P> {
     class WithRouter extends Component<P> {
         private router: Router

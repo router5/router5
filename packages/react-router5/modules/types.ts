@@ -1,10 +1,8 @@
 import { Router, State } from 'router5'
 
-export interface RouterContext {
+export type RouteContext = {
     router: Router
-    route: State
-    previousRoute: State | null
-}
+} & RouterState
 
 export interface RouterState {
     route: State

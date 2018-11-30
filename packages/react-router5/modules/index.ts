@@ -1,20 +1,20 @@
 import BaseLink from './BaseLink'
-import routeNode from './routeNode'
+import routeNode from './hocs/routeNode'
+import withRoute from './hocs/withRoute'
+import withRouter from './hocs/withRouter'
+import RouteNode from './render/RouteNode'
 import RouterProvider from './RouterProvider'
-import withRoute from './withRoute'
-import withRouter from './withRouter'
-import { RouteProvider, Route, RouteNode } from './RouteProvider'
+
+export { routerContext, routeContext } from './context'
 
 const Link = withRoute(BaseLink)
 
 export {
     BaseLink,
     routeNode,
-    RouterProvider,
     withRoute,
     withRouter,
     Link,
-    RouteProvider,
-    Route,
-    RouteNode
+    RouteNode,
+    RouterProvider
 }

@@ -1,12 +1,12 @@
 import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
 import { shouldUpdateNode } from 'router5-transition-path'
-import { RouterState, RouterContext, UnsubscribeFn } from './types'
+import { RouterState, RouteContext, UnsubscribeFn } from '../types'
 import { Router } from 'router5'
 
 function routeNode<P>(nodeName: string) {
     return function routeNodeWrapper(
-        RouteSegment: React.ComponentType<P & RouterContext>
+        RouteSegment: React.ComponentType<P & RouteContext>
     ): ComponentClass<P> {
         class RouteNode extends Component<P> {
             private router: Router

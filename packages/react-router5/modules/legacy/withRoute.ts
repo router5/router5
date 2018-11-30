@@ -1,7 +1,7 @@
 import { Component, createElement, ComponentClass } from 'react'
 import PropTypes from 'prop-types'
 import { Router } from 'router5'
-import { RouterState, UnsubscribeFn } from './types'
+import { RouterState, UnsubscribeFn } from '../types'
 
 function withRoute<P>(
     BaseComponent: React.ComponentType<P & RouterState>
