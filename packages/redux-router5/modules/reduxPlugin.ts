@@ -1,6 +1,7 @@
 import * as actions from './actions'
+import { PluginFactory } from 'router5'
 
-function reduxPluginFactory(dispatch) {
+function reduxPluginFactory(dispatch): PluginFactory {
     function reduxPlugin() {
         return {
             onTransitionStart(toState, fromState) {

@@ -6,7 +6,7 @@ import cloneRouter from './clone'
 
 // Types
 export { Route, ActivationFn, Router, PluginFactory } from './types/router'
-export { State } from './types/base'
+export { State, NavigationOptions } from './types/base'
 
 export {
     createRouter,

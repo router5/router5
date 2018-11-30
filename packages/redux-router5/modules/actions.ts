@@ -1,6 +1,11 @@
+import { NavigationOptions, State } from 'router5'
 import * as actionTypes from './actionTypes'
 
-export function navigateTo(name, params = {}, opts = {}) {
+export function navigateTo(
+    name: string,
+    params?: { [key: string]: any },
+    opts: NavigationOptions = {}
+) {
     return {
         type: actionTypes.NAVIGATE_TO,
         payload: {
@@ -23,7 +28,7 @@ export function clearErrors() {
     }
 }
 
-export function transitionStart(route, previousRoute) {
+export function transitionStart(route: State, previousRoute: State | null) {
     return {
         type: actionTypes.TRANSITION_START,
         payload: {
@@ -33,7 +38,7 @@ export function transitionStart(route, previousRoute) {
     }
 }
 
-export function transitionSuccess(route, previousRoute) {
+export function transitionSuccess(route: State, previousRoute: State | null) {
     return {
         type: actionTypes.TRANSITION_SUCCESS,
         payload: {
@@ -43,7 +48,11 @@ export function transitionSuccess(route, previousRoute) {
     }
 }
 
-export function transitionError(route, previousRoute, transitionError) {
+export function transitionError(
+    route: State,
+    previousRoute: State | null,
+    transitionError: any
+) {
     return {
         type: actionTypes.TRANSITION_ERROR,
         payload: {
@@ -54,7 +63,7 @@ export function transitionError(route, previousRoute, transitionError) {
     }
 }
 
-export function canActivate(name, canActivate) {
+export function canActivate(name: string, canActivate: boolean) {
     return {
         type: actionTypes.CAN_ACTIVATE,
         payload: {
@@ -64,7 +73,7 @@ export function canActivate(name, canActivate) {
     }
 }
 
-export function canDeactivate(name, canDeactivate) {
+export function canDeactivate(name: string, canDeactivate: boolean) {
     return {
         type: actionTypes.CAN_DEACTIVATE,
         payload: {

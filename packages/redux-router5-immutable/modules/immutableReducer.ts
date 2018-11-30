@@ -1,7 +1,6 @@
-import * as actionTypes from '../lib/actionTypes'
+import * as actionTypes from '../../redux-router5/modules/actionTypes'
 import { Record } from 'immutable'
 
-// eslint-disable-next-line new-cap
 const State = Record({
     route: null,
     previousRoute: null,

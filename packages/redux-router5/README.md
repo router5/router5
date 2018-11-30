@@ -120,12 +120,3 @@ export default connect(state => {
     })
 )(Root);
 ```
-
-
-## With immutable-js
-
-If you are using [immutable-js](https://github.com/facebook/immutable-js) and [redux-immutable](https://github.com/gajus/redux-immutable) simply use the reducer from 'redux-router5/immutable/reducer' 
-
-```javascript
-import router5Reducer from 'redux-router5/immutable/reducer';
-```

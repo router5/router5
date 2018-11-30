@@ -4,7 +4,7 @@ import transitionPath from 'router5-transition-path'
 import { constants, errorCodes, ErrorCodes, Constants } from './constants'
 import cloneRouter from './clone'
 export { Route, ActivationFn, Router, PluginFactory } from './types/router'
-export { State } from './types/base'
+export { State, NavigationOptions } from './types/base'
 export {
     createRouter,
     cloneRouter,

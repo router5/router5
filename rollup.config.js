@@ -1,7 +1,7 @@
 const typescript = require('rollup-plugin-typescript2')
 const { uglify } = require('rollup-plugin-uglify')
 const nodeResolve = require('rollup-plugin-node-resolve')
-const common = require('rollup-plugin-commonjs')
+const commonjs = require('rollup-plugin-commonjs')
 
 const formatSuffix = {
     es: '.es',
@@ -19,7 +19,15 @@ const makeConfig = ({
         file || `packages/${packageName}/dist/index${formatSuffix[format]}.js`
     const plugins = [
         nodeResolve({ jsnext: true, module: true }),
-        common({ include: `packages/${packageName}/node_modules/**` }),
+        commonjs({
+            include: `packages/${packageName}/node_modules/**`,
+            namedExports: {
+                [`packages/${packageName}/node_modules/immutable/dist/immutable.js`]: [
+                    'Record',
+                    'Map'
+                ]
+            }
+        }),
         typescript({
             tsconfig: `./packages/${packageName}/tsconfig.build.json`,
             useTsconfigDeclarationDir: true,
@@ -47,7 +55,19 @@ const makeConfig = ({
     }
 }
 
-const config = [
+const makePackageConfig = (packageName) => [
+    makeConfig({
+        packageName,
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName,
+        format: 'es'
+    })
+]
+
+module.exports = [
     makeConfig({
         packageName: 'router5',
         file: 'dist/router5.min.js',
@@ -59,87 +79,15 @@ const config = [
         file: 'dist/router5.js',
         format: 'umd'
     }),
-    makeConfig({
-        packageName: 'router5',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'router5-helpers',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5-helpers',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'router5-transition-path',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5-transition-path',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-browser',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-browser',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-logger',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-logger',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-listeners',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-listeners',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-persistent-params',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'router5-plugin-persistent-params',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'rxjs-router5',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'rxjs-router5',
-        format: 'es'
-    }),
-    makeConfig({
-        packageName: 'xstream-router5',
-        declaration: true,
-        format: 'cjs'
-    }),
-    makeConfig({
-        packageName: 'xstream-router5',
-        format: 'es'
-    })
+    ...makePackageConfig('router5'),
+    ...makePackageConfig('router5-helpers'),
+    ...makePackageConfig('router5-transition-path'),
+    ...makePackageConfig('router5-plugin-browser'),
+    ...makePackageConfig('router5-plugin-logger'),
+    ...makePackageConfig('router5-plugin-listeners'),
+    ...makePackageConfig('router5-plugin-persistent-params'),
+    ...makePackageConfig('rxjs-router5'),
+    ...makePackageConfig('xstream-router5'),
+    ...makePackageConfig('redux-router5'),
+    ...makePackageConfig('redux-router5-immutable'),
 ]
-
-export default config

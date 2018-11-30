@@ -1,6 +1,6 @@
 import { shouldUpdateNode } from 'router5-transition-path'
 
-function createRouteNodeSelector(routeNode, reducerKey = 'router') {
+function createRouteNodeSelector(routeNode: string, reducerKey = 'router') {
     const routerStateSelector = state =>
         state[reducerKey] || (state.get && state.get(reducerKey))
     let lastReturnedValue

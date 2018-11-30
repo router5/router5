@@ -1,7 +1,8 @@
 import * as actionTypes from './actionTypes'
 import reduxPlugin from './reduxPlugin'
+import { Router } from 'router5'
 
-const router5ReduxMiddleware = router => store => {
+const router5ReduxMiddleware = (router: Router) => store => {
     const { dispatch } = store
     router.setDependency('store', store)
     router.usePlugin(reduxPlugin(dispatch))
