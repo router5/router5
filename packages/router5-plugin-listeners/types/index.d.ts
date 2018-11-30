@@ -1,10 +1,8 @@
+import { PluginFactory } from 'router5'
 export interface ListenersPluginOptions {
     autoCleanUp?: boolean
 }
 declare const listenersPluginFactory: (
     options?: ListenersPluginOptions
-) => {
-    (router: any): any
-    pluginName: string
-}
+) => PluginFactory
 export default listenersPluginFactory

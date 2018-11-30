@@ -1,6 +1,5 @@
 import { constants, errorCodes, Router, PluginFactory } from 'router5'
 import safeBrowser from './browser'
-import withUtils from './utils'
 import { BrowserPluginOptions } from './types'
 
 const defaultOptions: BrowserPluginOptions = {
@@ -29,7 +28,41 @@ function browserPluginFactory(
         const routerOptions = router.getOptions()
         const routerStart = router.start
 
-        withUtils(router, options)
+        router.buildUrl = (route, params) => {
+            const base = options.base || ''
+            const prefix = options.useHash ? `#${options.hashPrefix}` : ''
+            const path = router.buildPath(route, params)
+
+            if (path === null) return null
+
+            return base + prefix + path
+        }
+
+        router.urlToPath = (url: string) => {
+            const match = url.match(
+                /^(?:http|https):\/\/(?:[0-9a-z_\-.:]+?)(?=\/)(.*)$/
+            )
+            const path = match ? match[1] : url
+
+            const pathParts = path.match(/^(.+?)(#.+?)?(\?.+)?$/)
+
+            if (!pathParts)
+                throw new Error(`[router5] Could not parse url ${url}`)
+
+            const pathname = pathParts[1]
+            const hash = pathParts[2] || ''
+            const search = pathParts[3] || ''
+
+            return (
+                (options.useHash
+                    ? hash.replace(new RegExp('^#' + options.hashPrefix), '')
+                    : options.base
+                    ? pathname.replace(new RegExp('^' + options.base), '')
+                    : pathname) + search
+            )
+        }
+
+        router.matchUrl = url => router.matchPath(router.urlToPath(url))
 
         router.start = function(...args) {
             if (args.length === 0 || typeof args[0] === 'function') {

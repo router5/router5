@@ -11,8 +11,8 @@ const defaultOptions: ListenersPluginOptions = {
 
 const listenersPluginFactory = (
     options: ListenersPluginOptions = defaultOptions
-) => {
-    function listenersPlugin(router: Router): PluginFactory {
+): PluginFactory => {
+    function listenersPlugin(router: Router) {
         let listeners = {}
 
         function removeListener(name, cb?) {
@@ -31,6 +31,7 @@ const listenersPluginFactory = (
             const normalizedName = name.replace(/^(\*|\^|=)/, '')
 
             if (normalizedName && !/^\$/.test(name)) {
+                //@ts-ignore
                 const segments = router.rootNode.getSegmentsByName(
                     normalizedName
                 )

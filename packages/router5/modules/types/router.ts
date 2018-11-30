@@ -67,11 +67,9 @@ export interface Config {
     forwardMap: { [key: string]: any }
 }
 
-export interface BaseRouter {
+export interface Router {
     config: Config
-}
 
-export interface RouterWithRoutes {
     rootNode: RouteNode
     add(routes: Route[] | Route, finalSort?: boolean): Router
     addNode(
@@ -88,14 +86,10 @@ export interface RouterWithRoutes {
     buildPath(route: string, params?: Params): string
     matchPath(path: string, source?: string): State | null
     setRootPath(rootPath: string): void
-}
 
-export interface RouterWithOptions {
     getOptions(): Options
     setOption(option: string, value: any): Router
-}
 
-export interface RouterWithState {
     makeState(
         name: string,
         params?: Params,
@@ -114,16 +108,12 @@ export interface RouterWithState {
     areStatesDescendants(parentState: State, childState: State): boolean
     forwardState(routeName: string, routeParams: Params): SimpleState
     buildState(routeName: string, routeParams: Params): RouteNodeState | null
-}
 
-export interface RouterWithLifecycle {
     isStarted(): boolean
     start(startPathOrState: string | State, done?: DoneFn): Router
     start(done?: DoneFn): Router
     stop(): void
-}
 
-export interface RouterWithRouteLifecycle {
     canDeactivate(
         name: string,
         canDeactivateHandler: ActivationFnFactory | boolean
@@ -141,23 +131,17 @@ export interface RouterWithRouteLifecycle {
         { [key: string]: ActivationFn },
         { [key: string]: ActivationFn }
     ]
-}
 
-export interface RouterWithPlugins {
     usePlugin(...plugins: PluginFactory[]): Router
     hasPlugin(pluginName: string): boolean
     addPlugin(plugin: Plugin): Router
     getPlugins(): PluginFactory[]
-}
 
-export interface RouterWithMiddleware {
     useMiddleware(...middlewares: MiddlewareFactory[]): Router
     clearMiddleware(): Router
     getMiddlewareFactories: () => MiddlewareFactory[]
     getMiddlewareFunctions: () => Middleware[]
-}
 
-export interface RouterWithDependencies {
     setDependency(dependencyName: string, dependency: any): Router
     setDependencies(deps: Dependencies): Router
     getDependencies(): Dependencies
@@ -165,15 +149,11 @@ export interface RouterWithDependencies {
     executeFactory(
         factory: (router?: Router, dependencies?: Dependencies) => any
     ): any
-}
 
-export interface RouterWithEvents {
     invokeEventListeners: (eventName, ...args) => void
     removeEventListener: (eventName, cb) => void
     addEventListener: (eventName, cb) => Unsubscribe
-}
 
-export interface RouterWithNavigation {
     cancel(): Router
     forward(fromRoute: string, toRoute: string): Router
     navigate(
@@ -192,27 +172,10 @@ export interface RouterWithNavigation {
         opts: NavigationOptions,
         done: DoneFn
     )
-}
 
-export interface RouterWithObservable {
     subscribe(listener: SubscribeFn | Listener): UnsubscribeFn | Subscription
-}
 
-export type Router = BaseRouter &
-    RouterWithRoutes &
-    RouterWithOptions &
-    RouterWithDependencies &
-    RouterWithEvents &
-    RouterWithPlugins &
-    RouterWithMiddleware &
-    RouterWithState &
-    RouterWithLifecycle &
-    RouterWithRouteLifecycle &
-    RouterWithNavigation &
-    RouterWithObservable
-
-export interface InternalRouter {
-    setState(state: State): void
+    [key: string]: any
 }
 
 export interface Plugin {
