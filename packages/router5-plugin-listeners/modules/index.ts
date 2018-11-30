@@ -1,6 +1,20 @@
-import { PluginFactory, Router } from 'router5'
+import { PluginFactory, Router, State } from 'router5'
 import transitionPath from 'router5-transition-path'
+import { removeListener } from 'cluster'
 
+export type Listener = (toState: State, fromState: State | null) => void
+
+declare module 'router5/types/types/router' {
+    interface Router {
+        getListeners(): { [key: string]: Listener[] }
+        addListener(name: string, callback: Listener): void
+        removeListener(name: string, callback: Listener): void
+        addNodeListener(name: string, callback: Listener): void
+        removeNodeListener(name: string, callback: Listener): void
+        addRouteListener(name: string, callback: Listener): void
+        removeRouteListener(name: string, callback: Listener): void
+    }
+}
 export interface ListenersPluginOptions {
     autoCleanUp?: boolean
 }

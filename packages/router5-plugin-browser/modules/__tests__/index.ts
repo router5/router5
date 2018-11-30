@@ -116,11 +116,6 @@ function test(useHash) {
             })
         })
 
-        it('should be able to extract the path of an URL', function() {
-            expect(router.urlToPath(makeUrl('/home'))).toBe('/home')
-            expect(() => router.urlToPath('')).toThrow()
-        })
-
         it('should match an URL', function() {
             expect(withoutMeta(router.matchUrl(makeUrl('/home')))).toEqual({
                 name: 'home',

@@ -1,6 +1,19 @@
-import { constants, errorCodes, Router, PluginFactory } from 'router5'
+import { PluginFactory, errorCodes, constants, Router, State } from 'router5'
 import safeBrowser from './browser'
 import { BrowserPluginOptions } from './types'
+
+declare module 'router5/types/types/router' {
+    interface Router {
+        buildUrl(name: string, params?: { [key: string]: any }): string
+        matchUrl(url: string): State | null
+        replaceHistoryState(
+            name: string,
+            params?: { [key: string]: any },
+            title?: string
+        ): void
+        lastKnownState: State
+    }
+}
 
 const defaultOptions: BrowserPluginOptions = {
     forceDeactivate: true,
@@ -38,7 +51,7 @@ function browserPluginFactory(
             return base + prefix + path
         }
 
-        router.urlToPath = (url: string) => {
+        const urlToPath = (url: string) => {
             const match = url.match(
                 /^(?:http|https):\/\/(?:[0-9a-z_\-.:]+?)(?=\/)(.*)$/
             )
@@ -62,7 +75,7 @@ function browserPluginFactory(
             )
         }
 
-        router.matchUrl = url => router.matchPath(router.urlToPath(url))
+        router.matchUrl = url => router.matchPath(urlToPath(url))
 
         router.start = function(...args) {
             if (args.length === 0 || typeof args[0] === 'function') {

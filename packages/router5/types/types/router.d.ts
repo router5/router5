@@ -171,7 +171,6 @@ export interface Router {
         done: DoneFn
     ): any
     subscribe(listener: SubscribeFn | Listener): UnsubscribeFn | Subscription
-    [key: string]: any
 }
 export interface Plugin {
     onStart?(): void

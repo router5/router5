@@ -174,8 +174,6 @@ export interface Router {
     )
 
     subscribe(listener: SubscribeFn | Listener): UnsubscribeFn | Subscription
-
-    [key: string]: any
 }
 
 export interface Plugin {
