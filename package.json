@@ -15,7 +15,6 @@
     "lint:check-conflicts": "eslint --print-config .eslintrc | eslint-config-prettier-check",
     "format": "prettier 'packages/**/*.{js,ts}'",
     "check": "yarn run lint:check-conflicts && yarn run lint && yarn run test && yarn run format --list-different",
-    "precommit": "lint-staged",
     "changelog": "lerna-changelog",
     "docs:start": "node packages/docs/scripts/start",
     "copy": "cp -f README.md ./packages/router5/README.md",
@@ -76,5 +75,10 @@
     "webpack-dev-middleware": "~3.1.2",
     "webpack-dev-server": "~3.1.3",
     "xstream": "~11.7.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
