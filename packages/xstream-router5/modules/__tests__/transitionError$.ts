@@ -1,16 +1,15 @@
-import { expect } from 'chai'
-import { spy } from 'sinon'
-import { state1, state2 } from './_helpers'
-import createObservables from '../modules'
-import createRouter, { constants } from '../../router5'
+import createObservables from '..'
+import createRouter, { constants } from 'router5'
 
+const state1 = { name: 'route1', path: '/route1', meta: { params: {} } }
+const state2 = { name: 'route2', path: '/route2', meta: { params: {} } }
 const error = 'error'
 
 describe('transitionError$', () => {
     it('should push new values to transitionError$ on transitionError events', () => {
         const router = createRouter()
         const observables = createObservables(router)
-        const listener = { next: spy(), error() {}, complete: spy() }
+        const listener = { next: jest.fn(), error() {}, complete: jest.fn() }
 
         observables.transitionError$.addListener(listener)
 
@@ -22,19 +21,19 @@ describe('transitionError$', () => {
             error
         )
 
-        expect(listener.next).to.have.been.calledTwice
-        expect(listener.next).to.have.been.calledWith(null)
-        expect(listener.next).to.have.been.calledWith(error)
+        expect(listener.next).toHaveBeenCalledTimes(2)
+        expect(listener.next).toHaveBeenCalledWith(null)
+        expect(listener.next).toHaveBeenCalledWith(error)
 
         router.invokeEventListeners(constants.ROUTER_STOP)
 
-        expect(listener.complete).to.have.been.called
+        expect(listener.complete).toHaveBeenCalled()
     })
 
     it('should become null on a new transition start event', () => {
         const router = createRouter()
         const observables = createObservables(router)
-        const listener = { next: spy(), error() {}, complete: spy() }
+        const listener = { next: jest.fn(), error() {}, complete: jest.fn() }
 
         observables.transitionError$.addListener(listener)
 
@@ -47,13 +46,13 @@ describe('transitionError$', () => {
         )
         router.invokeEventListeners(constants.TRANSITION_START, state2, null)
 
-        expect(listener.next).to.have.been.calledThrice
-        expect(listener.next).to.have.been.calledWith(null)
-        expect(listener.next).to.have.been.calledWith(error)
-        expect(listener.next).to.have.been.calledWith(null)
+        expect(listener.next).toHaveBeenCalledTimes(3)
+        expect(listener.next).toHaveBeenCalledWith(null)
+        expect(listener.next).toHaveBeenCalledWith(error)
+        expect(listener.next).toHaveBeenCalledWith(null)
 
         router.invokeEventListeners(constants.ROUTER_STOP)
 
-        expect(listener.complete).to.have.been.called
+        expect(listener.complete).toHaveBeenCalled()
     })
 })

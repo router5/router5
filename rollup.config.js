@@ -12,7 +12,6 @@ const makeConfig = ({
     packageName,
     declaration = false,
     format,
-    external,
     compress = false,
     file
 }) => {
@@ -121,6 +120,24 @@ const config = [
     }),
     makeConfig({
         packageName: 'router5-plugin-persistent-params',
+        format: 'es'
+    }),
+    makeConfig({
+        packageName: 'rxjs-router5',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'rxjs-router5',
+        format: 'es'
+    }),
+    makeConfig({
+        packageName: 'xstream-router5',
+        declaration: true,
+        format: 'cjs'
+    }),
+    makeConfig({
+        packageName: 'xstream-router5',
         format: 'es'
     })
 ]

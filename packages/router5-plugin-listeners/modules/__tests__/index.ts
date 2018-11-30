@@ -73,7 +73,7 @@ describe('listenersPlugin', () => {
             router.addListener(listener)
 
             router.navigate('orders.pending', {}, {}, () => {
-                expect(listener).toHaveBeenLastCalledWith(
+                expect(listener).toHaveBeenCalledWith(
                     router.getState(),
                     previousState
                 )

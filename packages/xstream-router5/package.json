@@ -22,12 +22,19 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/xstream-router5",
+  "devDependencies": {
+    "router5": "^6.0.0",
+    "xstream": "^10.0.0 || ^11.0.0"
+  },
   "dependencies": {
-    "router5-transition-path": "5.4.0",
-    "xstream": "^10.0.0"
+    "router5-transition-path": "5.4.0"
   },
   "peerDependencies": {
     "router5": "^5.0.0 || ^6.0.0",
     "xstream": "^10.0.0"
+  },
+  "typings": "./types/index.d.ts",
+  "scripts": {
+      "test": "jest"
   }
 }

@@ -1,22 +1,32 @@
-import xs from 'xstream'
+import xs, { Listener } from 'xstream'
+import { State, PluginFactory } from 'router5'
 import dropRepeats from 'xstream/extra/dropRepeats'
 import transitionPath from 'router5-transition-path'
 
-const TRANSITION_SUCCESS = '@@router5/TRANSITION_SUCCESS'
-const TRANSITION_ERROR = '@@router5/TRANSITION_ERROR'
-const TRANSITION_START = '@@router5/TRANSITION_START'
-const TRANSITION_CANCEL = '@@router5/TRANSITION_CANCEL'
+export const TRANSITION_SUCCESS = 'success'
+export const TRANSITION_ERROR = 'error'
+export const TRANSITION_START = 'start'
+export const TRANSITION_CANCEL = 'cancel'
 
-export {
-    TRANSITION_SUCCESS,
-    TRANSITION_ERROR,
-    TRANSITION_START,
-    TRANSITION_CANCEL
+export interface RouterAction {
+    type: string
+    toState: State
+    fromState: State | null
+    error?: any
 }
 
-function xsPluginFactory(listener) {
-    return function xsPlugin() {
-        const dispatch = (type, isError) => (toState, fromState, error) => {
+export interface RouterState {
+    intersection: ''
+    state: State
+}
+
+function xsPluginFactory(listener: Listener<RouterAction>): PluginFactory {
+    function xsPlugin() {
+        const dispatch = (type: string, isError?: boolean) => (
+            toState: State,
+            fromState: State | null,
+            error: any
+        ) => {
             if (listener) {
                 const routerEvt = { type, toState, fromState }
 
@@ -32,11 +42,15 @@ function xsPluginFactory(listener) {
             onTransitionCancel: dispatch(TRANSITION_CANCEL)
         }
     }
+
+    xsPlugin.pluginName = 'xstream'
+
+    return xsPlugin as PluginFactory
 }
 
 function createObservables(router) {
     // Events observable
-    const transitionEvents$ = xs.create({
+    const transitionEvents$ = xs.create<RouterAction>({
         start(listener) {
             router.usePlugin(xsPluginFactory(listener))
         },
@@ -45,33 +59,35 @@ function createObservables(router) {
 
     // Transition Route
     const transitionRoute$ = transitionEvents$
-        .map(_ => (_.type === TRANSITION_START ? _.toState : null))
+        .map<State | null>(_ =>
+            _.type === TRANSITION_START ? _.toState : null
+        )
         .startWith(null)
 
     // Error
     const transitionError$ = transitionEvents$
-        .filter(_ => _.type)
-        .map(_ => (_.type === TRANSITION_ERROR ? _.error : null))
+        .filter(_ => Boolean(_.type))
+        .map<any>(_ => (_.type === TRANSITION_ERROR ? _.error : null))
         .startWith(null)
         .compose(dropRepeats())
 
     // Route with intersection
     const routeState$ = transitionEvents$
         .filter(_ => _.type === TRANSITION_SUCCESS && _.toState !== null)
-        .map(({ toState, fromState }) => {
+        .map<RouterState>(({ toState, fromState }) => {
             const { intersection } = transitionPath(toState, fromState)
-            return { intersection, route: toState }
+            return { intersection, state: toState } as RouterState
         })
-        .startWith({ intersection: '', route: router.getState() })
+        .startWith({ intersection: '', state: router.getState() })
 
     // Create a route observable
-    const route$ = routeState$.map(({ route }) => route)
+    const route$ = routeState$.map<State>(({ state }) => state)
 
     // Create a route node observable
-    const routeNode = node =>
+    const routeNode = (node: string) =>
         routeState$
             .filter(({ intersection }) => intersection === node)
-            .map(({ route }) => route)
+            .map(({ state }) => state)
             .startWith(router.getState())
 
     // Return observables

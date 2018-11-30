@@ -4,18 +4,11 @@ import transitionPath from 'router5-transition-path'
 import { map, startWith, filter, distinctUntilChanged } from 'rxjs/operators'
 import { PluginFactory } from 'router5'
 
-const PLUGIN_NAME = 'RXJS_PLUGIN'
-const TRANSITION_SUCCESS = 'success'
-const TRANSITION_ERROR = 'error'
-const TRANSITION_START = 'start'
-const TRANSITION_CANCEL = 'cancel'
-
-export {
-    TRANSITION_SUCCESS,
-    TRANSITION_ERROR,
-    TRANSITION_START,
-    TRANSITION_CANCEL
-}
+export const PLUGIN_NAME = 'RXJS_PLUGIN'
+export const TRANSITION_SUCCESS = 'success'
+export const TRANSITION_ERROR = 'error'
+export const TRANSITION_START = 'start'
+export const TRANSITION_CANCEL = 'cancel'
 
 export interface RouterAction {
     type: string
