@@ -33,13 +33,6 @@ class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
         super(props, context)
 
         this.router = context
-
-        if (!this.router.hasPlugin('BROWSER_PLUGIN')) {
-            console.error(
-                '[react-router5][BaseLink] missing browser plugin, href might be built incorrectly'
-            )
-        }
-
         this.isActive = this.isActive.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
         this.callback = this.callback.bind(this)

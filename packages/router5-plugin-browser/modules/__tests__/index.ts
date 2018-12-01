@@ -89,10 +89,6 @@ function test(useHash) {
             jest.clearAllMocks()
         })
 
-        it('should be registered', function() {
-            expect(router.hasPlugin('browserPlugin')).toBe(true)
-        })
-
         it('should update history on start', function(done) {
             router.start(function(err, state) {
                 //@ts-ignore

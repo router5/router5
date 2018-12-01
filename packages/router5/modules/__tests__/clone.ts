@@ -18,7 +18,6 @@ describe('core/clone', () => {
         const myPlugin = () => ({
             onTransitionSuccess: () => true
         })
-        myPlugin.pluginName = 'ABC'
         router.usePlugin(myPlugin)
 
         const clonedRouter = cloneRouter(router)

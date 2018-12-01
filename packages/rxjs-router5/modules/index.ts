@@ -45,8 +45,6 @@ function rxjsPluginFactory(observer: Subject<RouterAction>): PluginFactory {
         }
     }
 
-    rxjsPlugin.pluginName = PLUGIN_NAME
-
     return rxjsPlugin as PluginFactory
 }
 

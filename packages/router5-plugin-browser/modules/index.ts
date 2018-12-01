@@ -37,7 +37,7 @@ function browserPluginFactory(
     }
     let removePopStateListener
 
-    function browserPlugin(router: Router) {
+    return function browserPlugin(router: Router) {
         const routerOptions = router.getOptions()
         const routerStart = router.start
 
@@ -239,10 +239,6 @@ function browserPluginFactory(
 
         return { onStart, onStop, onTransitionSuccess, onPopState }
     }
-
-    browserPlugin.pluginName = 'BROWSER_PLUGIN'
-
-    return browserPlugin
 }
 
 export default browserPluginFactory

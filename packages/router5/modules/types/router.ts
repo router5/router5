@@ -132,8 +132,7 @@ export interface Router {
         { [key: string]: ActivationFn }
     ]
 
-    usePlugin(...plugins: PluginFactory[]): Router
-    hasPlugin(pluginName: string): boolean
+    usePlugin(...plugins: PluginFactory[]): Unsubscribe
     addPlugin(plugin: Plugin): Router
     getPlugins(): PluginFactory[]
 
@@ -201,7 +200,6 @@ export type MiddlewareFactory = (
 ) => Middleware
 
 export interface PluginFactory {
-    pluginName: string
     (router?: Router, dependencies?: Dependencies): Plugin
 }
 

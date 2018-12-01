@@ -43,8 +43,6 @@ function xsPluginFactory(listener: Listener<RouterAction>): PluginFactory {
         }
     }
 
-    xsPlugin.pluginName = 'xstream'
-
     return xsPlugin as PluginFactory
 }
 

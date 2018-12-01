@@ -40,10 +40,6 @@ describe('listenersPlugin', () => {
         router.stop()
     })
 
-    it('should be registered', () => {
-        expect(router.hasPlugin('listenersPlugin')).toBe(true)
-    })
-
     it('should call root node listener on first transition', function(done) {
         router.stop()
         router.setOption('defaultRoute', 'home')

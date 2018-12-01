@@ -11,26 +11,21 @@ const eventsMap = {
 }
 
 export default function withPlugins(router: Router): Router {
-    const routerPlugins: PluginFactory[] = []
-    let removePluginListeners = []
+    let routerPlugins: PluginFactory[] = []
 
     router.getPlugins = () => routerPlugins
 
     router.usePlugin = (...plugins) => {
-        plugins.forEach(plugin => {
-            if (!router.hasPlugin(plugin.pluginName)) {
-                routerPlugins.push(plugin)
-                startPlugin(plugin)
-            }
+        const removePluginFns = plugins.map(plugin => {
+            routerPlugins.push(plugin)
+            return startPlugin(plugin)
         })
 
-        return router
+        return () => {
+            routerPlugins.filter(plugin => routerPlugins.indexOf(plugin) >= 0)
+            removePluginFns.forEach(removePlugin => removePlugin())
+        }
     }
-
-    router.hasPlugin = pluginName =>
-        routerPlugins.filter(
-            p => p.pluginName === pluginName || p.name === pluginName
-        ).length > 0
 
     function startPlugin(plugin) {
         const appliedPlugin = router.executeFactory(plugin)
@@ -46,7 +41,8 @@ export default function withPlugins(router: Router): Router {
             })
             .filter(Boolean)
 
-        removePluginListeners.push(...removeEventListeners)
+        return () =>
+            removeEventListeners.forEach(removeListener => removeListener())
     }
 
     return router

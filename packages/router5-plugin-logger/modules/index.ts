@@ -44,6 +44,4 @@ const loggerPlugin: PluginFactory = () => {
     }
 }
 
-loggerPlugin.pluginName = 'LOGGER_PLUGIN'
-
 export default loggerPlugin

@@ -17,7 +17,11 @@ Child.contextTypes = {
 
 export const FnChild = props => <div />
 
-export const createTestRouter = () => createRouter([]).usePlugin(browserPlugin())
+export const createTestRouter = () => {
+    const router = createRouter([])
+    router.usePlugin(browserPlugin())
+    return router
+}
 
 export const renderWithRouter = router => BaseComponent =>
     mount(

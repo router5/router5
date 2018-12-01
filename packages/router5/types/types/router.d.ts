@@ -134,8 +134,7 @@ export interface Router {
             [key: string]: ActivationFn
         }
     ]
-    usePlugin(...plugins: PluginFactory[]): Router
-    hasPlugin(pluginName: string): boolean
+    usePlugin(...plugins: PluginFactory[]): Unsubscribe
     addPlugin(plugin: Plugin): Router
     getPlugins(): PluginFactory[]
     useMiddleware(...middlewares: MiddlewareFactory[]): Router
@@ -194,7 +193,6 @@ export declare type MiddlewareFactory = (
     dependencies: Dependencies
 ) => Middleware
 export interface PluginFactory {
-    pluginName: string
     (router?: Router, dependencies?: Dependencies): Plugin
 }
 export interface SubscribeState {

@@ -26,7 +26,7 @@ const defaultOptions: ListenersPluginOptions = {
 const listenersPluginFactory = (
     options: ListenersPluginOptions = defaultOptions
 ): PluginFactory => {
-    function listenersPlugin(router: Router) {
+    return function listenersPlugin(router: Router) {
         let listeners = {}
 
         function removeListener(name, cb?) {
@@ -100,10 +100,6 @@ const listenersPluginFactory = (
 
         return { onTransitionSuccess }
     }
-
-    listenersPlugin.pluginName = 'LISTENERS_PLUGIN'
-
-    return listenersPlugin
 }
 
 export default listenersPluginFactory

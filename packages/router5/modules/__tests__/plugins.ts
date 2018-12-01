@@ -16,14 +16,12 @@ describe('core/plugins', () => {
 
             return myPluginMethods
         }
-        myPlugin.pluginName = 'PLUGIN_NAME'
     })
     afterAll(() => router.stop())
 
     it('should register plugins', done => {
         router.stop()
         router.usePlugin(myPlugin)
-        expect(router.hasPlugin('PLUGIN_NAME'))
         router.start('', () => {
             expect(router.myCustomMethod).not.toBe(undefined)
 

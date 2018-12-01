@@ -6,7 +6,7 @@ const getDefinedParams = params =>
         .reduce((acc, param) => ({ ...acc, [param]: params[param] }), {})
 
 function persistentParamsPluginFactory(params = {}): PluginFactory {
-    function persistentParamsPlugin(router) {
+    return function persistentParamsPlugin(router) {
         // Persistent parameters
         const persistentParams = Array.isArray(params)
             ? params.reduce(
@@ -53,10 +53,6 @@ function persistentParamsPluginFactory(params = {}): PluginFactory {
             }
         }
     }
-
-    persistentParamsPlugin.pluginName = 'PERSISTENT_PARAMS_PLUGIN'
-
-    return persistentParamsPlugin
 }
 
 export default persistentParamsPluginFactory

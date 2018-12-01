@@ -1202,23 +1202,19 @@
     };
     function withPlugins(router) {
         var routerPlugins = [];
-        var removePluginListeners = [];
         router.getPlugins = function () { return routerPlugins; };
         router.usePlugin = function () {
             var plugins = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 plugins[_i] = arguments[_i];
             }
-            plugins.forEach(function (plugin) {
-                if (!router.hasPlugin(plugin.pluginName)) {
-                    routerPlugins.push(plugin);
-                    startPlugin(plugin);
-                }
+            var removePluginFns = plugins.map(function (plugin) {
+                routerPlugins.push(plugin);
+                return startPlugin(plugin);
             });
-            return router;
-        };
-        router.hasPlugin = function (pluginName) {
-            return routerPlugins.filter(function (p) { return p.pluginName === pluginName || p.name === pluginName; }).length > 0;
+            return function () {
+                removePluginFns.forEach(function (removePlugin) { return removePlugin(); });
+            };
         };
         function startPlugin(plugin) {
             var appliedPlugin = router.executeFactory(plugin);
@@ -1229,7 +1225,9 @@
                 }
             })
                 .filter(Boolean);
-            removePluginListeners.push.apply(removePluginListeners, removeEventListeners);
+            return function () {
+                return removeEventListeners.forEach(function (removeListener) { return removeListener(); });
+            };
         }
         return router;
     }
