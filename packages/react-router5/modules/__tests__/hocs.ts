@@ -50,21 +50,24 @@ describe('withRouter hoc', () => {
     })
 })
 
-// describe('routeNode hoc', () => {
-//     let router
+describe('routeNode hoc', () => {
+    let router
 
-//     beforeAll(() => {
-//         router = createTestRouter()
-//     })
+    beforeAll(() => {
+        router = createTestRouter()
+    })
 
-//     it('should inject the router in the wrapped component props', () => {
-//         const ChildSpy = jest.fn(FnChild)
+    it('should inject the router in the wrapped component props', () => {
+        const ChildSpy = jest.fn(FnChild)
 
-//         renderWithRouter(router)(routeNode('')(ChildSpy))
-//         expect(ChildSpy).toHaveBeenCalledWith({
-//             router,
-//             route: null,
-//             previousRoute: null
-//         }, {})
-//     })
-// })
+        renderWithRouter(router)(routeNode('')(ChildSpy))
+        expect(ChildSpy).toHaveBeenCalledWith(
+            {
+                router,
+                route: null,
+                previousRoute: null
+            },
+            {}
+        )
+    })
+})

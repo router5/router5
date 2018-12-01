@@ -4,7 +4,7 @@ import RouteNode from '../render/RouteNode'
 
 function routeNode<P>(nodeName: string) {
     return function(BaseComponent: ComponentType<P & RouteContext>): SFC<P> {
-        function RouteNode(props) {
+        function RouteNodeWrapper(props) {
             return (
                 <RouteNode nodeName={nodeName}>
                     {routeContext => (
@@ -14,7 +14,7 @@ function routeNode<P>(nodeName: string) {
             )
         }
 
-        return RouteNode
+        return RouteNodeWrapper
     }
 }
 

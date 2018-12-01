@@ -1,4 +1,4 @@
-import React, { ReactNode, ReactElement } from 'react'
+import React, { ReactNode, ReactElement, SFC } from 'react'
 import { shouldUpdateNode } from 'router5-transition-path'
 import { RouteContext } from '../types'
 import { routeContext } from '../context'
@@ -8,35 +8,31 @@ export interface RouteNodeProps {
     children: (routeContext: RouteContext) => ReactNode
 }
 
-class RouteNode extends React.Component<RouteNodeProps> {
-    private memoizedResult: ReactNode
-
-    constructor(props, context) {
-        super(props, context)
-
-        this.renderOnRouteNodeChange = this.renderOnRouteNodeChange.bind(this)
+class RouteNodeRenderer extends React.Component<RouteNodeProps & RouteContext> {
+    constructor(props) {
+        super(props)
     }
 
-    renderOnRouteNodeChange(routeContext) {
-        const shouldUpdate = shouldUpdateNode(this.props.nodeName)(
-            routeContext.route,
-            routeContext.previousRoute
+    shouldComponentUpdate(nextProps) {
+        return shouldUpdateNode(this.props.nodeName)(
+            nextProps.route,
+            nextProps.previousRoute
         )
-
-        if (!this.memoizedResult || shouldUpdate) {
-            this.memoizedResult = this.props.children(routeContext)
-        }
-
-        return this.memoizedResult
     }
 
     render() {
-        return (
-            <routeContext.Consumer>
-                {this.renderOnRouteNodeChange}
-            </routeContext.Consumer>
-        )
+        const { router, route, previousRoute } = this.props
+
+        return this.props.children({ router, route, previousRoute })
     }
+}
+
+const RouteNode: SFC<RouteNodeProps> = props => {
+    return (
+        <routeContext.Consumer>
+            {routeContext => <RouteNodeRenderer {...props} {...routeContext} />}
+        </routeContext.Consumer>
+    )
 }
 
 export default RouteNode
