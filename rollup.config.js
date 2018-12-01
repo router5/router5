@@ -61,7 +61,7 @@ const makeConfig = ({
 }
 
 const format = process.env.FORMAT
-const declaration = format === 'es'
+const declaration = format === 'cjs'
 const makePackageConfig = packageName =>
     makeConfig({
         packageName,

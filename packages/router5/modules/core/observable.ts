@@ -2,7 +2,23 @@ import $$observable from 'symbol-observable'
 import { Router } from '../types/router'
 import { constants } from '../constants'
 
-export default function withObservable(router: Router) {
+export default function withObservability(router: Router) {
+    const callbacks = {}
+
+    router.invokeEventListeners = (eventName, ...args) => {
+        ;(callbacks[eventName] || []).forEach(cb => cb(...args))
+    }
+
+    router.removeEventListener = (eventName, cb) => {
+        callbacks[eventName] = callbacks[eventName].filter(_cb => _cb !== cb)
+    }
+
+    router.addEventListener = (eventName, cb) => {
+        callbacks[eventName] = (callbacks[eventName] || []).concat(cb)
+
+        return () => router.removeEventListener(eventName, cb)
+    }
+
     function subscribe(listener) {
         const isObject = typeof listener === 'object'
         const finalListener = isObject ? listener.next.bind(listener) : listener

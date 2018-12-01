@@ -1259,6 +1259,94 @@
         return router;
     }
 
+    function symbolObservablePonyfill(root) {
+    	var result;
+    	var Symbol = root.Symbol;
+
+    	if (typeof Symbol === 'function') {
+    		if (Symbol.observable) {
+    			result = Symbol.observable;
+    		} else {
+    			result = Symbol('observable');
+    			Symbol.observable = result;
+    		}
+    	} else {
+    		result = '@@observable';
+    	}
+
+    	return result;
+    }
+
+    /* global window */
+
+    var root;
+
+    if (typeof self !== 'undefined') {
+      root = self;
+    } else if (typeof window !== 'undefined') {
+      root = window;
+    } else if (typeof global !== 'undefined') {
+      root = global;
+    } else if (typeof module !== 'undefined') {
+      root = module;
+    } else {
+      root = Function('return this')();
+    }
+
+    var result = symbolObservablePonyfill(root);
+
+    function withObservability(router) {
+        var callbacks = {};
+        router.invokeEventListeners = function (eventName) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            (callbacks[eventName] || []).forEach(function (cb) { return cb.apply(void 0, args); });
+        };
+        router.removeEventListener = function (eventName, cb) {
+            callbacks[eventName] = callbacks[eventName].filter(function (_cb) { return _cb !== cb; });
+        };
+        router.addEventListener = function (eventName, cb) {
+            callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
+            return function () { return router.removeEventListener(eventName, cb); };
+        };
+        function subscribe(listener) {
+            var isObject = typeof listener === 'object';
+            var finalListener = isObject ? listener.next.bind(listener) : listener;
+            var unsubscribeHandler = router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
+                finalListener({
+                    route: toState,
+                    previousRoute: fromState
+                });
+            });
+            return isObject
+                ? { unsubscribe: unsubscribeHandler }
+                : unsubscribeHandler;
+        }
+        function observable() {
+            var _a;
+            return _a = {
+                    subscribe: function (observer) {
+                        if (typeof observer !== 'object' || observer === null) {
+                            throw new TypeError('Expected the observer to be an object.');
+                        }
+                        return subscribe(observer);
+                    }
+                },
+                _a[result] = function () {
+                    return this;
+                },
+                _a;
+        }
+        router.subscribe = subscribe;
+        //@ts-ignore
+        router[result] = observable;
+        //@ts-ignore
+        router['@@observable'] = observable;
+        return router;
+    }
+
     var nameToIDs = function (name) {
         return name
             .split('.')
@@ -1601,79 +1689,6 @@
         return router;
     }
 
-    function symbolObservablePonyfill(root) {
-    	var result;
-    	var Symbol = root.Symbol;
-
-    	if (typeof Symbol === 'function') {
-    		if (Symbol.observable) {
-    			result = Symbol.observable;
-    		} else {
-    			result = Symbol('observable');
-    			Symbol.observable = result;
-    		}
-    	} else {
-    		result = '@@observable';
-    	}
-
-    	return result;
-    }
-
-    /* global window */
-
-    var root;
-
-    if (typeof self !== 'undefined') {
-      root = self;
-    } else if (typeof window !== 'undefined') {
-      root = window;
-    } else if (typeof global !== 'undefined') {
-      root = global;
-    } else if (typeof module !== 'undefined') {
-      root = module;
-    } else {
-      root = Function('return this')();
-    }
-
-    var result = symbolObservablePonyfill(root);
-
-    function withObservable(router) {
-        function subscribe(listener) {
-            var isObject = typeof listener === 'object';
-            var finalListener = isObject ? listener.next.bind(listener) : listener;
-            var unsubscribeHandler = router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
-                finalListener({
-                    route: toState,
-                    previousRoute: fromState
-                });
-            });
-            return isObject
-                ? { unsubscribe: unsubscribeHandler }
-                : unsubscribeHandler;
-        }
-        function observable() {
-            var _a;
-            return _a = {
-                    subscribe: function (observer) {
-                        if (typeof observer !== 'object' || observer === null) {
-                            throw new TypeError('Expected the observer to be an object.');
-                        }
-                        return subscribe(observer);
-                    }
-                },
-                _a[result] = function () {
-                    return this;
-                },
-                _a;
-        }
-        router.subscribe = subscribe;
-        //@ts-ignore
-        router[result] = observable;
-        //@ts-ignore
-        router['@@observable'] = observable;
-        return router;
-    }
-
     var noop$1 = function () { };
     function withRouterLifecycle(router) {
         var started = false;
@@ -1802,25 +1817,6 @@
         return router;
     }
 
-    function withEvents(router) {
-        var callbacks = {};
-        router.invokeEventListeners = function (eventName) {
-            var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
-            }
-            (callbacks[eventName] || []).forEach(function (cb) { return cb.apply(void 0, args); });
-        };
-        router.removeEventListener = function (eventName, cb) {
-            callbacks[eventName] = callbacks[eventName].filter(function (_cb) { return _cb !== cb; });
-        };
-        router.addEventListener = function (eventName, cb) {
-            callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
-            return function () { return router.removeEventListener(eventName, cb); };
-        };
-        return router;
-    }
-
     var pipe = function () {
         var fns = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -1837,7 +1833,7 @@
             defaultParams: {},
             forwardMap: {}
         };
-        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withState, withEvents, withRouterLifecycle, withRouteLifecycle, withNavigation, withObservable, withPlugins, withMiddleware)({ config: config });
+        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withObservability, withState, withRouterLifecycle, withRouteLifecycle, withNavigation, withPlugins, withMiddleware)({ config: config });
     };
 
     function cloneRouter(router, dependencies) {
