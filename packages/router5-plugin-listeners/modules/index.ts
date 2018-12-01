@@ -98,7 +98,12 @@ const listenersPluginFactory = (
             invokeListeners('*', toState, fromState)
         }
 
-        return { onTransitionSuccess }
+        return {
+            onTransitionSuccess,
+            teardown: () => {
+                listeners = {}
+            }
+        }
     }
 }
 

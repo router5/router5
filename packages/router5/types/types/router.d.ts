@@ -182,6 +182,7 @@ export interface Plugin {
         fromState?: State,
         opts?: NavigationOptions
     ): void
+    teardown?(): void
 }
 export declare type Middleware = (
     toState: State,

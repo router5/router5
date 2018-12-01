@@ -41,8 +41,12 @@ export default function withPlugins(router: Router): Router {
             })
             .filter(Boolean)
 
-        return () =>
+        return () => {
             removeEventListeners.forEach(removeListener => removeListener())
+            if (plugin.teardown) {
+                plugin.teardown()
+            }
+        }
     }
 
     return router

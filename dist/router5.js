@@ -1226,7 +1226,10 @@
             })
                 .filter(Boolean);
             return function () {
-                return removeEventListeners.forEach(function (removeListener) { return removeListener(); });
+                removeEventListeners.forEach(function (removeListener) { return removeListener(); });
+                if (plugin.teardown) {
+                    plugin.teardown();
+                }
             };
         }
         return router;

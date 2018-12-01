@@ -210,9 +210,10 @@ function browserPluginFactory(
             )
         }
 
-        function onStop() {
+        function teardown() {
             if (removePopStateListener) {
                 removePopStateListener()
+                removePopStateListener = undefined
             }
         }
 
@@ -237,7 +238,13 @@ function browserPluginFactory(
             updateBrowserState(toState, url, replace)
         }
 
-        return { onStart, onStop, onTransitionSuccess, onPopState }
+        return {
+            onStart,
+            onStop: teardown,
+            teardown,
+            onTransitionSuccess,
+            onPopState
+        }
     }
 }
 
