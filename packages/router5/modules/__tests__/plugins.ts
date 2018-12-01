@@ -1,4 +1,5 @@
 import { createTestRouter } from './helpers'
+import createRouter from '..'
 
 describe('core/plugins', () => {
     let router
@@ -31,5 +32,20 @@ describe('core/plugins', () => {
                 done()
             })
         })
+    })
+
+    it('should return an deregister function and call teardown', () => {
+        const router = createRouter()
+        const teardown = jest.fn()
+        const unsubscribe = router.usePlugin(() => ({
+            teardown
+        }))
+
+        expect(router.getPlugins().length).toBe(1)
+
+        unsubscribe()
+
+        expect(router.getPlugins().length).toBe(0)
+        expect(teardown).toHaveBeenCalled()
     })
 })

@@ -22,7 +22,9 @@ export default function withPlugins(router: Router): Router {
         })
 
         return () => {
-            routerPlugins.filter(plugin => routerPlugins.indexOf(plugin) >= 0)
+            routerPlugins = routerPlugins.filter(
+                plugin => plugins.indexOf(plugin) === -1
+            )
             removePluginFns.forEach(removePlugin => removePlugin())
         }
     }
@@ -43,8 +45,8 @@ export default function withPlugins(router: Router): Router {
 
         return () => {
             removeEventListeners.forEach(removeListener => removeListener())
-            if (plugin.teardown) {
-                plugin.teardown()
+            if (appliedPlugin.teardown) {
+                appliedPlugin.teardown()
             }
         }
     }
