@@ -1826,7 +1826,7 @@
         };
         router.addEventListener = function (eventName, cb) {
             callbacks[eventName] = (callbacks[eventName] || []).concat(cb);
-            return function () { return removeEventListener(eventName, cb); };
+            return function () { return router.removeEventListener(eventName, cb); };
         };
         return router;
     }

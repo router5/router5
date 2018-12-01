@@ -14,7 +14,7 @@ export default function withEvents(router: Router): Router {
     router.addEventListener = (eventName, cb) => {
         callbacks[eventName] = (callbacks[eventName] || []).concat(cb)
 
-        return () => removeEventListener(eventName, cb)
+        return () => router.removeEventListener(eventName, cb)
     }
 
     return router

@@ -47,12 +47,15 @@ function xsPluginFactory(listener: Listener<RouterAction>): PluginFactory {
 }
 
 function createObservables(router) {
+    let unsubscribe
     // Events observable
     const transitionEvents$ = xs.create<RouterAction>({
         start(listener) {
-            router.usePlugin(xsPluginFactory(listener))
+            unsubscribe = router.usePlugin(xsPluginFactory(listener))
         },
-        stop() {}
+        stop() {
+            unsubscribe()
+        }
     })
 
     // Transition Route
