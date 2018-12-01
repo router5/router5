@@ -1638,17 +1638,15 @@
     var result = symbolObservablePonyfill(root);
 
     function withObservable(router) {
-        var listeners = [];
-        function unsubscribe(listener) {
-            if (listener) {
-                listeners = listeners.filter(function (l) { return l !== listener; });
-            }
-        }
         function subscribe(listener) {
             var isObject = typeof listener === 'object';
             var finalListener = isObject ? listener.next.bind(listener) : listener;
-            listeners = listeners.concat(finalListener);
-            var unsubscribeHandler = function () { return unsubscribe(finalListener); };
+            var unsubscribeHandler = router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
+                finalListener({
+                    route: toState,
+                    previousRoute: fromState
+                });
+            });
             return isObject
                 ? { unsubscribe: unsubscribeHandler }
                 : unsubscribeHandler;
@@ -1673,14 +1671,6 @@
         router[result] = observable;
         //@ts-ignore
         router['@@observable'] = observable;
-        router.addEventListener(constants.TRANSITION_SUCCESS, function (toState, fromState) {
-            listeners.forEach(function (listener) {
-                return listener({
-                    route: toState,
-                    previousRoute: fromState
-                });
-            });
-        });
         return router;
     }
 
