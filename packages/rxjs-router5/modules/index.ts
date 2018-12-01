@@ -1,7 +1,13 @@
-import { Subject, Observable } from 'rxjs'
+import { Observable, Subscriber } from 'rxjs'
 import { Router, State } from 'router5'
 import transitionPath from 'router5-transition-path'
-import { map, startWith, filter, distinctUntilChanged } from 'rxjs/operators'
+import {
+    map,
+    startWith,
+    filter,
+    distinctUntilChanged,
+    share
+} from 'rxjs/operators'
 import { PluginFactory } from 'router5'
 
 export const PLUGIN_NAME = 'RXJS_PLUGIN'
@@ -22,7 +28,7 @@ export interface RouterState {
     state: State
 }
 
-function rxjsPluginFactory(observer: Subject<RouterAction>): PluginFactory {
+function rxjsPluginFactory(observer: Subscriber<RouterAction>): PluginFactory {
     function rxjsPlugin() {
         const dispatch = (type: string, isError = false) => (
             toState: State,
@@ -50,9 +56,12 @@ function rxjsPluginFactory(observer: Subject<RouterAction>): PluginFactory {
 
 function createObservables(router: Router) {
     // Events observable
-    const transitionEvents$ = new Subject<RouterAction>()
+    const transitionEvents$ = new Observable<RouterAction>(observer => {
+        const unsubscribe = router.usePlugin(rxjsPluginFactory(observer))
 
-    router.usePlugin(rxjsPluginFactory(transitionEvents$))
+        return unsubscribe
+    }).pipe(share<RouterAction>())
+
     // Transition Route
     const transitionRoute$ = transitionEvents$.pipe(
         map(_ => (_.type === TRANSITION_START ? _.toState : null)),
