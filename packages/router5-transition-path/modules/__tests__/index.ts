@@ -111,4 +111,25 @@ describe('router5-transition-path', () => {
             expect(shouldUpdateNode('a.b.c.e')(toState, fromState)).toBe(false)
         })
     })
+
+    it('should take into action transition options', () => {
+        expect(
+            transitionPath(
+                {
+                    name: 'a.b.c.d',
+                    params: {},
+                    meta: { options: { reload: true } }
+                },
+                {
+                    name: 'a.b.c',
+                    params: {},
+                    meta: {}
+                }
+            )
+        ).toEqual({
+            intersection: '',
+            toActivate: ['a', 'a.b', 'a.b.c', 'a.b.c.d'],
+            toDeactivate: ['a.b.c', 'a.b', 'a']
+        })
+    })
 })

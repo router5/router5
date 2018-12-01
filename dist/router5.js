@@ -1213,6 +1213,7 @@
                 return startPlugin(plugin);
             });
             return function () {
+                routerPlugins = routerPlugins.filter(function (plugin) { return plugins.indexOf(plugin) === -1; });
                 removePluginFns.forEach(function (removePlugin) { return removePlugin(); });
             };
         };
@@ -1227,8 +1228,8 @@
                 .filter(Boolean);
             return function () {
                 removeEventListeners.forEach(function (removeListener) { return removeListener(); });
-                if (plugin.teardown) {
-                    plugin.teardown();
+                if (appliedPlugin.teardown) {
+                    appliedPlugin.teardown();
                 }
             };
         }
@@ -1365,7 +1366,8 @@
         }, {});
     };
     function transitionPath(toState, fromState) {
-        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
+        var toStateOptions = toState.meta && toState.meta && toState.meta.options || {};
+        var fromStateIds = fromState && !toStateOptions.reload ? nameToIDs(fromState.name) : [];
         var toStateIds = nameToIDs(toState.name);
         var maxI = Math.min(fromStateIds.length, toStateIds.length);
         function pointOfDifference() {
@@ -1593,7 +1595,9 @@
             var opts = typeof args[0] === 'object' ? args[0] : {};
             var done = args.length === 2
                 ? args[1]
-                : typeof args[0] === 'function' ? args[0] : noop;
+                : typeof args[0] === 'function'
+                    ? args[0]
+                    : noop;
             var options = router.getOptions();
             if (options.defaultRoute) {
                 return navigate(options.defaultRoute, options.defaultParams, opts, done);
@@ -1640,7 +1644,7 @@
                 router.invokeEventListeners(constants.TRANSITION_ERROR, toState, router.getState(), err);
                 return;
             }
-            var fromState = sameStates || opts.reload ? null : router.getState();
+            var fromState = router.getState();
             if (opts.skipTransition) {
                 done(null, toState);
                 return noop;

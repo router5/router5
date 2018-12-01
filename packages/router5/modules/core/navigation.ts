@@ -15,7 +15,9 @@ export default function withNavigation(router: Router): Router {
         const done =
             args.length === 2
                 ? args[1]
-                : typeof args[0] === 'function' ? args[0] : noop
+                : typeof args[0] === 'function'
+                ? args[0]
+                : noop
         const options = router.getOptions()
 
         if (options.defaultRoute) {
@@ -89,7 +91,7 @@ export default function withNavigation(router: Router): Router {
             return
         }
 
-        const fromState = sameStates || opts.reload ? null : router.getState()
+        const fromState = router.getState()
 
         if (opts.skipTransition) {
             done(null, toState)

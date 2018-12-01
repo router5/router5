@@ -52,6 +52,8 @@ export default function transitionPath(
     toState: State,
     fromState: State | null
 ): TransitionPath {
+    const toStateOptions =
+        (toState.meta && toState.meta && toState.meta.options) || {}
     const fromStateIds = fromState ? nameToIDs(fromState.name) : []
     const toStateIds = nameToIDs(toState.name)
     const maxI = Math.min(fromStateIds.length, toStateIds.length)
@@ -86,7 +88,7 @@ export default function transitionPath(
     }
 
     let i
-    if (!fromState) {
+    if (!fromState || toStateOptions.reload) {
         i = 0
     } else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {
         i = 0
