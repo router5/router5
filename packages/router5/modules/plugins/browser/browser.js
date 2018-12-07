@@ -49,8 +49,8 @@ const getLocation = opts => {
         ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '')
         : window.location.pathname.replace(new RegExp('^' + opts.base), '')
 
-    // Fix Frefox issue with non encoded pipe characters
-    const correctedPath = path.replace(/\|/g, '%7C')
+    // Fix issue with browsers that don't URL encode characters (Edge)
+    const correctedPath = encodeURI(decodeURI(path))
 
     return (correctedPath || '/') + window.location.search
 }
