@@ -30,7 +30,7 @@ export default function withPlugins(router) {
     }
 
     function addPlugin(plugin) {
-        if (!hasPlugin(plugin)) {
+        if (!hasPlugin(plugin.pluginName)) {
             plugins.push(plugin)
             startPlugin(plugin)
         }
