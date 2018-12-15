@@ -9,11 +9,12 @@ import useRouter from './hooks/useRouter'
 import useRoute from './hooks/useRoute'
 import useRouteNode from './hooks/useRouteNode'
 
-const Link = withRoute(BaseLink)
+const ConnectedLink = withRoute(BaseLink)
+const Link = withRouter(BaseLink)
 
 export {
     RouterProvider,
-    BaseLink,
+    ConnectedLink,
     Link,
     withRouter,
     withRoute,

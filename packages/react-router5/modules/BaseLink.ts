@@ -26,13 +26,12 @@ export interface BaseLinkState {
 }
 
 class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
-    static contextType = routerContext
     public router: Router
 
     constructor(props, context) {
         super(props, context)
 
-        this.router = context
+        this.router = this.props.router
         this.isActive = this.isActive.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
         this.callback = this.callback.bind(this)
