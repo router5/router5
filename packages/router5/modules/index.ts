@@ -14,6 +14,7 @@ export {
     Dependencies,
     Router,
     Plugin,
+    PluginFactory,
     Middleware,
     SubscribeState,
     SubscribeFn,

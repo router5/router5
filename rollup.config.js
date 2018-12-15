@@ -3,20 +3,13 @@ const { uglify } = require('rollup-plugin-uglify')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const commonjs = require('rollup-plugin-commonjs')
 
-const formatSuffix = {
-    es: '.es',
-    cjs: ''
-}
-
 const makeConfig = ({
     packageName,
     declaration = false,
-    format,
+    umd = false,
     compress = false,
     file
 }) => {
-    const outputFile =
-        file || `packages/${packageName}/dist/index${formatSuffix[format]}.js`
     const plugins = [
         nodeResolve({ jsnext: true, module: true }),
         commonjs({
@@ -39,14 +32,8 @@ const makeConfig = ({
 
     return {
         input: `packages/${packageName}/modules/index.ts`,
-        output: {
-            file: outputFile,
-            name: packageName,
-            format
-        },
         external:
-            format === 'es' || format === 'cjs'
-                ? Object.keys(
+            umd ? [] : Object.keys(
                       require(`./packages/${packageName}/package.json`)
                           .dependencies || {}
                   ).concat(
@@ -54,35 +41,44 @@ const makeConfig = ({
                           require(`./packages/${packageName}/package.json`)
                               .peerDependencies || {}
                       )
-                  )
-                : [],
+                  ),
+        output: umd ? {
+            file,
+            name: packageName,
+            format: 'umd'
+        } : [
+            {
+                format: 'es',
+                file: `packages/${packageName}/dist/index.es.js`
+            },
+            {
+                format: 'cjs',
+                file: `packages/${packageName}/dist/index.js`
+            }
+        ],
         plugins
     }
 }
 
-const format = process.env.FORMAT
-const declaration = format === 'cjs'
 const makePackageConfig = packageName =>
     makeConfig({
         packageName,
-        declaration,
-        format
+        declaration: true
     })
 
 module.exports = [
-    format === 'cjs' &&
-        makeConfig({
-            packageName: 'router5',
-            file: 'dist/router5.min.js',
-            format: 'umd',
-            compress: true
-        }),
-    format === 'cjs' &&
-        makeConfig({
-            packageName: 'router5',
-            file: 'dist/router5.js',
-            format: 'umd'
-        }),
+    makeConfig({
+        packageName: 'router5',
+        file: 'dist/router5.min.js',
+        umd: true,
+        compress: true
+    }),
+    makeConfig({
+        packageName: 'router5',
+        file: 'dist/router5.js',
+        umd: true,
+        format: 'umd'
+    }),
     makePackageConfig('router5'),
     makePackageConfig('router5-helpers'),
     makePackageConfig('router5-transition-path'),

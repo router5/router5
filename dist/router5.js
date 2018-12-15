@@ -1366,8 +1366,8 @@
         }, {});
     };
     function transitionPath(toState, fromState) {
-        var toStateOptions = toState.meta && toState.meta && toState.meta.options || {};
-        var fromStateIds = fromState && !toStateOptions.reload ? nameToIDs(fromState.name) : [];
+        var toStateOptions = (toState.meta && toState.meta && toState.meta.options) || {};
+        var fromStateIds = fromState ? nameToIDs(fromState.name) : [];
         var toStateIds = nameToIDs(toState.name);
         var maxI = Math.min(fromStateIds.length, toStateIds.length);
         function pointOfDifference() {
@@ -1397,7 +1397,7 @@
             return i;
         }
         var i;
-        if (!fromState) {
+        if (!fromState || toStateOptions.reload) {
             i = 0;
         }
         else if (!hasMetaParams(fromState) && !hasMetaParams(toState)) {

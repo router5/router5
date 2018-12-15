@@ -5,9 +5,7 @@ export interface NavigationOptions {
     force?: boolean
     [key: string]: any
 }
-export interface Params {
-    [key: string]: any
-}
+export declare type Params = Record<string, any>
 export declare type Unsubscribe = () => void
 export declare type DoneFn = (err?: any, state?: State) => void
 export declare type CancelFn = () => void

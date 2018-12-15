@@ -3,8 +3,23 @@ import RouteNode from 'route-node'
 import transitionPath from 'router5-transition-path'
 import { constants, errorCodes, ErrorCodes, Constants } from './constants'
 import cloneRouter from './clone'
-export { Route, ActivationFn, Router, PluginFactory } from './types/router'
-export { State, NavigationOptions } from './types/base'
+export {
+    CreateRouter,
+    Route,
+    Options,
+    ActivationFn,
+    ActivationFnFactory,
+    Dependencies,
+    Router,
+    Plugin,
+    PluginFactory,
+    Middleware,
+    SubscribeState,
+    SubscribeFn,
+    Listener,
+    Subscription
+} from './types/router'
+export { State, StateMeta, NavigationOptions } from './types/base'
 export {
     createRouter,
     cloneRouter,
