@@ -5,8 +5,8 @@ import {
     withRoute,
     withRouter,
     routeNode,
-    BaseLink,
-    Link
+    Link,
+    ConnectedLink
 } from '..'
 import { mount, configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
@@ -71,7 +71,7 @@ describe('routeNode hoc', () => {
     })
 })
 
-describe('BaseLink component', () => {
+describe('Link component', () => {
     let router
 
     beforeAll(() => {
@@ -82,7 +82,7 @@ describe('BaseLink component', () => {
         router.addNode('home', '/home')
         const output = mount(
             <RouterProvider router={router}>
-                <BaseLink routeName={'home'} />
+                <Link routeName={'home'} />
             </RouterProvider>
         )
         expect(output.find('a').prop('href')).toBe('/home')
@@ -94,7 +94,7 @@ describe('BaseLink component', () => {
         router.start()
         const output = mount(
             <RouterProvider router={router}>
-                <BaseLink routeName={'home'} />
+                <Link routeName={'home'} />
             </RouterProvider>
         )
         expect(output.find('a').prop('className')).toContain('active')
@@ -104,7 +104,7 @@ describe('BaseLink component', () => {
         router.start()
         const output = mount(
             <RouterProvider router={router}>
-                <Link routeName="home" title="Hello" target="_blank" />
+                <ConnectedLink routeName="home" title="Hello" target="_blank" />
             </RouterProvider>
         )
         const a = output.find('a')
@@ -121,7 +121,7 @@ describe('BaseLink component', () => {
         const onMouseLeave = () => {}
         const output = mount(
             <RouterProvider router={router}>
-                <Link
+                <ConnectedLink
                     routeName={'home'}
                     title="Hello"
                     data-test-id="Link"

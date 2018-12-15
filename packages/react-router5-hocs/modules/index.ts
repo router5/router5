@@ -1,9 +1,9 @@
 import RouterProvider from './RouterProvider'
-import BaseLink from './BaseLink'
+import Link from './Link'
 import withRouter from './withRouter'
 import withRoute from './withRoute'
 import routeNode from './routeNode'
 
-const Link = withRoute(BaseLink)
+const ConnectedLink = withRoute(Link)
 
-export { RouterProvider, BaseLink, Link, withRouter, withRoute, routeNode }
+export { RouterProvider, ConnectedLink, Link, withRouter, withRoute, routeNode }
