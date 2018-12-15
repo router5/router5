@@ -1,3 +1,14 @@
+## router5@6.6.3 (2018-12-15)
+
+#### Bug fix
+* `router5`
+  * [#386](https://github.com/router5/router5/pull/386) Fix hasPlugin function. ([@BEGEMOT9I](https://github.com/BEGEMOT9I))
+
+#### Committers: 1
+- [BEGEMOT9I](https://github.com/BEGEMOT9I)
+
+
+
 ## router5@6.6.2 (2018-10-23)
 
 #### Bug fix
