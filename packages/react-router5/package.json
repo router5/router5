@@ -28,7 +28,7 @@
     "router5": "^6.6.2"
   },
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
+    "react": ">=16.3.0",
     "router5": ">= 6.1.0 < 7.0.0"
   },
   "dependencies": {
