@@ -1,3 +1,7 @@
+# router5@7.0.0 (2018-12-??)
+
+See migration guide: https://router5.js.org/migration/migrating-from-6.x-to-7.x
+
 ## router5@6.6.3 (2018-12-15)
 
 #### Bug fix
