@@ -2,9 +2,9 @@
   "name": "react-router5-hocs",
   "version": "6.5.3",
   "description": "router5 helpers for React",
-  "main": "dist/commonjs/index.js",
-  "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"

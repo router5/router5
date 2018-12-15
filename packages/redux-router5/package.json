@@ -2,9 +2,9 @@
   "name": "redux-router5",
   "version": "6.0.5",
   "description": "Router5 integration with redux",
-  "main": "index.js",
-  "module": "dist/es/index.js",
-  "jnext:main": "dist/es/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jnext:main": "dist/index.es.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"

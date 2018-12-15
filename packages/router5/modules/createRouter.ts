@@ -29,7 +29,6 @@ const createRouter: CreateRouter = (
 
     return pipe(
         withOptions(options),
-        withRoutes(routes),
         withDependencies(dependencies),
         withObservability,
         withState,
@@ -37,7 +36,8 @@ const createRouter: CreateRouter = (
         withRouteLifecycle,
         withNavigation,
         withPlugins,
-        withMiddleware
+        withMiddleware,
+        withRoutes(routes)
     )({ config } as Router)
 }
 
