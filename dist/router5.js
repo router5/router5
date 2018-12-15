@@ -1837,7 +1837,7 @@
             defaultParams: {},
             forwardMap: {}
         };
-        return pipe(withOptions(options), withRoutes(routes), withDependencies(dependencies), withObservability, withState, withRouterLifecycle, withRouteLifecycle, withNavigation, withPlugins, withMiddleware)({ config: config });
+        return pipe(withOptions(options), withDependencies(dependencies), withObservability, withState, withRouterLifecycle, withRouteLifecycle, withNavigation, withPlugins, withMiddleware, withRoutes(routes))({ config: config });
     };
 
     function cloneRouter(router, dependencies) {
