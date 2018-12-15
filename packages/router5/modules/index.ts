@@ -5,8 +5,22 @@ import { constants, errorCodes, ErrorCodes, Constants } from './constants'
 import cloneRouter from './clone'
 
 // Types
-export { Route, ActivationFn, Router, PluginFactory } from './types/router'
-export { State, NavigationOptions } from './types/base'
+export {
+    CreateRouter,
+    Route,
+    Options,
+    ActivationFn,
+    ActivationFnFactory,
+    Dependencies,
+    Router,
+    Plugin,
+    Middleware,
+    SubscribeState,
+    SubscribeFn,
+    Listener,
+    Subscription
+} from './types/router'
+export { State, StateMeta, NavigationOptions } from './types/base'
 
 export {
     createRouter,

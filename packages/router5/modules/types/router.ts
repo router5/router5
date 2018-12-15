@@ -56,15 +56,13 @@ export type ActivationFnFactory = (
     dependencies?: Dependencies
 ) => ActivationFn
 
-export interface Dependencies {
-    [key: string]: any
-}
+export type Dependencies = Record<string, any>
 
 export interface Config {
-    decoders: { [key: string]: any }
-    encoders: { [key: string]: any }
-    defaultParams: { [key: string]: any }
-    forwardMap: { [key: string]: any }
+    decoders: Record<string, any>
+    encoders: Record<string, any>
+    defaultParams: Record<string, any>
+    forwardMap: Record<string, any>
 }
 
 export interface Router {
@@ -172,7 +170,7 @@ export interface Router {
         done: DoneFn
     )
 
-    subscribe(listener: SubscribeFn | Listener): UnsubscribeFn | Subscription
+    subscribe(listener: SubscribeFn | Listener): Unsubscribe | Subscription
 }
 
 export interface Plugin {
@@ -211,13 +209,11 @@ export interface SubscribeState {
 
 export type SubscribeFn = (state: SubscribeState) => void
 
-export type UnsubscribeFn = () => void
-
 export interface Listener {
     next: (val: any) => {}
     [key: string]: any
 }
 
 export interface Subscription {
-    unsubscribe: UnsubscribeFn
+    unsubscribe: Unsubscribe
 }

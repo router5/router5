@@ -6,9 +6,7 @@ export interface NavigationOptions {
     [key: string]: any
 }
 
-export interface Params {
-    [key: string]: any
-}
+export type Params = Record<string, any>
 
 export type Unsubscribe = () => void
 
