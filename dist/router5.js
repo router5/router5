@@ -1244,11 +1244,16 @@
             for (var _i = 0; _i < arguments.length; _i++) {
                 middlewares[_i] = arguments[_i];
             }
-            middlewares.forEach(function (middleware) {
+            var removePluginFns = middlewares.map(function (middleware) {
+                var middlewareFunction = router.executeFactory(middleware);
                 middlewareFactories.push(middleware);
-                middlewareFunctions.push(router.executeFactory(middleware));
+                middlewareFunctions.push(middlewareFunction);
+                return function () {
+                    middlewareFactories = middlewareFactories.filter(function (m) { return m !== middleware; });
+                    middlewareFunctions = middlewareFunctions.filter(function (m) { return m !== middlewareFunction; });
+                };
             });
-            return router;
+            return function () { return removePluginFns.forEach(function (fn) { return fn(); }); };
         };
         router.clearMiddleware = function () {
             middlewareFactories = [];

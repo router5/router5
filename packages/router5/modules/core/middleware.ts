@@ -5,12 +5,25 @@ export default function withMiddleware(router: Router): Router {
     let middlewareFunctions = []
 
     router.useMiddleware = (...middlewares) => {
-        middlewares.forEach(middleware => {
-            middlewareFactories.push(middleware)
-            middlewareFunctions.push(router.executeFactory(middleware))
-        })
+        const removePluginFns: Array<() => void> = middlewares.map(
+            middleware => {
+                const middlewareFunction = router.executeFactory(middleware)
 
-        return router
+                middlewareFactories.push(middleware)
+                middlewareFunctions.push(middlewareFunction)
+
+                return () => {
+                    middlewareFactories = middlewareFactories.filter(
+                        m => m !== middleware
+                    )
+                    middlewareFunctions = middlewareFunctions.filter(
+                        m => m !== middlewareFunction
+                    )
+                }
+            }
+        )
+
+        return () => removePluginFns.forEach(fn => fn())
     }
 
     router.clearMiddleware = () => {

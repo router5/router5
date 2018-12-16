@@ -134,7 +134,7 @@ export interface Router {
     addPlugin(plugin: Plugin): Router
     getPlugins(): PluginFactory[]
 
-    useMiddleware(...middlewares: MiddlewareFactory[]): Router
+    useMiddleware(...middlewares: MiddlewareFactory[]): Unsubscribe
     clearMiddleware(): Router
     getMiddlewareFactories: () => MiddlewareFactory[]
     getMiddlewareFunctions: () => Middleware[]

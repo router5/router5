@@ -1,6 +1,6 @@
 import { NavigationOptions, State, Router } from 'router5'
 import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
-export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
+export interface LinkProps extends HTMLAttributes<HTMLAnchorElement> {
     routeName: string
     routeParams?: {
         [key: string]: any
@@ -19,10 +19,10 @@ export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     previousRoute?: State
     router?: Router
 }
-export interface BaseLinkState {
+export interface LinkState {
     active: boolean
 }
-declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
+declare class Link extends Component<LinkProps, LinkState> {
     router: Router
     constructor(props: any, context: any)
     buildUrl(routeName: any, routeParams: any): any
@@ -508,4 +508,4 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
         HTMLElement
     >
 }
-export default BaseLink
+export default Link

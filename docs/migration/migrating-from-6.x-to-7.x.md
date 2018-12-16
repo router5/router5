@@ -23,7 +23,8 @@ An `unmaintained` directory has been created to move packages which are no longe
     - `router5-plugin-logger`
     - `router5-plugin-listeners`
     - `router5-plugin-persistent-params`
-- `usePlugin` no longer returns your router instance, but a teardown function to remove plugins. You can still pass multiple plugins, in which case calling the teardown function will remove all plugins.
+- `useMiddleware` no longer returns your router instance, but a function to remove the added middleware. You can still pass multiple middleware, in which case calling the teardown function will remove all of them.
+- `usePlugin` no longer returns your router instance, but a function to remove the added plugin. You can still pass multiple plugins, in which case calling the teardown function will remove all of them.
 - Cloning is now done using a `cloneRouter` function, and it no longer re-uses existing dependencies
     ```js
     import { cloneRouter } from 'router5'
