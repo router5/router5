@@ -19,16 +19,16 @@ npm install router5
 // ES2015+
 import createRouter from 'router5';
 
-import browserPlugin from 'router5/plugins/browser';
-import persistentParamsPlugin from 'router5/plugins/persistentParams';
+import browserPlugin from 'router5-plugin-browser';
+import persistentParamsPlugin from 'router5-plugin-persistent-params';
 ```
 
 ### CommonJS syntax
 
 ```javascript
 var createRouter = require('router5').default;
-var browserPlugin = require('router5/plugins/browser');
-var persistentParamsPlugin = require('router5/plugins/persistentParams');
+var browserPlugin = require('router5-plugin-browser');
+var persistentParamsPlugin = require('router5-plugin-persistent-params');
 ```
 
 ### UMD

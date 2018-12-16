@@ -18,7 +18,7 @@ router5 is a **framework and view library agnostic router**.
 
 ```javascript
 import createRouter from 'router5'
-import browserPlugin from 'router5/plugins/browser'
+import browserPlugin from 'router5-plugin-browser'
 
 const routes = [
     { name: 'home', path: '/' },
@@ -26,12 +26,13 @@ const routes = [
 ]
 
 const router = createRouter(routes)
-    .usePlugin(browserPlugin())
+
+router.usePlugin(browserPlugin())
 
 router.start()
 ```
 
-**With React \(new context API\)**
+**With React
 
 ```javascript
 import React from 'react'

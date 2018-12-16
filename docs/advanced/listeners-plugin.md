@@ -7,10 +7,11 @@
 ## Usage
 
 ```javascript
-import listenersPlugin from 'router5/plugins/listeners';
+import listenersPlugin from 'router5-plugin-listeners'
 
 const router = createRouter()
-    .usePlugin(listenersPlugin());
+
+router.usePlugin(listenersPlugin())
 ```
 
 ## Types of listeners
@@ -28,4 +29,3 @@ Listeners registered with `addListener(fn)` will be triggered on any route chang
 ## Listen to a specific route
 
 `addRouteListener(name, fn)` will register a listener which will be triggered when the router is navigating to the supplied route name.
-

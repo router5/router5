@@ -17,9 +17,9 @@ const router = createRouter(routes, options);
 `router5-history`, `router5-persistent-params` and `router5-listeners` have been moved to router5 main repository. They are no longer individual modules but are distributed with router5 module.
 
 ```javascript
-import browserPlugin from 'router5/plugins/browser';
-import listenersPlugin from 'router5/plugins/listeners';
-import persistentParamsPlugin from 'router5/plugins/persistentParams';
+import browserPlugin from 'router5-plugin-browser';
+import listenersPlugin from 'router5-plugin-listeners';
+import persistentParamsPlugin from 'router5-plugin-persistent-params';
 ```
 
 The history plugin has been renamed 'browser plugin', to better describe its responsabilities. It deals with any URL related options and methods, to make router5 fully runtime environment agnostic:
@@ -28,7 +28,7 @@ The history plugin has been renamed 'browser plugin', to better describe its res
 * `buildUrl`, `matchUrl` and `urlToPath` methods are no longer present by default and are added to your router instance by `browserPlugin`.
 
 ```javascript
-import browserPlugin from 'router5/plugins/browser';
+import browserPlugin from 'router5-plugin-browser';
 
 router.usePlugin(browserPlugin({
     useHash: true
