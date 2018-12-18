@@ -1,0 +1,42 @@
+{
+  "name": "react-router5-hocs",
+  "version": "6.5.3",
+  "description": "router5 helpers for React",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router",
+    "html5",
+    "history",
+    "tree",
+    "react",
+    "functional"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5/issues"
+  },
+  "homepage": "https://router5.js.org",
+  "devDependencies": {
+    "enzyme-adapter-react-16": "~1.7.0",
+    "router5": "^6.6.2"
+  },
+  "peerDependencies": {
+    "react": "^15.0.0 || ^16.0.0",
+    "router5": "^7.0.0"
+  },
+  "dependencies": {
+    "prop-types": "~15.6.2",
+    "router5-transition-path": "5.4.0"
+  },
+  "typings": "./index.d.ts",
+  "scripts": {
+    "test": "jest"
+  }
+}

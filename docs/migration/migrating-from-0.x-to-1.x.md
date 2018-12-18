@@ -21,9 +21,9 @@ npm install router5
 // ES2015+
 import createRouter, { RouteNode, errorCodes, transitionPath, loggerPlugin, constants } from 'router5';
 
-import browserPlugin from 'router5/plugins/browser';
-import listenersPlugin from 'router5/plugins/listeners';
-import persistentParamsPlugin from 'router5/plugins/persistentParams';
+import browserPlugin from 'router5-plugin-browser';
+import listenersPlugin from 'router5-plugin-listeners';
+import persistentParamsPlugin from 'router5-plugin-persistent-params';
 
 // ES5
 var router5 = require('router5');
@@ -36,9 +36,9 @@ var transitionPath = router5.transitionPath;
 var loggerPlugin = router5.loggerPlugin;
 var constants = router5.constants;
 
-var browserPlugin = require('router5/plugins/browser');
-var listenersPlugin = require('router5/plugins/listeners');
-var persistentParamsPlugin = require('router5/plugins/persistentParams');
+var browserPlugin = require('router5-plugin-browser');
+var listenersPlugin = require('router5-plugin-listeners');
+var persistentParamsPlugin = require('router5-plugin-persistent-params');
 ```
 
 **UMD**

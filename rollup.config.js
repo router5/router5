@@ -1,62 +1,95 @@
-import babel from 'rollup-plugin-babel'
-import uglify from 'rollup-plugin-uglify'
-import nodeResolve from 'rollup-plugin-node-resolve'
-import common from 'rollup-plugin-commonjs'
+const typescript = require('rollup-plugin-typescript2')
+const { uglify } = require('rollup-plugin-uglify')
+const nodeResolve = require('rollup-plugin-node-resolve')
+const commonjs = require('rollup-plugin-commonjs')
 
-const babelOptions = {
-    runtimeHelpers: true,
-    presets: [['env', { modules: false }], 'react'],
-    plugins: [
-        'external-helpers',
-        'transform-object-rest-spread',
-        'transform-class-properties',
-        'transform-export-extensions'
-    ],
-    babelrc: false
-}
-
-const modules = {
-    router5: 'packages/router5/modules/index.js',
-    router5BrowserPlugin: 'packages/router5/modules/plugins/browser/index.js',
-    router5ListenersPlugin:
-        'packages/router5/modules/plugins/listeners/index.js',
-    persistentParamsPlugin:
-        'packages/router5/modules/plugins/persistentParams/index.js',
-    reactRouter5: 'packages/react-router5/modules/index.js',
-    reduxRouter5: 'packages/redux-router5/modules/index.js',
-    router5Helpers: 'packages/router5-helpers/modules/index.js'
-}
-
-const modulesToBuild = Object.keys(modules).reduce((acc, moduleName) => {
-    const base = {
-        input: modules[moduleName],
-        external: ['react']
-    }
-    const packageDir = modules[moduleName].match(/^packages\/([\w-]+)\//)[1]
+const makeConfig = ({
+    packageName,
+    declaration = false,
+    umd = false,
+    compress = false,
+    file
+}) => {
     const plugins = [
         nodeResolve({ jsnext: true, module: true }),
-        common({ include: `packages/${packageDir}/node_modules/**` }),
-        babel(babelOptions)
-    ]
-
-    return acc.concat([
-        Object.assign({}, base, {
-            output: {
-                file: `dist/${moduleName}.js`,
-                name: moduleName,
-                format: 'umd'
-            },
-            plugins
+        commonjs({
+            include: `packages/${packageName}/node_modules/**`,
+            namedExports: {
+                [`packages/${packageName}/node_modules/immutable/dist/immutable.js`]: [
+                    'Record',
+                    'Map'
+                ]
+            }
         }),
-        Object.assign({}, base, {
-            output: {
-                file: `dist/${moduleName}.min.js`,
-                name: moduleName,
-                format: 'umd'
-            },
-            plugins: plugins.concat(uglify())
-        })
-    ])
-}, [])
+        typescript({
+            tsconfig: `./packages/${packageName}/tsconfig.build.json`,
+            useTsconfigDeclarationDir: true,
+            clean: true,
+            tsconfigOverride: { compilerOptions: { declaration } }
+        }),
+        compress && uglify()
+    ].filter(Boolean)
 
-export default modulesToBuild
+    return {
+        input: `packages/${packageName}/modules/index.ts`,
+        external:
+            umd ? [] : Object.keys(
+                      require(`./packages/${packageName}/package.json`)
+                          .dependencies || {}
+                  ).concat(
+                      Object.keys(
+                          require(`./packages/${packageName}/package.json`)
+                              .peerDependencies || {}
+                      )
+                  ),
+        output: umd ? {
+            file,
+            name: packageName,
+            format: 'umd'
+        } : [
+            {
+                format: 'es',
+                file: `packages/${packageName}/dist/index.es.js`
+            },
+            {
+                format: 'cjs',
+                file: `packages/${packageName}/dist/index.js`
+            }
+        ],
+        plugins
+    }
+}
+
+const makePackageConfig = packageName =>
+    makeConfig({
+        packageName,
+        declaration: true
+    })
+
+module.exports = [
+    makeConfig({
+        packageName: 'router5',
+        file: 'dist/router5.min.js',
+        umd: true,
+        compress: true
+    }),
+    makeConfig({
+        packageName: 'router5',
+        file: 'dist/router5.js',
+        umd: true,
+        format: 'umd'
+    }),
+    makePackageConfig('router5'),
+    makePackageConfig('router5-helpers'),
+    makePackageConfig('router5-transition-path'),
+    makePackageConfig('router5-plugin-browser'),
+    makePackageConfig('router5-plugin-logger'),
+    makePackageConfig('router5-plugin-listeners'),
+    makePackageConfig('router5-plugin-persistent-params'),
+    makePackageConfig('rxjs-router5'),
+    makePackageConfig('xstream-router5'),
+    makePackageConfig('react-router5'),
+    makePackageConfig('react-router5-hocs'),
+    makePackageConfig('redux-router5'),
+    makePackageConfig('redux-router5-immutable')
+].filter(Boolean)

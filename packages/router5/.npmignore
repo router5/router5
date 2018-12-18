@@ -1,7 +1,8 @@
 **/.*
 modules
 coverage
-tests
+test
 node_modules
 *.md
 *.config.js
+*.json

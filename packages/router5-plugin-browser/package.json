@@ -1,0 +1,33 @@
+{
+  "name": "router5-plugin-browser",
+  "version": "0.0.0",
+  "description": "Router5 browser plugin",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router5",
+    "helpers"
+  ],
+  "author": "Thomas Roch <thomas.c.roch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5/issues"
+  },
+  "devDependencies": {
+      "router5": "^6.6.2"
+  },
+  "peerDependencies": {
+    "router5": "^7.0.0"
+  },
+  "homepage": "https://github.com/router5/router5/tree/master/packages/router5-plugin-browser",
+  "typings": "./types/index.d.ts",
+  "scripts": {
+      "test": "jest"
+  }
+}

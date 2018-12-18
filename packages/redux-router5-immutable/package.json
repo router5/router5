@@ -1,0 +1,42 @@
+{
+  "name": "redux-router5-immutable",
+  "version": "6.0.5",
+  "description": "Router5 integration with redux",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "jnext:main": "dist/index.es.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/router5/router5.git"
+  },
+  "keywords": [
+    "router",
+    "redux",
+    "react",
+    "flux",
+    "router5",
+    "functional"
+  ],
+  "author": "Thomas Roch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/router5/router5/issues"
+  },
+  "homepage": "https://router5.js.org",
+  "devDependencies": {
+    "immutable": "^3.0.0",
+    "router5": "^6.0.0"
+  },
+  "peerDependencies": {
+    "redux": "^3.0.0 || ^4.0.0",
+    "router5": "^7.0.0",
+    "immutable": "^3.0.0"
+  },
+  "dependencies": {
+    "redux-router5": "6.0.5"
+  },
+  "typings": "./types/index.d.ts",
+  "scripts": {
+      "test": "jest"
+  }
+}

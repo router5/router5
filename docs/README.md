@@ -28,6 +28,7 @@
   * [Listeners plugin](advanced/listeners-plugin.md)
 * [API Reference](api-reference.md)
 * Migration
+  * [Migrating from 6.x to 7.x](migration/migrating-from-6.x-to-7.x.md)
   * [Migrating from 5.x to 6.x](migration/migrating-from-5.x-to-6.x.md)
   * [Migrating from 4.x to 5.x](migration/migrating-from-4.x-to-5.x.md)
   * [Migrating from 3.x to 4.x](migration/migrating-from-3.x-to-4.x.md)

@@ -1,6 +1,7 @@
 **/.*
+modules
 node_modules
 npm-debug.log
-test
 *.md
 *.config.js
+*.json

@@ -14,15 +14,16 @@ const router = createRouter([routes], [options], [dependencies])
 * `options`: your router options, see [router options](https://github.com/router5/router5/tree/1cc1c6969a96918deb28e45b8c5b2d6aa19d0a19/docs/guides/router5-options.md)
 * `dependencies`: the dependencies you want to make available in middleware and plugins, see [dependency injection](https://github.com/router5/router5/tree/1cc1c6969a96918deb28e45b8c5b2d6aa19d0a19/docs/adavanced/dependency-injection.md)
 
-### clone
+### cloneRouter
 
 Clone an existing router.
 
 ```javascript
-const clonedRouter = router.clone(dependencies)
+const clonedRouter = cloneRouter(router, dependencies)
 ```
 
-* `dependencies`: the new dependencies, for the cloned router
+* `router`: the router instance to clone
+* `dependencies`: the new dependencies, for the cloned router (optional)
 
 ### add
 
@@ -147,7 +148,7 @@ const dependencies = router.getDependencies()
 Register one or multiple middlewares, see [middleware](advanced/middleware.md)
 
 ```javascript
-router.useMiddleware(...middlewares)
+const remove = router.useMiddleware(...middlewares)
 ```
 
 ### clearMiddleware
@@ -163,16 +164,9 @@ router.clearMiddleware()
 Register one or multiple plugins, see [plugins](advanced/plugins.md)
 
 ```javascript
-router.usePlugin(...plugins)
+const teardown = router.usePlugin(...plugins)
 ```
 
-### hasPlugin
-
-Check if a plugin is in use
-
-```javascript
-router.hasPlugin(pluginName)
-```
 
 ### canActivate
 
