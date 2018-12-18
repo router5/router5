@@ -1,6 +1,6 @@
 {
   "name": "router5-helpers",
-  "version": "5.2.1",
+  "version": "7.0.0",
   "description": "Router5 helpers for comparing and checking routes",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -22,6 +22,6 @@
   "homepage": "https://github.com/router5/router5/tree/master/packages/router5-helpers",
   "typings": "./types/index.d.ts",
   "scripts": {
-      "test": "jest"
+    "test": "jest"
   }
 }

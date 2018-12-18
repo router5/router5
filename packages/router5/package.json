@@ -1,6 +1,6 @@
 {
   "name": "router5",
-  "version": "6.6.3",
+  "version": "7.0.0",
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -27,11 +27,11 @@
   "homepage": "https://router5.js.org",
   "dependencies": {
     "route-node": "3.4.2",
-    "router5-transition-path": "5.4.0",
+    "router5-transition-path": "^7.0.0",
     "symbol-observable": "1.2.0"
   },
   "typings": "./types/index.d.ts",
   "scripts": {
-      "test": "jest"
+    "test": "jest"
   }
 }

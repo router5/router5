@@ -1,6 +1,6 @@
 {
   "name": "router5-transition-path",
-  "version": "5.4.0",
+  "version": "7.0.0",
   "description": "Router5 transition path helper function",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -25,6 +25,6 @@
   },
   "typings": "./types/index.d.ts",
   "scripts": {
-      "test": "jest"
+    "test": "jest"
   }
 }
