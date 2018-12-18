@@ -1,4 +1,4 @@
-# router5@7.0.0 (2018-12-??)
+# router5@7.0.0 (2018-12-18)
 
 See migration guide: https://router5.js.org/migration/migrating-from-6.x-to-7.x
 

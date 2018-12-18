@@ -1,7 +1,5 @@
 import { NavigationOptions, State, Router } from 'router5'
 import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
-import PropTypes from 'prop-types'
-import { routerContext } from './context'
 
 export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     routeName: string

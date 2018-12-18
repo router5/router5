@@ -1,4 +1,4 @@
-import * as actionTypes from '../../redux-router5/modules/actionTypes'
+import { actionTypes } from 'redux-router5'
 import { Record } from 'immutable'
 
 const State = Record({

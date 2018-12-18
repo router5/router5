@@ -2,4 +2,8 @@
 
 # redux-router5-immutable
 
-Identical to [redux-router5](https://github.com/router5/router5/tree/master/packages/redux-router5) package, except that the reducer uses [immutable-js](https://github.com/facebook/immutable-js).
+A reducer for `redux-router5` using [immutable-js](https://github.com/facebook/immutable-js).
+
+```js
+import { router5Reducer } from 'redux-router5-immutable'
+```

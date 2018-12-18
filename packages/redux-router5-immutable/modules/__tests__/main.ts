@@ -1,11 +1,7 @@
 import { State } from 'router5'
 import { Record, Map } from 'immutable'
-import {
-    createRouteNodeSelector,
-    router5Reducer,
-    actions,
-    actionTypes
-} from '..'
+import { createRouteNodeSelector, actions, actionTypes } from 'redux-router5'
+import { router5Reducer } from '../'
 
 const route1 = { name: 'a.1', meta: { params: {} } } as State
 const route2 = { name: 'a.2', meta: { params: {} } } as State

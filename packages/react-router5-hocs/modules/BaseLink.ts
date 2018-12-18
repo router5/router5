@@ -1,8 +1,7 @@
 import { NavigationOptions, State, Router } from 'router5'
 import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
-import PropTypes from 'prop-types'
 
-export interface LinkProps extends HTMLAttributes<HTMLAnchorElement> {
+export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     routeName: string
     routeParams?: { [key: string]: any }
     routeOptions?: NavigationOptions
@@ -20,17 +19,17 @@ export interface LinkProps extends HTMLAttributes<HTMLAnchorElement> {
     router?: Router
 }
 
-export interface LinkState {
+export interface BaseLinkState {
     active: boolean
 }
 
-class Link extends Component<LinkProps, LinkState> {
+class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
     public router: Router
+
     constructor(props, context) {
         super(props, context)
 
-        this.router = context.router
-
+        this.router = this.props.router
         this.isActive = this.isActive.bind(this)
         this.clickHandler = this.clickHandler.bind(this)
         this.callback = this.callback.bind(this)
@@ -139,8 +138,4 @@ class Link extends Component<LinkProps, LinkState> {
     }
 }
 
-Link.contextTypes = {
-    router: PropTypes.object.isRequired
-}
-
-export default Link
+export default BaseLink

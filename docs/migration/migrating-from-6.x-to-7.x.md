@@ -52,7 +52,7 @@ An `unmaintained` directory has been created to move packages which are no longe
 
 #### BREAKING CHANGES
 
-- For use with immutable.js, use `redux-router5-immutable`
+- For use with immutable.js, import `router5Reducer` from `redux-router5-immutable`
 
 ### router5-helpers
 

@@ -33,7 +33,7 @@
     "immutable": "^3.0.0"
   },
   "dependencies": {
-    "router5-transition-path": "5.4.0"
+    "redux-router5": "6.0.5"
   },
   "typings": "./types/index.d.ts",
   "scripts": {
