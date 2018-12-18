@@ -35,7 +35,7 @@
     "prop-types": "~15.6.2",
     "router5-transition-path": "^7.0.0"
   },
-  "typings": "./index.d.ts",
+  "typings": "./types/index.d.ts",
   "scripts": {
     "test": "jest"
   }
