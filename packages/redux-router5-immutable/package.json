@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "redux": "^3.0.0 || ^4.0.0",
-    "router5": "^5.0.0 || ^6.0.0",
+    "router5": "^7.0.0",
     "immutable": "^3.0.0"
   },
   "dependencies": {

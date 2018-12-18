@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
-    "router5": ">= 6.1.0 < 7.0.0"
+    "router5": "^7.0.0"
   },
   "dependencies": {
     "prop-types": "~15.6.2",
