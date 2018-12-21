@@ -16,9 +16,9 @@ const pipe = (...fns: Array<Enhancer>) => (arg: Router): Router =>
     fns.reduce((prev: Router, fn) => fn(prev), arg)
 
 const createRouter: CreateRouter = (
-    routes?,
-    options?,
-    dependencies?
+    routes = [],
+    options = {},
+    dependencies = {}
 ): Router => {
     const config = {
         decoders: {},

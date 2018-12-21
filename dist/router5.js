@@ -1836,6 +1836,9 @@
         };
     };
     var createRouter = function (routes, options, dependencies) {
+        if (routes === void 0) { routes = []; }
+        if (options === void 0) { options = {}; }
+        if (dependencies === void 0) { dependencies = {}; }
         var config = {
             decoders: {},
             encoders: {},
