@@ -1,6 +1,6 @@
 {
   "name": "react-router5-hocs",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "router5 helpers for React",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -25,7 +25,7 @@
   "homepage": "https://router5.js.org",
   "devDependencies": {
     "enzyme-adapter-react-16": "~1.7.0",
-    "router5": "^7.0.0"
+    "router5": "^7.0.1"
   },
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
