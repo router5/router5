@@ -1,3 +1,14 @@
+## router5@7.0.1 (2018-12-21)
+
+#### Bug fix
+* `router5`
+  * [#389](https://github.com/router5/router5/pull/389) Add createRouter argument defaults ([@troch](https://github.com/troch))
+
+#### Committers: 1
+- Thomas Roch ([@troch](https://github.com/troch))
+
+
+
 # router5@7.0.0 (2018-12-18)
 
 See migration guide: https://router5.js.org/migration/migrating-from-6.x-to-7.x
