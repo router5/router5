@@ -4,6 +4,7 @@ import transitionPath from 'router5-transition-path'
 import { constants, errorCodes, ErrorCodes, Constants } from './constants'
 import cloneRouter from './clone'
 export {
+    Config,
     CreateRouter,
     Route,
     Options,
@@ -14,6 +15,7 @@ export {
     Plugin,
     PluginFactory,
     Middleware,
+    MiddlewareFactory,
     SubscribeState,
     SubscribeFn,
     Listener,
