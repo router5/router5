@@ -41,9 +41,17 @@ const getLocation = opts => {
         : window.location.pathname.replace(new RegExp('^' + opts.base), '')
 
     // Fix issue with browsers that don't URL encode characters (Edge)
-    const correctedPath = encodeURI(decodeURI(path))
+    const correctedPath = safelyEncodePath(path)
 
     return (correctedPath || '/') + window.location.search
+}
+
+const safelyEncodePath = path => {
+    try {
+        return encodeURI(decodeURI(path))
+    } catch (_) {
+        return path
+    }
 }
 
 const getState = () => window.history.state
