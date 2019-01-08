@@ -1,10 +1,1 @@
 packages/*/dist
-packages/redux-router5/immutable
-packages/redux-router5/index.js
-packages/redux-router5/lib
-packages/router5/constants.js
-packages/router5/core
-packages/router5/create-router.js
-packages/router5/index.js
-packages/router5/plugins
-packages/router5/transition

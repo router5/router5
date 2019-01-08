@@ -1,10 +1,11 @@
 {
   "name": "rxjs-router5",
-  "version": "5.3.5",
-  "description": "RxJS 5+ plugin for router5",
-  "main": "dist/commonjs/index.js",
-  "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "version": "7.0.1",
+  "description": "RxJS plugin for router5",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
@@ -23,13 +24,19 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/rxjs-router5",
+  "devDependencies": {
+    "router5": "^7.0.1",
+    "rxjs": "^6.3.3"
+  },
   "dependencies": {
-    "router5-transition-path": "5.4.0",
-    "rxjs": "~5.4.3"
+    "router5-transition-path": "^7.0.0"
   },
   "peerDependencies": {
-    "router5": "^5.0.0 || ^6.0.0",
-    "rxjs": "^5.0.0"
+    "router5": "^7.0.0",
+    "rxjs": "^6.0.0"
   },
-  "typings": "./index.d.ts"
+  "typings": "./types/index.d.ts",
+  "scripts": {
+    "test": "jest"
+  }
 }

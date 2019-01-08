@@ -19,7 +19,7 @@ In both cases, __use the provided reducer (`router5Reducer`).__
 
 ## Using the router plugin
 
-If you choose to not use the middleware, you need to add `reduxPlugin` to your router. The plugin simply syncs the router state with redux. To navigate, you will need to invoke `router.navigate`. If you use React, you can use `BaseLink` from `react-router5`.
+If you choose to not use the middleware, you need to add `reduxPlugin` to your router. The plugin simply syncs the router state with redux. To navigate, you will need to invoke `router.navigate`. If you use React, you can use `Link` from `react-router5`.
 
 ```js
 import { reduxPlugin } from 'redux-router5';
@@ -119,13 +119,4 @@ export default connect(state => {
         ...routeNodeSelector(state)
     })
 )(Root);
-```
-
-
-## With immutable-js
-
-If you are using [immutable-js](https://github.com/facebook/immutable-js) and [redux-immutable](https://github.com/gajus/redux-immutable) simply use the reducer from 'redux-router5/immutable/reducer' 
-
-```javascript
-import router5Reducer from 'redux-router5/immutable/reducer';
 ```

@@ -1,10 +1,10 @@
 {
   "name": "react-router5",
-  "version": "6.5.3",
+  "version": "7.0.2",
   "description": "router5 helpers for React",
-  "main": "dist/commonjs/index.js",
-  "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
@@ -23,16 +23,20 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://router5.js.org",
+  "devDependencies": {
+    "enzyme-adapter-react-16": "~1.7.0",
+    "router5": "^7.0.1"
+  },
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
-    "router5": ">= 6.1.0 < 7.0.0"
+    "react": ">=16.3.0",
+    "router5": "^7.0.0"
   },
   "dependencies": {
-    "prop-types": "^15.6.0",
-    "router5-transition-path": "5.4.0"
+    "prop-types": "~15.6.2",
+    "router5-transition-path": "^7.0.0"
   },
-  "typings": "./index.d.ts",
-  "devDependencies": {
-    "enzyme-adapter-react-16": "~1.1.1"
+  "typings": "./types/index.d.ts",
+  "scripts": {
+    "test": "jest"
   }
 }

@@ -1,10 +1,11 @@
 {
   "name": "router5-transition-path",
-  "version": "5.4.0",
+  "version": "7.0.0",
   "description": "Router5 transition path helper function",
-  "main": "dist/commonjs/index.js",
-  "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "sideEffects": "false",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/router5/router5.git"
@@ -20,9 +21,10 @@
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/router5-transition-path",
   "peerDependencies": {
-    "router5": "^5.0.0 || ^6.0.0"
+    "router5": "^7.0.0"
   },
-  "devDependencies": {
-    "babel-plugin-add-module-exports": "~0.2.1"
+  "typings": "./types/index.d.ts",
+  "scripts": {
+    "test": "jest"
   }
 }

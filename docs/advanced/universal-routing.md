@@ -11,10 +11,10 @@ You can use the same code for configuring your router on both client and server 
 
 ```javascript
 const createRouter = require( 'router5' ).default;
-const browserPlugin = require( 'router5/plugins/browser' );
+const browserPlugin = require( 'router5-plugin-browser' );
 
 function createRouter() {
-    return createRouter([
+    const router = createRouter([
             { name: 'home', path: '/home' },
             { name: 'about', path: '/about' },
             { name: 'contact', path: '/contact' },
@@ -23,9 +23,12 @@ function createRouter() {
             trailingSlash: true,
             defaultRoute: '404'
         })
-        .usePlugin(browserPlugin({
+
+    router.usePlugin(browserPlugin({
             useHash: false
         }))
+
+    return router
 }
 
 export default createRouter
@@ -121,8 +124,10 @@ A user reported a gain from 300ms to 10ms per request for creating a new router,
 {% endhint %}
 
 ```javascript
+import { createRouter, cloneRouter } from 'router5'
+
 const baseRouter = createRouter(/* ... */);
 
-const router = baseRouter.clone(dependencies);
+const router = cloneRouter(baseRouter);
 ```
 

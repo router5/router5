@@ -1,10 +1,11 @@
 {
   "name": "router5-helpers",
-  "version": "5.2.1",
+  "version": "7.0.0",
   "description": "Router5 helpers for comparing and checking routes",
-  "main": "dist/commonjs/index.js",
-  "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/router5/router5.git"
@@ -19,5 +20,8 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/router5-helpers",
-  "typings": "./index.d.ts"
+  "typings": "./types/index.d.ts",
+  "scripts": {
+    "test": "jest"
+  }
 }

@@ -1,10 +1,11 @@
 {
   "name": "router5",
-  "version": "6.6.2",
+  "version": "7.0.1",
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
-  "main": "index.js",
-  "jsnext:main": "dist/es/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/index.js",
+  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
@@ -26,8 +27,11 @@
   "homepage": "https://router5.js.org",
   "dependencies": {
     "route-node": "3.4.2",
-    "router5-transition-path": "5.4.0",
+    "router5-transition-path": "^7.0.0",
     "symbol-observable": "1.2.0"
   },
-  "typings": "./index.d.ts"
+  "typings": "./types/index.d.ts",
+  "scripts": {
+    "test": "jest"
+  }
 }
