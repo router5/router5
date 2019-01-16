@@ -18,6 +18,7 @@ const Route = routeContext.Consumer
 
 export {
     RouterProvider,
+    BaseLink,
     ConnectedLink,
     Link,
     // HoC
