@@ -46,7 +46,7 @@ You can connect your components using three different methods:
 ## Link components
 
 -   **BaseLink**: a component to render hyperlinks. For a full list of supported props, check the source!
--   **Link**: `Link` is `withRoute` and `BaseLink` composed together
+-   **Link**: `Link` is `withRouter` and `BaseLink` composed together
 -   **ConnectedLink**: same as `Link`, except it re-renders on a route changes.
 
 ```javascript
