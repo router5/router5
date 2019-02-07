@@ -1,4 +1,9 @@
-import { createTestRouter, FnChild, renderWithRouter } from './helpers'
+import {
+    createTestRouter,
+    FnChild,
+    renderWithRouter,
+    createTestRouterWithADefaultRoute
+} from './helpers'
 import { withRoute, withRouter, routeNode } from '..'
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
@@ -52,9 +57,11 @@ describe('withRouter hoc', () => {
 
 describe('routeNode hoc', () => {
     let router
+    let routerWithADefaultRoute
 
     beforeAll(() => {
         router = createTestRouter()
+        routerWithADefaultRoute = createTestRouterWithADefaultRoute()
     })
 
     it('should inject the router in the wrapped component props', () => {
@@ -69,5 +76,17 @@ describe('routeNode hoc', () => {
             },
             {}
         )
+    })
+
+    it('Route should not be null with a default route and the router started', () => {
+        const ChildSpy = jest.fn(FnChild)
+
+        const BaseComponent = routeNode('')(ChildSpy)
+
+        routerWithADefaultRoute.start(() => {
+            renderWithRouter(routerWithADefaultRoute)(BaseComponent)
+            /* first call, first argument */
+            expect(ChildSpy.mock.calls[0][0].route.name).toBe('test')
+        })
     })
 })
