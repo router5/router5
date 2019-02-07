@@ -7,10 +7,11 @@ export type UnsubscribeFn = () => void
 
 export default function useRouter(nodeName: string): RouteContext {
     const router = useContext(routerContext)
-    const [state, setState] = useState({
+
+    const [state, setState] = useState(() => ({
         previousRoute: null,
-        route: null
-    })
+        route: router.getState()
+    }))
 
     useEffect(
         () =>
