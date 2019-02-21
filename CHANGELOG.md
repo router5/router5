@@ -1,3 +1,22 @@
+### react-router5@7.1.0, router5-plugin-browser@7.0.2 (2019-02-21)
+
+#### Bug fix
+* `react-router5`
+  * [#396](https://github.com/router5/router5/pull/396) Fix useRouteNode hook ([@titouancreach](https://github.com/titouancreach))
+* `router5-plugin-browser`
+  * [#384](https://github.com/router5/router5/pull/384) Fix issue with browsers that don't URL encode characters (MS Edge, IE11) ([@todorpr](https://github.com/todorpr))
+
+#### Enhancement
+* `react-router5`
+  * [#393](https://github.com/router5/router5/pull/393) Export BaseLink in react-router5 (link without router) ([@Morcatko](https://github.com/Morcatko))
+
+#### Committers: 3
+- Titouan CREACH ([@titouancreach](https://github.com/titouancreach))
+- Todor Prikumov ([@todorpr](https://github.com/todorpr))
+- [@Morcatko](https://github.com/Morcatko)
+
+
+
 ## router5@7.0.1 (2018-12-21)
 
 #### Bug fix
