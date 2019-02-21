@@ -4,7 +4,7 @@ import { routerContext } from '../context'
 
 function withRouter<P>(
     BaseComponent: ComponentType<P & { router: Router }>
-): SFC<P> {
+): SFC<Exclude<P, 'router'>> {
     return function WithRouter(props) {
         return (
             <routerContext.Consumer>
