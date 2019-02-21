@@ -1,7 +1,8 @@
 **/.*
-modules
 node_modules
-npm-debug.log
+modules
+*.log
 *.md
 *.config.js
 *.json
+*.lock

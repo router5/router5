@@ -1,5 +1,8 @@
 **/.*
 node_modules
-npm-debug.log
-test
+modules
+*.log
 *.md
+*.config.js
+*.json
+*.lock
