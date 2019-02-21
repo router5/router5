@@ -18,6 +18,24 @@ export const createTestRouter = () => {
     return router
 }
 
+export const createTestRouterWithADefaultRoute = () => {
+    const router = createRouter(
+        [
+            {
+                name: 'test',
+                path: '/'
+            }
+        ],
+        { defaultRoute: 'test' }
+    )
+    router.usePlugin(
+        browserPlugin({
+            useHash: true
+        })
+    )
+    return router
+}
+
 export const renderWithRouter = router => BaseComponent =>
     mount(
         <RouterProvider router={router}>

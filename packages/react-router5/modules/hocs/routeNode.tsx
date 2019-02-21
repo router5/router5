@@ -4,7 +4,7 @@ import RouteNode from '../render/RouteNode'
 
 function routeNode<P>(nodeName: string) {
     return function(BaseComponent: ComponentType<P & RouteContext>): SFC<P> {
-        function RouteNodeWrapper(props) {
+        function RouteNodeWrapper(props: P) {
             return (
                 <RouteNode nodeName={nodeName}>
                     {routeContext => (
