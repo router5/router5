@@ -7,4 +7,12 @@ import routeNode from './routeNode'
 const ConnectedLink = withRoute(BaseLink)
 const Link = withRouter(BaseLink)
 
-export { RouterProvider, ConnectedLink, Link, withRouter, withRoute, routeNode }
+export {
+    RouterProvider,
+    ConnectedLink,
+    BaseLink,
+    Link,
+    withRouter,
+    withRoute,
+    routeNode
+}

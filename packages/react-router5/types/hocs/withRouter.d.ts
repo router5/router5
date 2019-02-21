@@ -6,5 +6,5 @@ declare function withRouter<P>(
             router: Router
         }
     >
-): SFC<P>
+): SFC<Exclude<P, 'router'>>
 export default withRouter

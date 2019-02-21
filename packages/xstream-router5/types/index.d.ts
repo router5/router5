@@ -1,4 +1,3 @@
-import xs from 'xstream'
 import { State } from 'router5'
 export declare const TRANSITION_SUCCESS = 'success'
 export declare const TRANSITION_ERROR = 'error'
@@ -19,7 +18,7 @@ declare function createObservables(
 ): {
     route$: import('xstream').MemoryStream<State>
     routeNode: (node: string) => import('xstream').MemoryStream<State>
-    transitionError$: xs<any>
+    transitionError$: import('xstream').Stream<any>
     transitionRoute$: import('xstream').MemoryStream<State>
 }
 export default createObservables

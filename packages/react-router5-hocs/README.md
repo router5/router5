@@ -55,7 +55,8 @@ export default routeNode('users')(Users)
 
 ## Link components
 
--   **Link**: a component to render hyperlinks. For a full list of supported props, check the source! `Link` is `withRoute` and `Link` composed together
+-   **BaseLink**: a component to render hyperlinks. For a full list of supported props, check the source!
+-   **Link**: `Link` is `withRouter` and `BaseLink` composed together
 -   **ConnectedLink**: same as `Link`, except it re-render on route changes
 
 ```javascript

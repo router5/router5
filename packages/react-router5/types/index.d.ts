@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import RouterProvider from './RouterProvider'
 export { routerContext, routeContext } from './context'
+import BaseLink from './BaseLink'
 import withRouter from './hocs/withRouter'
 import withRoute from './hocs/withRoute'
 import routeNode from './hocs/routeNode'
@@ -18,6 +19,7 @@ declare const Route: import('react').ExoticComponent<
 >
 export {
     RouterProvider,
+    BaseLink,
     ConnectedLink,
     Link,
     withRouter,

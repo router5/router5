@@ -17,7 +17,7 @@ export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     target?: string
     route?: State
     previousRoute?: State
-    router?: Router
+    router: Router
 }
 export interface BaseLinkState {
     active: boolean
