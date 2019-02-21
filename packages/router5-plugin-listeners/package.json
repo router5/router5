@@ -1,6 +1,6 @@
 {
     "name": "router5-plugin-listeners",
-    "version": "7.0.1",
+    "version": "7.0.2",
     "description": "Router5 browser plugin",
     "main": "dist/index.js",
     "jsnext:main": "dist/index.es.js",
@@ -20,10 +20,10 @@
         "url": "https://github.com/router5/router5/issues"
     },
     "devDependencies": {
-        "router5": "^7.0.1"
+        "router5": "^7.0.2"
     },
     "dependencies": {
-        "router5-transition-path": "^7.0.0"
+        "router5-transition-path": "^7.0.1"
     },
     "peerDependencies": {
         "router5": "^7.0.0"

@@ -1,6 +1,6 @@
 {
   "name": "react-router5",
-  "version": "7.0.2",
+  "version": "7.1.0",
   "description": "router5 helpers for React",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -25,7 +25,7 @@
   "homepage": "https://router5.js.org",
   "devDependencies": {
     "enzyme-adapter-react-16": "~1.7.0",
-    "router5": "^7.0.1"
+    "router5": "^7.0.2"
   },
   "peerDependencies": {
     "react": ">=16.3.0",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "prop-types": "~15.6.2",
-    "router5-transition-path": "^7.0.0"
+    "router5-transition-path": "^7.0.1"
   },
   "typings": "./types/index.d.ts",
   "scripts": {

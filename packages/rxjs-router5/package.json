@@ -1,6 +1,6 @@
 {
   "name": "rxjs-router5",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "RxJS plugin for router5",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -25,11 +25,11 @@
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/rxjs-router5",
   "devDependencies": {
-    "router5": "^7.0.1",
+    "router5": "^7.0.2",
     "rxjs": "^6.3.3"
   },
   "dependencies": {
-    "router5-transition-path": "^7.0.0"
+    "router5-transition-path": "^7.0.1"
   },
   "peerDependencies": {
     "router5": "^7.0.0",
