@@ -147,7 +147,7 @@ The answer is very simple: block on the server-side, and choose to block or not 
 
 ## Chunk loading
 
-Chunk loading \(loading code asynchronoulsy\) is similar to data loading, since one can consider code is a form of data. With middlewares, you can call a done callback or return a promise, making them perfectly usable with `require.ensure` or `System.import`. Like examples above, you can implement similar techniques with, let's say, a `loadComponent` route property.
+Chunk loading \(loading code asynchronously\) is similar to data loading, since one can consider code is a form of data. With middlewares, you can call a done callback or return a promise, making them perfectly usable with `require.ensure` or `System.import`. Like examples above, you can implement similar techniques with, let's say, a `loadComponent` route property.
 
 ```javascript
 const routes = {
