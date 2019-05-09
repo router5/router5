@@ -5,7 +5,7 @@ import { RouteContext } from '../types'
 
 export type UnsubscribeFn = () => void
 
-export default function useRouter(nodeName: string): RouteContext {
+export default function useRouteNode(nodeName: string): RouteContext {
     const router = useContext(routerContext)
 
     const [state, setState] = useState(() => ({
