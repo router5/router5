@@ -1,7 +1,7 @@
 import { NavigationOptions, State, Router } from 'router5'
 import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
 
-export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
+export interface BaseLinkProps extends HTMLAttributes<HTMLElement> {
     routeName: string
     routeParams?: { [key: string]: any }
     routeOptions?: NavigationOptions
@@ -9,14 +9,15 @@ export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     activeClassName?: string
     activeStrict?: boolean
     ignoreQueryParams?: boolean
-    onClick?: MouseEventHandler<HTMLAnchorElement>
-    onMouseOver?: MouseEventHandler<HTMLAnchorElement>
+    onClick?: MouseEventHandler<HTMLElement>
+    onMouseOver?: MouseEventHandler<HTMLElement>
     successCallback?(state?: State): void
     errorCallback?(error?: any): void
     target?: string
     route?: State
     previousRoute?: State
     router: Router
+    component?: any
 }
 
 export interface BaseLinkState {
@@ -115,18 +116,22 @@ class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             onClick,
             successCallback,
             errorCallback,
+            component = 'a',
             ...linkProps
         } = this.props
         /* eslint-enable */
 
         const active = this.isActive()
-        const href = this.buildUrl(routeName, routeParams)
+        const href =
+            component === 'a'
+                ? this.buildUrl(routeName, routeParams)
+                : undefined
         const linkclassName = (active ? [activeClassName] : [])
             .concat(className ? className.split(' ') : [])
             .join(' ')
 
         return React.createElement(
-            'a',
+            component,
             {
                 ...linkProps,
                 href,

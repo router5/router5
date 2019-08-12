@@ -1,6 +1,6 @@
 import { NavigationOptions, State, Router } from 'router5'
 import React, { Component, HTMLAttributes, MouseEventHandler } from 'react'
-export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
+export interface BaseLinkProps extends HTMLAttributes<HTMLElement> {
     routeName: string
     routeParams?: {
         [key: string]: any
@@ -10,8 +10,8 @@ export interface BaseLinkProps extends HTMLAttributes<HTMLAnchorElement> {
     activeClassName?: string
     activeStrict?: boolean
     ignoreQueryParams?: boolean
-    onClick?: MouseEventHandler<HTMLAnchorElement>
-    onMouseOver?: MouseEventHandler<HTMLAnchorElement>
+    onClick?: MouseEventHandler<HTMLElement>
+    onMouseOver?: MouseEventHandler<HTMLElement>
     successCallback?(state?: State): void
     errorCallback?(error?: any): void
     target?: string
@@ -34,7 +34,7 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             href: any
             className: string
             onClick: (evt: any) => void
-            onMouseOver?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onMouseOver?: (event: React.MouseEvent<HTMLElement>) => void
             target?: string
             defaultChecked?: boolean
             defaultValue?: string | string[]
@@ -156,353 +156,257 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             dangerouslySetInnerHTML?: {
                 __html: string
             }
-            onCopy?: (event: React.ClipboardEvent<HTMLAnchorElement>) => void
-            onCopyCapture?: (
-                event: React.ClipboardEvent<HTMLAnchorElement>
-            ) => void
-            onCut?: (event: React.ClipboardEvent<HTMLAnchorElement>) => void
-            onCutCapture?: (
-                event: React.ClipboardEvent<HTMLAnchorElement>
-            ) => void
-            onPaste?: (event: React.ClipboardEvent<HTMLAnchorElement>) => void
-            onPasteCapture?: (
-                event: React.ClipboardEvent<HTMLAnchorElement>
-            ) => void
+            onCopy?: (event: React.ClipboardEvent<HTMLElement>) => void
+            onCopyCapture?: (event: React.ClipboardEvent<HTMLElement>) => void
+            onCut?: (event: React.ClipboardEvent<HTMLElement>) => void
+            onCutCapture?: (event: React.ClipboardEvent<HTMLElement>) => void
+            onPaste?: (event: React.ClipboardEvent<HTMLElement>) => void
+            onPasteCapture?: (event: React.ClipboardEvent<HTMLElement>) => void
             onCompositionEnd?: (
-                event: React.CompositionEvent<HTMLAnchorElement>
+                event: React.CompositionEvent<HTMLElement>
             ) => void
             onCompositionEndCapture?: (
-                event: React.CompositionEvent<HTMLAnchorElement>
+                event: React.CompositionEvent<HTMLElement>
             ) => void
             onCompositionStart?: (
-                event: React.CompositionEvent<HTMLAnchorElement>
+                event: React.CompositionEvent<HTMLElement>
             ) => void
             onCompositionStartCapture?: (
-                event: React.CompositionEvent<HTMLAnchorElement>
+                event: React.CompositionEvent<HTMLElement>
             ) => void
             onCompositionUpdate?: (
-                event: React.CompositionEvent<HTMLAnchorElement>
+                event: React.CompositionEvent<HTMLElement>
             ) => void
             onCompositionUpdateCapture?: (
-                event: React.CompositionEvent<HTMLAnchorElement>
+                event: React.CompositionEvent<HTMLElement>
             ) => void
-            onFocus?: (event: React.FocusEvent<HTMLAnchorElement>) => void
-            onFocusCapture?: (
-                event: React.FocusEvent<HTMLAnchorElement>
-            ) => void
-            onBlur?: (event: React.FocusEvent<HTMLAnchorElement>) => void
-            onBlurCapture?: (event: React.FocusEvent<HTMLAnchorElement>) => void
-            onChange?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onChangeCapture?: (
-                event: React.FormEvent<HTMLAnchorElement>
-            ) => void
-            onInput?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onInputCapture?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onReset?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onResetCapture?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onSubmit?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onSubmitCapture?: (
-                event: React.FormEvent<HTMLAnchorElement>
-            ) => void
-            onInvalid?: (event: React.FormEvent<HTMLAnchorElement>) => void
-            onInvalidCapture?: (
-                event: React.FormEvent<HTMLAnchorElement>
-            ) => void
-            onLoad?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onLoadCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onError?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onErrorCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onKeyDown?: (event: React.KeyboardEvent<HTMLAnchorElement>) => void
-            onKeyDownCapture?: (
-                event: React.KeyboardEvent<HTMLAnchorElement>
-            ) => void
-            onKeyPress?: (event: React.KeyboardEvent<HTMLAnchorElement>) => void
+            onFocus?: (event: React.FocusEvent<HTMLElement>) => void
+            onFocusCapture?: (event: React.FocusEvent<HTMLElement>) => void
+            onBlur?: (event: React.FocusEvent<HTMLElement>) => void
+            onBlurCapture?: (event: React.FocusEvent<HTMLElement>) => void
+            onChange?: (event: React.FormEvent<HTMLElement>) => void
+            onChangeCapture?: (event: React.FormEvent<HTMLElement>) => void
+            onInput?: (event: React.FormEvent<HTMLElement>) => void
+            onInputCapture?: (event: React.FormEvent<HTMLElement>) => void
+            onReset?: (event: React.FormEvent<HTMLElement>) => void
+            onResetCapture?: (event: React.FormEvent<HTMLElement>) => void
+            onSubmit?: (event: React.FormEvent<HTMLElement>) => void
+            onSubmitCapture?: (event: React.FormEvent<HTMLElement>) => void
+            onInvalid?: (event: React.FormEvent<HTMLElement>) => void
+            onInvalidCapture?: (event: React.FormEvent<HTMLElement>) => void
+            onLoad?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onLoadCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onError?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onErrorCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void
+            onKeyDownCapture?: (event: React.KeyboardEvent<HTMLElement>) => void
+            onKeyPress?: (event: React.KeyboardEvent<HTMLElement>) => void
             onKeyPressCapture?: (
-                event: React.KeyboardEvent<HTMLAnchorElement>
+                event: React.KeyboardEvent<HTMLElement>
             ) => void
-            onKeyUp?: (event: React.KeyboardEvent<HTMLAnchorElement>) => void
-            onKeyUpCapture?: (
-                event: React.KeyboardEvent<HTMLAnchorElement>
-            ) => void
-            onAbort?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onAbortCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onCanPlay?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onKeyUp?: (event: React.KeyboardEvent<HTMLElement>) => void
+            onKeyUpCapture?: (event: React.KeyboardEvent<HTMLElement>) => void
+            onAbort?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onAbortCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onCanPlay?: (event: React.SyntheticEvent<HTMLElement>) => void
             onCanPlayCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
             onCanPlayThrough?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
             onCanPlayThroughCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
             onDurationChange?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
             onDurationChangeCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onEmptied?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onEmptied?: (event: React.SyntheticEvent<HTMLElement>) => void
             onEmptiedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onEncrypted?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onEncrypted?: (event: React.SyntheticEvent<HTMLElement>) => void
             onEncryptedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onEnded?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onEndedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onLoadedData?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onEnded?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onEndedCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onLoadedData?: (event: React.SyntheticEvent<HTMLElement>) => void
             onLoadedDataCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
             onLoadedMetadata?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
             onLoadedMetadataCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onLoadStart?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onLoadStart?: (event: React.SyntheticEvent<HTMLElement>) => void
             onLoadStartCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onPause?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onPauseCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onPlay?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onPlayCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onPlaying?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onPause?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onPauseCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onPlay?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onPlayCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onPlaying?: (event: React.SyntheticEvent<HTMLElement>) => void
             onPlayingCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onProgress?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onProgress?: (event: React.SyntheticEvent<HTMLElement>) => void
             onProgressCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onRateChange?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onRateChange?: (event: React.SyntheticEvent<HTMLElement>) => void
             onRateChangeCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onSeeked?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onSeekedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onSeeking?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onSeeked?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onSeekedCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onSeeking?: (event: React.SyntheticEvent<HTMLElement>) => void
             onSeekingCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onStalled?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onStalled?: (event: React.SyntheticEvent<HTMLElement>) => void
             onStalledCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onSuspend?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onSuspend?: (event: React.SyntheticEvent<HTMLElement>) => void
             onSuspendCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onTimeUpdate?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onTimeUpdate?: (event: React.SyntheticEvent<HTMLElement>) => void
             onTimeUpdateCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onVolumeChange?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
+            onVolumeChange?: (event: React.SyntheticEvent<HTMLElement>) => void
             onVolumeChangeCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onWaiting?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onWaiting?: (event: React.SyntheticEvent<HTMLElement>) => void
             onWaitingCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLElement>
             ) => void
-            onClickCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
-            ) => void
-            onContextMenu?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onClickCapture?: (event: React.MouseEvent<HTMLElement>) => void
+            onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void
             onContextMenuCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLElement>
             ) => void
-            onDoubleClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onDoubleClick?: (event: React.MouseEvent<HTMLElement>) => void
             onDoubleClickCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLElement>
             ) => void
-            onDrag?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragCapture?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragEnd?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragEndCapture?: (
-                event: React.DragEvent<HTMLAnchorElement>
-            ) => void
-            onDragEnter?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragEnterCapture?: (
-                event: React.DragEvent<HTMLAnchorElement>
-            ) => void
-            onDragExit?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragExitCapture?: (
-                event: React.DragEvent<HTMLAnchorElement>
-            ) => void
-            onDragLeave?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragLeaveCapture?: (
-                event: React.DragEvent<HTMLAnchorElement>
-            ) => void
-            onDragOver?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragOverCapture?: (
-                event: React.DragEvent<HTMLAnchorElement>
-            ) => void
-            onDragStart?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDragStartCapture?: (
-                event: React.DragEvent<HTMLAnchorElement>
-            ) => void
-            onDrop?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onDropCapture?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onMouseDown?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseDownCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
-            ) => void
-            onMouseEnter?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseLeave?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseMove?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseMoveCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
-            ) => void
-            onMouseOut?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseOutCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
-            ) => void
-            onMouseOverCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
-            ) => void
-            onMouseUp?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseUpCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
-            ) => void
-            onSelect?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onSelectCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
-            ) => void
-            onTouchCancel?: (event: React.TouchEvent<HTMLAnchorElement>) => void
+            onDrag?: (event: React.DragEvent<HTMLElement>) => void
+            onDragCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDragEnd?: (event: React.DragEvent<HTMLElement>) => void
+            onDragEndCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDragEnter?: (event: React.DragEvent<HTMLElement>) => void
+            onDragEnterCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDragExit?: (event: React.DragEvent<HTMLElement>) => void
+            onDragExitCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDragLeave?: (event: React.DragEvent<HTMLElement>) => void
+            onDragLeaveCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDragOver?: (event: React.DragEvent<HTMLElement>) => void
+            onDragOverCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDragStart?: (event: React.DragEvent<HTMLElement>) => void
+            onDragStartCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onDrop?: (event: React.DragEvent<HTMLElement>) => void
+            onDropCapture?: (event: React.DragEvent<HTMLElement>) => void
+            onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseDownCapture?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseEnter?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseLeave?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseMove?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseMoveCapture?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseOut?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseOutCapture?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseOverCapture?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void
+            onMouseUpCapture?: (event: React.MouseEvent<HTMLElement>) => void
+            onSelect?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onSelectCapture?: (event: React.SyntheticEvent<HTMLElement>) => void
+            onTouchCancel?: (event: React.TouchEvent<HTMLElement>) => void
             onTouchCancelCapture?: (
-                event: React.TouchEvent<HTMLAnchorElement>
+                event: React.TouchEvent<HTMLElement>
             ) => void
-            onTouchEnd?: (event: React.TouchEvent<HTMLAnchorElement>) => void
-            onTouchEndCapture?: (
-                event: React.TouchEvent<HTMLAnchorElement>
-            ) => void
-            onTouchMove?: (event: React.TouchEvent<HTMLAnchorElement>) => void
-            onTouchMoveCapture?: (
-                event: React.TouchEvent<HTMLAnchorElement>
-            ) => void
-            onTouchStart?: (event: React.TouchEvent<HTMLAnchorElement>) => void
-            onTouchStartCapture?: (
-                event: React.TouchEvent<HTMLAnchorElement>
-            ) => void
-            onPointerDown?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onTouchEnd?: (event: React.TouchEvent<HTMLElement>) => void
+            onTouchEndCapture?: (event: React.TouchEvent<HTMLElement>) => void
+            onTouchMove?: (event: React.TouchEvent<HTMLElement>) => void
+            onTouchMoveCapture?: (event: React.TouchEvent<HTMLElement>) => void
+            onTouchStart?: (event: React.TouchEvent<HTMLElement>) => void
+            onTouchStartCapture?: (event: React.TouchEvent<HTMLElement>) => void
+            onPointerDown?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerDownCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerMove?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onPointerMove?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerMoveCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerUp?: (event: React.PointerEvent<HTMLAnchorElement>) => void
+            onPointerUp?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerUpCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerCancel?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onPointerCancel?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerCancelCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerEnter?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onPointerEnter?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerEnterCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerLeave?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onPointerLeave?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerLeaveCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerOver?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onPointerOver?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerOverCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onPointerOut?: (
-                event: React.PointerEvent<HTMLAnchorElement>
-            ) => void
+            onPointerOut?: (event: React.PointerEvent<HTMLElement>) => void
             onPointerOutCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
             onGotPointerCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
             onGotPointerCaptureCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
             onLostPointerCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
             onLostPointerCaptureCapture?: (
-                event: React.PointerEvent<HTMLAnchorElement>
+                event: React.PointerEvent<HTMLElement>
             ) => void
-            onScroll?: (event: React.UIEvent<HTMLAnchorElement>) => void
-            onScrollCapture?: (event: React.UIEvent<HTMLAnchorElement>) => void
-            onWheel?: (event: React.WheelEvent<HTMLAnchorElement>) => void
-            onWheelCapture?: (
-                event: React.WheelEvent<HTMLAnchorElement>
-            ) => void
+            onScroll?: (event: React.UIEvent<HTMLElement>) => void
+            onScrollCapture?: (event: React.UIEvent<HTMLElement>) => void
+            onWheel?: (event: React.WheelEvent<HTMLElement>) => void
+            onWheelCapture?: (event: React.WheelEvent<HTMLElement>) => void
             onAnimationStart?: (
-                event: React.AnimationEvent<HTMLAnchorElement>
+                event: React.AnimationEvent<HTMLElement>
             ) => void
             onAnimationStartCapture?: (
-                event: React.AnimationEvent<HTMLAnchorElement>
+                event: React.AnimationEvent<HTMLElement>
             ) => void
-            onAnimationEnd?: (
-                event: React.AnimationEvent<HTMLAnchorElement>
-            ) => void
+            onAnimationEnd?: (event: React.AnimationEvent<HTMLElement>) => void
             onAnimationEndCapture?: (
-                event: React.AnimationEvent<HTMLAnchorElement>
+                event: React.AnimationEvent<HTMLElement>
             ) => void
             onAnimationIteration?: (
-                event: React.AnimationEvent<HTMLAnchorElement>
+                event: React.AnimationEvent<HTMLElement>
             ) => void
             onAnimationIterationCapture?: (
-                event: React.AnimationEvent<HTMLAnchorElement>
+                event: React.AnimationEvent<HTMLElement>
             ) => void
             onTransitionEnd?: (
-                event: React.TransitionEvent<HTMLAnchorElement>
+                event: React.TransitionEvent<HTMLElement>
             ) => void
             onTransitionEndCapture?: (
-                event: React.TransitionEvent<HTMLAnchorElement>
+                event: React.TransitionEvent<HTMLElement>
             ) => void
         },
         HTMLElement
