@@ -43,7 +43,7 @@ function browserPluginFactory(
 
         router.buildUrl = (route, params) => {
             const base = options.base || ''
-            const prefix = options.useHash ? `#${options.hashPrefix}` : ''
+            const prefix = options.useHash ? `${window.location.search}#${options.hashPrefix}` : ''
             const path = router.buildPath(route, params)
 
             if (path === null) return null
