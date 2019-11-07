@@ -54,7 +54,7 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             style?: React.CSSProperties
             tabIndex?: number
             title?: string
-            inputMode?: string
+            inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
             is?: string
             radioGroup?: string
             role?: string
