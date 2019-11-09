@@ -30,6 +30,7 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
     callback(err: any, state: any): void
     clickHandler(evt: any): void
     render(): React.DetailedReactHTMLElement<
+        Pick<React.HTMLAttributes<HTMLElement>, 'inputMode'> &
         {
             href: any
             className: string
@@ -54,7 +55,6 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             style?: React.CSSProperties
             tabIndex?: number
             title?: string
-            inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
             is?: string
             radioGroup?: string
             role?: string
