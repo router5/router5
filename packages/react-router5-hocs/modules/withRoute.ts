@@ -11,6 +11,7 @@ function withRoute<P>(
         private routeState: RouteState
         private mounted: boolean
         private unsubscribe: UnsubscribeFn
+        static contextTypes: { router: PropTypes.Validator<object> }
 
         constructor(props, context) {
             super(props, context)

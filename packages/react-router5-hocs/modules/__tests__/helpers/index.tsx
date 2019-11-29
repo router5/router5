@@ -6,6 +6,7 @@ import { mount } from 'enzyme'
 import browserPlugin from '../../../../router5-plugin-browser'
 
 export class Child extends Component {
+    static contextTypes: { router: PropTypes.Validator<object>; }
     render() {
         return <div />
     }

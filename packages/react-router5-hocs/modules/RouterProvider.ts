@@ -10,6 +10,8 @@ interface RouterProviderProps {
 class RouterProvider extends Component<RouterProviderProps> {
     private router: Router
 
+    static childContextTypes: { router: PropTypes.Validator<object> }
+
     constructor(props, context) {
         super(props, context)
         this.router = props.router

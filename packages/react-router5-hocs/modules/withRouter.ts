@@ -7,6 +7,7 @@ function withRouter<P>(
 ): ComponentClass<P> {
     class WithRouter extends Component<P> {
         private router: Router
+        static contextTypes: { router: PropTypes.Validator<object> }
 
         constructor(props, context) {
             super(props, context)
