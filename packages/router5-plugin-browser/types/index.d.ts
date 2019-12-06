@@ -1,5 +1,5 @@
 import { PluginFactory, State } from 'router5'
-import { BrowserPluginOptions } from './types'
+import { BrowserPluginOptions, Browser } from './types'
 declare module 'router5/types/types/router' {
     interface Router {
         buildUrl(
@@ -21,6 +21,6 @@ declare module 'router5/types/types/router' {
 }
 declare function browserPluginFactory(
     opts?: BrowserPluginOptions,
-    browser?: import('./types').Browser
+    browser?: Browser
 ): PluginFactory
 export default browserPluginFactory
