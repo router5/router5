@@ -34,28 +34,29 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             href: any
             className: string
             onClick: (evt: any) => void
-            onMouseOver?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onMouseOver?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             target?: string
             defaultChecked?: boolean
-            defaultValue?: string | string[]
+            defaultValue?: string | number | string[]
             suppressContentEditableWarning?: boolean
             suppressHydrationWarning?: boolean
             accessKey?: string
-            contentEditable?: boolean
+            contentEditable?: boolean | 'true' | 'false' | 'inherit'
             contextMenu?: string
             dir?: string
-            draggable?: boolean
+            draggable?: boolean | 'true' | 'false'
             hidden?: boolean
             id?: string
             lang?: string
             placeholder?: string
             slot?: string
-            spellCheck?: boolean
+            spellCheck?: boolean | 'true' | 'false'
             style?: React.CSSProperties
             tabIndex?: number
             title?: string
-            inputMode?: string
-            is?: string
+            translate?: 'yes' | 'no'
             radioGroup?: string
             role?: string
             about?: string
@@ -78,11 +79,21 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             results?: number
             security?: string
             unselectable?: 'on' | 'off'
+            inputMode?:
+                | 'none'
+                | 'text'
+                | 'tel'
+                | 'url'
+                | 'email'
+                | 'numeric'
+                | 'decimal'
+                | 'search'
+            is?: string
             'aria-activedescendant'?: string
-            'aria-atomic'?: boolean | 'false' | 'true'
+            'aria-atomic'?: boolean | 'true' | 'false'
             'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both'
-            'aria-busy'?: boolean | 'false' | 'true'
-            'aria-checked'?: boolean | 'false' | 'true' | 'mixed'
+            'aria-busy'?: boolean | 'true' | 'false'
+            'aria-checked'?: boolean | 'true' | 'false' | 'mixed'
             'aria-colcount'?: number
             'aria-colindex'?: number
             'aria-colspan'?: number
@@ -90,15 +101,15 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             'aria-current'?:
                 | boolean
                 | 'time'
-                | 'false'
                 | 'true'
+                | 'false'
                 | 'page'
                 | 'step'
                 | 'location'
                 | 'date'
             'aria-describedby'?: string
             'aria-details'?: string
-            'aria-disabled'?: boolean | 'false' | 'true'
+            'aria-disabled'?: boolean | 'true' | 'false'
             'aria-dropeffect'?:
                 | 'link'
                 | 'none'
@@ -107,46 +118,46 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
                 | 'move'
                 | 'popup'
             'aria-errormessage'?: string
-            'aria-expanded'?: boolean | 'false' | 'true'
+            'aria-expanded'?: boolean | 'true' | 'false'
             'aria-flowto'?: string
-            'aria-grabbed'?: boolean | 'false' | 'true'
+            'aria-grabbed'?: boolean | 'true' | 'false'
             'aria-haspopup'?:
                 | boolean
                 | 'dialog'
                 | 'menu'
-                | 'false'
                 | 'true'
+                | 'false'
                 | 'listbox'
                 | 'tree'
                 | 'grid'
-            'aria-hidden'?: boolean | 'false' | 'true'
-            'aria-invalid'?: boolean | 'false' | 'true' | 'grammar' | 'spelling'
+            'aria-hidden'?: boolean | 'true' | 'false'
+            'aria-invalid'?: boolean | 'true' | 'false' | 'grammar' | 'spelling'
             'aria-keyshortcuts'?: string
             'aria-label'?: string
             'aria-labelledby'?: string
             'aria-level'?: number
             'aria-live'?: 'off' | 'assertive' | 'polite'
-            'aria-modal'?: boolean | 'false' | 'true'
-            'aria-multiline'?: boolean | 'false' | 'true'
-            'aria-multiselectable'?: boolean | 'false' | 'true'
+            'aria-modal'?: boolean | 'true' | 'false'
+            'aria-multiline'?: boolean | 'true' | 'false'
+            'aria-multiselectable'?: boolean | 'true' | 'false'
             'aria-orientation'?: 'horizontal' | 'vertical'
             'aria-owns'?: string
             'aria-placeholder'?: string
             'aria-posinset'?: number
-            'aria-pressed'?: boolean | 'false' | 'true' | 'mixed'
-            'aria-readonly'?: boolean | 'false' | 'true'
+            'aria-pressed'?: boolean | 'true' | 'false' | 'mixed'
+            'aria-readonly'?: boolean | 'true' | 'false'
             'aria-relevant'?:
+                | 'text'
                 | 'additions'
                 | 'additions text'
                 | 'all'
                 | 'removals'
-                | 'text'
-            'aria-required'?: boolean | 'false' | 'true'
+            'aria-required'?: boolean | 'true' | 'false'
             'aria-roledescription'?: string
             'aria-rowcount'?: number
             'aria-rowindex'?: number
             'aria-rowspan'?: number
-            'aria-selected'?: boolean | 'false' | 'true'
+            'aria-selected'?: boolean | 'true' | 'false'
             'aria-setsize'?: number
             'aria-sort'?: 'none' | 'ascending' | 'descending' | 'other'
             'aria-valuemax'?: number
@@ -196,6 +207,10 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             onChangeCapture?: (
                 event: React.FormEvent<HTMLAnchorElement>
             ) => void
+            onBeforeInput?: (event: React.FormEvent<HTMLAnchorElement>) => void
+            onBeforeInputCapture?: (
+                event: React.FormEvent<HTMLAnchorElement>
+            ) => void
             onInput?: (event: React.FormEvent<HTMLAnchorElement>) => void
             onInputCapture?: (event: React.FormEvent<HTMLAnchorElement>) => void
             onReset?: (event: React.FormEvent<HTMLAnchorElement>) => void
@@ -208,13 +223,17 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             onInvalidCapture?: (
                 event: React.FormEvent<HTMLAnchorElement>
             ) => void
-            onLoad?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onLoadCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+            onLoad?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onError?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onLoadCapture?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
+            onError?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onErrorCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onKeyDown?: (event: React.KeyboardEvent<HTMLAnchorElement>) => void
             onKeyDownCapture?: (
@@ -228,124 +247,158 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             onKeyUpCapture?: (
                 event: React.KeyboardEvent<HTMLAnchorElement>
             ) => void
-            onAbort?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
-            onAbortCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+            onAbort?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onCanPlay?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onAbortCapture?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
+            onCanPlay?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onCanPlayCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onCanPlayThrough?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onCanPlayThroughCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onDurationChange?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onDurationChangeCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onEmptied?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onEmptied?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onEmptiedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onEncrypted?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onEncryptedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onEnded?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onEnded?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onEndedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onLoadedData?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onLoadedDataCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onLoadedMetadata?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onLoadedMetadataCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onLoadStart?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onLoadStartCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onPause?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onPause?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onPauseCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onPlay?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onPlay?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onPlayCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onPlaying?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onPlaying?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onPlayingCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onProgress?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onProgressCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onRateChange?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onRateChangeCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onSeeked?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onSeeked?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onSeekedCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onSeeking?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onSeeking?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onSeekingCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onStalled?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onStalled?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onStalledCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onSuspend?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onSuspend?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onSuspendCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onTimeUpdate?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onTimeUpdateCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onVolumeChange?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onVolumeChangeCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
-            onWaiting?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onWaiting?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onWaitingCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
+            onAuxClick?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
+            onAuxClickCapture?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
             onClickCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
-            onContextMenu?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onContextMenu?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             onContextMenuCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
-            onDoubleClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onDoubleClick?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             onDoubleClickCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
             onDrag?: (event: React.DragEvent<HTMLAnchorElement>) => void
             onDragCapture?: (event: React.DragEvent<HTMLAnchorElement>) => void
@@ -375,30 +428,44 @@ declare class BaseLink extends Component<BaseLinkProps, BaseLinkState> {
             ) => void
             onDrop?: (event: React.DragEvent<HTMLAnchorElement>) => void
             onDropCapture?: (event: React.DragEvent<HTMLAnchorElement>) => void
-            onMouseDown?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onMouseDown?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             onMouseDownCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
-            onMouseEnter?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseLeave?: (event: React.MouseEvent<HTMLAnchorElement>) => void
-            onMouseMove?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onMouseEnter?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
+            onMouseLeave?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
+            onMouseMove?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             onMouseMoveCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
-            onMouseOut?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onMouseOut?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             onMouseOutCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
             onMouseOverCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
-            onMouseUp?: (event: React.MouseEvent<HTMLAnchorElement>) => void
+            onMouseUp?: (
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+            ) => void
             onMouseUpCapture?: (
-                event: React.MouseEvent<HTMLAnchorElement>
+                event: React.MouseEvent<HTMLAnchorElement, MouseEvent>
             ) => void
-            onSelect?: (event: React.SyntheticEvent<HTMLAnchorElement>) => void
+            onSelect?: (
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
+            ) => void
             onSelectCapture?: (
-                event: React.SyntheticEvent<HTMLAnchorElement>
+                event: React.SyntheticEvent<HTMLAnchorElement, Event>
             ) => void
             onTouchCancel?: (event: React.TouchEvent<HTMLAnchorElement>) => void
             onTouchCancelCapture?: (

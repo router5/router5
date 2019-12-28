@@ -1,7 +1,7 @@
 const typescript = require('rollup-plugin-typescript2')
 const { uglify } = require('rollup-plugin-uglify')
-const nodeResolve = require('rollup-plugin-node-resolve')
-const commonjs = require('rollup-plugin-commonjs')
+const nodeResolve = require('@rollup/plugin-node-resolve')
+const commonjs = require('@rollup/plugin-commonjs')
 
 const makeConfig = ({
     packageName,
@@ -11,16 +11,8 @@ const makeConfig = ({
     file
 }) => {
     const plugins = [
-        nodeResolve({ jsnext: true, module: true }),
-        commonjs({
-            include: `packages/${packageName}/node_modules/**`,
-            namedExports: {
-                [`packages/${packageName}/node_modules/immutable/dist/immutable.js`]: [
-                    'Record',
-                    'Map'
-                ]
-            }
-        }),
+        nodeResolve({ mainFields: ['jsnext', 'module']}),
+        commonjs(),
         typescript({
             tsconfig: `./packages/${packageName}/tsconfig.build.json`,
             useTsconfigDeclarationDir: true,

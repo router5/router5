@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
     typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (factory((global.router5 = {})));
+    (global = global || self, factory(global.router5 = {}));
 }(this, (function (exports) { 'use strict';
 
     /*! *****************************************************************************
@@ -42,7 +42,7 @@
     };
     function withOptions(options) {
         return function (router) {
-            var routerOptions = __assign({}, defaultOptions, options);
+            var routerOptions = __assign(__assign({}, defaultOptions), options);
             router.getOptions = function () { return routerOptions; };
             router.setOption = function (option, value) {
                 routerOptions[option] = value;
@@ -51,6 +51,18 @@
             return router;
         };
     }
+
+    function unwrapExports (x) {
+    	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+    }
+
+    function createCommonjsModule(fn, module) {
+    	return module = { exports: {} }, fn(module, module.exports), module.exports;
+    }
+
+    var cjs = createCommonjsModule(function (module, exports) {
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
     var makeOptions = function (opts) {
         if (opts === void 0) { opts = {}; }
@@ -213,6 +225,43 @@
             removedParams: parse(removed.join('&'), options)
         };
     };
+    /**
+     * Remove a list of parameters from a querystring
+     */
+    var keep = function (path, paramsToKeep, opts) {
+        var options = makeOptions(opts);
+        var searchPart = getSearch(path);
+        if (searchPart === '') {
+            return {
+                keptParams: {},
+                querystring: ''
+            };
+        }
+        var _a = path.split('&').reduce(function (_a, chunk) {
+            var left = _a[0], right = _a[1];
+            var rawName = chunk.split('=')[0];
+            var name = parseName(rawName).name;
+            return paramsToKeep.indexOf(name) >= 0
+                ? [left.concat(chunk), right]
+                : [left, right.concat(chunk)];
+        }, [[], []]), kept = _a[0], removed = _a[1];
+        return {
+            keptParams: parse(kept.join('&'), options),
+            querystring: kept.join('&')
+        };
+    };
+
+    exports.parse = parse;
+    exports.build = build;
+    exports.omit = omit;
+    exports.keep = keep;
+    });
+
+    unwrapExports(cjs);
+    var cjs_1 = cjs.parse;
+    var cjs_2 = cjs.build;
+    var cjs_3 = cjs.omit;
+    var cjs_4 = cjs.keep;
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -387,7 +436,7 @@
                 return match;
             }
             // Extract query params
-            var queryParams = parse(path, options.queryParams);
+            var queryParams = cjs_1(path, options.queryParams);
             var unexpectedQueryParams = Object.keys(queryParams).filter(function (p) { return !_this.isQueryParam(p); });
             if (unexpectedQueryParams.length === 0) {
                 // Extend url match
@@ -409,7 +458,7 @@
             if (!this.hasQueryParams) {
                 return match;
             }
-            var queryParams = parse(path, options.queryParams);
+            var queryParams = cjs_1(path, options.queryParams);
             Object.keys(queryParams)
                 .filter(function (p) { return _this.isQueryParam(p); })
                 .forEach(function (p) { return appendQueryParam(match, p, queryParams[p]); });
@@ -480,7 +529,7 @@
                 sparams[paramName] = params[paramName];
                 return sparams;
             }, {});
-            var searchPart = build(searchParams, options.queryParams);
+            var searchPart = cjs_2(searchParams, options.queryParams);
             return searchPart ? base + '?' + searchPart : base;
         };
         Path.prototype.getParams = function (type) {
@@ -598,7 +647,7 @@
             }
             return acc;
         }, {});
-        var searchPart = build(searchParamsObject, options.queryParams);
+        var searchPart = cjs_2(searchParamsObject, options.queryParams);
         var path = segments
             .reduce(function (path, segment) {
             var segmentPath = segment.parser.build(params, {
@@ -622,7 +671,7 @@
     };
 
     var getPath = function (path) { return path.split('?')[0]; };
-    var getSearch$1 = function (path) { return path.split('?')[1] || ''; };
+    var getSearch = function (path) { return path.split('?')[1] || ''; };
     var matchChildren = function (nodes, pathSegment, currentMatch, options, consumedBefore) {
         if (options === void 0) { options = {}; }
         var _a = options.queryParamsMode, queryParamsMode = _a === void 0 ? 'default' : _a, _b = options.strictTrailingSlash, strictTrailingSlash = _b === void 0 ? false : _b, _c = options.strongMatching, strongMatching = _c === void 0 ? true : _c, _d = options.caseSensitive, caseSensitive = _d === void 0 ? false : _d;
@@ -670,7 +719,7 @@
                 if (!strictTrailingSlash && !child.children.length) {
                     remainingPath = remainingPath.replace(/^\/\?/, '?');
                 }
-                var querystring = omit(getSearch$1(segment.replace(consumedPath, '')), child.parser.queryParams, options.queryParams).querystring;
+                var querystring = cjs_3(getSearch(segment.replace(consumedPath, '')), child.parser.queryParams, options.queryParams).querystring;
                 remainingPath =
                     getPath(remainingPath) + (querystring ? "?" + querystring : '');
                 if (!strictTrailingSlash &&
@@ -688,7 +737,7 @@
                     queryParamsMode !== 'strict' &&
                     remainingPath.indexOf('?') === 0) {
                     // unmatched queryParams in non strict mode
-                    var remainingQueryParams_1 = parse(remainingPath.slice(1), options.queryParams);
+                    var remainingQueryParams_1 = cjs_1(remainingPath.slice(1), options.queryParams);
                     Object.keys(remainingQueryParams_1).forEach(function (name) {
                         return (currentMatch.params[name] = remainingQueryParams_1[name]);
                     });
@@ -1071,7 +1120,7 @@
                 if (route === constants.UNKNOWN_ROUTE) {
                     return params.path;
                 }
-                var paramsWithDefault = __assign({}, router.config.defaultParams[route], params);
+                var paramsWithDefault = __assign(__assign({}, router.config.defaultParams[route]), params);
                 var _a = router.getOptions(), trailingSlashMode = _a.trailingSlashMode, queryParamsMode = _a.queryParamsMode, queryParams = _a.queryParams;
                 var encodedParams = router.config.encoders[route]
                     ? router.config.encoders[route](paramsWithDefault)
@@ -1139,10 +1188,10 @@
         };
         router.makeState = function (name, params, path, meta, forceId) { return ({
             name: name,
-            params: __assign({}, router.config.defaultParams[name], params),
+            params: __assign(__assign({}, router.config.defaultParams[name]), params),
             path: path,
             meta: meta
-                ? __assign({}, meta, { id: forceId === undefined ? ++stateId : forceId }) : undefined
+                ? __assign(__assign({}, meta), { id: forceId === undefined ? ++stateId : forceId }) : undefined
         }); };
         router.makeNotFoundState = function (path, options) {
             return router.makeState(constants.UNKNOWN_ROUTE, { path: path }, path, {
@@ -1179,7 +1228,7 @@
         };
         router.forwardState = function (routeName, routeParams) {
             var name = router.config.forwardMap[routeName] || routeName;
-            var params = __assign({}, router.config.defaultParams[routeName], router.config.defaultParams[name], routeParams);
+            var params = __assign(__assign(__assign({}, router.config.defaultParams[routeName]), router.config.defaultParams[name]), routeParams);
             return {
                 name: name,
                 params: params
@@ -1437,7 +1486,7 @@
                 fromState.params !== toState.params ||
                 fromState.path !== toState.path;
         };
-        var mergeStates = function (toState, fromState) { return (__assign({}, fromState, toState, { meta: __assign({}, fromState.meta, toState.meta) })); };
+        var mergeStates = function (toState, fromState) { return (__assign(__assign(__assign({}, fromState), toState), { meta: __assign(__assign({}, fromState.meta), toState.meta) })); };
         var processFn = function (stepFn, errBase, state, _done) {
             var done = function (err, newState) {
                 if (err) {
@@ -1472,11 +1521,11 @@
                 }, function (err) {
                     if (err instanceof Error) {
                         console.error(err.stack || err);
-                        done(__assign({}, errBase, { promiseError: err }), null);
+                        done(__assign(__assign({}, errBase), { promiseError: err }), null);
                     }
                     else {
                         done(typeof err === 'object'
-                            ? __assign({}, errBase, err) : errBase, null);
+                            ? __assign(__assign({}, errBase), err) : errBase, null);
                     }
                 });
             }
@@ -1536,7 +1585,7 @@
             }
             callback(err, state || toState);
         };
-        var makeError = function (base, err) { return (__assign({}, base, (err instanceof Object ? err : { error: err }))); };
+        var makeError = function (base, err) { return (__assign(__assign({}, base), (err instanceof Object ? err : { error: err }))); };
         var isUnknownRoute = toState.name === constants.UNKNOWN_ROUTE;
         var asyncBase = { isCancelled: isCancelled, toState: toState, fromState: fromState };
         var _b = transitionPath(toState, fromState), toDeactivate = _b.toDeactivate, toActivate = _b.toActivate;
@@ -1547,9 +1596,9 @@
                     .filter(function (name) { return canDeactivateFunctions[name]; })
                     .reduce(function (fnMap, name) {
                     var _a;
-                    return (__assign({}, fnMap, (_a = {}, _a[name] = canDeactivateFunctions[name], _a)));
+                    return (__assign(__assign({}, fnMap), (_a = {}, _a[name] = canDeactivateFunctions[name], _a)));
                 }, {});
-                resolve(canDeactivateFunctionMap, __assign({}, asyncBase, { errorKey: 'segment' }), function (err) {
+                resolve(canDeactivateFunctionMap, __assign(__assign({}, asyncBase), { errorKey: 'segment' }), function (err) {
                     return cb(err
                         ? makeError({ code: errorCodes.CANNOT_DEACTIVATE }, err)
                         : null);
@@ -1562,9 +1611,9 @@
                     .filter(function (name) { return canActivateFunctions[name]; })
                     .reduce(function (fnMap, name) {
                     var _a;
-                    return (__assign({}, fnMap, (_a = {}, _a[name] = canActivateFunctions[name], _a)));
+                    return (__assign(__assign({}, fnMap), (_a = {}, _a[name] = canActivateFunctions[name], _a)));
                 }, {});
-                resolve(canActivateFunctionMap, __assign({}, asyncBase, { errorKey: 'segment' }), function (err) {
+                resolve(canActivateFunctionMap, __assign(__assign({}, asyncBase), { errorKey: 'segment' }), function (err) {
                     return cb(err
                         ? makeError({ code: errorCodes.CANNOT_ACTIVATE }, err)
                         : null);
@@ -1659,7 +1708,7 @@
                 if (err) {
                     if (err.redirect) {
                         var _a = err.redirect, name_1 = _a.name, params_1 = _a.params;
-                        navigate(name_1, params_1, __assign({}, opts, { force: true, redirected: true }), done);
+                        navigate(name_1, params_1, __assign(__assign({}, opts), { force: true, redirected: true }), done);
                     }
                     else {
                         done(err);
@@ -1863,13 +1912,13 @@
         return clonedRouter;
     }
 
-    exports.createRouter = createRouter;
-    exports.cloneRouter = cloneRouter;
     exports.RouteNode = RouteNode;
-    exports.transitionPath = transitionPath;
+    exports.cloneRouter = cloneRouter;
     exports.constants = constants;
-    exports.errorCodes = errorCodes;
+    exports.createRouter = createRouter;
     exports.default = createRouter;
+    exports.errorCodes = errorCodes;
+    exports.transitionPath = transitionPath;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

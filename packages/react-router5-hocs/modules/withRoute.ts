@@ -7,6 +7,10 @@ function withRoute<P>(
     BaseComponent: React.ComponentType<P & RouterState>
 ): ComponentClass<P> {
     class WithRoute extends Component<P> {
+        static contextTypes = {
+            router: PropTypes.object.isRequired
+        }
+
         private router: Router
         private routeState: RouteState
         private mounted: boolean
@@ -55,10 +59,6 @@ function withRoute<P>(
                 router: this.router
             })
         }
-    }
-
-    WithRoute.contextTypes = {
-        router: PropTypes.object.isRequired
     }
 
     return WithRoute

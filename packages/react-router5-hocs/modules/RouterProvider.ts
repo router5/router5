@@ -8,6 +8,10 @@ interface RouterProviderProps {
 }
 
 class RouterProvider extends Component<RouterProviderProps> {
+    static childContextTypes = {
+        router: PropTypes.object.isRequired
+    }
+
     private router: Router
 
     constructor(props, context) {
@@ -23,10 +27,6 @@ class RouterProvider extends Component<RouterProviderProps> {
         const { children } = this.props
         return Children.only(children)
     }
-}
-
-RouterProvider.childContextTypes = {
-    router: PropTypes.object.isRequired
 }
 
 export default RouterProvider

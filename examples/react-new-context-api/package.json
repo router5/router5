@@ -5,7 +5,7 @@
   "dependencies": {
     "react": "16.4.2",
     "react-dom": "16.4.2",
-    "react-scripts": "1.1.4",
+    "react-scripts": "3.3.0",
     "router5": "6.4.2",
     "react-router5": "6.3.0"
   },

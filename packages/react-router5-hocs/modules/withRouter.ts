@@ -6,6 +6,10 @@ function withRouter<P>(
     BaseComponent: ComponentType<P & { router: Router }>
 ): ComponentClass<P> {
     class WithRouter extends Component<P> {
+        static contextTypes = {
+            router: PropTypes.object.isRequired
+        }
+
         private router: Router
 
         constructor(props, context) {

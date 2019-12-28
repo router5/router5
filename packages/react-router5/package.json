@@ -5,9 +5,13 @@
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
+  "typings": "./types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
+  },
+  "scripts": {
+    "test": "jest"
   },
   "keywords": [
     "router",
@@ -24,7 +28,7 @@
   },
   "homepage": "https://router5.js.org",
   "devDependencies": {
-    "enzyme-adapter-react-16": "~1.7.0",
+    "enzyme-adapter-react-16": "~1.15.2",
     "router5": "^7.0.2"
   },
   "peerDependencies": {
@@ -32,11 +36,6 @@
     "router5": "^7.0.0"
   },
   "dependencies": {
-    "prop-types": "~15.6.2",
     "router5-transition-path": "^7.0.1"
-  },
-  "typings": "./types/index.d.ts",
-  "scripts": {
-    "test": "jest"
   }
 }

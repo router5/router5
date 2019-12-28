@@ -7,5 +7,5 @@ declare function routeNode<P>(
             router: import('router5').Router
         } & import('../types').RouteState
     >
-) => React.FunctionComponent<P>
+) => React.SFC<P>
 export default routeNode
