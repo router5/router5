@@ -28,7 +28,6 @@
   },
   "homepage": "https://router5.js.org",
   "devDependencies": {
-    "enzyme-adapter-react-16": "~1.15.2",
     "router5": "^7.0.2"
   },
   "peerDependencies": {

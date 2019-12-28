@@ -3,6 +3,7 @@ cache: yarn
 node_js:
   - '12'
 script:
-  - npm run build
-  - npm test
+  - yarn run build
+  - yarn lint
+  - yarn test
 # after_script: "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"

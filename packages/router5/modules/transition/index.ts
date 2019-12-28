@@ -56,7 +56,7 @@ export default function transition(
         !fromState || opts.forceDeactivate
             ? []
             : (toState, fromState, cb) => {
-                  let canDeactivateFunctionMap = toDeactivate
+                  const canDeactivateFunctionMap = toDeactivate
                       .filter(name => canDeactivateFunctions[name])
                       .reduce(
                           (fnMap, name) => ({

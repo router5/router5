@@ -3,7 +3,7 @@ import { State } from '../types/base'
 import { constants } from '../constants'
 
 export default function withState(router: Router): Router {
-    let stateId: number = 0
+    let stateId = 0
     let routerState: State | null = null
 
     router.getState = () => routerState
