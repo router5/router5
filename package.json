@@ -3,21 +3,13 @@
   "private": true,
   "description": "A simple, powerful, view-agnostic, modular and extensible router",
   "scripts": {
-    "clean": "git clean -fXd -e '!node_modules'",
-    "clean:deps": "rimraf packages/*/yarn.lock",
-    "clean:types": "rimraf 'packages/*/types'",
-    "reset": "npm run clean && npm run clean:deps && npm run bootstrap",
     "build": "rollup -c rollup.config.js",
-    "postbuild": "prettier --write 'packages/*/types/**/*.ts'",
+    "postbuild": "cp -f README.md ./packages/router5/README.md",
     "test": "jest",
     "lint": "eslint packages/*/modules --ext ts,tsx",
-    "lint:check-conflicts": "eslint --print-config .eslintrc | eslint-config-prettier-check",
-    "format": "prettier 'packages/**/*.{js,ts}'",
-    "check": "yarn run lint:check-conflicts && yarn run lint && yarn run test && yarn run format --list-different",
+    "format": "prettier 'packages/**/*.{js,ts,json}'",
     "changelog": "lerna-changelog",
-    "docs:start": "node packages/docs/scripts/start",
-    "copy": "cp -f README.md ./packages/router5/README.md",
-    "release": "git pull --rebase &&  npm run build && npm run copy && lerna publish"
+    "release": "lerna publish"
   },
   "lint-staged": {
     "packages/**/*.{js,ts}": [
@@ -70,7 +62,6 @@
     "react": "~16.12.0",
     "react-addons-test-utils": "~15.6.2",
     "react-dom": "~16.12.0",
-    "rimraf": "~3.0.0",
     "rollup": "~1.27.14",
     "rollup-plugin-typescript2": "~0.25.3",
     "rollup-plugin-uglify": "~6.0.4",

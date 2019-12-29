@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -20,7 +24,6 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/router5-helpers",
-  "typings": "./types/index.d.ts",
   "scripts": {
     "test": "jest"
   }

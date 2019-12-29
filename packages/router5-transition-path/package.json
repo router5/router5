@@ -5,7 +5,11 @@
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
-  "sideEffects": "false",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/router5/router5.git"
@@ -23,7 +27,6 @@
   "peerDependencies": {
     "router5": "^7.0.0"
   },
-  "typings": "./types/index.d.ts",
   "scripts": {
     "test": "jest"
   }

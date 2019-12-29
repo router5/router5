@@ -2,7 +2,7 @@ import { PluginFactory, errorCodes, constants, Router, State } from 'router5'
 import safeBrowser from './browser'
 import { BrowserPluginOptions } from './types'
 
-declare module 'router5/types/types/router' {
+declare module 'router5/dist/types/router' {
     interface Router {
         buildUrl(name: string, params?: { [key: string]: any }): string
         matchUrl(url: string): State | null
