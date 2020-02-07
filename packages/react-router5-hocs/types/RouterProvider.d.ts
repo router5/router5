@@ -10,6 +10,24 @@ declare class RouterProvider extends Component<RouterProviderProps> {
     getChildContext(): {
         router: Router
     }
-    render(): import('react').ReactElement<any>
+    render():
+        | string
+        | number
+        | boolean
+        | {}
+        | import('react').ReactElement<
+              any,
+              | string
+              | ((
+                    props: any
+                ) => import('react').ReactElement<
+                    any,
+                    | string
+                    | any
+                    | (new (props: any) => Component<any, any, any>)
+                >)
+              | (new (props: any) => Component<any, any, any>)
+          >
+        | import('react').ReactPortal
 }
 export default RouterProvider

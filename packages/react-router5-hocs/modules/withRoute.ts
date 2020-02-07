@@ -57,7 +57,8 @@ function withRoute<P>(
         }
     }
 
-    WithRoute.contextTypes = {
+    // WORKAROUND: compatibility with older versions of react
+    ;(WithRoute as any).contextTypes = {
         router: PropTypes.object.isRequired
     }
 

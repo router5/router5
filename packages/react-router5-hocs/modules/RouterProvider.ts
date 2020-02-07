@@ -25,7 +25,8 @@ class RouterProvider extends Component<RouterProviderProps> {
     }
 }
 
-RouterProvider.childContextTypes = {
+// WORKAROUND: compatibility with older versions of react
+;(RouterProvider as any).childContextTypes = {
     router: PropTypes.object.isRequired
 }
 

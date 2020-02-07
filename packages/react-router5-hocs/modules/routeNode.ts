@@ -66,7 +66,8 @@ function routeNode<P>(nodeName: string) {
             }
         }
 
-        RouteNode.contextTypes = {
+        // WORKAROUND: compatibility with older versions of react
+        ;(RouteNode as any).contextTypes = {
             router: PropTypes.object.isRequired
         }
 

@@ -11,7 +11,7 @@ export class Child extends Component {
     }
 }
 
-Child.contextTypes = {
+(Child as any).contextTypes = {
     router: PropTypes.object.isRequired
 }
 
