@@ -3,15 +3,15 @@
   "description": "",
   "homepage": "https://stackblitz.com/edit/react-redux-router5",
   "dependencies": {
-    "react": "16.4.2",
-    "react-dom": "16.4.2",
-    "react-scripts": "3.3.0",
-    "redux": "4.0.0",
-    "router5": "6.4.2",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
+    "react-scripts": "3.4.0",
+    "router5": "7.0.2",
     "react-redux": "5.0.7",
+    "react-router5": "7.1.0",
+    "redux": "4.0.0",
     "redux-logger": "3.0.6",
-    "react-router5": "6.3.0",
-    "redux-router5": "6.0.3"
+    "redux-router5": "7.0.2"
   },
   "version": "0.1.0",
   "private": true,
