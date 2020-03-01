@@ -4,7 +4,7 @@
   "singleQuote": true,
   "overrides": [
     {
-      "files": ["*.json", "*.yml", ".eslintrc", ".prettierrc"],
+      "files": ["*.json", "*.md", "*.yml", ".eslintrc", ".prettierrc"],
       "options": {
         "tabWidth": 2
       }
