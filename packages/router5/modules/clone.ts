@@ -1,11 +1,10 @@
-import { Router, Dependencies } from './types/router'
+import { Router, DefaultDependencies } from './types/router'
 import createRouter from './createRouter'
 
-export default function cloneRouter(
-    router: Router,
-    dependencies?: Dependencies
-): Router {
-    const clonedRouter = createRouter(
+export default function cloneRouter<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+>(router: Router, dependencies?: Dependencies): Router<Dependencies> {
+    const clonedRouter = createRouter<Dependencies>(
         router.rootNode,
         router.getOptions(),
         dependencies

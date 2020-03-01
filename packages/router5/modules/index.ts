@@ -6,12 +6,10 @@ import cloneRouter from './clone'
 
 // Types
 export {
-    CreateRouter,
     Route,
     Options,
     ActivationFn,
     ActivationFnFactory,
-    Dependencies,
     Router,
     Plugin,
     PluginFactory,

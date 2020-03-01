@@ -2,8 +2,10 @@ import { RouteNode } from 'route-node'
 import { constants } from '../constants'
 import { Router, Route } from '../types/router'
 
-export default function withRoutes(routes: Route[] | RouteNode) {
-    return (router: Router): Router => {
+export default function withRoutes<Dependencies>(
+    routes: Array<Route<Dependencies>> | RouteNode
+) {
+    return (router: Router<Dependencies>): Router<Dependencies> => {
         router.forward = (fromRoute, toRoute) => {
             router.config.forwardMap[fromRoute] = toRoute
 
@@ -41,7 +43,7 @@ export default function withRoutes(routes: Route[] | RouteNode) {
             return router
         }
 
-        router.addNode = (name, path, canActivateHandler?): Router => {
+        router.addNode = (name, path, canActivateHandler?) => {
             rootNode.addNode(name, path)
             if (canActivateHandler) router.canActivate(name, canActivateHandler)
             return router

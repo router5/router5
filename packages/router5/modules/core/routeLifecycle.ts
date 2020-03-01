@@ -2,7 +2,9 @@ import { Router } from '../types/router'
 
 const toFunction = val => (typeof val === 'function' ? val : () => () => val)
 
-export default function withRouteLifecycle(router: Router): Router {
+export default function withRouteLifecycle<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     const canDeactivateFactories = {}
     const canActivateFactories = {}
     const canDeactivateFunctions = {}

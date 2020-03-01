@@ -2,7 +2,9 @@ import { Router } from '../types/router'
 import { State } from '../types/base'
 import { constants } from '../constants'
 
-export default function withState(router: Router): Router {
+export default function withState<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     let stateId = 0
     let routerState: State | null = null
 

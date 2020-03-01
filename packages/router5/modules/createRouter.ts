@@ -1,4 +1,4 @@
-import { Router, CreateRouter } from './types/router'
+import { Router, Route, Options, DefaultDependencies } from './types/router'
 
 import withOptions from './core/options'
 import withRoutes from './core/routes'
@@ -10,16 +10,24 @@ import withObservability from './core/observable'
 import withNavigation from './core/navigation'
 import withRouterLifecycle from './core/routerLifecycle'
 import withRouteLifecycle from './core/routeLifecycle'
+import { RouteNode } from 'route-node'
 
-type Enhancer = (router: Router) => Router
-const pipe = (...fns: Array<Enhancer>) => (arg: Router): Router =>
-    fns.reduce((prev: Router, fn) => fn(prev), arg)
+type Enhancer<Dependencies> = (
+    router: Router<Dependencies>
+) => Router<Dependencies>
 
-const createRouter: CreateRouter = (
-    routes = [],
-    options = {},
-    dependencies = {}
-): Router => {
+const pipe = <Dependencies>(...fns: Array<Enhancer<Dependencies>>) => (
+    arg: Router<Dependencies>
+): Router<Dependencies> =>
+    fns.reduce((prev: Router<Dependencies>, fn) => fn(prev), arg)
+
+const createRouter = <
+    Dependencies extends DefaultDependencies = DefaultDependencies
+>(
+    routes: Array<Route<Dependencies>> | RouteNode = [],
+    options: Partial<Options> = {},
+    dependencies: Dependencies = {} as Dependencies
+): Router<Dependencies> => {
     const config = {
         decoders: {},
         encoders: {},
@@ -27,7 +35,7 @@ const createRouter: CreateRouter = (
         forwardMap: {}
     }
 
-    return pipe(
+    return pipe<Dependencies>(
         withOptions(options),
         withDependencies(dependencies),
         withObservability,
@@ -38,7 +46,7 @@ const createRouter: CreateRouter = (
         withPlugins,
         withMiddleware,
         withRoutes(routes)
-    )({ config } as Router)
+    )({ config } as Router<Dependencies>)
 }
 
 export default createRouter

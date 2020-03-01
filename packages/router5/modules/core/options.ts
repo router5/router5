@@ -12,8 +12,8 @@ const defaultOptions: Options = {
     urlParamsEncoding: 'default'
 }
 
-export default function withOptions(options: Partial<Options>) {
-    return (router: Router): Router => {
+export default function withOptions<Dependencies>(options: Partial<Options>) {
+    return (router: Router<Dependencies>): Router<Dependencies> => {
         const routerOptions = {
             ...defaultOptions,
             ...options

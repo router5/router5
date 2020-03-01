@@ -1,7 +1,9 @@
-import { Options, Router, Dependencies } from '../types/router'
+import { Router } from '../types/router'
 
-export default function withDependencies(dependencies: Dependencies) {
-    return (router: Router): Router => {
+export default function withDependencies<Dependencies>(
+    dependencies: Dependencies
+) {
+    return (router: Router<Dependencies>): Router<Dependencies> => {
         const routerDependencies: Dependencies = dependencies
 
         router.setDependency = (dependencyName, dependency) => {

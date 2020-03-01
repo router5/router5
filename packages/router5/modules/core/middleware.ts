@@ -1,6 +1,8 @@
 import { Router } from '../types/router'
 
-export default function withMiddleware(router: Router): Router {
+export default function withMiddleware<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     let middlewareFactories = []
     let middlewareFunctions = []
 

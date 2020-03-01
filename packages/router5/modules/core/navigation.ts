@@ -4,7 +4,9 @@ import transition from '../transition'
 
 const noop = () => {}
 
-export default function withNavigation(router: Router): Router {
+export default function withNavigation<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     let cancelCurrentTransition
 
     router.navigate = navigate

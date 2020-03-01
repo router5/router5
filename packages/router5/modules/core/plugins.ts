@@ -10,7 +10,9 @@ const eventsMap = {
     onTransitionCancel: constants.TRANSITION_CANCEL
 }
 
-export default function withPlugins(router: Router): Router {
+export default function withPlugins<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     let routerPlugins: PluginFactory[] = []
 
     router.getPlugins = () => routerPlugins

@@ -2,7 +2,9 @@ import $$observable from 'symbol-observable'
 import { Router } from '../types/router'
 import { constants } from '../constants'
 
-export default function withObservability(router: Router) {
+export default function withObservability<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     const callbacks = {}
 
     router.invokeEventListeners = (eventName, ...args) => {
