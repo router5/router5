@@ -15,7 +15,7 @@ export class Child extends Component {
     }
 }
 
-export const FnChild = props => <div />
+export const FnChild = () => <div />
 
 export const createTestRouter = () => {
     const router = createRouter([])
