@@ -80,7 +80,9 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "examples/*",
+      "unmaintained/*"
     ]
   }
 }

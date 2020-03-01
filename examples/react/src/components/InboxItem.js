@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Link } from 'react-router5'
 
 function InboxItem({ title, message, id }) {
@@ -6,7 +6,7 @@ function InboxItem({ title, message, id }) {
         <li>
             <Link
                 routeName="inbox.message"
-                routeParams={{id }}
+                routeParams={{ id }}
                 activeClassName="active"
             >
                 <h4>{title}</h4>

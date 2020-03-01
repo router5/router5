@@ -6,12 +6,13 @@ import createRouter from './create-router'
 import emails from './data'
 import './style.css'
 
-const router = createRouter(true)
+const router = createRouter()
 
 router.start(() => {
-    ReactDOM.render((
+    ReactDOM.render(
         <RouterProvider router={router}>
             <App emails={emails} />
-        </RouterProvider>
-    ), document.getElementById('root'))
+        </RouterProvider>,
+        document.getElementById('root')
+    )
 })

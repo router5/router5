@@ -1,13 +1,14 @@
 {
-  "name": "react-router5",
-  "description": "",
-  "homepage": "https://stackblitz.com/edit/react-router5",
+  "name": "react-router5-example",
+  "description": "React router5 example",
   "dependencies": {
-    "react": "16.4.2",
-    "react-dom": "16.4.2",
-    "react-scripts": "3.3.0",
-    "router5": "6.4.2",
-    "react-router5": "6.3.0"
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-router5": "7.1.0",
+    "react-scripts": "3.4.0",
+    "router5": "7.0.2",
+    "router5-plugin-browser": "7.0.2",
+    "router5-plugin-logger": "7.0.2"
   },
   "version": "0.1.0",
   "private": true,
@@ -16,5 +17,17 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

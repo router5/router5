@@ -12,8 +12,7 @@ npm install --save react-router5
 
 ## Demos and examples
 
--   Higher-order components: [https://stackblitz.com/edit/react-router5-new-context-api](https://stackblitz.com/edit/react-router5)
--   Render props: [https://stackblitz.com/edit/react-router5-new-context-api](https://stackblitz.com/edit/react-router5-new-context-api)
+[https://stackblitz.com/edit/react-router5](https://stackblitz.com/edit/react-router5)
 
 ## Provider
 

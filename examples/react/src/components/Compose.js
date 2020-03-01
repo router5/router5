@@ -1,43 +1,32 @@
-import React, { Component } from 'react'
-import { routeNode } from 'react-router5'
+import React, { useEffect, useState } from 'react'
 
-class Compose extends Component {
-    constructor(props, context) {
-        super(props, context)
-        this.state = {
-            title: '',
-            message: ''
-        }
-        this.updateTitle = this.updateTitle.bind(this)
-        this.updateMessage = this.updateMessage.bind(this)
-    }
+const Compose = () => {
+    const [title, setTitle] = useState('')
+    const [message, setMessage] = useState('')
+    const [warning, setWarning] = useState(false)
 
-    updateTitle(evt) {
-        this.setState({ title: evt.target.value, warning: false })
-    }
+    useEffect(() => {
+        setWarning(false)
+    }, [title, message])
 
-    updateMessage(evt) {
-        this.setState({ message: evt.target.value, warning: false })
-    }
+    return (
+        <div className="compose">
+            <h4>Compose a new message</h4>
 
-    render() {
-        const { title, message, warning } = this.state
+            <input
+                name="title"
+                value={title}
+                onChange={evt => setTitle(evt.target.value)}
+            />
+            <textarea
+                name="message"
+                value={message}
+                onChange={evt => setMessage(evt.target.value)}
+            />
 
-        return (
-            <div className="compose">
-                <h4>Compose a new message</h4>
-
-                <input name="title" value={title} onChange={this.updateTitle} />
-                <textarea
-                    name="message"
-                    value={message}
-                    onChange={this.updateMessage}
-                />
-
-                {warning ? <p>Clear inputs before continuing</p> : null}
-            </div>
-        )
-    }
+            {warning ? <p>Clear inputs before continuing</p> : null}
+        </div>
+    )
 }
 
-export default routeNode('compose')(Compose)
+export default Compose

@@ -1,8 +1,8 @@
 import React from 'react'
-import { BaseLink, withRoute } from 'react-router5'
+import { BaseLink, useRoute } from 'react-router5'
 
-function Nav(props) {
-    const { router } = props
+function Nav() {
+    const { router } = useRoute()
 
     return (
         <nav>
@@ -23,4 +23,4 @@ function Nav(props) {
     )
 }
 
-export default withRoute(Nav)
+export default Nav
