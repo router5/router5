@@ -10,7 +10,7 @@
 * [mobx-router5](https://github.com/LeonardoGentile/mobx-router5): integration with MobX
 * [react-mobx-router5](https://github.com/LeonardoGentile/react-mobx-router5): integration with Mobx and React
 * [marko-router5](https://jesse1983.github.io/marko-router5/#/): integration with MarkoJS
-* [Mr. Router5](https://github.com/pzmosquito/mr-router5): integration with MobX and React (support router5 7.x and mobx-react-lite)
+* [mr-router5](https://github.com/pzmosquito/mr-router5): lightweight integration with MobX and React
 
 ## Examples
 
