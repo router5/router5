@@ -26,7 +26,7 @@ describe('core/plugins', () => {
         router.start('', () => {
             expect(router.myCustomMethod).not.toBe(undefined)
 
-            router.navigate('orders', function(err, state) {
+            router.navigate('orders', function() {
                 expect(myPluginMethods.onTransitionStart).toHaveBeenCalled()
                 expect(myPluginMethods.onTransitionSuccess).toHaveBeenCalled()
                 done()

@@ -25,15 +25,15 @@ describe('core/navigation', function() {
     })
 
     it('should navigate to same state if reload is set to true', done => {
-        router.navigate('orders.pending', function(err, state) {
-            router.navigate('orders.pending', function(err, state) {
+        router.navigate('orders.pending', function() {
+            router.navigate('orders.pending', function(err) {
                 expect(err.code).toBe(errorCodes.SAME_STATES)
 
                 router.navigate(
                     'orders.pending',
                     {},
                     { reload: true },
-                    function(err, state) {
+                    function(err) {
                         expect(err).toBe(null)
                         done()
                     }
@@ -52,19 +52,19 @@ describe('core/navigation', function() {
     })
 
     it('should be able to handle multiple cancellations', done => {
-        router.useMiddleware(router => (toState, fromState, done) => {
+        router.useMiddleware(() => (toState, fromState, done) => {
             setTimeout(done, 20)
         })
-        router.navigate('users', (err, state) => {
+        router.navigate('users', err => {
             expect(err.code).toBe(errorCodes.TRANSITION_CANCELLED)
         })
-        router.navigate('users', (err, state) => {
+        router.navigate('users', err => {
             expect(err.code).toBe(errorCodes.TRANSITION_CANCELLED)
         })
-        router.navigate('users', (err, state) => {
+        router.navigate('users', err => {
             expect(err.code).toBe(errorCodes.TRANSITION_CANCELLED)
         })
-        router.navigate('users', (err, state) => {
+        router.navigate('users', () => {
             router.clearMiddleware()
             done()
         })
@@ -108,7 +108,7 @@ describe('core/navigation', function() {
         jest.spyOn(console, 'error').mockImplementation(noop)
         router.stop()
         router.canActivate('admin', () => () =>
-            new Promise((resolve, reject) => {
+            new Promise(() => {
                 throw new Error('unhandled error')
             })
         )

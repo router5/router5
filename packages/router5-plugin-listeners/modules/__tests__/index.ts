@@ -98,10 +98,7 @@ describe('listenersPlugin', () => {
             router.navigate('users.view', { id: 1 }, {}, () => {
                 expect(nodeListener).toHaveBeenCalled()
                 router.navigate('users.view', { id: 1 }, {}, () => {
-                    router.navigate('users.view', { id: 2 }, {}, function(
-                        err,
-                        state
-                    ) {
+                    router.navigate('users.view', { id: 2 }, {}, function() {
                         expect(nodeListener).toHaveBeenCalledTimes(2)
                         router.removeNodeListener('users', nodeListener)
                         done()
@@ -136,9 +133,9 @@ describe('listenersPlugin', () => {
     })
 
     it('should automatically remove node listeners if autoCleanUp', function(done) {
-        router.navigate('orders.completed', {}, {}, function(err, state) {
+        router.navigate('orders.completed', {}, {}, function() {
             router.addNodeListener('orders', () => {})
-            router.navigate('users', {}, {}, function(err, state) {
+            router.navigate('users', {}, {}, function() {
                 setTimeout(() => {
                     expect(router.getListeners()['^orders']).toEqual([])
                     done()

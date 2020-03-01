@@ -1,4 +1,4 @@
-import createRouter, { RouteNode, Route } from '../../'
+import createRouter, { Route } from '../../'
 
 const routes: Route[] = [
     {

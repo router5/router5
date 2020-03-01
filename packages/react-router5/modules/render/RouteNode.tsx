@@ -1,4 +1,4 @@
-import React, { ReactNode, ReactElement, SFC } from 'react'
+import React, { ReactNode, SFC } from 'react'
 import { shouldUpdateNode } from 'router5-transition-path'
 import { RouteContext } from '../types'
 import { routeContext } from '../context'

@@ -39,7 +39,7 @@ describe('core/route-lifecycle', function() {
     })
 
     it('should register can deactivate status', done => {
-        router.navigate('users.list', function(err) {
+        router.navigate('users.list', function() {
             router.canDeactivate('users.list', false)
             router.navigate('users', function(err) {
                 expect(err.code).toBe(errorCodes.CANNOT_DEACTIVATE)
@@ -65,9 +65,9 @@ describe('core/route-lifecycle', function() {
     })
 
     it('should force deactivation if specified as a transition option', done => {
-        router.navigate('orders.view', { id: '1' }, {}, (err, state) => {
+        router.navigate('orders.view', { id: '1' }, {}, () => {
             router.canDeactivate('orders.view', false)
-            router.navigate('home', (err, state) => {
+            router.navigate('home', err => {
                 expect(err.code).toBe(errorCodes.CANNOT_DEACTIVATE)
                 router.navigate(
                     'home',
