@@ -1,7 +1,6 @@
 {
-  "name": "react-router5-new-context-api",
-  "description": "",
-  "homepage": "https://stackblitz.com/edit/react-router5-new-context-api",
+  "name": "react-router5-example",
+  "description": "React router5 example",
   "dependencies": {
     "react": "16.12.0",
     "react-dom": "16.12.0",
