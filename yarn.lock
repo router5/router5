@@ -10251,6 +10251,13 @@ path-parse@^1.0.6:
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
   integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
 
+path-parser@4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-4.2.0.tgz#2fbb3df2d49659a9a4cac88be7d8d5f4666814fb"
+  integrity sha512-MPPZiWTTp2I72VXmGQQfsn2ohrbd9QTbZSLYNS+HXsnQ37VbiLR/szO2R7DHaZA1V1scYxuxgyQerj+6kMTXtA==
+  dependencies:
+    search-params "2.1.3"
+
 path-parser@6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-6.1.0.tgz#ee8a1dd7b1ffaf4069f2ddd1c20d1867c8fd3a08"
@@ -11447,6 +11454,14 @@ react-is@^16.6.1, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
+react-router5@7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/react-router5/-/react-router5-7.1.0.tgz#e626505d3f4f0b766078d9a64d129e71055b01cd"
+  integrity sha512-OVMaRPOhJP5/1U2ExEz9kpv/cdnpt08bKo/+bUgsimDTJ+eD0NrM4wqa1nkpZFUJaICfHccjuHfcxcA5/N0cDw==
+  dependencies:
+    prop-types "~15.6.2"
+    router5-transition-path "^7.0.1"
+
 react-scripts@3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-3.4.0.tgz#f413680f0b5b937c8879ba1ffdae9b8c5b364bf5"
@@ -12101,6 +12116,14 @@ rollup@~1.27.14:
     "@types/node" "*"
     acorn "^7.1.0"
 
+route-node@3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-3.4.2.tgz#6481fd5949c34a785bfbb9c3bcdae4d8333bbd46"
+  integrity sha512-MDIllr+xwmzSKQh49Ls1g66LIH9JisXh15WXyu4hAYW95mrTSRWr7bqc23hcrjZpehTmSNOb64ZiHBgsHUArog==
+  dependencies:
+    path-parser "4.2.0"
+    search-params "2.1.3"
+
 route-node@4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/route-node/-/route-node-4.1.1.tgz#9006600160982db0b19d2f093d4271f9fd7548ea"
@@ -12109,6 +12132,30 @@ route-node@4.1.1:
     path-parser "6.1.0"
     search-params "3.0.0"
     tslib "^1.10.0"
+
+router5-plugin-browser@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/router5-plugin-browser/-/router5-plugin-browser-7.0.2.tgz#a13376a1d72fd696b0d5da5a697e7aeb39f5fd24"
+  integrity sha512-iDrHIDVj6wyvJBKo6fTTkrQor8/vKOXOJQD30HnFcWMHP0Amiu3vzEi6HwM3HjTr5L1AKVzMINBI3fonsdINkw==
+
+router5-plugin-logger@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/router5-plugin-logger/-/router5-plugin-logger-7.0.2.tgz#acda42b66b25374375b5ec3789629f7fed0cbfea"
+  integrity sha512-a0rtbYFWaOntcjsZm/Sgfw/hLTJA0lQoHQkfhG7u9H4raHWGTDRh3LYByFCzyBUodiyAHUpln2qPcESd09rogQ==
+
+router5-transition-path@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/router5-transition-path/-/router5-transition-path-7.0.1.tgz#2e941fa2021fb1e4b301ec44a5c999635f787180"
+  integrity sha512-ZAiz78ey4T1CDjgFiOUK4fX6AF5ZC8tuw4jCpfsfHWFt5r6URtx/2Sc1ENFPkA6Yrl2crUCGxVWUZCBFwtH9GA==
+
+router5@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/router5/-/router5-7.0.2.tgz#10b6ba554bfefe3233ead8b74c07f66c72b70590"
+  integrity sha512-QPTKHjJVn8pozHoPvVREGTogo06M/1dY6UHMMUyoAc7gG3UMx5QBMjyiREnqtac0U0Cp4T5RsZ0bkBXNsSjfYg==
+  dependencies:
+    route-node "3.4.2"
+    router5-transition-path "^7.0.1"
+    symbol-observable "1.2.0"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -12250,6 +12297,11 @@ schema-utils@^2.5.0, schema-utils@^2.6.0, schema-utils@^2.6.1, schema-utils@^2.6
   dependencies:
     ajv "^6.10.2"
     ajv-keywords "^3.4.1"
+
+search-params@2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/search-params/-/search-params-2.1.3.tgz#90b98964eaf3d0edef0f73e6e8307d1480020413"
+  integrity sha512-hHxU9ZGWpZ/lrFBIHndSnQae2in7ra+m+tBSoeAahSWDDgOgpZqs4bfaTZpljgNgAgTbjiQoJtZW6FKSsfEcDA==
 
 search-params@3.0.0:
   version "3.0.0"
