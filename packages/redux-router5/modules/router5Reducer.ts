@@ -1,13 +1,30 @@
+import { State } from 'router5'
+import { Reducer } from 'redux'
+
 import * as actionTypes from './actionTypes'
 
-const initialState = {
+interface Router5ReducerState {
+    route: State | null
+    previousRoute: State | null
+    transitionRoute: State | null
+    transitionError: any | null
+}
+
+const initialState: Router5ReducerState = {
     route: null,
     previousRoute: null,
     transitionRoute: null,
     transitionError: null
 }
 
-function router5Reducer(state = initialState, action) {
+const router5Reducer: Reducer<Router5ReducerState> = (
+    state = initialState,
+    action
+) => {
+    if (!action.type) {
+        return state
+    }
+
     switch (action.type) {
         case actionTypes.TRANSITION_START:
             return {

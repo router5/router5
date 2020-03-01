@@ -87,7 +87,7 @@ export default function resolve(
                     errorKey && isMapped
                         ? { [errorKey]: remainingFunctions[0] }
                         : {}
-                let stepFn = isMapped
+                const stepFn = isMapped
                     ? functions[remainingFunctions[0]]
                     : remainingFunctions[0]
 

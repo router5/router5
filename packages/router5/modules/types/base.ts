@@ -18,7 +18,7 @@ export interface StateMeta {
     id: number
     params: Params
     options: NavigationOptions
-    redirected: Boolean
+    redirected: boolean
     source?: string
 }
 

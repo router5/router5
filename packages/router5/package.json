@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -26,11 +30,10 @@
   },
   "homepage": "https://router5.js.org",
   "dependencies": {
-    "route-node": "3.4.2",
+    "route-node": "4.1.1",
     "router5-transition-path": "^7.0.1",
     "symbol-observable": "1.2.0"
   },
-  "typings": "./types/index.d.ts",
   "scripts": {
     "test": "jest"
   }

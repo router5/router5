@@ -5,6 +5,13 @@
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
   "module": "dist/index.es.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
@@ -19,24 +26,16 @@
   ],
   "author": "Thomas Roch",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/router5/router5/issues"
-  },
   "homepage": "https://router5.js.org",
+  "dependencies": {
+    "prop-types": "~15.6.2",
+    "router5-transition-path": "^7.0.1"
+  },
   "devDependencies": {
-    "enzyme-adapter-react-16": "~1.7.0",
     "router5": "^7.0.2"
   },
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
     "router5": "^7.0.0"
-  },
-  "dependencies": {
-    "prop-types": "~15.6.2",
-    "router5-transition-path": "^7.0.1"
-  },
-  "typings": "./types/index.d.ts",
-  "scripts": {
-    "test": "jest"
   }
 }

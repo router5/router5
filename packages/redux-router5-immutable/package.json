@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jnext:main": "dist/index.es.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/router5/router5.git"
@@ -35,7 +39,6 @@
   "dependencies": {
     "redux-router5": "^7.0.2"
   },
-  "typings": "./types/index.d.ts",
   "scripts": {
     "test": "jest"
   }

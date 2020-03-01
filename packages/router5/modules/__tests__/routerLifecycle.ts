@@ -68,7 +68,7 @@ describe('core/router-lifecycle', function() {
 
     it('should start with the default route if start route is not matched', done => {
         router.stop()
-        router.start('/about', function(err, state) {
+        router.start('/about', function() {
             expect(omitMeta(router.getState())).toEqual({
                 name: 'home',
                 params: {},
@@ -156,7 +156,7 @@ describe('core/router-lifecycle', function() {
     it('should not reuse id when starting with provided state', done => {
         router.stop()
         expect(homeState.meta.id).toEqual(1)
-        router.start(homeState, function(err, state) {
+        router.start(homeState, function() {
             router.navigate('users', function(err, state) {
                 expect(state.meta.id).not.toEqual(1)
                 done()
@@ -168,7 +168,7 @@ describe('core/router-lifecycle', function() {
         router.stop()
         router.setOption('defaultRoute', 'fake.route')
 
-        router.start('/not-existing', function(err, state) {
+        router.start('/not-existing', function(err) {
             expect(err.code).toBe(errorCodes.ROUTE_NOT_FOUND)
             done()
         })

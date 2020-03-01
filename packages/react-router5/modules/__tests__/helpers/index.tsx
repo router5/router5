@@ -1,5 +1,5 @@
 import createRouter from 'router5'
-import React, { Component } from 'react'
+import React, { Component, FC } from 'react'
 import { RouterProvider } from '../../'
 import { mount } from 'enzyme'
 import browserPlugin from '../../../../router5-plugin-browser'
@@ -10,7 +10,7 @@ export class Child extends Component {
     }
 }
 
-export const FnChild = props => <div />
+export const FnChild: FC<Record<string, any>> = () => <div />
 
 export const createTestRouter = () => {
     const router = createRouter([])

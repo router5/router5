@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const typescript = require('rollup-plugin-typescript2')
 const { uglify } = require('rollup-plugin-uglify')
-const nodeResolve = require('rollup-plugin-node-resolve')
-const commonjs = require('rollup-plugin-commonjs')
+const nodeResolve = require('@rollup/plugin-node-resolve')
+const commonjs = require('@rollup/plugin-commonjs')
 
 const makeConfig = ({
     packageName,
@@ -11,16 +12,8 @@ const makeConfig = ({
     file
 }) => {
     const plugins = [
-        nodeResolve({ jsnext: true, module: true }),
-        commonjs({
-            include: `packages/${packageName}/node_modules/**`,
-            namedExports: {
-                [`packages/${packageName}/node_modules/immutable/dist/immutable.js`]: [
-                    'Record',
-                    'Map'
-                ]
-            }
-        }),
+        nodeResolve({ mainFields: ['jsnext', 'module'] }),
+        commonjs(),
         typescript({
             tsconfig: `./packages/${packageName}/tsconfig.build.json`,
             useTsconfigDeclarationDir: true,
@@ -32,30 +25,33 @@ const makeConfig = ({
 
     return {
         input: `packages/${packageName}/modules/index.ts`,
-        external:
-            umd ? [] : Object.keys(
+        external: umd
+            ? []
+            : Object.keys(
+                  require(`./packages/${packageName}/package.json`)
+                      .dependencies || {}
+              ).concat(
+                  Object.keys(
                       require(`./packages/${packageName}/package.json`)
-                          .dependencies || {}
-                  ).concat(
-                      Object.keys(
-                          require(`./packages/${packageName}/package.json`)
-                              .peerDependencies || {}
-                      )
-                  ),
-        output: umd ? {
-            file,
-            name: packageName,
-            format: 'umd'
-        } : [
-            {
-                format: 'es',
-                file: `packages/${packageName}/dist/index.es.js`
-            },
-            {
-                format: 'cjs',
-                file: `packages/${packageName}/dist/index.js`
-            }
-        ],
+                          .peerDependencies || {}
+                  )
+              ),
+        output: umd
+            ? {
+                  file,
+                  name: packageName,
+                  format: 'umd'
+              }
+            : [
+                  {
+                      format: 'es',
+                      file: `packages/${packageName}/dist/index.es.js`
+                  },
+                  {
+                      format: 'cjs',
+                      file: `packages/${packageName}/dist/index.js`
+                  }
+              ],
         plugins
     }
 }
@@ -67,6 +63,7 @@ const makePackageConfig = packageName =>
     })
 
 module.exports = [
+    makePackageConfig('router5-transition-path'),
     makeConfig({
         packageName: 'router5',
         file: 'dist/router5.min.js',
@@ -81,7 +78,6 @@ module.exports = [
     }),
     makePackageConfig('router5'),
     makePackageConfig('router5-helpers'),
-    makePackageConfig('router5-transition-path'),
     makePackageConfig('router5-plugin-browser'),
     makePackageConfig('router5-plugin-logger'),
     makePackageConfig('router5-plugin-listeners'),

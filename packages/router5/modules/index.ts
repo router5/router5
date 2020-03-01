@@ -1,17 +1,15 @@
 import createRouter from './createRouter'
-import RouteNode from 'route-node'
+import { RouteNode } from 'route-node'
 import transitionPath from 'router5-transition-path'
 import { constants, errorCodes, ErrorCodes, Constants } from './constants'
 import cloneRouter from './clone'
 
 // Types
 export {
-    CreateRouter,
     Route,
     Options,
     ActivationFn,
     ActivationFnFactory,
-    Dependencies,
     Router,
     Plugin,
     PluginFactory,

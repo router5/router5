@@ -3,7 +3,9 @@ import { Router } from '../types/router'
 
 const noop = function() {}
 
-export default function withRouterLifecycle(router: Router): Router {
+export default function withRouterLifecycle<Dependencies>(
+    router: Router<Dependencies>
+): Router<Dependencies> {
     let started = false
 
     router.isStarted = () => started

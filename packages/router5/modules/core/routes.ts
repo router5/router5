@@ -1,9 +1,11 @@
-import RouteNode from 'route-node'
+import { RouteNode } from 'route-node'
 import { constants } from '../constants'
 import { Router, Route } from '../types/router'
 
-export default function withRoutes(routes: Route[] | RouteNode) {
-    return (router: Router): Router => {
+export default function withRoutes<Dependencies>(
+    routes: Array<Route<Dependencies>> | RouteNode
+) {
+    return (router: Router<Dependencies>): Router<Dependencies> => {
         router.forward = (fromRoute, toRoute) => {
             router.config.forwardMap[fromRoute] = toRoute
 
@@ -13,7 +15,7 @@ export default function withRoutes(routes: Route[] | RouteNode) {
         const rootNode =
             routes instanceof RouteNode
                 ? routes
-                : new RouteNode('', '', routes, onRouteAdded)
+                : new RouteNode('', '', routes, { onAdd: onRouteAdded })
 
         function onRouteAdded(route) {
             if (route.canActivate)
@@ -41,7 +43,7 @@ export default function withRoutes(routes: Route[] | RouteNode) {
             return router
         }
 
-        router.addNode = (name, path, canActivateHandler?): Router => {
+        router.addNode = (name, path, canActivateHandler?) => {
             rootNode.addNode(name, path)
             if (canActivateHandler) router.canActivate(name, canActivateHandler)
             return router
@@ -93,7 +95,8 @@ export default function withRoutes(routes: Route[] | RouteNode) {
             return router.rootNode.buildPath(route, encodedParams, {
                 trailingSlashMode,
                 queryParamsMode,
-                queryParams
+                queryParams,
+                urlParamsEncoding: router.getOptions().urlParamsEncoding
             })
         }
 

@@ -33,7 +33,7 @@ describe('browserPlugin', function() {
 })
 
 function test(useHash) {
-    const prefix = useHash ? '/#!' : ''
+    const prefix = useHash ? '#!' : ''
 
     function makeUrl(path) {
         return (
@@ -127,14 +127,14 @@ function test(useHash) {
             })
         })
 
-        it('should build URLs', () => {
+        it.only('should build URLs', () => {
             expect(router.buildUrl('home', {})).toBe(prefix + '/home')
             expect(
                 router.buildUrl(constants.UNKNOWN_ROUTE, {
                     path: '/route-not-found'
                 })
             ).toBe(prefix + '/route-not-found')
-            expect(router.buildUrl('undefined', {})).toBe(null)
+            expect(() => router.buildUrl('undefined', {})).toThrow()
         })
     })
 }

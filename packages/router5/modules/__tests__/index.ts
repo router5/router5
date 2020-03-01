@@ -1,5 +1,5 @@
 import createRouter from '../'
-import RouteNode from 'route-node'
+import { RouteNode } from 'route-node'
 
 describe('router5', () => {
     describe('createRouter', () => {

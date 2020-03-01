@@ -1,8 +1,10 @@
-import RouteNode, {
+import {
     TrailingSlashMode,
     QueryParamsMode,
     QueryParamsOptions,
-    RouteNodeState
+    RouteNode,
+    RouteNodeState,
+    URLParamsEncodingType
 } from 'route-node'
 import {
     State,
@@ -14,18 +16,14 @@ import {
     CancelFn
 } from './base'
 
-export type CreateRouter = (
-    routes?: Route[] | RouteNode,
-    options?: Partial<Options>,
-    dependencies?: Dependencies
-) => Router
-
-export interface Route {
+export interface Route<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> {
     name: string
     path: string
-    canActivate?: ActivationFnFactory
+    canActivate?: ActivationFnFactory<Dependencies>
     forwardTo?: string
-    children?: Route[]
+    children?: Array<Route<Dependencies>>
     encodeParams?(stateParams: Params): Params
     decodeParams?(pathParams: Params): Params
     defaultParams?: Params
@@ -43,6 +41,7 @@ export interface Options {
     rewritePathOnMatch: boolean
     queryParams?: QueryParamsOptions
     caseSensitive: boolean
+    urlParamsEncoding?: URLParamsEncodingType
 }
 
 export type ActivationFn = (
@@ -51,12 +50,11 @@ export type ActivationFn = (
     done: DoneFn
 ) => boolean | Promise<boolean> | void
 
-export type ActivationFnFactory = (
-    router: Router,
-    dependencies?: Dependencies
-) => ActivationFn
+export type ActivationFnFactory<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> = (router: Router, dependencies?: Dependencies) => ActivationFn
 
-export type Dependencies = Record<string, any>
+export type DefaultDependencies = Record<string, any>
 
 export interface Config {
     decoders: Record<string, any>
@@ -65,16 +63,21 @@ export interface Config {
     forwardMap: Record<string, any>
 }
 
-export interface Router {
+export interface Router<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> {
     config: Config
 
     rootNode: RouteNode
-    add(routes: Route[] | Route, finalSort?: boolean): Router
+    add(
+        routes: Array<Route<Dependencies>> | Route<Dependencies>,
+        finalSort?: boolean
+    ): Router<Dependencies>
     addNode(
         name: string,
         path: string,
-        canActivateHandler?: ActivationFnFactory
-    ): Router
+        canActivateHandler?: ActivationFnFactory<Dependencies>
+    ): Router<Dependencies>
     isActive(
         name: string,
         params?: Params,
@@ -86,7 +89,7 @@ export interface Router {
     setRootPath(rootPath: string): void
 
     getOptions(): Options
-    setOption(option: string, value: any): Router
+    setOption(option: string, value: any): Router<Dependencies>
 
     makeState(
         name: string,
@@ -108,51 +111,56 @@ export interface Router {
     buildState(routeName: string, routeParams: Params): RouteNodeState | null
 
     isStarted(): boolean
-    start(startPathOrState: string | State, done?: DoneFn): Router
-    start(done?: DoneFn): Router
+    start(startPathOrState: string | State, done?: DoneFn): Router<Dependencies>
+    start(done?: DoneFn): Router<Dependencies>
     stop(): void
 
     canDeactivate(
         name: string,
-        canDeactivateHandler: ActivationFnFactory | boolean
-    ): Router
+        canDeactivateHandler: ActivationFnFactory<Dependencies> | boolean
+    ): Router<Dependencies>
     clearCanDeactivate(name: string): Router
     canActivate(
         name: string,
-        canActivateHandler: ActivationFnFactory | boolean
-    ): Router
+        canActivateHandler: ActivationFnFactory<Dependencies> | boolean
+    ): Router<Dependencies>
     getLifecycleFactories(): [
-        { [key: string]: ActivationFnFactory },
-        { [key: string]: ActivationFnFactory }
+        { [key: string]: ActivationFnFactory<Dependencies> },
+        { [key: string]: ActivationFnFactory<Dependencies> }
     ]
     getLifecycleFunctions(): [
         { [key: string]: ActivationFn },
         { [key: string]: ActivationFn }
     ]
 
-    usePlugin(...plugins: PluginFactory[]): Unsubscribe
-    addPlugin(plugin: Plugin): Router
-    getPlugins(): PluginFactory[]
+    usePlugin(...plugins: Array<PluginFactory<Dependencies>>): Unsubscribe
+    addPlugin(plugin: Plugin): Router<Dependencies>
+    getPlugins(): Array<PluginFactory<Dependencies>>
 
-    useMiddleware(...middlewares: MiddlewareFactory[]): Unsubscribe
+    useMiddleware(
+        ...middlewares: Array<MiddlewareFactory<Dependencies>>
+    ): Unsubscribe
     clearMiddleware(): Router
-    getMiddlewareFactories: () => MiddlewareFactory[]
+    getMiddlewareFactories: () => Array<MiddlewareFactory<Dependencies>>
     getMiddlewareFunctions: () => Middleware[]
 
     setDependency(dependencyName: string, dependency: any): Router
     setDependencies(deps: Dependencies): Router
     getDependencies(): Dependencies
-    getInjectables(): [Router, Dependencies]
+    getInjectables(): [Router<Dependencies>, Dependencies]
     executeFactory(
-        factory: (router?: Router, dependencies?: Dependencies) => any
+        factory: (
+            router?: Router<Dependencies>,
+            dependencies?: Dependencies
+        ) => any
     ): any
 
     invokeEventListeners: (eventName, ...args) => void
     removeEventListener: (eventName, cb) => void
     addEventListener: (eventName, cb) => Unsubscribe
 
-    cancel(): Router
-    forward(fromRoute: string, toRoute: string): Router
+    cancel(): Router<Dependencies>
+    forward(fromRoute: string, toRoute: string): Router<Dependencies>
     navigate(
         routeName: string,
         routeParams: Params,
@@ -193,14 +201,13 @@ export type Middleware = (
     done: DoneFn
 ) => boolean | Promise<any> | void
 
-export type MiddlewareFactory = (
-    router: Router,
-    dependencies: Dependencies
-) => Middleware
+export type MiddlewareFactory<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> = (router: Router, dependencies: Dependencies) => Middleware
 
-export interface PluginFactory {
-    (router?: Router, dependencies?: Dependencies): Plugin
-}
+export type PluginFactory<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> = (router?: Router, dependencies?: Dependencies) => Plugin
 
 export interface SubscribeState {
     route: State

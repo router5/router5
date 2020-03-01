@@ -6,16 +6,16 @@ import { mount } from 'enzyme'
 import browserPlugin from '../../../../router5-plugin-browser'
 
 export class Child extends Component {
+    static contextTypes = {
+        router: PropTypes.object.isRequired
+    }
+
     render() {
         return <div />
     }
 }
 
-Child.contextTypes = {
-    router: PropTypes.object.isRequired
-}
-
-export const FnChild = props => <div />
+export const FnChild = () => <div />
 
 export const createTestRouter = () => {
     const router = createRouter([])

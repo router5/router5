@@ -9,6 +9,10 @@ function routeNode<P>(nodeName: string) {
         RouteSegment: React.ComponentType<P & RouterState>
     ): ComponentClass<P> {
         class RouteNode extends Component<P> {
+            static contextTypes = {
+                router: PropTypes.object.isRequired
+            }
+
             private router: Router
             private routeState: RouteState
             private mounted: boolean
@@ -64,10 +68,6 @@ function routeNode<P>(nodeName: string) {
 
                 return component
             }
-        }
-
-        RouteNode.contextTypes = {
-            router: PropTypes.object.isRequired
         }
 
         return RouteNode

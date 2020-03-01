@@ -54,7 +54,7 @@ describe('core/middleware', () => {
         router.stop()
         router.useMiddleware(() => listeners.transitionMutate)
         router.start('', () => {
-            router.navigate('orders', function(err, state) {
+            router.navigate('orders', function(err) {
                 expect(console.error).toHaveBeenCalled()
                 expect(err).toEqual(null)
                 router.clearMiddleware()
@@ -67,8 +67,8 @@ describe('core/middleware', () => {
         jest.spyOn(listeners, 'transitionErr')
         router.stop()
         router.useMiddleware(() => listeners.transitionErr)
-        router.start('', err => {
-            router.navigate('users', function(err, state) {
+        router.start('', () => {
+            router.navigate('users', function(err) {
                 expect(listeners.transitionErr).toHaveBeenCalled()
                 expect(err.code).toEqual(errorCodes.TRANSITION_ERR)
                 expect(err.reason).toEqual('because')
@@ -86,8 +86,8 @@ describe('core/middleware', () => {
             () => listeners.transition,
             () => listeners.transitionErr
         )
-        router.start('', (err, state) => {
-            router.navigate('users', function(err, state) {
+        router.start('', () => {
+            router.navigate('users', function() {
                 expect(listeners.transition).toHaveBeenCalled()
                 expect(listeners.transitionErr).toHaveBeenCalled()
                 done()

@@ -4,7 +4,7 @@ import { removeListener } from 'cluster'
 
 export type Listener = (toState: State, fromState: State | null) => void
 
-declare module 'router5/types/types/router' {
+declare module 'router5/dist/types/router' {
     interface Router {
         getListeners(): { [key: string]: Listener[] }
         addListener(name: string, callback: Listener): void
