@@ -2,7 +2,7 @@ import { constants, errorCodes } from '../constants'
 import { Router } from '../types/router'
 import transition from '../transition'
 
-const noop = function(err, state?) {}
+const noop = () => {}
 
 export default function withNavigation(router: Router): Router {
     let cancelCurrentTransition

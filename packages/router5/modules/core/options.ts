@@ -8,7 +8,8 @@ const defaultOptions: Options = {
     allowNotFound: false,
     strongMatching: true,
     rewritePathOnMatch: true,
-    caseSensitive: false
+    caseSensitive: false,
+    urlParamsEncoding: 'default'
 }
 
 export default function withOptions(options: Partial<Options>) {

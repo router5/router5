@@ -38,7 +38,8 @@
         allowNotFound: false,
         strongMatching: true,
         rewritePathOnMatch: true,
-        caseSensitive: false
+        caseSensitive: false,
+        urlParamsEncoding: 'default'
     };
     function withOptions(options) {
         return function (router) {
@@ -1184,7 +1185,7 @@
         var segments = this.getSegmentsByName(routeName);
 
         if (!segments) {
-          return '';
+          throw new Error("[route-node][buildPath] '{routeName}' is not defined");
         }
 
         return buildPathFromSegments(segments, params, options);
@@ -1439,7 +1440,8 @@
                 return router.rootNode.buildPath(route, encodedParams, {
                     trailingSlashMode: trailingSlashMode,
                     queryParamsMode: queryParamsMode,
-                    queryParams: queryParams
+                    queryParams: queryParams,
+                    urlParamsEncoding: router.getOptions().urlParamsEncoding
                 });
             };
             router.matchPath = function (path, source) {
@@ -1947,7 +1949,7 @@
         return cancel;
     }
 
-    var noop = function (err, state) { };
+    var noop = function () { };
     function withNavigation(router) {
         var cancelCurrentTransition;
         router.navigate = navigate;

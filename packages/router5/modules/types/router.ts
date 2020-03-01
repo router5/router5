@@ -3,7 +3,8 @@ import {
     QueryParamsMode,
     QueryParamsOptions,
     RouteNode,
-    RouteNodeState
+    RouteNodeState,
+    URLParamsEncodingType
 } from 'route-node'
 import {
     State,
@@ -44,6 +45,7 @@ export interface Options {
     rewritePathOnMatch: boolean
     queryParams?: QueryParamsOptions
     caseSensitive: boolean
+    urlParamsEncoding?: URLParamsEncodingType
 }
 
 export type ActivationFn = (

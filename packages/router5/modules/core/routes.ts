@@ -93,7 +93,8 @@ export default function withRoutes(routes: Route[] | RouteNode) {
             return router.rootNode.buildPath(route, encodedParams, {
                 trailingSlashMode,
                 queryParamsMode,
-                queryParams
+                queryParams,
+                urlParamsEncoding: router.getOptions().urlParamsEncoding
             })
         }
 
