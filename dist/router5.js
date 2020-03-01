@@ -53,58 +53,6 @@
         };
     }
 
-    /*! *****************************************************************************
-    Copyright (c) Microsoft Corporation. All rights reserved.
-    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-    this file except in compliance with the License. You may obtain a copy of the
-    License at http://www.apache.org/licenses/LICENSE-2.0
-
-    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-    MERCHANTABLITY OR NON-INFRINGEMENT.
-
-    See the Apache Version 2.0 License for specific language governing permissions
-    and limitations under the License.
-    ***************************************************************************** */
-
-    var __assign$1 = function() {
-        __assign$1 = Object.assign || function __assign(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign$1.apply(this, arguments);
-    };
-
-    /*! *****************************************************************************
-    Copyright (c) Microsoft Corporation. All rights reserved.
-    Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-    this file except in compliance with the License. You may obtain a copy of the
-    License at http://www.apache.org/licenses/LICENSE-2.0
-
-    THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-    WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-    MERCHANTABLITY OR NON-INFRINGEMENT.
-
-    See the Apache Version 2.0 License for specific language governing permissions
-    and limitations under the License.
-    ***************************************************************************** */
-
-    var __assign$2 = function() {
-        __assign$2 = Object.assign || function __assign(t) {
-            for (var s, i = 1, n = arguments.length; i < n; i++) {
-                s = arguments[i];
-                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-            }
-            return t;
-        };
-        return __assign$2.apply(this, arguments);
-    };
-
     var makeOptions = function makeOptions(opts) {
       if (opts === void 0) {
         opts = {};
@@ -500,7 +448,7 @@
         }
 
         this.path = path;
-        this.options = __assign$2(__assign$2({}, defaultOptions$1), options);
+        this.options = __assign(__assign({}, defaultOptions$1), options);
         this.tokens = tokenise(path);
         this.hasUrlParams = this.tokens.filter(function (t) {
           return /^url-parameter/.test(t.type);
@@ -545,7 +493,7 @@
       Path.prototype.test = function (path, opts) {
         var _this = this;
 
-        var options = __assign$2(__assign$2({
+        var options = __assign(__assign({
           caseSensitive: false,
           strictTrailingSlash: false
         }, this.options), opts); // trailingSlash: falsy => non optional, truthy => optional
@@ -580,7 +528,7 @@
       Path.prototype.partialTest = function (path, opts) {
         var _this = this;
 
-        var options = __assign$2(__assign$2({
+        var options = __assign(__assign({
           caseSensitive: false,
           delimited: true
         }, this.options), opts); // Check if partial match (start of given path matches regex)
@@ -614,7 +562,7 @@
           params = {};
         }
 
-        var options = __assign$2(__assign$2({
+        var options = __assign(__assign({
           ignoreConstraints: false,
           ignoreSearch: false,
           queryParams: {}
@@ -1133,7 +1081,7 @@
           }).join('.');
 
           if (cb) {
-            cb(__assign$1(__assign$1({}, route), {
+            cb(__assign(__assign({}, route), {
               name: fullName
             }));
           }

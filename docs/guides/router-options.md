@@ -17,7 +17,7 @@ var router = createRouter([], {
     trailingSlashMode: 'default',
     strictTrailingSlash: false,
     caseSensitive: false,
-    urlParamsEncodingType: 'default'
+    urlParamsEncoding: 'default'
 })
 ```
 
@@ -48,7 +48,7 @@ const state = {
 
 ## URL parameters encoding and decoding
 
-Option `urlParamsEncodingType` controls the encoding and decoding of URL parameters, when matching and building paths. It supports the following values:
+Option `urlParamsEncoding` controls the encoding and decoding of URL parameters, when matching and building paths. It supports the following values:
 
 -   `'default'`: `encodeURIComponent` and `decodeURIComponent` are used but some characters to encode and decode URL parameters, but some characters are preserved when encoding (sub-delimiters:`+`,`:`,`'`,`!`,`,`,`;`,`*`).
 -   `'uriComponent'`: use `encodeURIComponent` and `decodeURIComponent` for encoding and decoding URL parameters.

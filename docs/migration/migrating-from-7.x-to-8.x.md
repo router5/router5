@@ -16,11 +16,11 @@ Version 8 is a global maintenance of `router5` and its dependencies. I'm putting
 
 -   `createRouter` takes a generic for typing dependencies (also it is advised to let it be inferred). This will help for more type safetiness and developer experience in places where dependencies are injected.
 
--   A new option `urlParamsEncodingType` has been added to be able to choose how URL params are encoded and decoded by default when matching and building. See the options documentation for more info.
+-   A new option `urlParamsEncoding` has been added to be able to choose how URL params are encoded and decoded by default when matching and building. See the options documentation for more info.
 
 #### BREAKING CHANGES
 
--   Now by default URL params encoding can be different dependending on what special characters you use in them. The default value is pretty safe but if you want to keep the old behaviour, set `urlParamsEncodingType` to `'legacy'`.
+-   Now by default URL params encoding can be different dependending on what special characters you use in them. The default value is pretty safe but if you want to keep the old behaviour, set `urlParamsEncoding` to `'legacy'`.
 
 ### Other packages
 
