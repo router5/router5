@@ -8611,10 +8611,10 @@ rollup@~1.27.14:
     "@types/node" "*"
     acorn "^7.1.0"
 
-route-node@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/route-node/-/route-node-4.0.0.tgz#175cac3beb168d88cd839151ac74d154d1636131"
-  integrity sha512-LjN8vM87fDjs6oI30QYyVjlHCbhbjj45VvIympiR0lKj+uHMLtUG8BfQLNCY3liRPZX/7sabgflIyPK4qrnL+Q==
+route-node@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/route-node/-/route-node-4.1.0.tgz#2ce35ed2d3fdb0dc0c59dd6519aa5b9f680802a4"
+  integrity sha512-6OT11+yW+qflqZEJfIpYRt1nOy9ZkI9J/uf8cxt/u2ffpKCtP+n2bL4FXrX+QaCFEZqA+DjTgWGyLBRQWzFvvA==
   dependencies:
     path-parser "6.1.0"
     search-params "3.0.0"
