@@ -1,10 +1,10 @@
 import React from 'react'
 import InboxList from './InboxList'
 import Message from './Message'
-import { RouteNode } from 'react-router5'
+import { useRouteNode } from 'react-router5'
 
-function Inbox(props) {
-    const { route, emails } = props
+const Inbox = ({ emails }) => {
+    const { route } = useRouteNode('inbox')
 
     return (
         <div className="inbox">
@@ -16,8 +16,4 @@ function Inbox(props) {
     )
 }
 
-export default (props) => (
-    <RouteNode nodeName="inbox">
-        {({ route }) => <Inbox route={route} {...props} />}
-    </RouteNode>
-)
+export default Inbox

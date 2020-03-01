@@ -1,10 +1,11 @@
 import React from 'react'
-import { RouteNode } from 'react-router5'
+import { useRouteNode } from 'react-router5'
 import Inbox from './Inbox'
 import Compose from './Compose'
 import NotFound from './NotFound'
 
-function Main({ route, emails }) {
+function Main({ emails }) {
+    const { route } = useRouteNode('')
     const topRouteName = route.name.split('.')[0]
 
     if (topRouteName === 'inbox') {
@@ -18,8 +19,4 @@ function Main({ route, emails }) {
     return <NotFound />
 }
 
-export default (props) => (
-    <RouteNode nodeName="">
-        {({ route }) => <Main route={route} {...props} />}
-    </RouteNode>
-)
+export default Main
