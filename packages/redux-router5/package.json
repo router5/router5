@@ -1,6 +1,6 @@
 {
   "name": "redux-router5",
-  "version": "7.0.2",
+  "version": "8.0.0",
   "description": "Router5 integration with redux",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -26,15 +26,15 @@
   "homepage": "https://router5.js.org",
   "devDependencies": {
     "immutable": "~3.0.0",
-    "router5": "^7.0.2",
-    "redux": "4.0.5"
+    "redux": "4.0.5",
+    "router5": "^8.0.0"
   },
   "peerDependencies": {
     "redux": "^3.0.0 || ^4.0.0",
     "router5": "^7.0.0"
   },
   "dependencies": {
-    "router5-transition-path": "^7.0.1"
+    "router5-transition-path": "^8.0.0"
   },
   "scripts": {
     "test": "jest"

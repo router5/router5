@@ -1,6 +1,6 @@
 {
   "name": "redux-router5-immutable",
-  "version": "7.0.2",
+  "version": "8.0.0",
   "description": "Router5 integration with redux",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -29,7 +29,7 @@
   "homepage": "https://router5.js.org",
   "devDependencies": {
     "immutable": "^3.0.0",
-    "router5": "^7.0.2"
+    "router5": "^8.0.0"
   },
   "peerDependencies": {
     "immutable": "^3.0.0",
@@ -37,7 +37,7 @@
     "router5": "^7.0.0"
   },
   "dependencies": {
-    "redux-router5": "^7.0.2"
+    "redux-router5": "^8.0.0"
   },
   "scripts": {
     "test": "jest"
