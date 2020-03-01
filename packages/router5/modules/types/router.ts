@@ -1,7 +1,8 @@
-import RouteNode, {
+import {
     TrailingSlashMode,
     QueryParamsMode,
     QueryParamsOptions,
+    RouteNode,
     RouteNodeState
 } from 'route-node'
 import {

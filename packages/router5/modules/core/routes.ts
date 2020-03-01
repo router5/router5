@@ -1,4 +1,4 @@
-import RouteNode from 'route-node'
+import { RouteNode } from 'route-node'
 import { constants } from '../constants'
 import { Router, Route } from '../types/router'
 
@@ -13,7 +13,7 @@ export default function withRoutes(routes: Route[] | RouteNode) {
         const rootNode =
             routes instanceof RouteNode
                 ? routes
-                : new RouteNode('', '', routes, onRouteAdded)
+                : new RouteNode('', '', routes, { onAdd: onRouteAdded })
 
         function onRouteAdded(route) {
             if (route.canActivate)
