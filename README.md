@@ -69,7 +69,7 @@ from(router).map(({ route }) => {
 
 ### Examples
 
-- With React: [`code`](./examples/react) | [`live`](https://stackblitz.com/github/router5/router5/tree/master/examples/react)
+- With React: [`code`](./examples/react) | [`live`](https://codesandbox.io/s/github/router5/router5/tree/master/examples/react)
 
 ### Docs
 
