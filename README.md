@@ -52,7 +52,12 @@ function App() {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(
+  <RouterProvider router={router}>
+    <App />
+  </RouterProvider>,
+  document.getElementById('root')
+)
 ```
 
 **With observables**
