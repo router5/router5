@@ -29,14 +29,16 @@ router.usePlugin(browserPlugin())
 router.start()
 ```
 
-**With React \(new context API\)**
+**With React \(hooks\)**
 
 ```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { RouteProvider, Route } from 'react-router5'
+import { RouterProvider, useRoute } from 'react-router5'
 
-function App({ route }) {
+function App() {
+  const { route } = useRoute()
+
   if (!route) {
     return null
   }
@@ -51,9 +53,9 @@ function App({ route }) {
 }
 
 ReactDOM.render(
-  <RouteProvider router={router}>
-    <Route>{({ route }) => <App route={route} />}</Route>
-  </RouteProvider>,
+  <RouterProvider router={router}>
+    <App />
+  </RouterProvider>,
   document.getElementById('root')
 )
 ```

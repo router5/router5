@@ -85,7 +85,6 @@ module.exports = [
     makePackageConfig('rxjs-router5'),
     makePackageConfig('xstream-router5'),
     makePackageConfig('react-router5'),
-    makePackageConfig('react-router5-hocs'),
     makePackageConfig('redux-router5'),
     makePackageConfig('redux-router5-immutable')
 ].filter(Boolean)
