@@ -36,6 +36,6 @@
   },
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
-    "router5": "^7.0.0"
+    "router5": "^8.0.0"
   }
 }

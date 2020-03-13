@@ -34,7 +34,7 @@
     "router5-transition-path": "^8.0.0"
   },
   "peerDependencies": {
-    "router5": "^7.0.0",
+    "router5": "^8.0.0",
     "xstream": "^10.0.0"
   },
   "scripts": {
