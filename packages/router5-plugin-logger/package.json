@@ -1,6 +1,6 @@
 {
   "name": "router5-plugin-logger",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Router5 browser plugin",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -24,7 +24,7 @@
     "url": "https://github.com/router5/router5/issues"
   },
   "devDependencies": {
-    "router5": "^8.0.0"
+    "router5": "^8.0.1"
   },
   "peerDependencies": {
     "router5": "^8.0.0"

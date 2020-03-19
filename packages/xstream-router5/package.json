@@ -1,6 +1,6 @@
 {
   "name": "xstream-router5",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "xstream plugin for router5",
   "main": "dist/index.js",
   "jsnext:main": "dist/index.es.js",
@@ -27,11 +27,11 @@
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/xstream-router5",
   "devDependencies": {
-    "router5": "^8.0.0",
+    "router5": "^8.0.1",
     "xstream": "^10.0.0 || ^11.0.0"
   },
   "dependencies": {
-    "router5-transition-path": "^8.0.0"
+    "router5-transition-path": "^8.0.1"
   },
   "peerDependencies": {
     "router5": "^8.0.0",
