@@ -27,7 +27,7 @@
     "router5": "^8.0.0"
   },
   "peerDependencies": {
-    "router5": "^7.0.0"
+    "router5": "^8.0.0"
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/router5-plugin-persistent-params",
   "scripts": {

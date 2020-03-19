@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/router5/router5/tree/master/packages/router5-transition-path",
   "peerDependencies": {
-    "router5": "^7.0.0"
+    "router5": "^8.0.0"
   },
   "scripts": {
     "test": "jest"

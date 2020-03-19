@@ -31,7 +31,7 @@
   },
   "peerDependencies": {
     "redux": "^3.0.0 || ^4.0.0",
-    "router5": "^7.0.0"
+    "router5": "^8.0.0"
   },
   "dependencies": {
     "router5-transition-path": "^8.0.0"
