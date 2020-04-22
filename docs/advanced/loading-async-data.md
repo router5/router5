@@ -83,7 +83,7 @@ In the case you don't want a route transition to wait for data to be loaded, you
 
 > Using a state container like redux gives you a lot more flexibility with your routing strategy.
 
-Using a state container like redux gives you a lot more flexibility with your routing strategy. Because all data ends up in the same bucket that your components can listen to, data loading doesn't need to block route transitions. The only thing it needs is a reference to your store so actions can be dispatched. As a result, your view can represent with greater details the state of your application: for example your UI can be a lot more explicit about displaying loading feedback. Not blocking route transitions also means immediate URL updates \(history\), making your app feel more responsive.
+Because all data ends up in the same bucket that your components can listen to, data loading doesn't need to block route transitions. The only thing it needs is a reference to your store so actions can be dispatched. As a result, your view can represent with greater details the state of your application: for example your UI can be a lot more explicit about displaying loading feedback. Not blocking route transitions also means immediate URL updates \(history\), making your app feel more responsive.
 
 The following example assumes the use a redux store configured with a `redux-thunk` middleware.
 
