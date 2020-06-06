@@ -11190,6 +11190,13 @@ react-is@^16.6.1, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
+react-router5@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-router5/-/react-router5-8.0.0.tgz#611aed142c20948a6c5f511ed196b4ee95d9bedd"
+  integrity sha512-TKeRIBjqjWuvLRB3kzOVyirCYkztJ2LQFa4qOq6je1zN0AlD3vyhB1urKGAd42qKap440KdsWTOQA/0QHz+KTg==
+  dependencies:
+    router5-transition-path "^8.0.0"
+
 react-scripts@3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-3.4.0.tgz#f413680f0b5b937c8879ba1ffdae9b8c5b364bf5"
@@ -11845,6 +11852,25 @@ route-node@4.1.1:
     path-parser "6.1.0"
     search-params "3.0.0"
     tslib "^1.10.0"
+
+router5-plugin-browser@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5-plugin-browser/-/router5-plugin-browser-8.0.0.tgz#0271e1df148944b3d30e3de5d31af1fb58068b74"
+  integrity sha512-JcyVLnJrzwVQN2ObxWvgiOFw43NaXSiEvAn2v0oQl45pTHnjGCMD0sEyFFkLgSrWja0mr08HLcgF6wvIv5z3Yg==
+
+router5-plugin-logger@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5-plugin-logger/-/router5-plugin-logger-8.0.0.tgz#618c6e8df5ae400be4a069aaa550b8f10c49abb9"
+  integrity sha512-TVzjyTlIqa75qdswk10tGetHUwls6YpH9Gly206XUvOkq+c1JzD3L6HWRCtH1Dt9U2Ukmd3TCxXeE7dUYGIlKA==
+
+router5@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5/-/router5-8.0.0.tgz#28cd8112b8d3bcab3de98766a179ececdd4a7bae"
+  integrity sha512-HYXB94yBZTTK0HrbZyGjOMPc3H+5TjzodY9KctIjgyNB44nuT85y4jjUtm0ufvTPXji0xyPphzKJUa1BpLRHMg==
+  dependencies:
+    route-node "4.1.1"
+    router5-transition-path "^8.0.0"
+    symbol-observable "1.2.0"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -13556,9 +13582,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   version "1.0.5"
