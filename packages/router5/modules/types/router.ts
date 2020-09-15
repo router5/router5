@@ -195,11 +195,11 @@ export interface Plugin {
     teardown?(): void
 }
 
-export type Middleware = (
+export type Middleware<EnhancedState extends State = State> = (
     toState: State,
     fromState: State,
     done: DoneFn
-) => boolean | Promise<any> | void
+) => boolean | Promise<any> | EnhancedState | void
 
 export type MiddlewareFactory<
     Dependencies extends DefaultDependencies = DefaultDependencies

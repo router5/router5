@@ -17,7 +17,8 @@ export {
     SubscribeState,
     SubscribeFn,
     Listener,
-    Subscription
+    Subscription,
+    DefaultDependencies
 } from './types/router'
 export { State, StateMeta, NavigationOptions } from './types/base'
 

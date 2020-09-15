@@ -1,14 +1,19 @@
 import React, { ReactNode } from 'react'
 import { UnsubscribeFn, RouteState } from './types'
 import { Router } from 'router5'
+import { DefaultDependencies } from 'router5/dist/types/router'
 import { routerContext, routeContext } from './context'
 
-export interface RouteProviderProps {
-    router: Router
+export interface RouteProviderProps<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> {
+    router: Router<Dependencies>
     children: ReactNode
 }
 
-class RouterProvider extends React.PureComponent<RouteProviderProps> {
+class RouterProvider<
+    Dependencies extends DefaultDependencies = DefaultDependencies
+> extends React.PureComponent<RouteProviderProps<Dependencies>> {
     private mounted: boolean
     private routeState: RouteState
     private unsubscribe: UnsubscribeFn
