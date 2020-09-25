@@ -14,6 +14,7 @@ export {
     Plugin,
     PluginFactory,
     Middleware,
+    MiddlewareFactory,
     SubscribeState,
     SubscribeFn,
     Listener,
