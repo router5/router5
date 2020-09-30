@@ -15,6 +15,7 @@
 ## Examples
 
 - [With React](https://codesandbox.io/s/github/router5/router5/tree/master/examples/react)
+- [Opionated Starter Kit - SSR, TypeScript and React](https://github.com/crazyfactory/ts-react-boilerplate)
 
 ## Not up to date
 
