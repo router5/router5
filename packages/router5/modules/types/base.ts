@@ -14,6 +14,8 @@ export type DoneFn = (err?: any, state?: State) => void
 
 export type CancelFn = () => void
 
+export type CallbackFn = (n: any) => any
+
 export interface StateMeta {
     id: number
     params: Params
