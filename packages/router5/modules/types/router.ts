@@ -13,7 +13,8 @@ import {
     DoneFn,
     NavigationOptions,
     Unsubscribe,
-    CancelFn
+    CancelFn,
+    CallbackFn
 } from './base'
 
 export interface Route<
@@ -155,9 +156,9 @@ export interface Router<
         ) => any
     ): any
 
-    invokeEventListeners: (eventName, ...args) => void
-    removeEventListener: (eventName, cb) => void
-    addEventListener: (eventName, cb) => Unsubscribe
+    invokeEventListeners: (eventName: string, ...args: any[]) => void
+    removeEventListener: (eventName: string, callback: CallbackFn) => void
+    addEventListener: (eventName: string, callback: CallbackFn) => Unsubscribe
 
     cancel(): Router<Dependencies>
     forward(fromRoute: string, toRoute: string): Router<Dependencies>

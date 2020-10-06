@@ -202,7 +202,7 @@ router.buildPath(route, params)
 
 ### matchPath
 
-Attempt to match a path
+Attempt to match a path, if the path is in the Router State it will return the State, otherwise returns `null`
 
 ```javascript
 router.matchPath(path, [source])
@@ -275,3 +275,10 @@ Replace state in history and silently update your router instance state. Use if 
 router.replaceHistoryState(name, params)
 ```
 
+### lastKnownState
+
+Returns the last known Router state if the history has been replaced, otherwise returns `undefined`
+
+```javascript
+router.lastKnownState
+```
