@@ -7,8 +7,8 @@ export type Listener = (toState: State, fromState: State | null) => void
 declare module 'router5/dist/types/router' {
     interface Router {
         getListeners(): { [key: string]: Listener[] }
-        addListener(name: string, callback: Listener): void
-        removeListener(name: string, callback: Listener): void
+        addListener(callback: Listener): void
+        removeListener(callback: Listener): void
         addNodeListener(name: string, callback: Listener): void
         removeNodeListener(name: string, callback: Listener): void
         addRouteListener(name: string, callback: Listener): void
