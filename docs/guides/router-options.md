@@ -28,7 +28,7 @@ When your router instance starts, it will navigate to a default route if such ro
 -   `defaultRoute`: the default route.
 -   `defaultParams`: the default route params \(defaults to `{}`\)
 
-See [navigation guide](https://github.com/router5/router5/tree/1cc1c6969a96918deb28e45b8c5b2d6aa19d0a19/docs/navigation.html) for more information.
+See [navigation guide](https://github.com/router5/router5/blob/master/docs/guides/navigating.md) for more information.
 
 ## Allow not found
 
