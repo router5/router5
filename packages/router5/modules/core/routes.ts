@@ -21,6 +21,9 @@ export default function withRoutes<Dependencies>(
             if (route.canActivate)
                 router.canActivate(route.name, route.canActivate)
 
+            if (route.canDeactivate)
+                router.canDeactivate(route.name, route.canDeactivate)
+
             if (route.forwardTo) router.forward(route.name, route.forwardTo)
 
             if (route.decodeParams)
