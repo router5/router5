@@ -45,6 +45,8 @@ class RouterProvider extends React.PureComponent<RouteProviderProps> {
         if (this.unsubscribe) {
             this.unsubscribe()
         }
+
+        this.mounted = false
     }
 
     render() {
