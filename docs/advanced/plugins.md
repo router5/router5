@@ -45,5 +45,5 @@ import createRouter, { loggerPlugin } from 'router5'
 
 const router = createRouter()
 
-const teardownPlgin = router.usePlugin(loggerPlugin)
+const teardownPlugin = router.usePlugin(loggerPlugin)
 ```
