@@ -58,7 +58,13 @@ export default function withNavigation<Dependencies>(
         const route = router.buildState(name, params)
 
         if (!route) {
-            const err = { code: errorCodes.ROUTE_NOT_FOUND }
+            const err = { 
+                code: errorCodes.ROUTE_NOT_FOUND, 
+                route: {
+                    name,
+                    params
+                } 
+            }
             done(err)
             router.invokeEventListeners(
                 constants.TRANSITION_ERROR,
