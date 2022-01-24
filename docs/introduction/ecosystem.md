@@ -11,6 +11,7 @@
 - [react-mobx-router5](https://github.com/LeonardoGentile/react-mobx-router5): integration with Mobx and React
 - [marko-router5](https://jesse1983.github.io/marko-router5/#/): integration with MarkoJS
 - [mr-router5](https://github.com/pzmosquito/mr-router5): lightweight integration with MobX and React
+- [matomo-router5-plugin](https://github.com/pzmosquito/matomo-router5-plugin): integration with Matomo (formerly Piwik)
 
 ## Examples
 
