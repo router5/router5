@@ -37,13 +37,26 @@ const addPopstateListener = (fn, opts) => {
 
 const getLocation = opts => {
     const path = opts.useHash
-        ? window.location.hash.replace(new RegExp('^#' + opts.hashPrefix), '')
-        : window.location.pathname.replace(new RegExp('^' + opts.base), '')
+        ? window.location.hash.replace(new RegExp('^#' + escapeRegex(opts.hashPrefix)), '')
+        : window.location.pathname.replace(new RegExp('^' + escapeRegex(opts.base)), '')
 
     // Fix issue with browsers that don't URL encode characters (Edge)
     const correctedPath = safelyEncodePath(path)
 
     return (correctedPath || '/') + window.location.search
+}
+
+const escapeRegex = url => {
+    const escaped = [];
+    const special = new Set(['.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\']);
+    for (let i = 0, len = url.length; i < len; i++) {
+        const c = url[i];
+        if (special.has(c)) {
+            escaped.push('\\');
+        }
+        escaped.push(c);
+    }
+    return escaped.join('');
 }
 
 const safelyEncodePath = path => {
