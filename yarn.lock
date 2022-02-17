@@ -11064,9 +11064,9 @@ querystring@0.2.0:
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
 querystringify@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.1.1.tgz#60e5a5fd64a7f8bfa4d2ab2ed6fdf4c85bad154e"
-  integrity sha512-w7fLxIRCRT7U8Qu53jQnJyPkYZIaR4n5151KMfcJlO/A9397Wxb1amJvROTK6TOnp7PfoAmg/qXiNHI+08jRfA==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.2.0.tgz#3345941b4153cb9d082d8eee4cda2016a9aef7f6"
+  integrity sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==
 
 quick-lru@^1.0.0:
   version "1.1.0"
@@ -11189,6 +11189,13 @@ react-is@^16.6.1, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
+
+react-router5@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-router5/-/react-router5-8.0.0.tgz#611aed142c20948a6c5f511ed196b4ee95d9bedd"
+  integrity sha512-TKeRIBjqjWuvLRB3kzOVyirCYkztJ2LQFa4qOq6je1zN0AlD3vyhB1urKGAd42qKap440KdsWTOQA/0QHz+KTg==
+  dependencies:
+    router5-transition-path "^8.0.0"
 
 react-scripts@3.4.0:
   version "3.4.0"
@@ -11845,6 +11852,25 @@ route-node@4.1.1:
     path-parser "6.1.0"
     search-params "3.0.0"
     tslib "^1.10.0"
+
+router5-plugin-browser@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5-plugin-browser/-/router5-plugin-browser-8.0.0.tgz#0271e1df148944b3d30e3de5d31af1fb58068b74"
+  integrity sha512-JcyVLnJrzwVQN2ObxWvgiOFw43NaXSiEvAn2v0oQl45pTHnjGCMD0sEyFFkLgSrWja0mr08HLcgF6wvIv5z3Yg==
+
+router5-plugin-logger@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5-plugin-logger/-/router5-plugin-logger-8.0.0.tgz#618c6e8df5ae400be4a069aaa550b8f10c49abb9"
+  integrity sha512-TVzjyTlIqa75qdswk10tGetHUwls6YpH9Gly206XUvOkq+c1JzD3L6HWRCtH1Dt9U2Ukmd3TCxXeE7dUYGIlKA==
+
+router5@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5/-/router5-8.0.0.tgz#28cd8112b8d3bcab3de98766a179ececdd4a7bae"
+  integrity sha512-HYXB94yBZTTK0HrbZyGjOMPc3H+5TjzodY9KctIjgyNB44nuT85y4jjUtm0ufvTPXji0xyPphzKJUa1BpLRHMg==
+  dependencies:
+    route-node "4.1.1"
+    router5-transition-path "^8.0.0"
+    symbol-observable "1.2.0"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -13267,9 +13293,9 @@ url-loader@2.3.0:
     schema-utils "^2.5.0"
 
 url-parse@^1.4.3:
-  version "1.4.7"
-  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.4.7.tgz#a8a83535e8c00a316e403a5db4ac1b9b853ae278"
-  integrity sha512-d3uaVyzDB9tQoSXFvuSUNFibTd9zxd2bkVrDRvF5TmvWWQwqE4lgYJ5m+x1DbecWkw+LK4RNl2CU1hHuOKPVlg==
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.7.tgz#00780f60dbdae90181f51ed85fb24109422c932a"
+  integrity sha512-HxWkieX+STA38EDk7CE9MEryFeHCKzgagxlGvsdS7WBImq9Mk+PGwiT56w82WI3aicwJA8REp42Cxo98c8FZMA==
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
