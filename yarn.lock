@@ -11190,6 +11190,13 @@ react-is@^16.6.1, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6, react-is
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
+react-router5@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/react-router5/-/react-router5-8.0.0.tgz#611aed142c20948a6c5f511ed196b4ee95d9bedd"
+  integrity sha512-TKeRIBjqjWuvLRB3kzOVyirCYkztJ2LQFa4qOq6je1zN0AlD3vyhB1urKGAd42qKap440KdsWTOQA/0QHz+KTg==
+  dependencies:
+    router5-transition-path "^8.0.0"
+
 react-scripts@3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-scripts/-/react-scripts-3.4.0.tgz#f413680f0b5b937c8879ba1ffdae9b8c5b364bf5"
@@ -11845,6 +11852,25 @@ route-node@4.1.1:
     path-parser "6.1.0"
     search-params "3.0.0"
     tslib "^1.10.0"
+
+router5-plugin-browser@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5-plugin-browser/-/router5-plugin-browser-8.0.0.tgz#0271e1df148944b3d30e3de5d31af1fb58068b74"
+  integrity sha512-JcyVLnJrzwVQN2ObxWvgiOFw43NaXSiEvAn2v0oQl45pTHnjGCMD0sEyFFkLgSrWja0mr08HLcgF6wvIv5z3Yg==
+
+router5-plugin-logger@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5-plugin-logger/-/router5-plugin-logger-8.0.0.tgz#618c6e8df5ae400be4a069aaa550b8f10c49abb9"
+  integrity sha512-TVzjyTlIqa75qdswk10tGetHUwls6YpH9Gly206XUvOkq+c1JzD3L6HWRCtH1Dt9U2Ukmd3TCxXeE7dUYGIlKA==
+
+router5@8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/router5/-/router5-8.0.0.tgz#28cd8112b8d3bcab3de98766a179ececdd4a7bae"
+  integrity sha512-HYXB94yBZTTK0HrbZyGjOMPc3H+5TjzodY9KctIjgyNB44nuT85y4jjUtm0ufvTPXji0xyPphzKJUa1BpLRHMg==
+  dependencies:
+    route-node "4.1.1"
+    router5-transition-path "^8.0.0"
+    symbol-observable "1.2.0"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -13021,9 +13047,9 @@ trim-newlines@^2.0.0:
   integrity sha1-tAPQuRvlDDMd/EuC7s6yLD3hbSA=
 
 trim-off-newlines@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/trim-off-newlines/-/trim-off-newlines-1.0.1.tgz#9f9ba9d9efa8764c387698bcbfeb2c848f11adb3"
-  integrity sha1-n5up2e+odkw4dpi8v+sshI8RrbM=
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/trim-off-newlines/-/trim-off-newlines-1.0.3.tgz#8df24847fcb821b0ab27d58ab6efec9f2fe961a1"
+  integrity sha512-kh6Tu6GbeSNMGfrrZh6Bb/4ZEHV1QlB4xNDBeog8Y9/QwFlKTRyWvY3Fs9tRDAMZliVUwieMgEdIeL/FtqjkJg==
 
 ts-jest@~24.2.0:
   version "24.2.0"
